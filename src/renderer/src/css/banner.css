@@ -1,0 +1,44 @@
+.Link-area {
+  display: flex;
+  width: 100%;
+  padding: 5px 0px;
+  position: fixed;
+  box-shadow: 0 10px 25px 0 rgba(0, 0, 0, .8);
+  background-color:#34343c;
+  z-index: 200;
+}
+
+.Link-button {
+  display: flex;
+  width: 150px;
+  flex: 1;
+  flex-flow: column;
+  background-color:#40404a;
+  white-space: nowrap;
+  align-items: center;
+}
+
+.DrawerArea {
+  background-color:#40404a;
+  position: fixed;
+  height: 100px;
+  z-index: 200;
+}
+
+.Arrowarea {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.blank {
+  flex: 1;
+}
+
+
+
+@media print {
+  .Link-area {
+    display: none;
+  }
+}

@@ -1,0 +1,248 @@
+.taiyobackGround {
+  background-color: white;
+  max-width: 210mm;
+  max-height: 297mm;
+  min-width: 210mm;
+  min-height: 297mm;
+}
+
+
+.taiyotop {
+  text-align: center;
+}
+
+.taiyoH1,.taiyo-Data-name,.taiyo-Data-number {
+  margin: 0;
+}
+.taiyoH1 {
+  padding-top: 10px;
+}
+
+.taiyo-Data-name {
+  padding-left: 20px;
+  text-align: left;
+}
+
+.taiyo-Data-number {
+  padding-right: 20px;
+  text-align: right;
+}
+
+.sub_top {
+  width: 100%;
+  display: flex;
+}
+
+.taiyo-Data {
+  margin: auto;
+}
+
+.sub_top2{
+  flex: 1;
+}
+
+.taiyo-tableArea {
+  width: 100%;
+}
+
+.tamuratable{
+  display: flex;
+  justify-content: center;
+}
+
+.taiyo-table {
+  width: 200mm;
+  border-collapse: collapse;
+  margin: 15px;
+}
+
+.taiyo-table-header th,
+.etc, .taiyo-number-data,
+.taiyo-name-data,.taiyo-num-data,
+.murakami-num-data,
+.murakami-name-data,
+.murakami-last-data,
+.murakami-store-data {
+  overflow: hidden;
+  height: 26px;
+  white-space: nowrap;
+  border: 1px solid black; /* 境界線 */
+  padding: 6px;           /* セルの内側に余白 */
+  /* text-align: left; */
+}
+
+
+
+.taiyo-table-header th {
+  font-size: 14px;
+  background-color: #f2f2f2; /* ヘッダーの背景色 */
+  font-weight: bold;         /* ヘッダーの太字 */
+  padding: 2px 6px;
+}
+
+.taiyoData tr:nth-child(even) {
+  background-color: #f9f9f9; /* 偶数行の背景色を変更 */
+}
+
+
+
+.taiyo-number {
+  width: 80px;
+}
+
+.taiyo-name {
+  flex: 1;
+}
+
+.taiyo-num {
+  width: 50px;
+}
+
+.taiyo-Dnum, .taiyo-Snum, .taiyo-bikou {
+  width: 80px;
+}
+
+.taiyo-num-data {
+  padding: 0px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.taiyo-number-data, .taiyo-name-data {
+  text-align: left;
+  padding: 0px;
+  padding-left: 6px;
+  font-size: 20px;
+}
+
+
+.special-row-saron {
+  padding: 0;
+  align-items: center;
+  text-align: center;
+  border: none;
+}
+
+.sarontop {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.taiyo-saron-last {
+  border: 1px solid black;
+}
+
+.sarontitle,.saronData {
+  padding: 5px 10px;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.saronname {
+  border: none;
+  padding: 5px 10px;
+  font-size: 20px;
+}
+
+.saronData {
+  font-size: 25px;
+  text-align: left;
+  padding-left: 15px;
+  width: 600px;
+}
+
+
+.sarontitle {
+  width: 100px;
+  text-align-last: justify;
+}
+
+
+.taiyo-saron-table{
+  justify-items: center;
+}
+
+.taiyo-saron-message {
+  border: 1px solid black;
+  height: 40px;
+}
+
+
+@media print {
+  @page {
+    size: A4 portrait;
+  }
+  body {
+    zoom: 1;
+  }
+}
+
+.murakami-header th {
+  text-align: left;
+  overflow: hidden;
+  height: 24px;
+  white-space: nowrap;
+  border: 2px solid black; /* 境界線 */
+  padding: 6px;
+}
+
+.murakami-top-data {
+  text-align: center;
+  padding: 0px;
+  padding-left: 6px;
+  font-size: 20px;
+  height: 34px;
+}
+
+.murakami-store-data {
+  text-align: left;
+  padding: 0px;
+  padding-left: 6px;
+  font-size: 20px;
+  height: 34px;
+}
+
+.murakami-num-data {
+  text-align: center;
+  padding: 0px;
+  padding-left: 6px;
+  font-size: 20px;
+  height: 34px;
+}
+
+.murakami-name-data {
+  width: 623px;
+  text-align: left;
+  padding: 0px;
+  padding-left: 6px;
+  font-size: 20px;
+  height: 34px;
+}
+
+.murakami-last-data {
+  text-align: center;
+  padding: 0px;
+  padding-left: 6px;
+  font-size: 30px;
+  height: 34px;
+  font-weight: bold;
+}
+
+.tamura-manager-area {
+  margin-left: 10px;
+  font-size: 25px;
+  padding: 2px 5px;
+  border: 1px solid black;
+  text-align: center;
+  display: flex;
+  flex-flow: column;
+}
+.tamura-manager {
+  font-size: 35px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+

@@ -1,0 +1,18 @@
+
+.NetOrderLinkTitle {
+  margin: 10px 20px;
+}
+.NetOrderLinkTable {
+  margin-left: 10px;
+  border-collapse: collapse;
+}
+
+.NetOrderLinkArea {
+  padding: 70px;
+}
+
+.NetOrderLinkArea th,.NetOrderLinkArea td {
+  padding: 5px 10px;
+  border: 1px solid black;
+  
+}

@@ -1,0 +1,39 @@
+.stocksWindow {
+  padding: 60px;
+  padding-left: 40px;
+  width: 1000px;
+}
+
+
+.stocksWindow table {
+  border-collapse: collapse;
+  background-color: white;
+  margin-left: 15px;
+}
+
+.stocksWindow th, .stocksWindow td {
+  border: 1px solid black;
+  padding: 6px 8px;
+}
+
+.stocksNum {
+  text-align: right;
+}
+
+.stocks-button-area {
+  margin-left: 15px;
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+
+
+@media print {
+  .stocks-button-area{
+    display: none;
+  }
+}
+
+
+

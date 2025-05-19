@@ -1,0 +1,27 @@
+.storeupdateArea{
+  display: flex;
+  margin: 4px 0px;
+}
+.storeupdateArea input {
+  width: 100px;
+  margin-right: 4px;
+}
+.buttonArea{
+  display: flex;
+  margin-top: 20px;
+  justify-content: space-between;
+}
+
+.setting-rowNumber {
+  display: flex;
+  text-align: right;
+  align-items: center;
+  justify-content: right;
+}
+
+.settingUpdateArea {
+  color: white;
+  border: 1px solid white;
+  padding: 10px 20px;
+  margin: 10px;
+}
