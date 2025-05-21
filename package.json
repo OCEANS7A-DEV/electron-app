@@ -7,6 +7,23 @@
   "author": "example.com",
   "homepage": "https://electron-vite.org",
   "type": "module",
+  "build": {
+    "appId": "com.OCEANS7A-DEV.Oceanstockman",
+    "productName": "在庫管理",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "OCEANS7A-DEV",
+        "repo": "electron-app"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
@@ -31,7 +48,7 @@
     "@mui/material": "^7.0.2",
     "@mui/x-data-grid": "^8.0.0",
     "electron-store": "^10.0.1",
-    "electron-updater": "^6.3.9",
+    "electron-updater": "^6.6.2",
     "fuse": "^0.12.1",
     "fuse.js": "^7.1.0",
     "jaconv": "^1.0.4",

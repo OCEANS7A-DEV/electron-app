@@ -3,6 +3,8 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
+import { autoUpdater } from 'electron-updater'
+
 // import React from 'react'
 // import ReactDOMServer from 'react-dom/server'
 // import PrintContent from '../renderer/src/router/PrintContent'
@@ -182,6 +184,30 @@ app.whenReady().then(async () => {
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+
+  autoUpdater.checkForUpdatesAndNotify()
+
+  autoUpdater.on('update-available', () => {
+    console.log('アップデートが利用可能です。')
+    // 必要なら renderer に通知
+  })
+
+  autoUpdater.on('update-not-available', () => {
+    console.log('アップデートはありません。')
+  })
+
+  autoUpdater.on('error', (error) => {
+    console.error('アップデートエラー:', error)
+  })
+
+  autoUpdater.on('download-progress', (progressObj) => {
+    console.log(`ダウンロード進行中: ${progressObj.percent.toFixed(2)}%`)
+  })
+
+  autoUpdater.on('update-downloaded', () => {
+    console.log('アップデート完了。再起動して更新します。')
+    autoUpdater.quitAndInstall()
   })
 })
 
