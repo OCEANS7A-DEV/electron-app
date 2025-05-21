@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest   # WindowsビルドはWindows環境で実行推奨
+    runs-on: windows-latest
 
     steps:
     - name: Checkout repository
