@@ -1,5 +1,6 @@
 {
-  "name": "electron-app",
+  "name": "zaiko-kanri",
+  "productName": "在庫管理",
   "version": "1.0.0",
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
@@ -43,6 +44,7 @@
     "react-select": "^5.10.1",
     "react-spinners": "^0.17.0",
     "react-sweetalert2": "^0.6.0",
+    "react-virtualized": "^9.22.6",
     "react-window": "^1.8.11",
     "router": "^2.2.0",
     "sweetalert2": "^11.19.1"

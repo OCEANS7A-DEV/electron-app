@@ -1,17 +1,17 @@
-import React, { useState, ChangeEvent, useEffect } from 'react'
+import React from 'react'
 import Select from 'react-select'
 import { useLoaderData } from "react-router-dom"
 
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import { Button, IconButton } from '@mui/material'
+import { Button } from '@mui/material'
 import '../css/setting.css'
 
 
 
-interface SelectOption {
-  value: string
-  label: string
-}
+// interface SelectOption {
+//   value: string
+//   label: string
+// }
 
 
 type FormValues = {
@@ -40,6 +40,7 @@ export const loader = async () => {
 
 export default function StoreDataUpDate() {
   const { Lists, storeData } = useLoaderData<typeof loader>()
+  console.log(Lists)
 
   const NumberOfStores = storeData.length
 
@@ -54,7 +55,7 @@ export default function StoreDataUpDate() {
     return result
   }
 
-  const { control, register, handleSubmit, getValues, watch, setValue, reset } =
+  const { control, register, getValues } =
     useForm<FormValues>({
       defaultValues: {
         rows: StoreDataDefaultSet()

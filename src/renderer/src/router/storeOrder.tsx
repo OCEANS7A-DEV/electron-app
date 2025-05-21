@@ -1,38 +1,39 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, ChangeEvent, useEffect } from 'react'
-import Select from 'react-select'
-import { useLoaderData } from 'react-router-dom'
+//import Select from 'react-select'
+//import { useLoaderData } from 'react-router-dom'
 import WordSearch from '../comp/ProductSearchWord'
 import '../css/Receiving.css'
-import { Button, IconButton, Tooltip } from '@mui/material'
+import { Button } from '@mui/material'
 import LinkBaner from '../comp/Linkbanar'
 import SendIcon from '@mui/icons-material/Send'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
+//import DeleteIcon from '@mui/icons-material/Delete'
+import { useForm, useFieldArray } from 'react-hook-form'
 import SweetAlert2 from 'react-sweetalert2';
 import ConfirmDialogTable from '../comp/DialogTable'
 import toast, { Toaster } from 'react-hot-toast';
+import { SubmitHandler } from 'react-hook-form'
 
-interface InsertData {
-  業者: { value: string; label: string }[]
-  商品コード: string
-  商品名: string
-  数量: string
-  商品単価: string
-  VendorList: { value: string; label: string }[]
-}
+// interface InsertData {
+//   業者: { value: string; label: string }[]
+//   商品コード: string
+//   商品名: string
+//   数量: string
+//   商品単価: string
+//   VendorList: { value: string; label: string }[]
+// }
 
-interface SelectOption {
-  value: string
-  label: string
-}
+// interface SelectOption {
+//   value: string
+//   label: string
+// }
 
-interface InventoryDataType {
-  業者: string
-  商品コード: string
-  商品名: string
-  商品単価: string
-}
+// interface InventoryDataType {
+//   業者: string
+//   商品コード: string
+//   商品名: string
+//   商品単価: string
+// }
 
 
 
@@ -45,8 +46,8 @@ type FormValues = {
   }[]
 }
 
-const defaultSet = () => {
-  const result = []
+const defaultSet = (): FormValues["rows"] => {
+  const result: FormValues["rows"] = []
   for (let i = 0; i < 20; i++) {
     result.push({
       vendor: '',
@@ -65,10 +66,10 @@ const defaultSet = () => {
 
 
 export default function StoreOrderPage() {
-  const [VendorList, setVendorList] = useState<SelectOption[]>([])
-  const [isDialogOpen, setDialogOpen] = useState(false)
-  const message =
-    '入庫内容は以下の通りです\n以下の内容でよろしければOKをクリックしてください\n内容の変更がある場合にはキャンセルをクリックしてください'
+  //const [VendorList, setVendorList] = useState<SelectOption[]>([])
+  // const [isDialogOpen, setDialogOpen] = useState(false)
+  // const message =
+  //   '入庫内容は以下の通りです\n以下の内容でよろしければOKをクリックしてください\n内容の変更がある場合にはキャンセルをクリックしてください'
 
   const [InsertDate, setDate] = useState<string>('')
 
@@ -90,7 +91,7 @@ export default function StoreOrderPage() {
 
 
 
-  const { control, register, handleSubmit, getValues, watch, setValue, reset } =
+  const { control, register, handleSubmit, getValues,  setValue, reset } =
     useForm<FormValues>({
       defaultValues: {
         rows: defaultSet()
@@ -102,24 +103,24 @@ export default function StoreOrderPage() {
     name: 'rows'
   })
 
-  const onSubmit = (data: FormValues) => {
-    console.log('送信データ:', data.rows)
-    // ここでAPIに送信など処理を書く
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    // data は FormValues 型として認識される
+    console.log(data)
   }
 
   const isHalfWidth = (value: string) => /^[\x20-\x7E]*$/.test(value)
 
-  const VendorListGet = async () => {
-    const result = []
-    const list = await window.myInventoryAPI.ListGet({sheetName: 'その他一覧', action: 'ListGet', ranges: 'A2:B'})
-    for (let i = 0; i < list.length; i++) {
-      result.push({
-        value: list[i][0],
-        label: list[i][0]
-      })
-    }
-    setVendorList(result)
-  }
+  // const VendorListGet = async () => {
+  //   const result = []
+  //   const list = await window.myInventoryAPI.ListGet({sheetName: 'その他一覧', action: 'ListGet', ranges: 'A2:B'})
+  //   for (let i = 0; i < list.length; i++) {
+  //     result.push({
+  //       value: list[i][0],
+  //       label: list[i][0]
+  //     })
+  //   }
+  //   setVendorList(result)
+  // }
 
   const addNewForm = () => {
     for (let i = 0; i < 20; i++) {
@@ -172,39 +173,39 @@ export default function StoreOrderPage() {
     //setDialogOpen(true)
   }
 
-  const handleConfirm = () => {
-    alert('確認が完了しました')
-    insertPost()
-    setDialogOpen(false)
-    setFormData(initialFormData)
-  }
+  // const handleConfirm = () => {
+  //   alert('確認が完了しました')
+  //   insertPost()
+  //   setDialogOpen(false)
+  //   setFormData(initialFormData)
+  // }
 
-  const handleCancel = () => {
-    alert('キャンセルされました')
-    setDialogOpen(false)
-  }
+  // const handleCancel = () => {
+  //   alert('キャンセルされました')
+  //   setDialogOpen(false)
+  // }
 
   const handleChangeDate = (event: ChangeEvent<HTMLInputElement>) => {
     setDate(event.target.value)
   }
 
-  const dataget = async () => {
-    try {
-      const data = await window.myInventoryAPI.ListData()
-      //console.log(data);
-      if (!data) {
-        throw new Error('APIからデータが返されませんでした')
-      }
-    } catch (error) {
-      console.error('データ取得エラー:', error)
-    }
-  }
+  // const dataget = async () => {
+  //   try {
+  //     const data = await window.myInventoryAPI.ListData()
+  //     //console.log(data);
+  //     if (!data) {
+  //       throw new Error('APIからデータが返されませんでした')
+  //     }
+  //   } catch (error) {
+  //     console.error('データ取得エラー:', error)
+  //   }
+  // }
 
   useEffect(() => {
     //dataget()
     //defaultSet()
 
-    VendorListGet()
+    //VendorListGet()
   }, [])
 
   useEffect(() => {
@@ -221,9 +222,10 @@ export default function StoreOrderPage() {
       const form = e.currentTarget.form
       const elements = Array.from(form.elements) as HTMLElement[]
       const index = elements.indexOf(e.currentTarget)
+      const nextElement = elements[index + 1] as HTMLInputElement | HTMLButtonElement
 
-      if (elements[index + 1] && elements[index + 1].type !== 'button') {
-        elements[index + 1].focus()
+      if (nextElement && nextElement.type !== 'button') {
+        nextElement.focus()
       } else {
         const nextCodeInput = document.querySelector<HTMLInputElement>(
           `input[name="rows.${rowIndex + 1}.code"]`
@@ -264,14 +266,14 @@ export default function StoreOrderPage() {
       </div>
       <div className="window_area">
         <div className="insertDate">
-          <Select
+          {/* <Select
             options={VendorList}
             placeholder="店舗"
             isClearable
             className="insert_Select"
             menuPlacement="auto"
             menuPortalTarget={document.body}
-          />
+          /> */}
           <h2 style={{ color: 'white' }}>入庫日付</h2>
           <input
             type="date"

@@ -2,8 +2,9 @@
   font-size: 18px;
   margin-right: 8px;
   padding-top: 60px;
-  padding-bottom: 80px;
 }
+
+
 
 
 .price-div {
@@ -12,10 +13,13 @@
   border: 1px solid black;
 }
 
-.productRow input{
+.productRow-tr input{
   font-size: 16px;
   padding: 4px;
 }
+
+
+
 
 .modalOverlay {
   display: none;
@@ -60,3 +64,106 @@
   align-items: center;
   justify-content: space-around;
 }
+
+
+
+.virtual-table-row {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  width: 1180px;
+}
+
+.virtual-table-row input {
+  font-size: 16px;
+}
+
+.virtual-table-cell {
+  font-size: 16px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+}
+
+.productRow-header {
+  display: flex;
+  font-size: 18px;
+  margin-right: 8px;
+  padding-top: 60px;
+  color: white;
+  width: 1180px;
+}
+.productRow-header div{
+  display: flex;
+  text-align: center;
+  justify-content: center;
+}
+
+
+
+
+
+/* 各列の幅設定（例：flex or 固定幅） */
+.cell-vendor {
+  min-width: 160px;
+  max-width: 160px;
+}
+.cell-code {
+  min-width: 80px;
+  max-width: 80px;
+}
+.cell-name {
+  min-width: 300px;
+  max-width: 300px;
+  flex-shrink: 0;
+}
+.cell-price {
+  min-width: 80px;
+  max-width: 80px;
+}
+.cell-type {
+  min-width: 160px;
+  max-width: 160px;
+}
+.cell-switch {
+  min-width: 80px;
+  max-width: 80px;
+  display: flex;
+  justify-content: center;
+}
+.cell-dialog {
+  min-width: 80px;
+  max-width: 80px;
+}
+.cell-actions {
+  min-width: 160px;
+  max-width: 160px;
+}
+
+
+.virtual-table-row .cell-price {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  height: 36px;
+  background-color: white;
+}
+
+.detail-newprice {
+  height: 34px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  border: 1px solid black;
+}
+
+.new-price{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+

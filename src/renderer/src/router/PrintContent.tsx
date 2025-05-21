@@ -1,6 +1,5 @@
 // PrintContent.tsx
 import React, { useEffect, useState } from 'react'
-import ReactDOM from 'react-dom/client'
 //import { useLocation } from 'react-router-dom';
 import '../css/PrintContent.css'
 import '../css/orderPrint.css'
@@ -12,8 +11,8 @@ import { useLoaderData } from "react-router-dom";
 
 export const loader = async () => {
   //console.log(window.myInventoryAPI);
-  const printData = await window.myInventoryAPI.storeGet({gettitle: 'printData'})
-  const printDate = await window.myInventoryAPI.storeGet({gettitle: 'printDate'})
+  const printData = await window.myInventoryAPI.storeGet('printData')
+  const printDate = await window.myInventoryAPI.storeGet('printDate')
   //setDate(printDate)
   //console.log(JSON.parse(printData))
   //setPrintData(JSON.parse(printData))
@@ -45,14 +44,15 @@ export const loader = async () => {
 
 const PrintContent = () => {
   const {printDate,resultdata,stores} = useLoaderData<typeof loader>();
-  const [date, setDate] = useState<any>(null)
+  //const [date, setDate] = useState<any>(null)
   //const location = useLocation();
-  const [printData, setPrintData] = useState([]);
+  //const [printData, setPrintData] = useState([]);
  // const [stores, setStore] = useState([])
   const SetRows = 19;
   const defaultText = '';
   const [WarningText, setWarningText] = useState(defaultText);
 
+  setWarningText(defaultText)
 
 
 
@@ -63,7 +63,7 @@ const PrintContent = () => {
   const totalResult = (num: string, price: string) => {
     let result = '' 
     if(num !== '' && price !== '') {
-      let total = num * price
+      let total = Number(num) * Number(price)
       result = total.toLocaleString('ja-JP');
     }else {
       result = ''

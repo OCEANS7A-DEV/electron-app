@@ -1,21 +1,23 @@
-import { dialog, app, shell, BrowserWindow, ipcMain, net } from 'electron'
-import path, { join } from 'path'
+import { app, shell, BrowserWindow, ipcMain, net } from 'electron'
+import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
-import React from 'react'
-import ReactDOMServer from 'react-dom/server'
-import PrintContent from '../renderer/src/router/PrintContent'
+// import React from 'react'
+// import ReactDOMServer from 'react-dom/server'
+// import PrintContent from '../renderer/src/router/PrintContent'
 
-const store = new Store()
+const store = new Store() as any
 
-const URL_STRING =
-  'https://script.google.com/macros/s/AKfycbznkMazxV3wlmS66uEHcOSRkI_SBQkdfT_MfMzJnvueFkSwDxGFiLlmFtq-MfMM6ldL/exec'
-const Get_URL =
-  'https://script.google.com/macros/s/AKfycbwdZ3lhe2QH2BChceXrTsxzGAkUd9EgZ2AZ7pWXWlMJvwtOtOcjXDTOXUmdBRJgCs25/exec'
-const Img_URL =
-  'https://script.google.com/macros/s/AKfycbzCrMJDEFvfTTTCjb2b-8SwVgc2ySlsKwpf7c49H08DS6P4-ZulaS4zcNtiioytK0i6/exec'
-const GetAPI_URL =
+// const URL_STRING =
+//   'https://script.google.com/macros/s/AKfycbznkMazxV3wlmS66uEHcOSRkI_SBQkdfT_MfMzJnvueFkSwDxGFiLlmFtq-MfMM6ldL/exec'
+// const Get_URL =
+//   'https://script.google.com/macros/s/AKfycbwdZ3lhe2QH2BChceXrTsxzGAkUd9EgZ2AZ7pWXWlMJvwtOtOcjXDTOXUmdBRJgCs25/exec'
+// const Img_URL =
+//   'https://script.google.com/macros/s/AKfycbzCrMJDEFvfTTTCjb2b-8SwVgc2ySlsKwpf7c49H08DS6P4-ZulaS4zcNtiioytK0i6/exec'
+
+
+  const GetAPI_URL =
   'https://script.google.com/macros/s/AKfycbwCAqk6CMJl2obU-0edITVdKHEcXLwVhiD81ilwv2xuRWPSSr537A1cfaUSs5FvYn8D-g/exec'
 const InsertAPI_URL =
   'https://script.google.com/macros/s/AKfycbylyaUttaEI9jYGJM_CQWOWyWAd3C9Q-ikbkNAMCUIPDYIWqtUHgrw9GHNgmgkWKE-M/exec'
@@ -174,7 +176,7 @@ app.whenReady().then(async () => {
 
   const AddressList = await addressGet()
 
-  store.set('address',AddressList)
+  store.set('address', AddressList)
 
   createWindow()
 
@@ -198,16 +200,15 @@ ipcMain.handle('shortageGet', async () => {
   return data
 })
 
-ipcMain.handle('storeSet', async (event, set) => {
+ipcMain.handle('storeSet', async (_event, set) => {
   store.set(set.settitle, set.setData)
 })
 
-ipcMain.handle('storeGet', async (event, gettitle) => {
-  const data = store.get(gettitle.gettitle)
-  return data
-})
+ipcMain.handle('storeGet', async (_event, payload: { gettitle: string }) => {
+  return store.get(payload.gettitle);
+});
 
-ipcMain.handle('list-get', async (event, payload: any) => {
+ipcMain.handle('list-get', async (_event, payload: any) => {
   //const SetDomain = await getEndpoint()
   try {
     const response = await net.fetch(GetAPI_URL, {
@@ -225,7 +226,7 @@ ipcMain.handle('list-get', async (event, payload: any) => {
   }
 })
 
-ipcMain.handle('data-insert', async (event, payload: any) => {
+ipcMain.handle('data-insert', async (_event, payload: any) => {
   //const SetDomain = await getEndpoint()
   try {
     const response = await net.fetch(InsertAPI_URL, {
@@ -236,14 +237,14 @@ ipcMain.handle('data-insert', async (event, payload: any) => {
       body: JSON.stringify(payload)
     })
     const result = await response.json()
-    //return result;
+    return result;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     return errorMessage
   }
 })
 
-ipcMain.handle('orderPrint', (event, payload) => {
+ipcMain.handle('orderPrint', (_event, payload) => {
   //console.log(payload)
   printWindow = new BrowserWindow({
     width: 950,
@@ -267,7 +268,7 @@ ipcMain.handle('orderPrint', (event, payload) => {
 })
 
 
-ipcMain.handle('productEditWindow', (event, payload) => {
+ipcMain.handle('productEditWindow', (_eventt, payload) => {
   //console.log(payload)
   printWindow = new BrowserWindow({
     width: 950,
@@ -301,7 +302,7 @@ ipcMain.handle('Print-Ready', () => {
 
 
 
-ipcMain.handle('printStatus', async (event, payload: any) => {
+ipcMain.handle('printStatus', async (_event, payload: any) => {
   try {
     const response = await net.fetch(InsertAPI_URL, {
       method: 'POST',
@@ -311,7 +312,7 @@ ipcMain.handle('printStatus', async (event, payload: any) => {
       body: JSON.stringify(payload)
     })
     const result = await response.json()
-    //return result;
+    return result;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     return errorMessage

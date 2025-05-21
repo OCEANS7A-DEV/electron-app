@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useLoaderData, Link, useNavigation, useNavigate } from "react-router-dom";
+import { useNavigation, useNavigate } from "react-router-dom";
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import { LinearProgress } from '@mui/material';

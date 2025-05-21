@@ -1,8 +1,8 @@
-import React,{ useEffect, useState } from 'react';
+import React,{ useEffect } from 'react';
 //import { kaigisituOrder, taiyoOrder, shortageGet, stockList } from '../backend/Server_end';
 import '../css/taiyoPrint.css';
 import { useLoaderData } from "react-router-dom";
-import LinkBaner from '../comp/Linkbanar'
+//import LinkBaner from '../comp/Linkbanar'
 //import { useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
 //import { Print } from '../backend/utils';
 
@@ -29,8 +29,8 @@ const isoToJstYMD = (isoString) => {
 
 
 export const loader = async ({ request }: { request: Request }) => {
-  let taiyoData = [];
-  const addressData = await window.myInventoryAPI.storeGet({gettitle: 'address'})
+  let taiyoData: string[][] = [];
+  const addressData = await window.myInventoryAPI.storeGet('address')
   const url = new URL(request.url);
   const date = url.searchParams.get("date");
   const vendor = url.searchParams.get("vendor");
@@ -78,7 +78,7 @@ export const loader = async ({ request }: { request: Request }) => {
     taiyoData = Inlist
   }
   
-  let calcD = 16 - taiyoData.length
+  const calcD = 16 - taiyoData.length
   for (let i = 0; i < calcD; i ++){
     taiyoData.push(['','','','','',''])
   }
@@ -90,8 +90,8 @@ export default function TaiyoPrint() {
   const {taiyoData, addressData, address, orderData} = useLoaderData<typeof loader>();
   //const [searchParams] = useSearchParams();
   //const address = searchParams.get("address") || "";
-  const [ShippingAddress, setShippingAddress] = useState(addressData.find(item => item[0] === address));
-  const [VendorData, setVendorData] = useState(addressData.find(item => item[0] === '大洋商会'));
+  const ShippingAddress = addressData.find(item => item[0] === address);
+  const VendorData = addressData.find(item => item[0] === '大洋商会');
   //const navigate = useNavigate();
   console.log(address)
   console.log(taiyoData)

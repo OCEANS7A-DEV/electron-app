@@ -1,11 +1,9 @@
-import React, { useState, ChangeEvent, useEffect } from 'react'
-import Select from 'react-select'
+import React from 'react'
 import { useLoaderData } from "react-router-dom"
 
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import { Button, IconButton } from '@mui/material';
+import { useForm, useFieldArray } from 'react-hook-form'
+import { Button } from '@mui/material';
 import '../css/setting.css'
-import { Height } from '@mui/icons-material';
 
 
 
@@ -50,7 +48,7 @@ export default function VendorDataUpDate() {
     return result
   }
 
-  const { control, register, handleSubmit, getValues, watch, setValue, reset } =
+  const { control, register, getValues } =
     useForm<FormValues>({
       defaultValues: {
         rows: StoreDataDefaultSet()

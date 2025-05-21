@@ -1,8 +1,8 @@
-import React, { useState, ChangeEvent, useEffect } from 'react'
-import Select from 'react-select'
+import React from 'react'
+//import Select from 'react-select'
 import { useLoaderData } from "react-router-dom"
 
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
+//import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import LinkBaner from '../comp/Linkbanar'
 import '../css/setting.css'
 
@@ -12,21 +12,21 @@ import VendorDataUpDate from '@renderer/comp/vendorDataUpdata'
 
 
 
-interface SelectOption {
-  value: string
-  label: string
-}
+// interface SelectOption {
+//   value: string
+//   label: string
+// }
 
 
-type FormValues = {
-  rows: {
-    vendor: { value: string; label: string } | null
-    code: string
-    name: string
-    quantity: string
-    price: string
-  }[]
-}
+// type FormValues = {
+//   rows: {
+//     vendor: { value: string; label: string } | null
+//     code: string
+//     name: string
+//     quantity: string
+//     price: string
+//   }[]
+// }
 
 
 
@@ -37,7 +37,7 @@ export const loader = async () => {
     ranges: 'A2:N'
   })
   const storeData = Lists.map(item => {
-    const result = [item[0],item[1]]
+    const result = [item[0], item[1]]
     return result
   })
   const vendorData = Lists.map(item => item[3])
@@ -47,6 +47,7 @@ export const loader = async () => {
 
 export default function SettingPage() {
   const { Lists, storeData, vendorData } = useLoaderData<typeof loader>()
+  console.log(Lists, storeData, vendorData)
 
 
   return (

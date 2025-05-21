@@ -13,8 +13,7 @@ import { Button } from '@mui/material';
 
 import MoonLoader from 'react-spinners/MoonLoader';
 
-import { useLoaderData, Link, useNavigation, useNavigate } from "react-router-dom";
-import { ContactSupport } from '@mui/icons-material';
+//import { useNavigate } from "react-router-dom";
 
 
 // import { useNavigate } from "@remix-run/react";
@@ -57,22 +56,22 @@ const getNearestMonday = () => {
 
 
 
-const CurrentDate = () => {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = ('0' + (today.getMonth() + 1)).slice(-2)
-  const day = ('0' + today.getDate()).slice(-2)
-  const resultdate = year + '/' + month + '/' + day
-  return resultdate
-}
-const DateNow = CurrentDate();
+// const CurrentDate = () => {
+//   const today = new Date()
+//   const year = today.getFullYear()
+//   const month = ('0' + (today.getMonth() + 1)).slice(-2)
+//   const day = ('0' + today.getDate()).slice(-2)
+//   const resultdate = year + '/' + month + '/' + day
+//   return resultdate
+// }
+// const DateNow = CurrentDate();
 
 export default function HQPage() {
   const [checkresult, setCheckResult] = useState([]);
-  const [isDialogOpen, setDialogOpen] = useState(false);
+  //const [isDialogOpen, setDialogOpen] = useState(false);
   const [storeSelect, setStoreSelect] = useState<SelectOption | null>(null);
   const [selectOptions, setSelectOptions] = useState<SelectOption[]>([]);
-  const message = `今回の店舗からの注文を${DateNow}で締め切りますか？`;
+  //const message = `今回の店舗からの注文を${DateNow}で締め切りますか？`;
   const [getDate, setGetDate] = useState(getNearestMonday());
   
   const [vendorSelect, setVendorSelect] = useState<SelectOption | null>(null);
@@ -83,7 +82,7 @@ export default function HQPage() {
 
   const [Listload, setListload] = useState(false);
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
 
 
@@ -362,8 +361,8 @@ export default function HQPage() {
       updataValue: '印刷済',
       updataDate: setDate
     })
-    await window.myInventoryAPI.storeSet({settitle: 'printData', setData: JSON.stringify(orderresult.flat(1))})
-    await window.myInventoryAPI.storeSet({settitle: 'printDate', setData: setDate})
+    await window.myInventoryAPI.storeSet('printData', JSON.stringify(orderresult.flat(1)));
+    await window.myInventoryAPI.storeSet('printDate', setDate);
     window.myInventoryAPI.orderPrint('PrintContent');
   }
 
@@ -379,8 +378,8 @@ export default function HQPage() {
       return
     }
     //console.log(filterData)
-    await window.myInventoryAPI.storeSet({settitle: 'printData', setData: JSON.stringify(filterData)})
-    await window.myInventoryAPI.storeSet({settitle: 'printDate', setData: setDate})
+    await window.myInventoryAPI.storeSet('printData', JSON.stringify(filterData))
+    await window.myInventoryAPI.storeSet('printDate', setDate)
     //console.log(store)
     window.myInventoryAPI.orderPrint('PrintContent');
     window.myInventoryAPI.DataInsert({
@@ -407,8 +406,8 @@ export default function HQPage() {
     const filterd = orderData.filter(row => updataStore.includes(row[1]))
     //console.log(filterd)
     const setdata = JSON.stringify(filterd)
-    await window.myInventoryAPI.storeSet({settitle: 'printData', setData: setdata})
-    await window.myInventoryAPI.storeSet({settitle: 'printDate', setData: getDate})
+    await window.myInventoryAPI.storeSet('printData', setdata)
+    await window.myInventoryAPI.storeSet('printDate', getDate)
     //store.set('printData',setData)
     //const setData = encodeURIComponent(JSON.stringify(orderData))
     window.myInventoryAPI.orderPrint('PrintContent');

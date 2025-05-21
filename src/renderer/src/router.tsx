@@ -1,14 +1,11 @@
 // router.ts
 import React from 'react';
-import { createHashRouter, RouterProvider } from 'react-router-dom'
-import { ipcFetch } from './ipcFetch'
-import ReceivingPage, { loader as ReceivingLoader} from './router/Receiving_stock';
+import { createHashRouter } from 'react-router-dom'
+
+import ReceivingPage from './router/Receiving_stock';
 import StoreOrderPage from './router/storeOrder'
 import ProductDetailChangePage, { loader as productsLoader } from './router/ProductListUpdata'
-import SelectPage, { loader as aboutLoader } from './router/SelectTitle'
-import AddTitlePage from './router/AddTitlePage'
-import AddPreview, { loader as previewLoader } from './router/AddTitlePreview'
-import EditPage, { loader as editLoader } from './router/EditPage'
+
 import NETOrder, { loader as netOrderLoader } from './router/netOrder'
 import HQStocks, { loader as HQStocksLoader } from './router/HQ_stocks'
 import HQPage from './router/process_chack'

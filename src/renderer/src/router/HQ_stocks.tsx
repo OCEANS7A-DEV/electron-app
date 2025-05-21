@@ -45,7 +45,7 @@ export default function HQStocks() {
           text: "",
           icon: "success"
         });
-        AllClearCells
+        //AllClearCells
       }
     });
   }

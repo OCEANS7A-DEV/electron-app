@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useLoaderData, useNavigate } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { useLoaderData } from "react-router-dom"
 //import { getMonthString } from '../backend/utils'
 //import { shortageGet, ListGet, orderGet } from '../backend/Server_end';
 import '../css/kinbatoPrint.css';
@@ -10,9 +10,9 @@ import jaconv from 'jaconv';
 
 
 
-interface SettingProps {
-  setCurrentPage: (page: string) => void;
-}
+// interface SettingProps {
+//   setCurrentPage: (page: string) => void;
+// }
 
 
 const isoToJstYMD = (isoString) => {
@@ -33,7 +33,7 @@ export const loader =  async ({ request }: { request: Request }) => {
   const url = new URL(request.url);
   const date = url.searchParams.get("date") ?? '2025-03-24';
   const address = url.searchParams.get("address");
-  const Addressdata = await window.myInventoryAPI.storeGet({gettitle: 'address'})
+  const Addressdata = await window.myInventoryAPI.storeGet('address')
   const vendors = ['キンバト', 'ムラカミ', '三久', 'タムラ']
 
   const ShippingAddress = Addressdata.find(row => row[0] === address)
@@ -45,7 +45,7 @@ export const loader =  async ({ request }: { request: Request }) => {
   const shortage = productData.filter(row => Number(row[12]) < 0 || (Number(row[14]) >= 1 && Number(row[12]) <= Number(row[14])) && !row[2].includes('eco') && !row[2].includes('ﾙﾍﾞﾙ') && row[1] !== 100001)
 
   let subData = []
-  let subdata = []
+  let subdata: any[] = [];
 
   const resultdata = vendors.map(item => {
     const swKH = jaconv.toHan(item);
@@ -79,7 +79,7 @@ export const loader =  async ({ request }: { request: Request }) => {
       subdata = [...new Set(addData.map(items => items[1]))]
       subData = addData
     }
-    let calcD = 24 - mapData.length
+    const calcD = 24 - mapData.length
     for (let i = 0; i < calcD; i ++){
       mapData.push(['',''])
     }
@@ -108,6 +108,7 @@ export const loader =  async ({ request }: { request: Request }) => {
 export default function EtcPrint() {
   const { date, ShippingAddress, subData, subdata, vendors, Addressdata, resultdata } = useLoaderData<typeof loader>();
 
+  console.log(date)
 
   
 
@@ -130,7 +131,7 @@ export default function EtcPrint() {
   return(
     <div>
       {vendors.map((item,index) => (
-        <div>
+        <div key={index}>
           <div className="PrintbackGround">
             <div className="kinbato-top">
               <h1 className="H1">
@@ -172,7 +173,7 @@ export default function EtcPrint() {
                   </tr>
                 </thead>
                 <tbody>
-                  {resultdata.find(frow => frow.vendor == item).data.map((row,index) => (
+                  {resultdata.find(frow => frow.vendor == item)?.data?.map((row,index) => (
                     <tr key={index}>
                       <td className="murakami-name-data">{row[0]}</td>
                       <td className="murakami-num-data">{row[1]}</td>
@@ -200,7 +201,7 @@ export default function EtcPrint() {
         {subdata.map((row, index) => {
           const matchdata = subData.filter(rowdata => rowdata[1] === row);
           return (
-            <table className="taiyo-table">
+            <table className="taiyo-table" key={index}>
               <thead>
                 <tr className="murakami-header">
                   <th colSpan="2" className="murakami-store-data">{row}</th>

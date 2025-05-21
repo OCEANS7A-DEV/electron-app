@@ -1,51 +1,51 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, ChangeEvent, useEffect } from 'react'
 import Select from 'react-select'
-import { useLoaderData } from 'react-router-dom'
+//import { useLoaderData } from 'react-router-dom'
 import WordSearch from '../comp/ProductSearchWord'
 import '../css/Receiving.css'
-import { Button, IconButton, Tooltip } from '@mui/material'
+import { Button } from '@mui/material'
 import LinkBaner from '../comp/Linkbanar'
 import SendIcon from '@mui/icons-material/Send'
-import DeleteIcon from '@mui/icons-material/Delete'
+////import DeleteIcon from '@mui/icons-material/Delete'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import SweetAlert2 from 'react-sweetalert2';
 import ConfirmDialogTable from '../comp/DialogTable'
 import toast, { Toaster } from 'react-hot-toast';
 
-interface InsertData {
-  業者: { value: string; label: string }[]
-  商品コード: string
-  商品名: string
-  数量: string
-  商品単価: string
-  VendorList: { value: string; label: string }[]
-}
+// interface InsertData {
+//   業者: { value: string; label: string }[]
+//   商品コード: string
+//   商品名: string
+//   数量: string
+//   商品単価: string
+//   VendorList: { value: string; label: string }[]
+// }
 
 interface SelectOption {
   value: string
   label: string
 }
 
-interface InventoryDataType {
-  業者: string
-  商品コード: string
-  商品名: string
-  商品単価: string
-}
+// interface InventoryDataType {
+//   業者: string
+//   商品コード: string
+//   商品名: string
+//   商品単価: string
+// }
 
-const productSearch = async (codenumber: number) => {
-  const data = await window.myInventoryAPI.ListData()
-  //console.log(data)
-  const storageGet = data
-  const product = storageGet.find((item) => item.code === codenumber)
-  console.log(product)
-  return product
-}
+// const productSearch = async (codenumber: number) => {
+//   const data = await window.myInventoryAPI.ListData()
+//   //console.log(data)
+//   const storageGet = data
+//   const product = storageGet.find((item) => item.code === codenumber)
+//   console.log(product)
+//   return product
+// }
 
 type FormValues = {
   rows: {
-    vendor: { value: string; label: string } | null
+    vendor: { value: string, label: string } | null
     code: string
     name: string
     quantity: string
@@ -53,8 +53,8 @@ type FormValues = {
   }[]
 }
 
-const defaultSet = () => {
-  const result = []
+const defaultSet = (): FormValues["rows"] => {
+  const result: FormValues["rows"] = []
   for (let i = 0; i < 20; i++) {
     result.push({
       vendor: null,
@@ -75,14 +75,15 @@ const defaultSet = () => {
 
 export default function ReceivingPage() {
   const [VendorList, setVendorList] = useState<SelectOption[]>([])
-  const [isDialogOpen, setDialogOpen] = useState(false)
-  const message =
-    '入庫内容は以下の通りです\n以下の内容でよろしければOKをクリックしてください\n内容の変更がある場合にはキャンセルをクリックしてください'
+  //const [isDialogOpen, setDialogOpen] = useState(false)
+  // const message =
+  //   '入庫内容は以下の通りです\n以下の内容でよろしければOKをクリックしてください\n内容の変更がある場合にはキャンセルをクリックしてください'
 
   const [InsertDate, setDate] = useState<string>('')
 
   const [swalProps, setSwalProps] = useState({});
 
+  
 
   const swalWindow = async () => {
     setSwalProps({
@@ -99,14 +100,14 @@ export default function ReceivingPage() {
 
 
 
-  const { control, register, handleSubmit, getValues, watch, setValue, reset } =
+  const { control, register, handleSubmit, getValues, setValue, reset } =
     useForm<FormValues>({
       defaultValues: {
         rows: defaultSet()
       }
     })
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove } = useFieldArray<FormValues>({
     control,
     name: 'rows'
   })
@@ -119,7 +120,7 @@ export default function ReceivingPage() {
   const isHalfWidth = (value: string) => /^[\x20-\x7E]*$/.test(value)
 
   const VendorListGet = async () => {
-    const result = []
+    const result: SelectOption[] = []
     const list = await window.myInventoryAPI.VendorData()
     for (let i = 0; i < list.length; i++) {
       result.push({
@@ -147,7 +148,7 @@ export default function ReceivingPage() {
     const formData = filterData.map((item) => {
       const result = [
         InsertDate,
-        item.vendor.value,
+        item.vendor?.value,
         item.code,
         item.name,
         item.quantity,
@@ -182,33 +183,33 @@ export default function ReceivingPage() {
     //setDialogOpen(true)
   }
 
-  const handleConfirm = () => {
-    alert('確認が完了しました')
-    insertPost()
-    setDialogOpen(false)
-    setFormData(initialFormData)
-  }
+  // const handleConfirm = () => {
+  //   alert('確認が完了しました')
+  //   insertPost()
+  //   setDialogOpen(false)
+  //   setFormData(initialFormData)
+  // }
 
-  const handleCancel = () => {
-    alert('キャンセルされました')
-    setDialogOpen(false)
-  }
+  // const handleCancel = () => {
+  //   alert('キャンセルされました')
+  //   setDialogOpen(false)
+  // }
 
   const handleChangeDate = (event: ChangeEvent<HTMLInputElement>) => {
     setDate(event.target.value)
   }
 
-  const dataget = async () => {
-    try {
-      const data = await window.myInventoryAPI.ListData()
-      //console.log(data);
-      if (!data) {
-        throw new Error('APIからデータが返されませんでした')
-      }
-    } catch (error) {
-      console.error('データ取得エラー:', error)
-    }
-  }
+  // const dataget = async () => {
+  //   try {
+  //     const data = await window.myInventoryAPI.ListData()
+  //     //console.log(data);
+  //     if (!data) {
+  //       throw new Error('APIからデータが返されませんでした')
+  //     }
+  //   } catch (error) {
+  //     console.error('データ取得エラー:', error)
+  //   }
+  // }
 
   useEffect(() => {
     //dataget()
@@ -231,9 +232,10 @@ export default function ReceivingPage() {
       const form = e.currentTarget.form
       const elements = Array.from(form.elements) as HTMLElement[]
       const index = elements.indexOf(e.currentTarget)
+      const nextElement = elements[index + 1] as HTMLInputElement | HTMLButtonElement
 
-      if (elements[index + 1] && elements[index + 1].type !== 'button') {
-        elements[index + 1].focus()
+      if (nextElement && nextElement.type !== 'button') {
+        nextElement.focus()
       } else {
         const nextCodeInput = document.querySelector<HTMLInputElement>(
           `input[name="rows.${rowIndex + 1}.code"]`

@@ -1,4 +1,4 @@
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 // import { ListGet } from '../backend/Server_end';
 import LinkBaner from '../comp/Linkbanar';
 // import { TableRow } from "@mui/material";
