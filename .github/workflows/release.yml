@@ -23,6 +23,11 @@ jobs:
 
     - name: Build Windows Electron app
       run: npm run build:win
+    
+    - name: Debug GH_TOKEN
+      run: curl -H "Authorization: token $GH_TOKEN" https://api.github.com/user
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
     - name: Publish GitHub Release
       env:
