@@ -20,7 +20,7 @@ jobs:
 
         
     - name: Debug GH_TOKEN
-      run: "curl -H \"Authorization: token $GH_TOKEN\" https://api.github.com/OCEANS7A-DEV"
+      run: "curl -H \"Authorization: token $GH_TOKEN\" https://api.github.com/user"
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
