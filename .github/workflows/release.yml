@@ -17,13 +17,12 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
-
         
     - name: Debug GH_TOKEN
-      run: "curl -H \"Authorization: token $GH_TOKEN\" https://api.github.com/user"
+      shell: bash
+      run: curl -H "Authorization: token $GH_TOKEN" https://api.github.com/user
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
 
     - name: Install dependencies
       run: npm install --legacy-peer-deps
