@@ -3,8 +3,10 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
-import updater from 'electron-updater';
-const { autoUpdater } = updater;
+import log from 'electron-log'
+import updater from 'electron-updater'
+const { autoUpdater } = updater
+
 
 
 // import React from 'react'
@@ -186,30 +188,33 @@ app.whenReady().then(async () => {
   createWindow()
 
   app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) {
+      log.info('アプリがアクティブ化 - ウィンドウ再作成')
+      createWindow()
+    }
   })
 
+  log.info('アップデートチェック開始')
   autoUpdater.checkForUpdatesAndNotify()
 
   autoUpdater.on('update-available', () => {
-    console.log('アップデートが利用可能です。')
-    // 必要なら renderer に通知
+    log.info('アップデートが利用可能です。')
   })
 
   autoUpdater.on('update-not-available', () => {
-    console.log('アップデートはありません。')
+    log.info('アップデートはありません。')
   })
 
   autoUpdater.on('error', (error) => {
-    console.error('アップデートエラー:', error)
+    log.error('アップデートエラー:', error)
   })
 
   autoUpdater.on('download-progress', (progressObj) => {
-    console.log(`ダウンロード進行中: ${progressObj.percent.toFixed(2)}%`)
+    log.info(`ダウンロード進行中: ${progressObj.percent.toFixed(2)}%`)
   })
 
   autoUpdater.on('update-downloaded', () => {
-    console.log('アップデート完了。再起動して更新します。')
+    log.info('アップデート完了。再起動して更新します。')
     autoUpdater.quitAndInstall()
   })
 })
