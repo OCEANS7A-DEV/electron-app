@@ -30,8 +30,6 @@ jobs:
 
     - name: Build Windows Electron app
       run: npm run build:win
-    
-    
 
     - name: Publish GitHub Release
       env:
