@@ -207,6 +207,7 @@ export const shortageGet = async () => {
 }
 
 app.whenReady().then(async () => {
+  log.info('起動')
   electronApp.setAppUserModelId('com.electron')
 
   createUpdaterWindow()
