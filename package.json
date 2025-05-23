@@ -11,7 +11,8 @@
     "appId": "com.OCEANS7A-DEV.Oceanstockman",
     "productName": "在庫管理",
     "files": [
-      "dist"
+      "dist",
+      "out/main"
     ],
     "extraResources": [],
     "publish": [
