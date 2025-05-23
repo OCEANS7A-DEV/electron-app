@@ -24,6 +24,15 @@ jobs:
         curl -H "Authorization: token $GH_TOKEN" https://api.github.com/user
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    
+    - name: Set version from tag (PowerShell)
+      shell: pwsh
+      run: |
+        $tag = "${{ github.ref }}" -replace '^refs/tags/v', ''
+        Write-Host "Setting package.json version to $tag"
+        $json = Get-Content package.json | ConvertFrom-Json
+        $json.version = $tag
+        $json | ConvertTo-Json -Depth 10 | Set-Content package.json
 
     - name: Install dependencies
       run: npm install --legacy-peer-deps
