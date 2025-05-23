@@ -1,6 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain, net } from 'electron'
 import { join } from 'path'
-import { electronApp, is } from '@electron-toolkit/utils'
+import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
 import log from 'electron-log'
@@ -29,31 +29,31 @@ const InsertAPI_URL =
   'https://script.google.com/macros/s/AKfycbylyaUttaEI9jYGJM_CQWOWyWAd3C9Q-ikbkNAMCUIPDYIWqtUHgrw9GHNgmgkWKE-M/exec'
 
 
-let updaterWindow: BrowserWindow | null = null
+// let updaterWindow: BrowserWindow | null = null
 
-const createUpdaterWindow = () => {
-  updaterWindow = new BrowserWindow({
-    width: 400,
-    height: 200,
-    resizable: false,
-    autoHideMenuBar: true,
-    show: false,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.mjs'),
-      sandbox: false
-    }
-  })
+// const createUpdaterWindow = () => {
+//   updaterWindow = new BrowserWindow({
+//     width: 400,
+//     height: 200,
+//     resizable: false,
+//     autoHideMenuBar: true,
+//     show: false,
+//     webPreferences: {
+//       preload: join(__dirname, '../preload/index.mjs'),
+//       sandbox: false
+//     }
+//   })
 
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    updaterWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#updater`)
-  } else {
-    updaterWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'updater' })
-  }
+//   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+//     updaterWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#updater`)
+//   } else {
+//     updaterWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'updater' })
+//   }
 
-  updaterWindow.once('ready-to-show', () => {
-    updaterWindow?.show()
-  })
-}
+//   updaterWindow.once('ready-to-show', () => {
+//     updaterWindow?.show()
+//   })
+// }
 
 function createWindow(): void {
   // Create the browser window.
@@ -209,33 +209,33 @@ export const shortageGet = async () => {
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.electron')
 
-  createUpdaterWindow()
+  // //createUpdaterWindow()
 
-  autoUpdater.on('checking-for-update', () => {
-    log.info('アップデートを確認中...')
-    updaterWindow?.webContents.send('update-status', 'checking')
-  })
+  // autoUpdater.on('checking-for-update', () => {
+  //   log.info('アップデートを確認中...')
+  //   //updaterWindow?.webContents.send('update-status', 'checking')
+  // })
 
-  autoUpdater.on('update-available', () => {
-    log.info('アップデートが利用可能です。')
-    updaterWindow?.webContents.send('update-status', 'available')
-  })
+  // autoUpdater.on('update-available', () => {
+  //   log.info('アップデートが利用可能です。')
+  //   //updaterWindow?.webContents.send('update-status', 'available')
+  // })
 
-  autoUpdater.on('update-not-available', async () => {
-    log.info('アップデートはありません。')
-    updaterWindow?.close()
-    await launchMainApp()
-  })
+  // autoUpdater.on('update-not-available', async () => {
+  //   log.info('アップデートはありません。')
+  //   //updaterWindow?.close()
+  //   await launchMainApp()
+  // })
 
-  autoUpdater.on('error', async (error) => {
-    log.error('アップデートエラー:', error)
-    updaterWindow?.webContents.send('update-status', 'error')
-    await launchMainApp()
-  })
+  // autoUpdater.on('error', async (error) => {
+  //   log.error('アップデートエラー:', error)
+  //   //updaterWindow?.webContents.send('update-status', 'error')
+  //   await launchMainApp()
+  // })
 
-  autoUpdater.on('download-progress', (progressObj) => {
-    updaterWindow?.webContents.send('download-progress', progressObj.percent.toFixed(2))
-  })
+  // autoUpdater.on('download-progress', () => {
+  //   //updaterWindow?.webContents.send('download-progress', progressObj.percent.toFixed(2))
+  // })
 
   if (!is.dev) {
     autoUpdater.on('update-downloaded', () => {
@@ -244,42 +244,42 @@ app.whenReady().then(async () => {
     })
   }
 
-  // app.on('browser-window-created', (_, window) => {
-  //   optimizer.watchWindowShortcuts(window)
-  // })
+  app.on('browser-window-created', (_, window) => {
+    optimizer.watchWindowShortcuts(window)
+  })
 
-  // ipcMain.on('ping', () => console.log('pong'))
-  // const list = await productGet()
+  ipcMain.on('ping', () => console.log('pong'))
+  const list = await productGet()
 
-  // const ListResult = list.map((item) => {
-  //   const result = {
-  //     vendor: item[0],
-  //     code: item[1],
-  //     name: item[2],
-  //     defaultPrice: item[3],
-  //     newPrice: item[4],
-  //     VC: item[5],
-  //     store: item[6],
-  //     type: item[7],
-  //     remarks: item[8],
-  //     Possibility: item[9],
-  //     service: item[10],
-  //     order: item[11]
-  //   }
-  //   return result
-  // })
+  const ListResult = list.map((item) => {
+    const result = {
+      vendor: item[0],
+      code: item[1],
+      name: item[2],
+      defaultPrice: item[3],
+      newPrice: item[4],
+      VC: item[5],
+      store: item[6],
+      type: item[7],
+      remarks: item[8],
+      Possibility: item[9],
+      service: item[10],
+      order: item[11]
+    }
+    return result
+  })
 
-  // store.set('data', ListResult)
+  store.set('data', ListResult)
 
-  // const VendorList = await vendorGet()
+  const VendorList = await vendorGet()
 
-  // store.set('vendor', VendorList)
+  store.set('vendor', VendorList)
 
-  // const AddressList = await addressGet()
+  const AddressList = await addressGet()
 
-  // store.set('address', AddressList)
+  store.set('address', AddressList)
 
-  //createWindow()
+  createWindow()
 })
 
 ipcMain.handle('product-list', async () => {
