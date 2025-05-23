@@ -32,3 +32,5 @@ $ npm run build:mac
 # For Linux
 $ npm run build:linux
 ```
+
+commit => push => git tag v...... => git push origin v......
