@@ -37,11 +37,13 @@ jobs:
     - name: Install dependencies
       run: npm install --legacy-peer-deps
 
-    - name: Build and Publish Electron App
-      env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    - name: Type check and Build renderer (vite)
       run: |
         npm run typecheck
         npm run build
+
+    - name: Build and Publish Electron App
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
         npx electron-builder --win --x64 --publish always

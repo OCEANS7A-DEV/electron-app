@@ -10,6 +10,10 @@
   "build": {
     "appId": "com.OCEANS7A-DEV.Oceanstockman",
     "productName": "在庫管理",
+    "files": [
+      "dist"
+    ],
+    "extraResources": [],
     "publish": [
       {
         "provider": "github",
@@ -17,6 +21,7 @@
         "repo": "electron-app"
       }
     ],
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "win": {
       "target": "nsis"
     },
