@@ -61,8 +61,8 @@ const LinkBaner = () => {
             </IconButton>
           </div>
           
-          <div className="blank">
-            初期（テスト用表示V2）
+          <div className="blank" style={{color: 'white'}}>
+            初期（テスト用表示V3）
           </div>
           <div>
             <IconButton sx={{color: "white"}} onClick={handleDrawerOpen}>
