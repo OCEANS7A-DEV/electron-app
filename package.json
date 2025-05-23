@@ -15,14 +15,6 @@
       "out/main"
     ],
     "extraResources": [],
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "OCEANS7A-DEV",
-        "repo": "electron-app",
-        "draft": false
-      }
-    ],
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "win": {
       "target": "nsis"
