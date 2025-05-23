@@ -46,3 +46,11 @@ jobs:
         npm run typecheck
         npm run build
         npx electron-builder --win --x64 --publish always
+
+    - name: Publish GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        draft: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
