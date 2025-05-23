@@ -210,7 +210,7 @@ app.whenReady().then(async () => {
   log.info('起動')
   electronApp.setAppUserModelId('com.electron')
 
-  createUpdaterWindow()
+  //createUpdaterWindow()
 
   autoUpdater.on('checking-for-update', () => {
     log.info('アップデートを確認中...')
