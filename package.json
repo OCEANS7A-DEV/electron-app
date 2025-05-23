@@ -20,7 +20,6 @@
         "provider": "github",
         "owner": "OCEANS7A-DEV",
         "repo": "electron-app",
-        "releaseType": "release",
         "prerelease": true
       }
     ],
