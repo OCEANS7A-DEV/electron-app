@@ -92,33 +92,33 @@ function createWindow(): void {
   }
 }
 
-async function launchMainApp() {
-  const list = await productGet()
+// async function launchMainApp() {
+//   const list = await productGet()
 
-  const ListResult = list.map((item) => ({
-    vendor: item[0],
-    code: item[1],
-    name: item[2],
-    defaultPrice: item[3],
-    newPrice: item[4],
-    VC: item[5],
-    store: item[6],
-    type: item[7],
-    remarks: item[8],
-    Possibility: item[9],
-    service: item[10],
-    order: item[11]
-  }))
-  store.set('data', ListResult)
+//   const ListResult = list.map((item) => ({
+//     vendor: item[0],
+//     code: item[1],
+//     name: item[2],
+//     defaultPrice: item[3],
+//     newPrice: item[4],
+//     VC: item[5],
+//     store: item[6],
+//     type: item[7],
+//     remarks: item[8],
+//     Possibility: item[9],
+//     service: item[10],
+//     order: item[11]
+//   }))
+//   store.set('data', ListResult)
 
-  const VendorList = await vendorGet()
-  store.set('vendor', VendorList)
+//   const VendorList = await vendorGet()
+//   store.set('vendor', VendorList)
 
-  const AddressList = await addressGet()
-  store.set('address', AddressList)
+//   const AddressList = await addressGet()
+//   store.set('address', AddressList)
 
-  createWindow()
-}
+//   createWindow()
+// }
 
 
 
