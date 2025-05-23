@@ -4,7 +4,6 @@
   "compilerOptions": {
     "composite": true,
     "types": ["electron-vite/node"],
-    "outDir": "out/main",
-    "rootDir": "src/main"
+    "outDir": "out/main"
   }
 }
