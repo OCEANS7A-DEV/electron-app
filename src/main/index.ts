@@ -29,11 +29,31 @@ const InsertAPI_URL =
   'https://script.google.com/macros/s/AKfycbylyaUttaEI9jYGJM_CQWOWyWAd3C9Q-ikbkNAMCUIPDYIWqtUHgrw9GHNgmgkWKE-M/exec'
 
 
+let updaterWindow: BrowserWindow | null = null
 
-let printWindow: BrowserWindow | null = null;
+function createUpdaterWindow() {
+  updaterWindow = new BrowserWindow({
+    width: 400,
+    height: 200,
+    resizable: false,
+    autoHideMenuBar: true,
+    show: false,
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.mjs'),
+      sandbox: false
+    }
+  })
 
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    updaterWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#updater`)
+  } else {
+    updaterWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'updater' })
+  }
 
-
+  updaterWindow.once('ready-to-show', () => {
+    updaterWindow?.show()
+  })
+}
 
 function createWindow(): void {
   // Create the browser window.
@@ -45,7 +65,9 @@ function createWindow(): void {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.mjs'),
+      preload: is.dev
+        ? join(__dirname, '../preload/index.mjs')
+        : join(app.getAppPath(), 'out/preload/index.mjs'),
       sandbox: false
     }
   })
@@ -69,6 +91,43 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+
+async function launchMainApp() {
+  const list = await productGet()
+
+  const ListResult = list.map((item) => ({
+    vendor: item[0],
+    code: item[1],
+    name: item[2],
+    defaultPrice: item[3],
+    newPrice: item[4],
+    VC: item[5],
+    store: item[6],
+    type: item[7],
+    remarks: item[8],
+    Possibility: item[9],
+    service: item[10],
+    order: item[11]
+  }))
+  store.set('data', ListResult)
+
+  const VendorList = await vendorGet()
+  store.set('vendor', VendorList)
+
+  const AddressList = await addressGet()
+  store.set('address', AddressList)
+
+  createWindow()
+}
+
+
+
+let printWindow: BrowserWindow | null = null;
+
+
+
+
+
 
 export const productGet = async () => {
   try {
@@ -150,73 +209,77 @@ export const shortageGet = async () => {
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.electron')
 
-  app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window)
+  createUpdaterWindow()
+
+  autoUpdater.on('checking-for-update', () => {
+    log.info('アップデートを確認中...')
+    updaterWindow?.webContents.send('update-status', 'checking')
   })
-
-  ipcMain.on('ping', () => console.log('pong'))
-  const list = await productGet()
-
-  const ListResult = list.map((item) => {
-    const result = {
-      vendor: item[0],
-      code: item[1],
-      name: item[2],
-      defaultPrice: item[3],
-      newPrice: item[4],
-      VC: item[5],
-      store: item[6],
-      type: item[7],
-      remarks: item[8],
-      Possibility: item[9],
-      service: item[10],
-      order: item[11]
-    }
-    return result
-  })
-
-  store.set('data', ListResult)
-
-  const VendorList = await vendorGet()
-
-  store.set('vendor', VendorList)
-
-  const AddressList = await addressGet()
-
-  store.set('address', AddressList)
-
-  createWindow()
-
-  app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      log.info('アプリがアクティブ化 - ウィンドウ再作成')
-      createWindow()
-    }
-  })
-
-  log.info('アップデートチェック開始')
-  autoUpdater.checkForUpdatesAndNotify()
 
   autoUpdater.on('update-available', () => {
     log.info('アップデートが利用可能です。')
+    updaterWindow?.webContents.send('update-status', 'available')
   })
 
-  autoUpdater.on('update-not-available', () => {
+  autoUpdater.on('update-not-available', async () => {
     log.info('アップデートはありません。')
+    updaterWindow?.close()
+    await launchMainApp()
   })
 
-  autoUpdater.on('error', (error) => {
+  autoUpdater.on('error', async (error) => {
     log.error('アップデートエラー:', error)
+    updaterWindow?.webContents.send('update-status', 'error')
+    await launchMainApp()
   })
 
   autoUpdater.on('download-progress', (progressObj) => {
-    log.info(`ダウンロード進行中: ${progressObj.percent.toFixed(2)}%`)
+    updaterWindow?.webContents.send('download-progress', progressObj.percent.toFixed(2))
   })
 
-  autoUpdater.on('update-downloaded', () => {
-    log.info('アップデート完了。再起動して更新します。')
-    autoUpdater.quitAndInstall()
-  })
+  if (!is.dev) {
+    autoUpdater.on('update-downloaded', () => {
+      log.info('アップデート完了。再起動して更新します。')
+      autoUpdater.quitAndInstall()
+    })
+  }
+
+  // app.on('browser-window-created', (_, window) => {
+  //   optimizer.watchWindowShortcuts(window)
+  // })
+
+  // ipcMain.on('ping', () => console.log('pong'))
+  // const list = await productGet()
+
+  // const ListResult = list.map((item) => {
+  //   const result = {
+  //     vendor: item[0],
+  //     code: item[1],
+  //     name: item[2],
+  //     defaultPrice: item[3],
+  //     newPrice: item[4],
+  //     VC: item[5],
+  //     store: item[6],
+  //     type: item[7],
+  //     remarks: item[8],
+  //     Possibility: item[9],
+  //     service: item[10],
+  //     order: item[11]
+  //   }
+  //   return result
+  // })
+
+  // store.set('data', ListResult)
+
+  // const VendorList = await vendorGet()
+
+  // store.set('vendor', VendorList)
+
+  // const AddressList = await addressGet()
+
+  // store.set('address', AddressList)
+
+  //createWindow()
 })
 
 ipcMain.handle('product-list', async () => {
@@ -288,7 +351,9 @@ ipcMain.handle('orderPrint', (_event, payload) => {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.mjs'),
+      preload: is.dev
+        ? join(__dirname, '../preload/index.mjs')
+        : join(app.getAppPath(), 'out/preload/index.mjs'),
       sandbox: false
     }
   })
@@ -312,7 +377,9 @@ ipcMain.handle('productEditWindow', (_eventt, payload) => {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.mjs'),
+      preload: is.dev
+        ? join(__dirname, '../preload/index.mjs')
+        : join(app.getAppPath(), 'out/preload/index.mjs'),
       sandbox: false
     }
   })
