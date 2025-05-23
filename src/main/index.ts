@@ -1,6 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain, net } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { electronApp, _optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
 import log from 'electron-log'
@@ -23,7 +23,7 @@ const store = new Store() as any
 //   'https://script.google.com/macros/s/AKfycbzCrMJDEFvfTTTCjb2b-8SwVgc2ySlsKwpf7c49H08DS6P4-ZulaS4zcNtiioytK0i6/exec'
 
 
-  const GetAPI_URL =
+const GetAPI_URL =
   'https://script.google.com/macros/s/AKfycbwCAqk6CMJl2obU-0edITVdKHEcXLwVhiD81ilwv2xuRWPSSr537A1cfaUSs5FvYn8D-g/exec'
 const InsertAPI_URL =
   'https://script.google.com/macros/s/AKfycbylyaUttaEI9jYGJM_CQWOWyWAd3C9Q-ikbkNAMCUIPDYIWqtUHgrw9GHNgmgkWKE-M/exec'
@@ -31,7 +31,7 @@ const InsertAPI_URL =
 
 let updaterWindow: BrowserWindow | null = null
 
-function createUpdaterWindow() {
+const createUpdaterWindow = () => {
   updaterWindow = new BrowserWindow({
     width: 400,
     height: 200,
