@@ -38,11 +38,11 @@ linux:
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
-publish:
-  provider: github
-  owner: OCEANS7A-DEV
-  repo: electron-app
-  draft: false
-  prerelease: true
+# publish:
+#   provider: github
+#   owner: OCEANS7A-DEV
+#   repo: electron-app
+#   draft: false
+#   prerelease: true
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
