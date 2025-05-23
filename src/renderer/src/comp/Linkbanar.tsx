@@ -60,7 +60,7 @@ const LinkBaner = () => {
               <ArrowForwardIcon />
             </IconButton>
           </div>
-          
+          {/* 後で非表示 */}
           <div className="blank" style={{color: 'white'}}>
             初期（テスト用表示V3）
           </div>
