@@ -1,6 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain, net } from 'electron'
 import { join } from 'path'
-import { electronApp, _optimizer, is } from '@electron-toolkit/utils'
+import { electronApp, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
 import log from 'electron-log'
