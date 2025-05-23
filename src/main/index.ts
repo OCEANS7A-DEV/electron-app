@@ -214,28 +214,28 @@ app.whenReady().then(async () => {
 
   autoUpdater.on('checking-for-update', () => {
     log.info('アップデートを確認中...')
-    updaterWindow?.webContents.send('update-status', 'checking')
+    //updaterWindow?.webContents.send('update-status', 'checking')
   })
 
   autoUpdater.on('update-available', () => {
     log.info('アップデートが利用可能です。')
-    updaterWindow?.webContents.send('update-status', 'available')
+    //updaterWindow?.webContents.send('update-status', 'available')
   })
 
   autoUpdater.on('update-not-available', async () => {
     log.info('アップデートはありません。')
-    updaterWindow?.close()
+    //updaterWindow?.close()
     await launchMainApp()
   })
 
   autoUpdater.on('error', async (error) => {
     log.error('アップデートエラー:', error)
-    updaterWindow?.webContents.send('update-status', 'error')
+    //updaterWindow?.webContents.send('update-status', 'error')
     await launchMainApp()
   })
 
   autoUpdater.on('download-progress', (progressObj) => {
-    updaterWindow?.webContents.send('download-progress', progressObj.percent.toFixed(2))
+    //updaterWindow?.webContents.send('download-progress', progressObj.percent.toFixed(2))
   })
 
   if (!is.dev) {
