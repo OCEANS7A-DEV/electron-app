@@ -29,31 +29,31 @@ const InsertAPI_URL =
   'https://script.google.com/macros/s/AKfycbylyaUttaEI9jYGJM_CQWOWyWAd3C9Q-ikbkNAMCUIPDYIWqtUHgrw9GHNgmgkWKE-M/exec'
 
 
-let updaterWindow: BrowserWindow | null = null
+// let updaterWindow: BrowserWindow | null = null
 
-const createUpdaterWindow = () => {
-  updaterWindow = new BrowserWindow({
-    width: 400,
-    height: 200,
-    resizable: false,
-    autoHideMenuBar: true,
-    show: false,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.mjs'),
-      sandbox: false
-    }
-  })
+// const createUpdaterWindow = () => {
+//   updaterWindow = new BrowserWindow({
+//     width: 400,
+//     height: 200,
+//     resizable: false,
+//     autoHideMenuBar: true,
+//     show: false,
+//     webPreferences: {
+//       preload: join(__dirname, '../preload/index.mjs'),
+//       sandbox: false
+//     }
+//   })
 
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    updaterWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#updater`)
-  } else {
-    updaterWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'updater' })
-  }
+//   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+//     updaterWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#updater`)
+//   } else {
+//     updaterWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'updater' })
+//   }
 
-  updaterWindow.once('ready-to-show', () => {
-    updaterWindow?.show()
-  })
-}
+//   updaterWindow.once('ready-to-show', () => {
+//     updaterWindow?.show()
+//   })
+// }
 
 function createWindow(): void {
   // Create the browser window.
