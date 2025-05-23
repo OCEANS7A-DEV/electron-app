@@ -41,6 +41,7 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        token: ${{ secrets.GH_TOKEN }}
       run: |
         npm run typecheck
         npm run build

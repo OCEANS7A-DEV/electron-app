@@ -19,7 +19,9 @@
       {
         "provider": "github",
         "owner": "OCEANS7A-DEV",
-        "repo": "electron-app"
+        "repo": "electron-app",
+        "draft": false,
+        "prerelease": true
       }
     ],
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
