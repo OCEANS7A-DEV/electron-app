@@ -149,6 +149,37 @@ export const shortageGet = async () => {
 
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.electron')
+  
+  app.on('activate', function () {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      log.info('アプリがアクティブ化 - ウィンドウ再作成')
+      createWindow()
+    }
+  })
+
+  log.info('アップデートチェック開始')
+  autoUpdater.checkForUpdatesAndNotify()
+
+  autoUpdater.on('update-available', () => {
+    log.info('アップデートが利用可能です。')
+  })
+
+  autoUpdater.on('update-not-available', () => {
+    log.info('アップデートはありません。')
+  })
+
+  autoUpdater.on('error', (error) => {
+    log.error('アップデートエラー:', error)
+  })
+
+  autoUpdater.on('download-progress', (progressObj) => {
+    log.info(`ダウンロード進行中: ${progressObj.percent.toFixed(2)}%`)
+  })
+
+  autoUpdater.on('update-downloaded', () => {
+    log.info('アップデート完了。再起動して更新します。')
+    autoUpdater.quitAndInstall()
+  })
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
@@ -187,36 +218,7 @@ app.whenReady().then(async () => {
 
   createWindow()
 
-  app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      log.info('アプリがアクティブ化 - ウィンドウ再作成')
-      createWindow()
-    }
-  })
-
-  log.info('アップデートチェック開始')
-  autoUpdater.checkForUpdatesAndNotify()
-
-  autoUpdater.on('update-available', () => {
-    log.info('アップデートが利用可能です。')
-  })
-
-  autoUpdater.on('update-not-available', () => {
-    log.info('アップデートはありません。')
-  })
-
-  autoUpdater.on('error', (error) => {
-    log.error('アップデートエラー:', error)
-  })
-
-  autoUpdater.on('download-progress', (progressObj) => {
-    log.info(`ダウンロード進行中: ${progressObj.percent.toFixed(2)}%`)
-  })
-
-  autoUpdater.on('update-downloaded', () => {
-    log.info('アップデート完了。再起動して更新します。')
-    autoUpdater.quitAndInstall()
-  })
+  
 })
 
 ipcMain.handle('product-list', async () => {
