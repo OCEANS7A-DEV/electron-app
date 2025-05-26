@@ -403,7 +403,6 @@ export default function ProductDetailChangePage() {
                     </Box>
                   </Tooltip>
                 </div>
-                
               </div>
               <div className="price-div">
                 <label style={{display: 'flex', alignItems: 'center', padding: '0px 10px'}}>VC価格</label>

@@ -207,11 +207,10 @@ export const shortageGet = async () => {
 }
 
 app.whenReady().then(async () => {
-  //log.info('起動')
   electronApp.setAppUserModelId('com.electron')
+  log.info(is.dev)
 
   if(!is.dev){
-
     autoUpdater.on('checking-for-update', () => {
       log.info('アップデートを確認中...')
       //updaterWindow?.webContents.send('update-status', 'checking')
@@ -225,13 +224,13 @@ app.whenReady().then(async () => {
     autoUpdater.on('update-not-available', async () => {
       log.info('アップデートはありません。')
       //updaterWindow?.close()
-      await launchMainApp()
+      //await launchMainApp()
     })
 
     autoUpdater.on('error', async (error) => {
       log.error('アップデートエラー:', error)
       //updaterWindow?.webContents.send('update-status', 'error')
-      await launchMainApp()
+      //await launchMainApp()
     })
 
     autoUpdater.on('download-progress', () => {
