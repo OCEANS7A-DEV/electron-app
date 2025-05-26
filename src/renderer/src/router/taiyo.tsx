@@ -88,10 +88,11 @@ export const loader = async ({ request }: { request: Request }) => {
 
 export default function TaiyoPrint() {
   const {taiyoData, addressData, address, orderData} = useLoaderData<typeof loader>();
+  console.log(addressData)
   //const [searchParams] = useSearchParams();
   //const address = searchParams.get("address") || "";
-  const ShippingAddress = addressData.find(item => item[0] === address);
-  const VendorData = addressData.find(item => item[0] === '大洋商会');
+  const ShippingAddress = addressData.address.find(item => item[0] === address);
+  const VendorData = addressData.address.find(item => item[0] === '大洋商会');
   //const navigate = useNavigate();
   console.log(address)
   console.log(taiyoData)

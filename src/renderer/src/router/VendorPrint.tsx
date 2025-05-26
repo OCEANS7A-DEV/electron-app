@@ -35,14 +35,14 @@ export const loader =  async ({ request }: { request: Request }) => {
   const address = url.searchParams.get("address");
   const Addressdata = await window.myInventoryAPI.storeGet('address')
   const vendors = ['キンバト', 'ムラカミ', '三久', 'タムラ']
-
-  const ShippingAddress = Addressdata.find(row => row[0] === address)
-
+  const ShippingAddress = Addressdata.address.find(row => row[0] === address)
 
 
 
 
-  const shortage = productData.filter(row => Number(row[12]) < 0 || (Number(row[14]) >= 1 && Number(row[12]) <= Number(row[14])) && !row[2].includes('eco') && !row[2].includes('ﾙﾍﾞﾙ') && row[1] !== 100001)
+  //console.log(productData)
+  const shortage = productData.filter(row => (Number(row[12]) < 0 || (Number(row[14]) >= 1 && Number(row[12]) <= Number(row[14]))) && (!row[2].includes('eco') && !row[2].includes('ﾙﾍﾞﾙ') && row[1] !== 100001 && !(Number(row[1]) >= 300100 && Number(row[1]) <= 300500)))
+  //console.log(shortage)
 
   let subData = []
   let subdata: any[] = [];
@@ -120,9 +120,9 @@ export default function EtcPrint() {
     window.myInventoryAPI.PrintReady()
   },[])
 
-  const AddressFindData = async(data,col) => {
-    const result = Addressdata.find(row => row[0] == data)
-    console.log(result)
+  const AddressFindData = (data,col) => {
+    const result = Addressdata.address.find(row => row[0] == data)
+    //console.log(result)
     return result[col]
   }
   
