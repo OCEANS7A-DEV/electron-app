@@ -43,8 +43,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         token: ${{ secrets.GH_TOKEN }}
       run: |
-        npm run typecheck
-        npm run build:win
+        npm run build
+        npx electron-builder --win --x64 --publish always
 
     - name: Publish GitHub Release
       uses: softprops/action-gh-release@v2
