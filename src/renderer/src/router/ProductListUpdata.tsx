@@ -393,6 +393,7 @@ export default function ProductDetailChangePage() {
                   最新価格
                 </label>
                 <div className="detail-newprice">
+                  {/* @ts-ignore */}
                   <Tooltip title="最新価格は自動反映されます" arrow>
                     <Box className="new-price" style={{display: 'flex'}}>
                       <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
