@@ -238,7 +238,18 @@ app.whenReady().then(async () => {
     })
     autoUpdater.on('update-downloaded', () => {
       log.info('アップデート完了。再起動して更新します。')
-      autoUpdater.quitAndInstall()
+
+      // 開いている全ウィンドウを閉じる
+      const allWindows = BrowserWindow.getAllWindows()
+      allWindows.forEach(win => {
+        win.removeAllListeners('close') // 必要に応じて
+        win.close()
+      })
+
+      // 少し待ってから終了＆インストール
+      setTimeout(() => {
+        autoUpdater.quitAndInstall()
+      }, 1000)
     })
     autoUpdater.checkForUpdates();
   }
