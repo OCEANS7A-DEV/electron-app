@@ -4,7 +4,7 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { useLoaderData } from "react-router-dom"
 import LinkBaner from '../comp/Linkbanar'
 
-import { Select, MenuItem, Tooltip } from '@mui/material'
+import { Select, MenuItem, Tooltip, Box } from '@mui/material'
 
 import '../css/ProductsEdit.css'
 import { Button } from '@mui/material'
@@ -298,12 +298,12 @@ export default function ProductDetailChangePage() {
                   </div>
                   <div className="virtual-table-cell cell-price">
                     <Tooltip title="最新価格は自動反映されます" arrow>
-                      <span className="new-price" style={{display: 'flex'}}>
+                      <Box className="new-price" style={{display: 'flex'}}>
                         <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
                         <div>
                           {getValues(`rows.${index}.newPrice`).toLocaleString()}
                         </div>
-                      </span>
+                      </Box>
                     </Tooltip>
                   </div>
                   <div className="virtual-table-cell cell-type">
@@ -387,12 +387,12 @@ export default function ProductDetailChangePage() {
                 </label>
                 <div className="detail-newprice">
                   <Tooltip title="最新価格は自動反映されます" arrow>
-                    <span className="new-price" style={{display: 'flex'}}>
+                    <Box className="new-price" style={{display: 'flex'}}>
                       <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
                       <div>
                         {getValues(`rows.${selectedRowIndex}.newPrice`).toLocaleString()}
                       </div>
-                    </span>
+                    </Box>
                   </Tooltip>
                 </div>
                 
