@@ -301,7 +301,7 @@ export default function ProductDetailChangePage() {
                       <Box className="new-price" style={{display: 'flex'}}>
                         <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
                         <div>
-                          {getValues(`rows.${index}.newPrice`).toLocaleString()}
+                          {(Number(getValues(`rows.${index}.newPrice`)) || 0).toLocaleString()}
                         </div>
                       </Box>
                     </Tooltip>
@@ -390,7 +390,7 @@ export default function ProductDetailChangePage() {
                     <Box className="new-price" style={{display: 'flex'}}>
                       <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
                       <div>
-                        {getValues(`rows.${selectedRowIndex}.newPrice`).toLocaleString()}
+                        {(Number(getValues(`rows.${index}.newPrice`)) || 0).toLocaleString()}
                       </div>
                     </Box>
                   </Tooltip>
