@@ -13,7 +13,8 @@
     "files": [
       "dist",
       "out/main",
-      "out/preload"
+      "out/preload",
+      "out/renderer"
     ],
     "extraResources": [],
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",

@@ -392,7 +392,6 @@ export default function ProductDetailChangePage() {
                       <div>
                         {(Number(getValues(`rows.${selectedRowIndex}.newPrice`)) || 0).toLocaleString()}
                       </div>
-
                     </Box>
                   </Tooltip>
                 </div>
