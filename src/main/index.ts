@@ -240,6 +240,7 @@ app.whenReady().then(async () => {
       log.info('アップデート完了。再起動して更新します。')
       autoUpdater.quitAndInstall()
     })
+    autoUpdater.checkForUpdates();
   }
   //createUpdaterWindow()
 
