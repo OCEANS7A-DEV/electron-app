@@ -298,12 +298,12 @@ export default function ProductDetailChangePage() {
                   </div>
                   <div className="virtual-table-cell cell-price">
                     <Tooltip title="最新価格は自動反映されます" arrow>
-                      <div className="new-price" style={{display: 'flex'}}>
+                      <span className="new-price" style={{display: 'flex'}}>
                         <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
                         <div>
                           {getValues(`rows.${index}.newPrice`).toLocaleString()}
                         </div>
-                      </div>
+                      </span>
                     </Tooltip>
                   </div>
                   <div className="virtual-table-cell cell-type">
@@ -387,12 +387,12 @@ export default function ProductDetailChangePage() {
                 </label>
                 <div className="detail-newprice">
                   <Tooltip title="最新価格は自動反映されます" arrow>
-                    <div className="new-price" style={{display: 'flex'}}>
+                    <span className="new-price" style={{display: 'flex'}}>
                       <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
                       <div>
                         {getValues(`rows.${selectedRowIndex}.newPrice`).toLocaleString()}
                       </div>
-                    </div>
+                    </span>
                   </Tooltip>
                 </div>
                 
