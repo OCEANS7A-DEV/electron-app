@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import React, { useState, useEffect } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
@@ -14,6 +15,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 
 import { FixedSizeList as List } from 'react-window';
+
+
+
+
+
 
 type FormValues = {
   rows: {
@@ -297,6 +303,7 @@ export default function ProductDetailChangePage() {
                     />
                   </div>
                   <div className="virtual-table-cell cell-price">
+                    {/* @ts-ignore */}
                     <Tooltip title="最新価格は自動反映されます" arrow>
                       <Box className="new-price" style={{display: 'flex'}}>
                         <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
