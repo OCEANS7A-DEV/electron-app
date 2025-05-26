@@ -22,7 +22,11 @@ import MoonLoader from 'react-spinners/MoonLoader';
 // import { useLoaderData, Link, useNavigation } from "@remix-run/react";
 
 
-
+type CheckResultItem = {
+  process: string
+  storeName: string
+  // 必要に応じて他のフィールドも
+}
 
 
 interface SelectOption {
@@ -70,13 +74,13 @@ export default function HQPage() {
   const [checkresult, setCheckResult] = useState([]);
   //const [isDialogOpen, setDialogOpen] = useState(false);
   const [storeSelect, setStoreSelect] = useState<SelectOption | null>(null);
-  const [selectOptions, setSelectOptions] = useState<SelectOption[]>([]);
+  const [selectOptions, setSelectOptions] = useState<SelectOption[]>([])
   //const message = `今回の店舗からの注文を${DateNow}で締め切りますか？`;
   const [getDate, setGetDate] = useState(getNearestMonday());
   
   const [vendorSelect, setVendorSelect] = useState<SelectOption | null>(null);
-  const [VendorList, setVendorList] = useState<SelectOption | null>(null);
-  const [AddressList, setAddressList] = useState<SelectOption | null>(null);
+  const [VendorList, setVendorList] = useState<SelectOption[]>([])
+  const [AddressList, setAddressList] = useState<SelectOption[]>([])
   const [addressSelect, setAdoressSelect] = useState<SelectOption | null>(null);
   const [orderData, setOrderData] = useState([]);
 
@@ -341,8 +345,8 @@ export default function HQPage() {
 
   const casePrint = async () => {
     const setDate = new Date(getDate).toLocaleDateString()
-    const stores = checkresult.filter(item => item.process !== '未注文' && item.process !== '印刷済' && item.process !== '注文無')
-    const orderresult = stores.map(row => {
+    const stores = checkresult.filter((item: CheckResultItem) => item.process !== '未注文' && item.process !== '印刷済' && item.process !== '注文無')
+    const orderresult = stores.map((row: CheckResultItem) => {
       const filterData = orderData.filter(item => item[1] == row.storeName)
       return filterData
     })
@@ -351,7 +355,7 @@ export default function HQPage() {
       return
     }
 
-    const updataStore = stores.map(row => row.storeName)
+    const updataStore = stores.map((row: CheckResultItem) => row.storeName)
     window.myInventoryAPI.DataInsert({
       sheetName: '店舗へ',
       action: 'PrintcellUpdate',
@@ -396,8 +400,8 @@ export default function HQPage() {
   const handleallPrint = async() => {
     const setDate = new Date(getDate).toLocaleDateString()
     const updataStore = checkresult
-      .filter(row => !['注文無', '未注文'].includes(row.process))
-      .map(row => row.storeName);
+      .filter((row: CheckResultItem) => !['注文無', '未注文'].includes(row.process))
+      .map((row: CheckResultItem) => row.storeName);
     //console.log(updataStore)
     if(orderData.length === 0){
       toast.error('印刷できるデータがありません')
@@ -458,7 +462,7 @@ export default function HQPage() {
                     </td>
                   </tr>
                 ) : (
-                  checkresult.map((row, index) => (
+                  checkresult.map((row: CheckResultItem, index) => (
                     <tr key={index}>
                       <td className='PCstoreName'>{row.storeName}</td>
                       <td className='PCprocess'>{row.process}</td>

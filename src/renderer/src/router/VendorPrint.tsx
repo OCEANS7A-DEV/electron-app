@@ -181,7 +181,7 @@ export default function EtcPrint() {
                   ))}
                   {item === 'ムラカミ' &&
                     <tr>
-                      <td colSpan="2" className="murakami-last-data">プロステップは別紙です</td>
+                      <td colSpan={2} className="murakami-last-data">プロステップは別紙です</td>
                     </tr>
                   }
                 </tbody>
@@ -194,7 +194,7 @@ export default function EtcPrint() {
         <table className="taiyo-table">
           <thead>
             <tr className="kinbato-header">
-              <th colSpan="2" className="murakami-top-data">プロステップヘアカラー</th>
+              <th colSpan={2} className="murakami-top-data">プロステップヘアカラー</th>
             </tr>
           </thead>
         </table>
@@ -204,7 +204,7 @@ export default function EtcPrint() {
             <table className="taiyo-table" key={index}>
               <thead>
                 <tr className="murakami-header">
-                  <th colSpan="2" className="murakami-store-data">{row}</th>
+                  <th colSpan={2} className="murakami-store-data">{row}</th>
                 </tr>
               </thead>
               <tbody>

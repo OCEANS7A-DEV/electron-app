@@ -297,7 +297,7 @@ export default function ProductDetailChangePage() {
                     />
                   </div>
                   <div className="virtual-table-cell cell-price">
-                    <Tooltip title="最新価格は自動反映されます" arrow children={undefined}>
+                    <Tooltip title="最新価格は自動反映されます" arrow>
                       <div className="new-price" style={{display: 'flex'}}>
                         <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
                         <div>
@@ -386,7 +386,7 @@ export default function ProductDetailChangePage() {
                   最新価格
                 </label>
                 <div className="detail-newprice">
-                  <Tooltip title="最新価格は自動反映されます" arrow children={undefined}>
+                  <Tooltip title="最新価格は自動反映されます" arrow>
                     <div className="new-price" style={{display: 'flex'}}>
                       <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
                       <div>

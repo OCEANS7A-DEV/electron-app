@@ -220,18 +220,21 @@ export default function StoreOrderPage() {
     if (e.key === 'Enter') {
       e.preventDefault()
       const form = e.currentTarget.form
-      const elements = Array.from(form.elements) as HTMLElement[]
-      const index = elements.indexOf(e.currentTarget)
-      const nextElement = elements[index + 1] as HTMLInputElement | HTMLButtonElement
+      if(form){
+        const elements = Array.from(form.elements) as HTMLElement[]
+        const index = elements.indexOf(e.currentTarget)
+        const nextElement = elements[index + 1] as HTMLInputElement | HTMLButtonElement
 
-      if (nextElement && nextElement.type !== 'button') {
-        nextElement.focus()
-      } else {
-        const nextCodeInput = document.querySelector<HTMLInputElement>(
-          `input[name="rows.${rowIndex + 1}.code"]`
-        )
-        nextCodeInput?.focus()
+        if (nextElement && nextElement.type !== 'button') {
+          nextElement.focus()
+        } else {
+          const nextCodeInput = document.querySelector<HTMLInputElement>(
+            `input[name="rows.${rowIndex + 1}.code"]`
+          )
+          nextCodeInput?.focus()
+        }
       }
+      
     }
   }
 

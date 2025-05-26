@@ -123,7 +123,7 @@ const PrintContent = () => {
           <table className="printData" key={storeindex}>
             <thead>
               <tr>
-                <th colSpan="10">
+                <th colSpan={10}>
                   <div className="printDate">
                     <div className="print-date">発注日:　{printDate}</div>
                     <div className="print-title">納品書</div>
@@ -131,7 +131,7 @@ const PrintContent = () => {
                 </th>
               </tr>
               <tr className="storename">
-                <th className="print-storename" colSpan="10">
+                <th className="print-storename" colSpan={10}>
                   <div className="print-storename-div">
                     <div className="Printwarning">{warningSet(resultdata[storeindex])}</div>
                     <div className="storeName">{storerow}</div>
@@ -156,7 +156,7 @@ const PrintContent = () => {
                   {(index % SetRows === 0 && index > 1) && (
                     <>
                       <tr key={`condition`}>
-                        <td colSpan="10" className="special-row no-break">
+                        <td colSpan={10} className="special-row no-break">
                           {index/SetRows}/{resultdata[storeindex].length / SetRows}
                         </td>
                       </tr>
@@ -179,7 +179,7 @@ const PrintContent = () => {
               ))}
               <>
                 <tr key="last-condition" className="special-row no-break">
-                  <td colSpan="11" className="special-row">
+                  <td colSpan={11} className="special-row">
                     <div className="last-row">
                       <div className="last-page-data">{resultdata[storeindex].length / SetRows}/{resultdata[storeindex].length / SetRows}</div>
                       <div className="last-page-amount">税抜注文合計金額(個人購入・欠品分含む): ¥{Number(storeTotalResult(resultdata[storeindex])).toLocaleString('ja-JP')}</div>

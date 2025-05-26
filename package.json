@@ -12,7 +12,8 @@
     "productName": "在庫管理",
     "files": [
       "dist",
-      "out/main"
+      "out/main",
+      "out/preload"
     ],
     "extraResources": [],
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",

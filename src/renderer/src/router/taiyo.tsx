@@ -151,7 +151,7 @@ export default function TaiyoPrint() {
             ))}
             <>
               <tr className="taiyo-saron-last">
-                <td colSpan="6" className="special-row-saron">
+                <td colSpan={6} className="special-row-saron">
                   <h2 className="sarontop">サロン直送</h2>
                   <div className="taiyo-saron-table">
                     <tr className="saronname">
@@ -170,7 +170,7 @@ export default function TaiyoPrint() {
                 </td>
               </tr>
               <tr className="taiyo-saron-message">
-                <td colSpan="6" className="special-row">
+                <td colSpan={6} className="special-row">
                   <h3 className="sarontop">お世話になります。<br/>ご注文よろしくお願いします</h3>
                 </td>
               </tr>
