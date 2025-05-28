@@ -266,6 +266,12 @@ app.whenReady().then(async () => {
       log.info('定期アップデート確認中...')
       autoUpdater.checkForUpdates()
     }, 60 * 1000)
+
+    setInterval(() => {
+      if (mainWindow) {
+        mainWindow.webContents.send('update-available', 'test')
+      }
+    }, 10 * 1000)
   }
   //createUpdaterWindow()
 
