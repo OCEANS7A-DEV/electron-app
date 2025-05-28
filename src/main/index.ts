@@ -440,7 +440,7 @@ ipcMain.handle('orderPrint', (_event, payload) => {
   printWindow.loadURL(url)
 })
 
-ipcMain.handle('button-Upgrade', () => {
+ipcMain.on('button-Upgrade', () => {
   autoUpdater.quitAndInstall()
 })
 
