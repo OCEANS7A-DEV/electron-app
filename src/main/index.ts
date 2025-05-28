@@ -295,11 +295,14 @@ const setupAutoUpdater = () => {
   autoUpdater.on('download-progress', (progressObj) => {
     const percent = Math.floor(progressObj.percent)
     //updaterWindow?.webContents.send('progress', percent)
-    updaterWindow?.webContents.send('progress', {
-      percent: percent,
-      message: 'ダウンロード中...',
-      status: 'downloading'
-    })
+    if (updaterWindow && !updaterWindow.isDestroyed()) {
+      updaterWindow?.webContents.send('progress', {
+        percent: percent,
+        message: 'ダウンロード中...',
+        status: 'downloading'
+      })
+    }
+    
   })
 
   autoUpdater.on('update-not-available', () => {
@@ -307,7 +310,6 @@ const setupAutoUpdater = () => {
 
     if (isFirstRunUpdate) {
       createWindow()
-      //updaterWindow?.close()
     }
     
     if (mainWindow) {
