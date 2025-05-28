@@ -28,7 +28,7 @@ export default function UpdateWindow() {
       } else if (value.status == 'updateCheck'){
         setUpdateCheck(true)
       } else if (value.status == 'bootCheck'){
-        //window.myInventoryAPI.UpdaterClose()
+        window.myInventoryAPI.UpdaterClose()
       } else if (value.status == 'startup'){
         setStartup(true)
       }

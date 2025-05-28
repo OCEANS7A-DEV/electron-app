@@ -307,7 +307,7 @@ const setupAutoUpdater = () => {
 
     if (isFirstRunUpdate) {
       createWindow()
-      updaterWindow?.close()
+      //updaterWindow?.close()
     }
     
     if (mainWindow) {
@@ -500,7 +500,7 @@ ipcMain.on('Main-boot', () => {
 })
 
 ipcMain.on('startUpClose', () => {
-  //updaterWindow?.close()
+  updaterWindow?.close()
 })
 
 ipcMain.handle('productEditWindow', (_eventt, payload) => {
