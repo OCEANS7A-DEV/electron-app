@@ -42,7 +42,6 @@ const LinkBaner = () => {
         setUpdateIconColor('disabled')
       }
     })
-    setUpdateIconColor('success')
   }, [])
 
   const handleUpdateClick = () => {
