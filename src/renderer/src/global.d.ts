@@ -5,6 +5,10 @@ export {}
 declare global {
   interface Window {
     myInventoryAPI: {
+      UpdaterClose: any;
+      MainBoot: any;
+      onCheckedUpdate(arg0: (value: any) => void): unknown;
+      onProgressUpdate(arg0: (value: any) => void): unknown;
       upGrade: any;
       onUpdateAvailable(arg0: (flag: any) => void): unknown;
       fetchData: () => Promise<any>

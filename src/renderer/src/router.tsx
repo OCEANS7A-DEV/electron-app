@@ -14,6 +14,10 @@ import TaiyoPrint, {loader as TaiyoLoader} from './router/taiyo'
 import EtcPrint, {loader as EtcLoader} from './router/VendorPrint'
 import SettingPage, {loader as SettingLoader} from './router/setting'
 import DetailContent from './router/productDetailEdit'
+import UpdateWindow from './router/updater'
+
+
+
 
 export const router = createHashRouter([
   {
@@ -66,5 +70,9 @@ export const router = createHashRouter([
   {
     path: '/productDetailEdit',
     element: <DetailContent />
+  },
+  {
+    path: '/updater',
+    element: <UpdateWindow/>
   }
 ])

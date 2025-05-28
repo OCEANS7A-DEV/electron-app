@@ -10,49 +10,35 @@ import { useLoaderData } from "react-router-dom";
 
 
 export const loader = async () => {
-  //console.log(window.myInventoryAPI);
-  const printData = await window.myInventoryAPI.storeGet('printData')
-  const printDate = await window.myInventoryAPI.storeGet('printDate')
-  //setDate(printDate)
-  //console.log(JSON.parse(printData))
-  //setPrintData(JSON.parse(printData))
-  const ordersGet = JSON.parse(printData)
+  const printDataObj = await window.myInventoryAPI.storeGet('printData')
+  const printDate = printDataObj.printDate
+  const ordersGet = JSON.parse(printDataObj.printData)
   const stores = [...new Set(ordersGet.map(item => item[1]))]
   const rowNum = 19;
   const resultdata = await Promise.all(
     stores.map(async (storeName) => {
       const storeData = ordersGet.filter(row => row[1] === storeName);
-      let printData = storeData;
+      const printdata = storeData;
       let pages = 1
-      if(printData.length !== 0){
-        pages = Math.ceil(printData.length / rowNum);
+      if(printdata.length !== 0){
+        pages = Math.ceil(printdata.length / rowNum);
       }
       const EmptyRow = ['', '', '', '', '', '', '', '', '', '', '', ''];
-      const restrows = (pages * rowNum) - printData.length;
+      const restrows = (pages * rowNum) - printdata.length;
       for (let i = 0; i < restrows; i++) {
-        printData.push(EmptyRow);
+        printdata.push(EmptyRow);
       }
-      return printData;
+      return printdata;
     })
   )
-  // setPrintData(resultdata)
-  // setStore(store)
-  return {printDate,resultdata,stores}
+  return { printDate, resultdata, stores }
 }
 
 
 
 const PrintContent = () => {
-  const {printDate,resultdata,stores} = useLoaderData<typeof loader>();
-  //const [date, setDate] = useState<any>(null)
-  //const location = useLocation();
-  //const [printData, setPrintData] = useState([]);
- // const [stores, setStore] = useState([])
+  const { printDate, resultdata, stores } = useLoaderData<typeof loader>()
   const SetRows = 19;
-  const defaultText = '';
-  const [WarningText, setWarningText] = useState(defaultText);
-
-  setWarningText(defaultText)
 
 
 
@@ -102,7 +88,7 @@ const PrintContent = () => {
 
   const warningSet = (data) => {
     //console.log(data)
-    let NonPriceData = data.filter(row => row[8] === '' && row[0] !== '');
+    const NonPriceData = data.filter(row => row[8] === '' && row[0] !== '');
     if(NonPriceData.length !== 0){
       return '警告 単価の入力がない商品があります'
     }else {
@@ -117,7 +103,7 @@ const PrintContent = () => {
 
   return (
     <div className="print-area">
-      <div className="Printwarning">{WarningText}</div>
+      {/* <div className="Printwarning">{WarningText}</div> */}
       <div className="printData">
         {stores.map((storerow,storeindex) => (
           <table className="printData" key={storeindex}>
@@ -152,10 +138,10 @@ const PrintContent = () => {
             </thead>
             <tbody>
               {resultdata[storeindex].map((row, index) => (
-                <>
+                <React.Fragment key={index}>
                   {(index % SetRows === 0 && index > 1) && (
                     <>
-                      <tr key={`condition`}>
+                      <tr key={`condition-${index}`}>
                         <td colSpan={10} className="special-row no-break">
                           {index/SetRows}/{resultdata[storeindex].length / SetRows}
                         </td>
@@ -175,10 +161,10 @@ const PrintContent = () => {
                     <td className="P-personal-taxin">{personalTotalAmount(row[6],row[8],row[10])}</td>
                     <td className="P-remarks">{row[11]}</td>
                   </tr>
-                </>
+                </React.Fragment>
               ))}
               <>
-                <tr key="last-condition" className="special-row no-break">
+                <tr className="special-row no-break">
                   <td colSpan={11} className="special-row">
                     <div className="last-row">
                       <div className="last-page-data">{resultdata[storeindex].length / SetRows}/{resultdata[storeindex].length / SetRows}</div>

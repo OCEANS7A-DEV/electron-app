@@ -381,10 +381,10 @@ export default function HQPage() {
     if(filterData.length === 0){
       return
     }
-    //console.log(filterData)
+
     await window.myInventoryAPI.storeSet('printData', JSON.stringify(filterData))
     await window.myInventoryAPI.storeSet('printDate', setDate)
-    //console.log(store)
+
     window.myInventoryAPI.orderPrint('PrintContent');
     window.myInventoryAPI.DataInsert({
       sheetName: '店舗へ',

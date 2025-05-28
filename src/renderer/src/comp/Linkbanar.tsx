@@ -11,9 +11,6 @@ import type { SvgIconProps } from '@mui/material/SvgIcon';
 import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 import Tooltip from '@mui/material/Tooltip';
 
-// import { useEffect, useState } from "react";
-// import ProgressBar from './ProgressBar';
-// import { LinearProgress } from '@mui/material';
 import '../css/banner.css';
 
 
@@ -34,7 +31,7 @@ const LinkBaner = () => {
 
   useEffect(() => {
     window.myInventoryAPI.onUpdateAvailable((flag) => {
-      console.log('Update available:', flag)
+      //console.log('Update available:', flag)
       // UI表示などの処理
       if(flag){
         setUpdateIconColor('success')
@@ -45,8 +42,8 @@ const LinkBaner = () => {
   }, [])
 
   const handleUpdateClick = () => {
-    console.log('アップデート実行')
     window.myInventoryAPI.upGrade()
+    //window.myInventoryAPI.MainBoot()
   }
 
 
@@ -82,10 +79,6 @@ const LinkBaner = () => {
             <IconButton onClick={() => window.history.forward()} sx={{color:'white', height:'30px', width:'30px'}} aria-label="進む">
               <ArrowForwardIcon />
             </IconButton>
-          </div>
-          {/* 後で非表示 */}
-          <div className="blank" style={{color: 'white'}}>
-            初期（テスト用表示V8）
           </div>
           <div>
             {updateIconColor === 'success' ? (

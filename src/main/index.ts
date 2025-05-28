@@ -29,31 +29,47 @@ const InsertAPI_URL =
   'https://script.google.com/macros/s/AKfycbylyaUttaEI9jYGJM_CQWOWyWAd3C9Q-ikbkNAMCUIPDYIWqtUHgrw9GHNgmgkWKE-M/exec'
 
 
-// let updaterWindow: BrowserWindow | null = null
 
-// const createUpdaterWindow = () => {
-//   updaterWindow = new BrowserWindow({
-//     width: 400,
-//     height: 200,
-//     resizable: false,
-//     autoHideMenuBar: true,
-//     show: false,
-//     webPreferences: {
-//       preload: join(__dirname, '../preload/index.mjs'),
-//       sandbox: false
-//     }
-//   })
 
-//   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-//     updaterWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#updater`)
-//   } else {
-//     updaterWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'updater' })
-//   }
 
-//   updaterWindow.once('ready-to-show', () => {
-//     updaterWindow?.show()
-//   })
-// }
+
+
+let updaterWindow: BrowserWindow | null = null
+
+const createUpdaterWindow = () => {
+  updaterWindow = new BrowserWindow({
+    width: 300,
+    height: 500,
+    resizable: false,
+    autoHideMenuBar: true,
+    //frame: false,
+    show: false,
+    webPreferences: {
+      preload: is.dev
+        ? join(__dirname, '../preload/index.mjs')
+        : join(app.getAppPath(), 'out/preload/index.mjs'),
+      sandbox: false
+    }
+  })
+
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    updaterWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#updater`)
+  } else {
+    updaterWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'updater' })
+  }
+
+  updaterWindow.once('ready-to-show', () => {
+    updaterWindow?.show()
+    if (is.dev) {
+      updaterWindow?.webContents.openDevTools()
+    }
+    updaterWindow?.webContents.send('progress', {
+      percent: 0,
+      message: '起動中...',
+      status: 'start'
+    })
+  })
+}
 
 
 let mainWindow: BrowserWindow
@@ -78,7 +94,13 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
-    mainWindow.webContents.openDevTools()
+    if (is.dev) {
+      mainWindow.webContents.openDevTools()
+    }
+    updaterWindow?.webContents.send('check', {
+      status: 'bootCheck',
+      value: true
+    })
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -220,8 +242,22 @@ const setupAutoUpdater = () => {
     }
   })
 
+  autoUpdater.on('download-progress', (progressObj) => {
+    const percent = Math.floor(progressObj.percent)
+    //updaterWindow?.webContents.send('progress', percent)
+    updaterWindow?.webContents.send('progress', {
+      percent: percent,
+      message: 'ダウンロード中...',
+      status: 'downloading'
+    })
+  })
+
   autoUpdater.on('update-not-available', () => {
     log.info('アップデートはありません。')
+    updaterWindow?.webContents.send('progress', {
+      status: 'updateCheck',
+      value: true
+    })
     if (mainWindow) {
       mainWindow.webContents.send('update-available', false)
     }
@@ -236,14 +272,6 @@ const setupAutoUpdater = () => {
 
     if (isFirstRunUpdate) {
       autoUpdater.quitAndInstall()
-      // const allWindows = BrowserWindow.getAllWindows()
-      // allWindows.forEach(win => {
-      //   win.removeAllListeners('close')
-      //   win.close()
-      // })
-      // setTimeout(() => {
-      //   autoUpdater.quitAndInstall()
-      // }, 1000)
     } else {
       log.info('定期チェックのアップデートは即時インストールしません')
       // → UI通知 or 次回起動時適用などに切り替え可能
@@ -254,21 +282,29 @@ const setupAutoUpdater = () => {
 
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.electron')
+  await createUpdaterWindow()
 
   if (!is.dev) {
     setupAutoUpdater()
-
-
     isFirstRunUpdate = true
     autoUpdater.checkForUpdates()
-
     setInterval(() => {
       isFirstRunUpdate = false
       log.info('定期アップデート確認中...')
       autoUpdater.checkForUpdates()
     }, 30 * 1000)
   }
-  //createUpdaterWindow()
+
+  
+
+  // setInterval(() => {
+  //   updaterWindow?.webContents.send('progress', {
+  //     percent: 45,
+  //     message: 'ダウンロード中...',
+  //     status: 'downloading'
+  //   })
+  // }, 30 * 1000)
+
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
@@ -304,9 +340,21 @@ app.whenReady().then(async () => {
   const AddressList = await addressGet()
 
   store.set('address', AddressList)
-
-  createWindow()
+  updaterWindow?.webContents.send('check', {
+    status: 'startup',
+    value: true
+  })
+  if(is.dev){
+    updaterWindow?.webContents.send('check', {
+      status: 'dev',
+      value: true
+    })
+  }
+  
 })
+
+
+
 
 ipcMain.handle('product-list', async () => {
   const data = await store.get('data')
@@ -323,8 +371,8 @@ ipcMain.handle('shortageGet', async () => {
   return data
 })
 
-ipcMain.handle('storeSet', async (_event, set) => {
-  store.set(set.settitle, set.setData)
+ipcMain.handle('storeSet', async (_event, key, value) => {
+  store.set(key, value)
 })
 
 ipcMain.handle('storeGet', async (_event, payload: { gettitle: string }) => {
@@ -396,6 +444,13 @@ ipcMain.handle('button-Upgrade', () => {
   autoUpdater.quitAndInstall()
 })
 
+ipcMain.on('Main-boot', () => {
+  createWindow()
+})
+
+ipcMain.on('startUpClose', () => {
+  updaterWindow?.close()
+})
 
 ipcMain.handle('productEditWindow', (_eventt, payload) => {
   //console.log(payload)

@@ -26,7 +26,15 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
       callback(flag)
     })
   },
-  upGrade: () => ipcRenderer.send('button-Upgrade')
+  upGrade: () => ipcRenderer.send('button-Upgrade'),
+  onProgressUpdate: (callback: (data: { percent: number, message: string, status: string }) => void) => {
+    ipcRenderer.on('progress', (_, data) => callback(data))
+  },
+  onCheckedUpdate: (callback: (data: { status: string, value: boolean }) => void) => {
+    ipcRenderer.on('check', (_, data) => callback(data))
+  },
+  MainBoot: () => ipcRenderer.send('Main-boot'),
+  UpdaterClose: () => ipcRenderer.send('startUpClose')
 })
 
 if (process.contextIsolated) {
