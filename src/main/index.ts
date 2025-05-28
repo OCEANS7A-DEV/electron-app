@@ -60,7 +60,9 @@ const createUpdaterWindow = () => {
 
   updaterWindow.once('ready-to-show', () => {
     updaterWindow?.show()
-
+    setTimeout(() => {
+      updaterWindow?.webContents.openDevTools({ mode: 'detach' })
+    }, 300)
     if (is.dev) {
       //updaterWindow?.webContents.openDevTools({ mode: 'detach' })
       setTimeout(() => {
