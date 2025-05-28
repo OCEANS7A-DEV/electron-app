@@ -33,12 +33,12 @@ const InsertAPI_URL =
 
 
 
-
+let isFirstRunUpdate = true
 let updaterWindow: BrowserWindow | null = null
 
 const createUpdaterWindow = () => {
   updaterWindow = new BrowserWindow({
-    width: 300,
+    minWidth: 300,
     height: 500,
     resizable: false,
     autoHideMenuBar: true,
@@ -60,14 +60,25 @@ const createUpdaterWindow = () => {
 
   updaterWindow.once('ready-to-show', () => {
     updaterWindow?.show()
+
     if (is.dev) {
-      updaterWindow?.webContents.openDevTools()
+      //updaterWindow?.webContents.openDevTools({ mode: 'detach' })
+      setTimeout(() => {
+        updaterWindow?.webContents.openDevTools({ mode: 'detach' })
+      }, 300)
+      updaterWindow?.webContents.send('check', {
+        status: 'dev',
+        value: true
+      })
     }
     updaterWindow?.webContents.send('progress', {
       percent: 0,
       message: '起動中...',
       status: 'start'
     })
+    StartUpSet()
+    isFirstRunUpdate = true
+    setupAutoUpdater()
   })
 }
 
@@ -228,97 +239,7 @@ export const shortageGet = async () => {
   }
 }
 
-let isFirstRunUpdate = true
-
-const setupAutoUpdater = () => {
-  autoUpdater.on('checking-for-update', () => {
-    log.info('アップデートを確認中...')
-  })
-
-  autoUpdater.on('update-available', () => {
-    log.info('アップデートが利用可能です。')
-    if (mainWindow) {
-      mainWindow.webContents.send('update-available', true)
-    }
-  })
-
-  autoUpdater.on('download-progress', (progressObj) => {
-    const percent = Math.floor(progressObj.percent)
-    //updaterWindow?.webContents.send('progress', percent)
-    updaterWindow?.webContents.send('progress', {
-      percent: percent,
-      message: 'ダウンロード中...',
-      status: 'downloading'
-    })
-  })
-
-  autoUpdater.on('update-not-available', () => {
-    log.info('アップデートはありません。')
-    updaterWindow?.webContents.send('progress', {
-      status: 'updateCheck',
-      value: true
-    })
-    if (mainWindow) {
-      mainWindow.webContents.send('update-available', false)
-    }
-  })
-
-  autoUpdater.on('error', (error) => {
-    log.error('アップデートエラー:', error)
-  })
-
-  autoUpdater.on('update-downloaded', () => {
-    log.info('アップデート完了。再起動して更新します。')
-
-    if (isFirstRunUpdate) {
-      autoUpdater.quitAndInstall()
-    } else {
-      log.info('定期チェックのアップデートは即時インストールしません')
-      // → UI通知 or 次回起動時適用などに切り替え可能
-    }
-  })
-}
-
-
-app.whenReady().then(async () => {
-  electronApp.setAppUserModelId('com.electron')
-  await createUpdaterWindow()
-
-  if (!is.dev) {
-    setupAutoUpdater()
-    isFirstRunUpdate = true
-    autoUpdater.checkForUpdates()
-    setInterval(() => {
-      isFirstRunUpdate = false
-      log.info('定期アップデート確認中...')
-      autoUpdater.checkForUpdates()
-    }, 30 * 1000)
-  }
-  setupAutoUpdater()
-  isFirstRunUpdate = true
-  autoUpdater.checkForUpdates()
-  setInterval(() => {
-    isFirstRunUpdate = false
-    log.info('定期アップデート確認中...')
-    autoUpdater.checkForUpdates()
-  }, 30 * 1000)
-
-  
-
-  // setInterval(() => {
-  //   updaterWindow?.webContents.send('progress', {
-  //     percent: 45,
-  //     message: 'ダウンロード中...',
-  //     status: 'downloading'
-  //   })
-  // }, 30 * 1000)
-
-
-  app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window)
-  })
-
-  ipcMain.on('ping', () => console.log('pong'))
+export const StartUpSet = async () => {
   const list = await productGet()
 
   const ListResult = list.map((item) => {
@@ -348,18 +269,134 @@ app.whenReady().then(async () => {
   const AddressList = await addressGet()
 
   store.set('address', AddressList)
-  
+
   updaterWindow?.webContents.send('check', {
     status: 'startup',
     value: true
   })
+}
 
-  if(is.dev){
-    updaterWindow?.webContents.send('check', {
-      status: 'dev',
-      value: true
+
+
+
+
+const setupAutoUpdater = () => {
+  autoUpdater.on('checking-for-update', () => {
+    log.info('アップデートを確認中...')
+  })
+
+  autoUpdater.on('update-available', () => {
+    log.info('アップデートが利用可能です。')
+    if (mainWindow) {
+      mainWindow.webContents.send('update-available', true)
+    }
+  })
+
+  autoUpdater.on('download-progress', (progressObj) => {
+    const percent = Math.floor(progressObj.percent)
+    //updaterWindow?.webContents.send('progress', percent)
+    updaterWindow?.webContents.send('progress', {
+      percent: percent,
+      message: 'ダウンロード中...',
+      status: 'downloading'
     })
+  })
+
+  autoUpdater.on('update-not-available', () => {
+    log.info('アップデートはありません。')
+    createWindow()
+    updaterWindow?.close()
+    if (mainWindow) {
+      mainWindow.webContents.send('update-available', false)
+    }
+  })
+
+  autoUpdater.on('error', (error) => {
+    log.error('アップデートエラー:', error)
+  })
+
+  autoUpdater.on('update-downloaded', () => {
+    log.info('アップデート完了。再起動して更新します。')
+
+    if (isFirstRunUpdate) {
+      autoUpdater.quitAndInstall()
+    } else {
+      log.info('定期チェックのアップデートは即時インストールしません')
+      // → UI通知 or 次回起動時適用などに切り替え可能
+    }
+  })
+}
+
+
+
+
+app.whenReady().then(async () => {
+  electronApp.setAppUserModelId('com.electron')
+  await createUpdaterWindow()
+
+  if (!is.dev) {
+    isFirstRunUpdate = true
+    setupAutoUpdater()
+    autoUpdater.checkForUpdates()
+    setInterval(() => {
+      isFirstRunUpdate = false
+      log.info('定期アップデート確認中...')
+      autoUpdater.checkForUpdates()
+    }, 30 * 1000)
   }
+  // isFirstRunUpdate = true
+  // setupAutoUpdater()
+  // autoUpdater.checkForUpdates()
+  // setInterval(() => {
+  //   isFirstRunUpdate = false
+  //   log.info('定期アップデート確認中...')
+  //   autoUpdater.checkForUpdates()
+  // }, 30 * 1000)
+
+
+  app.on('browser-window-created', (_, window) => {
+    optimizer.watchWindowShortcuts(window)
+  })
+
+  ipcMain.on('ping', () => console.log('pong'))
+
+  // const list = await productGet()
+
+  // const ListResult = list.map((item) => {
+  //   const result = {
+  //     vendor: item[0],
+  //     code: item[1],
+  //     name: item[2],
+  //     defaultPrice: item[3],
+  //     newPrice: item[4],
+  //     VC: item[5],
+  //     store: item[6],
+  //     type: item[7],
+  //     remarks: item[8],
+  //     Possibility: item[9],
+  //     service: item[10],
+  //     order: item[11]
+  //   }
+  //   return result
+  // })
+
+  // store.set('data', ListResult)
+
+  // const VendorList = await vendorGet()
+
+  // store.set('vendor', VendorList)
+
+  // const AddressList = await addressGet()
+
+  // store.set('address', AddressList)
+
+
+  // if(is.dev){
+  //   updaterWindow?.webContents.send('check', {
+  //     status: 'dev',
+  //     value: true
+  //   })
+  // }
   
 })
 
