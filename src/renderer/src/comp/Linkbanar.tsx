@@ -88,11 +88,11 @@ const LinkBaner = () => {
           </div>
           <div>
             {updateIconColor === 'success' ? (
-              <Tooltip title="アップデートがあります！">
+              <Tooltip title="アップデートがあります！" children={
                 <IconButton onClick={handleUpdateClick}>
                   <SystemUpdateAltIcon color={updateIconColor} />
                 </IconButton>
-              </Tooltip>
+              } />
             ) : (
               <IconButton disabled>
                 <SystemUpdateAltIcon color={updateIconColor} />
