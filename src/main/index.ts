@@ -348,7 +348,6 @@ ipcMain.handle('data-insert', async (_event, payload: any) => {
 })
 
 ipcMain.handle('orderPrint', (_event, payload) => {
-  //console.log(payload)
   printWindow = new BrowserWindow({
     width: 950,
     height: 670,
@@ -368,7 +367,11 @@ ipcMain.handle('orderPrint', (_event, payload) => {
     printWindow?.show()
   })
   const url = `http://localhost:5173/#/${payload}`
-  printWindow.loadURL(url)
+  if (is.dev) {
+    printWindow.loadURL(url)
+  } else {
+    printWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
 
 })
 
