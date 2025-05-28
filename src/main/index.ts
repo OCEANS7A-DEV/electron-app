@@ -305,7 +305,7 @@ const setupAutoUpdater = () => {
   autoUpdater.on('update-not-available', () => {
     log.info('アップデートはありません。')
     createWindow()
-    updaterWindow?.close()
+    //updaterWindow?.close()
     if (mainWindow) {
       mainWindow.webContents.send('update-available', false)
     }
