@@ -78,7 +78,7 @@ const createUpdaterWindow = () => {
     })
     StartUpSet()
     isFirstRunUpdate = true
-    setupAutoUpdater(true)
+    setupAutoUpdater()
   })
 }
 
@@ -280,7 +280,7 @@ export const StartUpSet = async () => {
 
 
 
-const setupAutoUpdater = (status: boolean) => {
+const setupAutoUpdater = () => {
   autoUpdater.on('checking-for-update', () => {
     log.info('アップデートを確認中...')
   })
@@ -304,10 +304,12 @@ const setupAutoUpdater = (status: boolean) => {
 
   autoUpdater.on('update-not-available', () => {
     log.info('アップデートはありません。')
-    if(status){
+
+    if (isFirstRunUpdate) {
       createWindow()
       updaterWindow?.close()
     }
+    
     if (mainWindow) {
       mainWindow.webContents.send('update-available', false)
     }
@@ -320,7 +322,7 @@ const setupAutoUpdater = (status: boolean) => {
   autoUpdater.on('update-downloaded', () => {
     log.info('アップデート完了。再起動して更新します。')
 
-    if (status) {
+    if (isFirstRunUpdate) {
       autoUpdater.quitAndInstall()
     } else {
       log.info('定期チェックのアップデートは即時インストールしません')
@@ -337,8 +339,8 @@ app.whenReady().then(async () => {
   await createUpdaterWindow()
 
   if (!is.dev) {
-    //isFirstRunUpdate = true
-    setupAutoUpdater(true)
+    isFirstRunUpdate = true
+    setupAutoUpdater()
     autoUpdater.checkForUpdates()
     setInterval(() => {
       isFirstRunUpdate = false
@@ -346,7 +348,14 @@ app.whenReady().then(async () => {
       autoUpdater.checkForUpdates()
     }, 30 * 1000)
   }
-
+  // isFirstRunUpdate = true
+  // setupAutoUpdater()
+  // autoUpdater.checkForUpdates()
+  // setInterval(() => {
+  //   isFirstRunUpdate = false
+  //   log.info('定期アップデート確認中...')
+  //   autoUpdater.checkForUpdates()
+  // }, 30 * 1000)
 
 
   app.on('browser-window-created', (_, window) => {
