@@ -56,7 +56,6 @@ const InsertAPI_URL =
 // }
 
 function createWindow(): void {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 950,
     height: 670,
@@ -81,10 +80,6 @@ function createWindow(): void {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
-
-  // console.log(is.dev)
-  // console.log(process.env['ELECTRON_RENDERER_URL'])
-  // console.log(join(__dirname, '../renderer/index.html'))
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
@@ -398,11 +393,14 @@ ipcMain.handle('productEditWindow', (_eventt, payload) => {
   printWindow.on('ready-to-show', () => {
     printWindow?.show()
   })
-  const url = is.dev
-    ? `http://localhost:5173/#/${payload}`
-    : `file://${join(__dirname, '../renderer/index.html')}#/${payload}`
+  const url = `http://localhost:5173/#/${payload}`
 
   printWindow.loadURL(url)
+  if (is.dev) {
+    printWindow.loadURL(url)
+  } else {
+    printWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
 
 })
 
