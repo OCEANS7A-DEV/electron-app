@@ -27,6 +27,15 @@ const LinkBaner = () => {
     }
   }, [navigation.state]);
 
+  useEffect(() => {
+    window.myInventoryAPI.onUpdateAvailable((flag) => {
+      console.log('Update available:', flag)
+      // UI表示などの処理
+    })
+
+  }, [])
+
+
   const handleDrawerOpen = () => {
     if(open){
       setopen(false);

@@ -20,7 +20,12 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   orderPrint: (payload) => ipcRenderer.invoke('orderPrint', payload),
   PrintReady: () => ipcRenderer.invoke('Print-Ready'),
   storeSet: (settitle: string, setData: any) => ipcRenderer.invoke('storeSet', settitle, setData),
-  storeGet: (gettitle: string) => ipcRenderer.invoke('storeGet', gettitle)
+  storeGet: (gettitle: string) => ipcRenderer.invoke('storeGet', gettitle),
+  onUpdateAvailable: (callback: (flag: boolean) => void) => {
+    ipcRenderer.on('update-available', (_event, flag) => {
+      callback(flag)
+    })
+  }
 })
 
 if (process.contextIsolated) {

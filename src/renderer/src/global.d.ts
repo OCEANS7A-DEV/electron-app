@@ -5,6 +5,7 @@ export {}
 declare global {
   interface Window {
     myInventoryAPI: {
+      onUpdateAvailable(arg0: (flag: any) => void): unknown;
       fetchData: () => Promise<any>
       postData: (endpoint: string, payload: any) => Promise<any>;
       postDataGet: () => Promise<any>;

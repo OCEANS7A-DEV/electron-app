@@ -55,8 +55,13 @@ const InsertAPI_URL =
 //   })
 // }
 
+
+let mainWindow: BrowserWindow
+
+
+
 function createWindow(): void {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 950,
     height: 670,
     minWidth: 950,
@@ -201,52 +206,61 @@ export const shortageGet = async () => {
   }
 }
 
-app.whenReady().then(async () => {
-  electronApp.setAppUserModelId('com.electron')
-  log.info(is.dev)
+let isFirstRunUpdate = true
 
-  if(!is.dev){
-    autoUpdater.on('checking-for-update', () => {
-      log.info('アップデートを確認中...')
-      //updaterWindow?.webContents.send('update-status', 'checking')
-    })
+const setupAutoUpdater = () => {
+  autoUpdater.on('checking-for-update', () => {
+    log.info('アップデートを確認中...')
+  })
 
-    autoUpdater.on('update-available', () => {
-      log.info('アップデートが利用可能です。')
-      //updaterWindow?.webContents.send('update-status', 'available')
-    })
+  autoUpdater.on('update-available', () => {
+    log.info('アップデートが利用可能です。')
+    if (mainWindow) {
+      mainWindow.webContents.send('update-available', true)
+    }
+  })
 
-    autoUpdater.on('update-not-available', async () => {
-      log.info('アップデートはありません。')
-      //updaterWindow?.close()
-      //await launchMainApp()
-    })
+  autoUpdater.on('update-not-available', () => {
+    log.info('アップデートはありません。')
+    if (mainWindow) {
+      mainWindow.webContents.send('update-available', false)
+    }
+  })
 
-    autoUpdater.on('error', async (error) => {
-      log.error('アップデートエラー:', error)
-      //updaterWindow?.webContents.send('update-status', 'error')
-      //await launchMainApp()
-    })
+  autoUpdater.on('error', (error) => {
+    log.error('アップデートエラー:', error)
+  })
 
-    autoUpdater.on('download-progress', () => {
-      //updaterWindow?.webContents.send('download-progress', progressObj.percent.toFixed(2))
-    })
-    autoUpdater.on('update-downloaded', () => {
-      log.info('アップデート完了。再起動して更新します。')
+  autoUpdater.on('update-downloaded', () => {
+    log.info('アップデート完了。再起動して更新します。')
 
-      // 開いている全ウィンドウを閉じる
-      const allWindows = BrowserWindow.getAllWindows()
-      allWindows.forEach(win => {
-        win.removeAllListeners('close') // 必要に応じて
-        win.close()
-      })
-
-      // 少し待ってから終了＆インストール
+    if (isFirstRunUpdate) {
+      isFirstRunUpdate = false
       setTimeout(() => {
         autoUpdater.quitAndInstall()
       }, 1000)
-    })
-    autoUpdater.checkForUpdates();
+    } else {
+      log.info('定期チェックのアップデートは即時インストールしません')
+      // → UI通知 or 次回起動時適用などに切り替え可能
+    }
+  })
+}
+
+
+app.whenReady().then(async () => {
+  electronApp.setAppUserModelId('com.electron')
+
+  if (!is.dev) {
+    setupAutoUpdater()
+
+    // ✅ 起動時に1回だけチェック＆自動インストール
+    autoUpdater.checkForUpdates()
+
+    // ✅ その後、10分ごとに確認だけ（実行はしない）
+    setInterval(() => {
+      log.info('定期アップデート確認中...')
+      autoUpdater.checkForUpdates()
+    }, 60 * 1000)
   }
   //createUpdaterWindow()
 
@@ -366,13 +380,10 @@ ipcMain.handle('orderPrint', (_event, payload) => {
   printWindow.on('ready-to-show', () => {
     printWindow?.show()
   })
-  const url = `http://localhost:5173/#/${payload}`
-  if (is.dev) {
-    printWindow.loadURL(url)
-  } else {
-    printWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-
+  const url = is.dev && process.env['ELECTRON_RENDERER_URL']
+    ? `${process.env['ELECTRON_RENDERER_URL']}#/${payload}`
+    : `file://${join(app.getAppPath(), 'out/renderer/index.html')}#/${payload}`
+  printWindow.loadURL(url)
 })
 
 
