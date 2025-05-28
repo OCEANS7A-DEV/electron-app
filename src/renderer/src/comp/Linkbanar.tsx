@@ -7,6 +7,10 @@ import { useNavigation, useNavigate } from "react-router-dom";
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import { LinearProgress } from '@mui/material';
+import type { SvgIconProps } from '@mui/material/SvgIcon';
+import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
+import Tooltip from '@mui/material/Tooltip';
+
 // import { useEffect, useState } from "react";
 // import ProgressBar from './ProgressBar';
 // import { LinearProgress } from '@mui/material';
@@ -18,6 +22,7 @@ const LinkBaner = () => {
   const [open, setopen] = useState(false);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(navigation.state === 'loading');
+  const [updateIconColor, setUpdateIconColor] = useState<SvgIconProps['color']>('disabled');
 
   useEffect(() => {
     if (navigation.state === "loading") {
@@ -31,9 +36,18 @@ const LinkBaner = () => {
     window.myInventoryAPI.onUpdateAvailable((flag) => {
       console.log('Update available:', flag)
       // UI表示などの処理
+      if(flag){
+        setUpdateIconColor('success')
+      }else{
+        setUpdateIconColor('disabled')
+      }
     })
-
+    setUpdateIconColor('success')
   }, [])
+
+  const handleUpdateClick = () => {
+    console.log('アップデート実行')
+  }
 
 
   const handleDrawerOpen = () => {
@@ -74,6 +88,17 @@ const LinkBaner = () => {
             初期（テスト用表示V7）
           </div>
           <div>
+            {updateIconColor === 'success' ? (
+              <Tooltip title="アップデートがあります！">
+                <IconButton onClick={handleUpdateClick}>
+                  <SystemUpdateAltIcon color={updateIconColor} />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <IconButton disabled>
+                <SystemUpdateAltIcon color={updateIconColor} />
+              </IconButton>
+            )}
             <IconButton sx={{color: "white"}} onClick={handleDrawerOpen}>
               <MenuIcon/>
             </IconButton>
@@ -81,6 +106,7 @@ const LinkBaner = () => {
           
         </div>
       </div>
+
       <div className="DrawerArea">
         <Drawer
           variant="persistent"

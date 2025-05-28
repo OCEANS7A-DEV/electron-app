@@ -267,11 +267,11 @@ app.whenReady().then(async () => {
       autoUpdater.checkForUpdates()
     }, 60 * 1000)
 
-    setInterval(() => {
-      if (mainWindow) {
-        mainWindow.webContents.send('update-available', 'test')
-      }
-    }, 10 * 1000)
+    // setInterval(() => {
+    //   if (mainWindow) {
+    //     mainWindow.webContents.send('update-available', 'test')
+    //   }
+    // }, 10 * 1000)
   }
   //createUpdaterWindow()
 
