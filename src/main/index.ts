@@ -398,7 +398,10 @@ ipcMain.handle('productEditWindow', (_eventt, payload) => {
   printWindow.on('ready-to-show', () => {
     printWindow?.show()
   })
-  const url = `http://localhost:5173/#/${payload}`
+  const url = is.dev
+    ? `http://localhost:5173/#/${payload}`
+    : `file://${join(__dirname, '../renderer/index.html')}#/${payload}`
+
   printWindow.loadURL(url)
 
 })
