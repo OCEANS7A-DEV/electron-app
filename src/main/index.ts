@@ -236,14 +236,15 @@ const setupAutoUpdater = () => {
 
     if (isFirstRunUpdate) {
       isFirstRunUpdate = false
-      const allWindows = BrowserWindow.getAllWindows()
-      allWindows.forEach(win => {
-        win.removeAllListeners('close') // 必要に応じて
-        win.close()
-      })
-      setTimeout(() => {
-        autoUpdater.quitAndInstall()
-      }, 1000)
+      autoUpdater.quitAndInstall()
+      // const allWindows = BrowserWindow.getAllWindows()
+      // allWindows.forEach(win => {
+      //   win.removeAllListeners('close')
+      //   win.close()
+      // })
+      // setTimeout(() => {
+      //   autoUpdater.quitAndInstall()
+      // }, 1000)
     } else {
       log.info('定期チェックのアップデートは即時インストールしません')
       // → UI通知 or 次回起動時適用などに切り替え可能
@@ -395,6 +396,10 @@ ipcMain.handle('orderPrint', (_event, payload) => {
     ? `${process.env['ELECTRON_RENDERER_URL']}#/${payload}`
     : `file://${join(app.getAppPath(), 'out/renderer/index.html')}#/${payload}`
   printWindow.loadURL(url)
+})
+
+ipcMain.handle('button-Upgrade', () => {
+  autoUpdater.quitAndInstall()
 })
 
 

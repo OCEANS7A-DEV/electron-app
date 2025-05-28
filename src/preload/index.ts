@@ -25,7 +25,8 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
     ipcRenderer.on('update-available', (_event, flag) => {
       callback(flag)
     })
-  }
+  },
+  upGrade: () => ipcRenderer.send('button-Upgrade')
 })
 
 if (process.contextIsolated) {
