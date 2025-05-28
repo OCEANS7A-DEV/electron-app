@@ -500,7 +500,7 @@ ipcMain.on('Main-boot', () => {
 })
 
 ipcMain.on('startUpClose', () => {
-  updaterWindow?.close()
+  //updaterWindow?.close()
 })
 
 ipcMain.handle('productEditWindow', (_eventt, payload) => {
