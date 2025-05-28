@@ -235,7 +235,6 @@ const setupAutoUpdater = () => {
     log.info('アップデート完了。再起動して更新します。')
 
     if (isFirstRunUpdate) {
-      isFirstRunUpdate = false
       autoUpdater.quitAndInstall()
       // const allWindows = BrowserWindow.getAllWindows()
       // allWindows.forEach(win => {
@@ -259,20 +258,15 @@ app.whenReady().then(async () => {
   if (!is.dev) {
     setupAutoUpdater()
 
-    // ✅ 起動時に1回だけチェック＆自動インストール
+
+    isFirstRunUpdate = true
     autoUpdater.checkForUpdates()
 
-    // ✅ その後、10分ごとに確認だけ（実行はしない）
     setInterval(() => {
+      isFirstRunUpdate = false
       log.info('定期アップデート確認中...')
       autoUpdater.checkForUpdates()
-    }, 60 * 1000)
-
-    // setInterval(() => {
-    //   if (mainWindow) {
-    //     mainWindow.webContents.send('update-available', 'test')
-    //   }
-    // }, 10 * 1000)
+    }, 30 * 1000)
   }
   //createUpdaterWindow()
 

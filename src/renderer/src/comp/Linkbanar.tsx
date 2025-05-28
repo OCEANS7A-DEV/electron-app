@@ -46,6 +46,7 @@ const LinkBaner = () => {
 
   const handleUpdateClick = () => {
     console.log('アップデート実行')
+    window.myInventoryAPI.upGrade()
   }
 
 
