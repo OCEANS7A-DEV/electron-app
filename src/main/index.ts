@@ -236,6 +236,11 @@ const setupAutoUpdater = () => {
 
     if (isFirstRunUpdate) {
       isFirstRunUpdate = false
+      const allWindows = BrowserWindow.getAllWindows()
+      allWindows.forEach(win => {
+        win.removeAllListeners('close') // 必要に応じて
+        win.close()
+      })
       setTimeout(() => {
         autoUpdater.quitAndInstall()
       }, 1000)
