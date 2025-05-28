@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../css/updater.css'
 import CircularProgress from '@mui/material/CircularProgress';
-import { is } from '@electron-toolkit/utils';
 
 
 
