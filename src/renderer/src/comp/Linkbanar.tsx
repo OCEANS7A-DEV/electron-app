@@ -84,7 +84,7 @@ const LinkBaner = () => {
           </div>
           {/* 後で非表示 */}
           <div className="blank" style={{color: 'white'}}>
-            初期（テスト用表示V7）
+            初期（テスト用表示V8）
           </div>
           <div>
             {updateIconColor === 'success' ? (
