@@ -22,8 +22,9 @@ export default function UpdateWindow() {
 
   useEffect(() => {
     window.myInventoryAPI.onCheckedUpdate((value) => {
+      console.log(value)
       if (value.status == 'dev'){
-        window.myInventoryAPI.MainBoot()
+        //window.myInventoryAPI.MainBoot()
       } else if (value.status == 'updateCheck'){
         setUpdateCheck(true)
       } else if (value.status == 'bootCheck'){

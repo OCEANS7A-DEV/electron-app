@@ -294,6 +294,14 @@ app.whenReady().then(async () => {
       autoUpdater.checkForUpdates()
     }, 30 * 1000)
   }
+  setupAutoUpdater()
+  isFirstRunUpdate = true
+  autoUpdater.checkForUpdates()
+  setInterval(() => {
+    isFirstRunUpdate = false
+    log.info('定期アップデート確認中...')
+    autoUpdater.checkForUpdates()
+  }, 30 * 1000)
 
   
 
@@ -340,10 +348,12 @@ app.whenReady().then(async () => {
   const AddressList = await addressGet()
 
   store.set('address', AddressList)
+  
   updaterWindow?.webContents.send('check', {
     status: 'startup',
     value: true
   })
+
   if(is.dev){
     updaterWindow?.webContents.send('check', {
       status: 'dev',
