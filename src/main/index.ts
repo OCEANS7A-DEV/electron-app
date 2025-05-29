@@ -61,26 +61,23 @@ const createUpdaterWindow = () => {
   updaterWindow.once('ready-to-show', () => {
     updaterWindow?.show()
     setTimeout(() => {
-      updaterWindow?.webContents.openDevTools({ mode: 'detach' })
-    }, 300)
+      if (updaterWindow && !updaterWindow.isDestroyed()) {
+        updaterWindow.webContents.openDevTools({ mode: 'detach' });
+      }
+    }, 300);
+  
     if (is.dev) {
-      //updaterWindow?.webContents.openDevTools({ mode: 'detach' })
-      setTimeout(() => {
-        updaterWindow?.webContents.openDevTools({ mode: 'detach' })
-      }, 300)
-      updaterWindow?.webContents.send('check', {
-        status: 'dev',
-        value: true
-      })
+      if (updaterWindow && !updaterWindow.isDestroyed()) {
+        updaterWindow.webContents.send('check', { status: 'dev', value: true });
+      }
     }
-    try{
-      updaterWindow?.webContents.send('progress', {
+    if (updaterWindow && !updaterWindow.isDestroyed()) {
+      updaterWindow.webContents.send('progress', {
         percent: 0,
         message: '起動中...',
         status: 'start'
-      })
-    }catch{}
-    
+      });
+    }
     StartUpSet()
     isFirstRunUpdate = true
     setupAutoUpdater()
@@ -306,7 +303,6 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('download-progress', (progressObj) => {
     const percent = Math.floor(progressObj.percent)
-    //updaterWindow?.webContents.send('progress', percent)
     try{
       if (updaterWindow && !updaterWindow.isDestroyed()) {
         updaterWindow?.webContents.send('progress', {
@@ -520,6 +516,7 @@ ipcMain.on('startUpClose', () => {
   try{
     if (updaterWindow && !updaterWindow.isDestroyed()) {
       updaterWindow.close()
+      updaterWindow = null
     }
   }catch{
     // エラー時は何もしない
