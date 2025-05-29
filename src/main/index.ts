@@ -73,11 +73,14 @@ const createUpdaterWindow = () => {
         value: true
       })
     }
-    updaterWindow?.webContents.send('progress', {
-      percent: 0,
-      message: '起動中...',
-      status: 'start'
-    })
+    try{
+      updaterWindow?.webContents.send('progress', {
+        percent: 0,
+        message: '起動中...',
+        status: 'start'
+      })
+    }catch{}
+    
     StartUpSet()
     isFirstRunUpdate = true
     setupAutoUpdater()
@@ -291,21 +294,31 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('update-available', () => {
     log.info('アップデートが利用可能です。')
-    if (mainWindow) {
-      mainWindow.webContents.send('update-available', true)
+    try{
+      if (mainWindow) {
+        mainWindow.webContents.send('update-available', true)
+      }
+    }catch{
+      // エラー時は何もしない
     }
+    
   })
 
   autoUpdater.on('download-progress', (progressObj) => {
     const percent = Math.floor(progressObj.percent)
     //updaterWindow?.webContents.send('progress', percent)
-    if (updaterWindow && !updaterWindow.isDestroyed()) {
-      updaterWindow?.webContents.send('progress', {
-        percent: percent,
-        message: 'ダウンロード中...',
-        status: 'downloading'
-      })
+    try{
+      if (updaterWindow && !updaterWindow.isDestroyed()) {
+        updaterWindow?.webContents.send('progress', {
+          percent: percent,
+          message: 'ダウンロード中...',
+          status: 'downloading'
+        })
+      }
+    }catch{
+      // エラー時は何もしない
     }
+    
     
   })
 
@@ -316,9 +329,14 @@ const setupAutoUpdater = () => {
       createWindow()
     }
     
-    if (mainWindow) {
-      mainWindow.webContents.send('update-available', false)
+    try{
+      if (mainWindow) {
+        mainWindow.webContents.send('update-available', false)
+      }
+    }catch{
+      // エラー時は何もしない
     }
+    
   })
 
   autoUpdater.on('error', (error) => {
@@ -499,8 +517,12 @@ ipcMain.on('Main-boot', () => {
 })
 
 ipcMain.on('startUpClose', () => {
-  if (updaterWindow && !updaterWindow.isDestroyed()) {
-    updaterWindow.close()
+  try{
+    if (updaterWindow && !updaterWindow.isDestroyed()) {
+      updaterWindow.close()
+    }
+  }catch{
+    // エラー時は何もしない
   }
 })
 
