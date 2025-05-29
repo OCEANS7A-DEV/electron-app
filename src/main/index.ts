@@ -61,7 +61,7 @@ const createUpdaterWindow = () => {
   updaterWindow.once('ready-to-show', () => {
     updaterWindow?.show()
     setTimeout(() => {
-      if (updaterWindow && !updaterWindow.isDestroyed()) {
+      if (updaterWindow && !updaterWindow.isDestroyed() && is.dev) {
         updaterWindow.webContents.openDevTools({ mode: 'detach' });
       }
     }, 300);
