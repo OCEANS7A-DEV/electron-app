@@ -272,10 +272,12 @@ export const StartUpSet = async () => {
 
   store.set('address', AddressList)
 
-  updaterWindow?.webContents.send('check', {
-    status: 'startup',
-    value: true
-  })
+  if (updaterWindow && !updaterWindow.isDestroyed()) {
+    updaterWindow.webContents.send('check', {
+      status: 'startup',
+      value: true
+    })
+  }
 }
 
 
@@ -352,14 +354,7 @@ app.whenReady().then(async () => {
       autoUpdater.checkForUpdates()
     }, 30 * 1000)
   }
-  // isFirstRunUpdate = true
-  // setupAutoUpdater()
-  // autoUpdater.checkForUpdates()
-  // setInterval(() => {
-  //   isFirstRunUpdate = false
-  //   log.info('定期アップデート確認中...')
-  //   autoUpdater.checkForUpdates()
-  // }, 30 * 1000)
+
 
 
   app.on('browser-window-created', (_, window) => {
@@ -505,7 +500,7 @@ ipcMain.on('Main-boot', () => {
 
 ipcMain.on('startUpClose', () => {
   if (updaterWindow && !updaterWindow.isDestroyed()) {
-    updaterWindow.close();
+    updaterWindow.close()
   }
 })
 
