@@ -10,9 +10,12 @@ import SendIcon from '@mui/icons-material/Send'
 //import DeleteIcon from '@mui/icons-material/Delete'
 import { useForm, useFieldArray } from 'react-hook-form'
 import SweetAlert2 from 'react-sweetalert2';
+import Swal from 'sweetalert2'
 import ConfirmDialogTable from '../comp/DialogTable'
 import toast, { Toaster } from 'react-hot-toast';
 import { SubmitHandler } from 'react-hook-form'
+import { MenuItem, Tooltip, Box } from '@mui/material'
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 // interface InsertData {
 //   業者: { value: string; label: string }[]
@@ -35,6 +38,10 @@ import { SubmitHandler } from 'react-hook-form'
 //   商品単価: string
 // }
 
+interface SelectOption {
+  value: string
+  label: string
+}
 
 
 type FormValues = {
@@ -70,10 +77,14 @@ export default function StoreOrderPage() {
   // const [isDialogOpen, setDialogOpen] = useState(false)
   // const message =
   //   '入庫内容は以下の通りです\n以下の内容でよろしければOKをクリックしてください\n内容の変更がある場合にはキャンセルをクリックしてください'
+  const [storeSelect, setStoreSelect] = React.useState('');
+
+  const [storeOptions, setStoreOptions] = useState<SelectOption[]>([])
 
   const [InsertDate, setDate] = useState<string>('')
 
   const [swalProps, setSwalProps] = useState({});
+
 
 
   const swalWindow = async () => {
@@ -83,7 +94,6 @@ export default function StoreOrderPage() {
       onConfirm: () => {
         setSwalProps({ show: false })
         insertPost()
-        toast.success('送信しました')
       }
     }); 
   }
@@ -110,17 +120,7 @@ export default function StoreOrderPage() {
 
   const isHalfWidth = (value: string) => /^[\x20-\x7E]*$/.test(value)
 
-  // const VendorListGet = async () => {
-  //   const result = []
-  //   const list = await window.myInventoryAPI.ListGet({sheetName: 'その他一覧', action: 'ListGet', ranges: 'A2:B'})
-  //   for (let i = 0; i < list.length; i++) {
-  //     result.push({
-  //       value: list[i][0],
-  //       label: list[i][0]
-  //     })
-  //   }
-  //   setVendorList(result)
-  // }
+
 
   const addNewForm = () => {
     for (let i = 0; i < 20; i++) {
@@ -134,34 +134,47 @@ export default function StoreOrderPage() {
   }
 
   const insertPost = async () => {
-    const filterData = getValues().rows.filter((row) => row.code !== '')
-    const formData = filterData.map((item) => {
-      const result = [
-        InsertDate,
-        item.vendor,
-        item.code,
-        item.name,
-        item.quantity,
-        null
-      ]
-      return result
-    })
-    console.log(formData)
-
-    if (formData.length >= 1) {
-      await window.myInventoryAPI.DataInsert({
-        sheetName: '店舗へ',
-        action: 'insert',
-        data: formData,
-        formulaConfig: {
-          targetCol: 10,
-          formula: '=RC[-3]*RC[-1]'
-        }
+    //await Swal.fire("")
+    if(storeSelect == ''){
+      await Swal.fire({
+        icon: 'warning',
+        title: '店舗が未選択です',
+        text: '店舗を選んでから送信してください',
+        confirmButtonText: 'OK'
       })
+      return
     }
-    reset({
-      rows: defaultSet()
-    })
+
+    // return
+    // const filterData = getValues().rows.filter((row) => row.code !== '')
+    // const formData = filterData.map((item) => {
+    //   const result = [
+    //     InsertDate,
+    //     item.vendor,
+    //     item.code,
+    //     item.name,
+    //     item.quantity,
+    //     null
+    //   ]
+    //   return result
+    // })
+    // console.log(formData)
+
+    // if (formData.length >= 1) {
+    //   await window.myInventoryAPI.DataInsert({
+    //     sheetName: '店舗へ',
+    //     action: 'insert',
+    //     data: formData,
+    //     formulaConfig: {
+    //       targetCol: 10,
+    //       formula: '=RC[-3]*RC[-1]'
+    //     }
+    //   })
+    // }
+    // reset({
+    //   rows: defaultSet()
+    // })
+    // toast.success('送信しました')
   }
 
   const handleOpenDialog = () => {
@@ -201,11 +214,29 @@ export default function StoreOrderPage() {
   //   }
   // }
 
+  const StoresGet = async () => {
+    const stores = await window.myInventoryAPI.ListGet({
+      sheetName: 'その他一覧',
+      action: 'ListGet',
+      ranges: 'A2:B'
+    });
+
+    const storenames: SelectOption[] = stores
+      .filter(row => row[0] !== "")
+      .map(item => ({
+        value: item[0],
+        label: item[0]
+      }));
+    console.log(storenames)
+    setStoreOptions(storenames);
+  }
+
   useEffect(() => {
     //dataget()
     //defaultSet()
 
     //VendorListGet()
+    StoresGet()
   }, [])
 
   useEffect(() => {
@@ -261,6 +292,12 @@ export default function StoreOrderPage() {
     })
   }
 
+
+  const handleStoreChange = (event: SelectChangeEvent) => {
+    setStoreSelect(event.target.value as string);
+  };
+
+
   return (
     <>
       <div>
@@ -268,26 +305,35 @@ export default function StoreOrderPage() {
         <Toaster />
       </div>
       <div className="window_area">
-        <div className="insertDate">
-          {/* <Select
-            options={VendorList}
-            placeholder="店舗"
-            isClearable
-            className="insert_Select"
-            menuPlacement="auto"
-            menuPortalTarget={document.body}
-          /> */}
-          <h2 style={{ color: 'white' }}>入庫日付</h2>
-          <input
-            type="date"
-            className="insert_date"
-            value={InsertDate}
-            onChange={(e) => handleChangeDate(e)}
-          />
-        </div>
         <div className="form_area">
           <WordSearch />
           <div className="in-area">
+            <div className="insertDate">
+              <Select
+                value={storeSelect}
+                label='店舗'
+                onChange={handleStoreChange}
+                displayEmpty
+                size="small"
+                style={{ width: 120, backgroundColor: 'white' }}
+              >
+                <MenuItem value="">
+                  <em>未選択</em>
+                </MenuItem>
+                {storeOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+              <h2 style={{ color: 'white' }}>入庫日付</h2>
+              <input
+                type="date"
+                className="insert_date"
+                value={InsertDate}
+                onChange={(e) => handleChangeDate(e)}
+              />
+            </div>
             <form onSubmit={handleSubmit(onSubmit)} className="p-4">
               {fields.map((field, index) => (
                 <div key={field.id} className="insert_area_store">

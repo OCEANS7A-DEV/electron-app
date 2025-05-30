@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, net } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, net, Notification } from 'electron'
 import { join } from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -31,18 +31,19 @@ const InsertAPI_URL =
 
 
 
-
+const NOTIFICATION_TITLE = '通知テスト'
+const NOTIFICATION_BODY = 'アプリが起動しました'
 
 let isFirstRunUpdate = true
 let updaterWindow: BrowserWindow | null = null
 
 const createUpdaterWindow = () => {
   updaterWindow = new BrowserWindow({
-    minWidth: 300,
+    width: 300,
     height: 500,
     resizable: false,
     autoHideMenuBar: true,
-    //frame: false,
+    frame: false,
     show: false,
     webPreferences: {
       preload: is.dev
@@ -125,35 +126,11 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  new Notification({
+    title: NOTIFICATION_TITLE,
+    body: NOTIFICATION_BODY
+  }).show()
 }
-
-// async function launchMainApp() {
-//   const list = await productGet()
-
-//   const ListResult = list.map((item) => ({
-//     vendor: item[0],
-//     code: item[1],
-//     name: item[2],
-//     defaultPrice: item[3],
-//     newPrice: item[4],
-//     VC: item[5],
-//     store: item[6],
-//     type: item[7],
-//     remarks: item[8],
-//     Possibility: item[9],
-//     service: item[10],
-//     order: item[11]
-//   }))
-//   store.set('data', ListResult)
-
-//   const VendorList = await vendorGet()
-//   store.set('vendor', VendorList)
-
-//   const AddressList = await addressGet()
-//   store.set('address', AddressList)
-
-//   createWindow()
-// }
 
 
 

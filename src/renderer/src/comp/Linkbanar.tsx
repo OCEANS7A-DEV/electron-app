@@ -119,7 +119,7 @@ const LinkBaner = () => {
             {/* <Link className="link" to="/about">テスト用</Link> */}
             {/* <Link className="link" to="/">入庫</Link> */}
             <Button variant="outlined" onClick={() => navigate('/')} sx={{height:'30px', margin: "5px 10px"}}>入庫</Button>
-            {/* <Button variant='outlined' onClick={() => navigate('/StoreOrder')} sx={{height:'30px', margin: "5px 10px"}}>店舗注文</Button> */}
+            <Button variant='outlined' onClick={() => navigate('/StoreOrder')} sx={{height:'30px', margin: "5px 10px"}}>店舗注文</Button>
             <Button variant="outlined" onClick={() => navigate('/HQ_Stocks')} sx={{height:'30px', margin: "5px 10px"}}>在庫数</Button>
             {/* <Link className="link" to="/service">サービス品入庫</Link>
             <Link className="link" to="/HQ_Stocks">在庫数</Link>

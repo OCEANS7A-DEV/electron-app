@@ -13,6 +13,7 @@ import SweetAlert2 from 'react-sweetalert2';
 import ConfirmDialogTable from '../comp/DialogTable'
 import toast, { Toaster } from 'react-hot-toast';
 
+
 // interface InsertData {
 //   業者: { value: string; label: string }[]
 //   商品コード: string
