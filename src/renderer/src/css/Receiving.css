@@ -46,8 +46,8 @@
 
 .in-area{
   overflow-x: visible;
-  overflow-y: auto;
-  margin-left: 350px;
+  overflow-y: visible;
+  /* margin-left: 350px; */
 }
 
 
@@ -70,6 +70,7 @@
   text-align: center;
   border-top: 1px solid #ccc; /* 上部に区切り線 */
   box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1); /* ボックスに影を追加 */
+  z-index: 100;
 }
 
 /* ダイアログの背後のオーバーレイ */
@@ -134,6 +135,10 @@
 
 .insert_code {
   width: 100px;
+}
+.insert_person{
+  width: 100px;
+  margin-right: 8px;
 }
 
 .insert_name {
@@ -235,4 +240,15 @@
 
 ::placeholder {
   text-align: left;
+}
+
+
+.custom-swal-popup {
+  width: 90vw !important;
+  max-width: 1100px !important;
+  height: auto !important;
+}
+
+.custom-swal-html {
+  overflow-y: auto;
 }

@@ -6,7 +6,7 @@
   padding: 5px;
   border-radius: 4px;
   z-index: 200;
-  height: calc(100% - 140px);
+  height: calc(100% - 150px);
   top: 60px;
   display: flex;
   flex-flow: column;
@@ -84,6 +84,8 @@
 }
 .search-table {
   display: flex;
+  flex: 1;
+  height: calc(100vh - 230px);
   overflow-y: scroll; /* 縦スクロールを追加 */
   width: 310px; /* 親要素の幅いっぱいに */
 }
@@ -132,4 +134,11 @@
   width: 180px;
   white-space: nowrap;
   overflow: hidden;
+}
+
+
+
+
+.WordSearchA {
+  flex: 1;
 }

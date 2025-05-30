@@ -17,6 +17,7 @@ declare global {
       filePost: (endpoint: string, payload: any) => Promise<any>;
       ListGet: (payload:any) => Promise<any>;
       DataInsert: (payload:any) => Promise<any>;
+      DetailsData: () => Promise<any>;
       ListData: () => Promise<any>;
       VendorData: () => Promise<any>;
       shortageGet: () => Promise<any>;

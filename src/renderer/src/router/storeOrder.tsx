@@ -5,13 +5,16 @@ import React, { useState, ChangeEvent, useEffect } from 'react'
 import WordSearch from '../comp/ProductSearchWord'
 import '../css/Receiving.css'
 import { Button } from '@mui/material'
+import { Autocomplete, TextField } from '@mui/material';
 import LinkBaner from '../comp/Linkbanar'
 import SendIcon from '@mui/icons-material/Send'
 //import DeleteIcon from '@mui/icons-material/Delete'
-import { useForm, useFieldArray } from 'react-hook-form'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
+import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import SweetAlert2 from 'react-sweetalert2';
 import Swal from 'sweetalert2'
-import ConfirmDialogTable from '../comp/DialogTable'
+import StoreDialogTable from '../comp/StoreDialogTable'
 import toast, { Toaster } from 'react-hot-toast';
 import { SubmitHandler } from 'react-hook-form'
 import { MenuItem } from '@mui/material'
@@ -49,7 +52,11 @@ type FormValues = {
     vendor: string
     code: string
     name: string
+    detail: { value: string; label: string } | null
+    detailList: { value: string; label: string }[] | []
     quantity: string
+    person: string
+    remarks: string
   }[]
 }
 
@@ -60,7 +67,11 @@ const defaultSet = (): FormValues["rows"] => {
       vendor: '',
       code: '',
       name: '',
+      detail: null,
+      detailList: [],
       quantity: '',
+      person: '',
+      remarks: ''
     })
   }
   return result
@@ -77,6 +88,11 @@ export default function StoreOrderPage() {
   // const [isDialogOpen, setDialogOpen] = useState(false)
   // const message =
   //   '入庫内容は以下の通りです\n以下の内容でよろしければOKをクリックしてください\n内容の変更がある場合にはキャンセルをクリックしてください'
+
+  const [DisplayStatus, setDisplayStatus] = useState(false)
+
+  const [marginNum, setMarginNum] = useState(100)
+
   const [storeSelect, setStoreSelect] = React.useState('');
 
   const [storeOptions, setStoreOptions] = useState<SelectOption[]>([])
@@ -84,6 +100,8 @@ export default function StoreOrderPage() {
   const [InsertDate, setDate] = useState<string>('')
 
   const [swalProps, setSwalProps] = useState({});
+
+  const [ProductdetailsList, setProductdetailsList] = useState([])
 
 
 
@@ -101,7 +119,7 @@ export default function StoreOrderPage() {
 
 
 
-  const { control, register, handleSubmit, getValues,  setValue, reset } =
+  const { control, register, handleSubmit, getValues,  setValue, reset, watch } =
     useForm<FormValues>({
       defaultValues: {
         rows: defaultSet()
@@ -128,7 +146,11 @@ export default function StoreOrderPage() {
         vendor: '',
         code: '',
         name: '',
+        detail: null,
+        detailList: [],
         quantity: '',
+        person: '',
+        remarks: ''
       })
     }
   }
@@ -231,13 +253,33 @@ export default function StoreOrderPage() {
     setStoreOptions(storenames);
   }
 
+  const DetailsSet = async () => {
+    const list = await window.myInventoryAPI.DetailsData()
+    const filtered = list.filter(row => row[1] !== '')
+    setProductdetailsList(filtered)
+  }
+
+  const DetailsGet = (index) => {
+    const result = watch(`rows.${index}.detailList`)
+    return result
+  }
+
   useEffect(() => {
     //dataget()
     //defaultSet()
 
     //VendorListGet()
     StoresGet()
+    DetailsSet()
   }, [])
+
+  useEffect(() => {
+    if(DisplayStatus){
+      setMarginNum(330)
+    }else{
+      setMarginNum(80)
+    }
+  },[DisplayStatus])
 
   useEffect(() => {
     const today = new Date()
@@ -247,27 +289,38 @@ export default function StoreOrderPage() {
     setDate(`${yyyy}-${mm}-${dd}`)
   }, [])
 
-  const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLInputElement>, rowIndex: number) => {
+  const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Enter') {
-      e.preventDefault()
-      const form = e.currentTarget.form
-      if(form){
-        const elements = Array.from(form.elements) as HTMLElement[]
-        const index = elements.indexOf(e.currentTarget)
-        const nextElement = elements[index + 1] as HTMLInputElement | HTMLButtonElement
-
-        if (nextElement && nextElement.type !== 'button') {
-          nextElement.focus()
-        } else {
-          const nextCodeInput = document.querySelector<HTMLInputElement>(
-            `input[name="rows.${rowIndex + 1}.code"]`
-          )
-          nextCodeInput?.focus()
+      e.preventDefault();
+      const form = (e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement).form;
+      if (form) {
+        const elements = Array.from(form.elements) as HTMLElement[];
+        const index = elements.indexOf(e.target as HTMLElement);
+        for (let i = index + 1; i < elements.length; i++) {
+          const next = elements[i] as HTMLElement;
+          if (
+            next &&
+            typeof next.focus === 'function' &&
+            !next.hasAttribute('disabled') &&
+            next.getAttribute('tabindex') !== '-1' &&
+            (next instanceof HTMLInputElement ||
+              next instanceof HTMLSelectElement ||
+              next instanceof HTMLTextAreaElement ||
+              next instanceof HTMLButtonElement) &&
+            next.type !== 'button'
+          ) {
+            next.focus();
+            break;
+          }
         }
       }
-      
     }
-  }
+  };
+
+
+
+
+  
 
   const search = async (index) => {
     const List = await window.myInventoryAPI.ListData()
@@ -279,6 +332,15 @@ export default function StoreOrderPage() {
       const name = productData.name
       setValue(`rows.${index}.vendor`, vendordata)
       setValue(`rows.${index}.name`, name)
+      const detailfilter = ProductdetailsList.filter(row => row[0] == code && row[1] !== '')
+      const detaillist = detailfilter.map(item => {
+        const result = {value: item[1] ?? '', label: item[1] ?? ''}
+        return result
+      })
+      setValue(`rows.${index}.detailList`, detaillist)
+      if(detailfilter.length !== 0){
+        console.log('詳細あり')
+      }
     }
   }
 
@@ -288,7 +350,11 @@ export default function StoreOrderPage() {
       vendor: '',
       code: '',
       name: '',
-      quantity: ''
+      detail: null,
+      detailList: [],
+      quantity: '',
+      person: '',
+      remarks: ''
     })
   }
 
@@ -306,8 +372,11 @@ export default function StoreOrderPage() {
       </div>
       <div className="window_area">
         <div className="form_area">
-          <WordSearch />
-          <div className="in-area">
+          <WordSearch
+            DisplayStatus={DisplayStatus}
+            setDisplayStatus={setDisplayStatus}
+          />
+          <div className="in-area" style={{marginLeft: `${marginNum}px`}}>
             <div className="insertDate">
               <Select
                 value={storeSelect}
@@ -341,7 +410,7 @@ export default function StoreOrderPage() {
                     {...register(`rows.${index}.vendor`)}
                     className="insert_vendor"
                     placeholder="業者名"
-                    onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                    onKeyDown={(e) => handleEnterFocusNext(e)}
                     onBlur={() => search(index)}
                   />
                   <input
@@ -350,31 +419,69 @@ export default function StoreOrderPage() {
                     })}
                     className="insert_code"
                     placeholder="商品コード"
-                    onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                    onKeyDown={(e) => handleEnterFocusNext(e)}
                     onBlur={() => search(index)}
                   />
                   <input
                     {...register(`rows.${index}.name`)}
                     placeholder="商品名"
                     className="insert_name"
-                    onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                    onKeyDown={(e) => handleEnterFocusNext(e)}
+                  />
+                  <Controller
+                    name={`rows.${index}.detail`}
+                    control={control}
+                    render={({ field }) => (
+                      <Autocomplete
+                        options={DetailsGet(index)}
+                        getOptionLabel={(option) => option.label}
+                        isOptionEqualToValue={(option, value) => option.value === value?.value}
+                        value={field.value || null}
+                        onChange={(_, newValue) => field.onChange(newValue)}
+                        onKeyDown={(e) => handleEnterFocusNext(e)}
+                        openOnFocus
+                        autoHighlight
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="詳細"
+                            size="small"
+                            style={{ width: 160, backgroundColor: 'white', height: 38, marginRight: 8 }}
+                          />
+                        )}
+                      />
+                    )}
                   />
                   <input
                     {...register(`rows.${index}.quantity`, {
                       validate: (value) => isHalfWidth(value) || '半角数字で入力してください'
                     })}
+                    name={`rows.${index}.quantity`}
                     placeholder="数量"
                     className="insert_quantity"
                     type="text"
-                    onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                    onKeyDown={(e) => handleEnterFocusNext(e)}
                   />
-                  <button
-                    type="button"
+                  <input
+                    {...register(`rows.${index}.person`)}
+                    className="personal"
+                    placeholder='個人購入'
+                    onKeyDown={(e) => handleEnterFocusNext(e)}
+                    type="text"
+                  />
+                  <input
+                    {...register(`rows.${index}.remarks`)}
+                    className="remarks"
+                    placeholder='備考'
+                    onKeyDown={(e) => handleEnterFocusNext(e)}
+                    type="text"
+                  />
+                  <Button variant='outlined'
                     onClick={() => RowRemove(index)}
                     className="text-red-500 hover:underline"
                   >
                     削除
-                  </button>
+                  </Button>
                 </div>
               ))}
             </form>
@@ -387,23 +494,18 @@ export default function StoreOrderPage() {
           <Button variant="outlined" onClick={handleOpenDialog} endIcon={<SendIcon />}>
             入庫実行
           </Button>
-          {/* <a className="buttonUnderlineS" type="button" onClick={handleOpenDialog}>入庫実行＞＞</a> */}
-          {/* <ConfirmDialog
-            title="確認"
-            message={message}
-            tableData={formData}
-            onConfirm={handleConfirm}
-            onCancel={handleCancel}
-            isOpen={isDialogOpen}
-          /> */}
           <SweetAlert2
             {...swalProps}
             didClose={() => {
               console.log('ダイアログが閉じられました');
               setSwalProps({ show: false });
             }}
+            customClass={{
+              popup: 'custom-swal-popup',
+              htmlContainer: 'custom-swal-html'
+            }}
           >
-            <ConfirmDialogTable
+            <StoreDialogTable
               tableData={getValues().rows}
             />
             

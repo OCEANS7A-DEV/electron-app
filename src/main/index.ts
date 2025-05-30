@@ -210,6 +210,23 @@ export const shortageGet = async () => {
   }
 }
 
+export const ProductDetails = async () => {
+  try {
+    const response = await net.fetch(GetAPI_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: JSON.stringify({ sheetName: '商品詳細一覧', action: 'ListGet', ranges: 'A2:B' })
+    })
+    const result = await response.json()
+    return result
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+    return errorMessage
+  }
+}
+
 export const StartUpSet = async () => {
   const list = await productGet()
 
@@ -241,6 +258,12 @@ export const StartUpSet = async () => {
 
   store.set('address', AddressList)
 
+  const productDetails = await ProductDetails()
+
+  store.set('details', productDetails)
+
+
+
   if (updaterWindow && !updaterWindow.isDestroyed()) {
     updaterWindow.webContents.send('check', {
       status: 'startup',
@@ -260,14 +283,14 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('update-available', () => {
     log.info('アップデートが利用可能です。')
-    NotificationEXE('アップデートが利用可能です。')
-    try{
-      if (mainWindow) {
-        mainWindow.webContents.send('update-available', true)
-      }
-    }catch{
-      // エラー時は何もしない
-    }
+    // NotificationEXE('アップデートが利用可能です。')
+    // try{
+    //   if (mainWindow) {
+    //     mainWindow.webContents.send('update-available', true)
+    //   }
+    // }catch{
+    //   // エラー時は何もしない
+    // }
     
   })
 
@@ -317,6 +340,14 @@ const setupAutoUpdater = () => {
     } else {
       log.info('定期チェックのアップデートは即時インストールしません')
       // → UI通知 or 次回起動時適用などに切り替え可能
+      NotificationEXE('アップデートが利用可能です。')
+      try{
+        if (mainWindow) {
+          mainWindow.webContents.send('update-available', true)
+        }
+      }catch{
+        // エラー時は何もしない
+      }
     }
   })
 }
@@ -397,6 +428,11 @@ ipcMain.handle('product-list', async () => {
 
 ipcMain.handle('vendor-list', async () => {
   const data = await store.get('vendor')
+  return data
+})
+
+ipcMain.handle('details-list', async () => {
+  const data = await store.get('details')
   return data
 })
 

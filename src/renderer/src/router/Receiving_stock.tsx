@@ -327,6 +327,7 @@ export default function ReceivingPage() {
                     className="insert_name"
                     onKeyDown={(e) => handleEnterFocusNext(e, index)}
                   />
+                  
                   <input
                     {...register(`rows.${index}.quantity`, {
                       validate: (value) => isHalfWidth(value) || '半角数字で入力してください'

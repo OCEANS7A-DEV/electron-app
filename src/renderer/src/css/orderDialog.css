@@ -68,17 +68,32 @@
 
 .dtname {
   overflow: hidden;
-  width: 280px;
+  min-width: 280px;
 }
 
 .dtquantity {
   text-align: right;
-  width: 80px;
+  min-width: 60px;
 }
 
 .dtprice {
   text-align: right;
-  width: 100px;
+  min-width: 100px;
+}
+
+.dtdetail{
+  overflow: hidden;
+  min-width: 100px;
+  max-width: 100px;
+}
+
+.dtperson {
+  min-width: 100px;
+  max-width: 100px;
+}
+
+.dtremarks {
+  width: 200px;
 }
 
 .order-confirm-dialog-overlay {

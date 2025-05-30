@@ -10,11 +10,12 @@ import jaconv from 'jaconv';
 
 
 
-export default function WordSearch() {
+export default function WordSearch({DisplayStatus, setDisplayStatus}) {
   const [SWord, setSWord] = useState<string>('')
   const [tableData, setTableData] = useState<any[]>([])
   const [data, setData] = useState<any[]>([])
   const [fuse, setFuse] = useState<any>(null)
+  const [buttonlabel, setButtonLabel] = useState('閉じる')
 
   // 入力値変更時に呼び出される
   const handlewordchange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -86,48 +87,67 @@ export default function WordSearch() {
     }
   }
 
+  const switching = () => {
+    setDisplayStatus(!DisplayStatus)
+  }
+
+  const buttonlabelSet = () => {
+    let result = '開く'
+    if(DisplayStatus){
+      result = '閉じる'
+    }
+    setButtonLabel(result)
+  }
+
   useEffect(() => {
     dataSet()
+    buttonlabelSet()
   }, [])
-
 
   return (
     <div className="WordSearch-area">
-      <div className="search-input">
-        <input
-          type="text"
-          value={SWord}
-          onChange={handlewordchange}
-          placeholder="検索ワードを入力"
-          onKeyDown={(e) => handleKeyDown(e)}
-        />
-        <Button variant="outlined" onClick={productReSearch} sx={{ height: '30px' }}>
-          検索
-        </Button>
-        <Button variant="outlined" onClick={productListUpdate} sx={{ height: '30px' }}>
-          更新
+      <div>
+        <Button variant='outlined' onClick={switching} sx={{ height: '30px' }}>
+          {buttonlabel}
         </Button>
       </div>
-
-      {/* テーブルを表示 */}
-      <div className="search-table">
-        <table className="search-data-table">
-          <thead>
-            <tr>
-              <th className="stcode">商品コード</th>
-              <th className="stname">商品名</th>
-            </tr>
-          </thead>
-          <tbody className="datail">
-            {tableData.map((row, index) => (
-              <tr key={index}>
-                <td className="scode">{row.code}</td> {/* 商品コードは配列の2番目の要素 */}
-                <td className="sname">{row.name}</td> {/* 商品名は配列の3番目の要素 */}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {DisplayStatus && (
+        <div className="WordSearchA">
+          <div className="search-input">
+            <input
+              type="text"
+              value={SWord}
+              onChange={handlewordchange}
+              placeholder="検索ワードを入力"
+              onKeyDown={(e) => handleKeyDown(e)}
+            />
+            <Button variant="outlined" onClick={productReSearch} sx={{ height: '30px' }}>
+              検索
+            </Button>
+            <Button variant="outlined" onClick={productListUpdate} sx={{ height: '30px' }}>
+              更新
+            </Button>
+          </div>
+          <div className="search-table">
+            <table className="search-data-table">
+              <thead>
+                <tr>
+                  <th className="stcode">商品コード</th>
+                  <th className="stname">商品名</th>
+                </tr>
+              </thead>
+              <tbody className="datail">
+                {tableData.map((row, index) => (
+                  <tr key={index}>
+                    <td className="scode">{row.code}</td> {/* 商品コードは配列の2番目の要素 */}
+                    <td className="sname">{row.name}</td> {/* 商品名は配列の3番目の要素 */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
