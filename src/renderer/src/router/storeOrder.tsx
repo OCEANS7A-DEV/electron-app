@@ -14,7 +14,7 @@ import Swal from 'sweetalert2'
 import ConfirmDialogTable from '../comp/DialogTable'
 import toast, { Toaster } from 'react-hot-toast';
 import { SubmitHandler } from 'react-hook-form'
-import { MenuItem, Tooltip, Box } from '@mui/material'
+import { MenuItem } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 // interface InsertData {
@@ -135,6 +135,7 @@ export default function StoreOrderPage() {
 
   const insertPost = async () => {
     //await Swal.fire("")
+    toast.success('送信しました(test)')
     if(storeSelect == ''){
       await Swal.fire({
         icon: 'warning',
@@ -144,7 +145,6 @@ export default function StoreOrderPage() {
       })
       return
     }
-
     // return
     // const filterData = getValues().rows.filter((row) => row.code !== '')
     // const formData = filterData.map((item) => {
@@ -171,9 +171,9 @@ export default function StoreOrderPage() {
     //     }
     //   })
     // }
-    // reset({
-    //   rows: defaultSet()
-    // })
+    reset({
+      rows: defaultSet()
+    })
     // toast.success('送信しました')
   }
 
