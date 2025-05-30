@@ -29,11 +29,6 @@ const InsertAPI_URL =
   'https://script.google.com/macros/s/AKfycbylyaUttaEI9jYGJM_CQWOWyWAd3C9Q-ikbkNAMCUIPDYIWqtUHgrw9GHNgmgkWKE-M/exec'
 
 
-
-
-const NOTIFICATION_TITLE = '通知テスト'
-const NOTIFICATION_BODY = 'アプリが起動しました'
-
 let isFirstRunUpdate = true
 let updaterWindow: BrowserWindow | null = null
 
@@ -126,10 +121,7 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
-  new Notification({
-    title: NOTIFICATION_TITLE,
-    body: NOTIFICATION_BODY
-  }).show()
+  NotificationEXE('アプリが起動しました')
 }
 
 
@@ -268,6 +260,7 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('update-available', () => {
     log.info('アップデートが利用可能です。')
+    NotificationEXE('アップデートが利用可能です。')
     try{
       if (mainWindow) {
         mainWindow.webContents.send('update-available', true)
@@ -332,7 +325,7 @@ const setupAutoUpdater = () => {
 
 
 app.whenReady().then(async () => {
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
   await createUpdaterWindow()
 
   if (!is.dev) {
@@ -570,3 +563,13 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+
+
+const NotificationEXE = (bodyString) => {
+  new Notification({
+    title: '通知',
+    body: bodyString
+  }).show()
+}
+
