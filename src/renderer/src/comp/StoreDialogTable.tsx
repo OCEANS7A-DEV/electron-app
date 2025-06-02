@@ -7,10 +7,9 @@ import '../css/orderDialog.css';
 
 interface ConfirmDialogProps {
   tableData: Array<any>;
-  storeName: string;
 }
 
-const StoreDialogTable: React.FC<ConfirmDialogProps> = ({tableData, storeName}) => {
+const StoreDialogTable: React.FC<ConfirmDialogProps> = ({tableData}) => {
   return (
     <div className="modal-dialog-table-area">
       <table className='data-table'>

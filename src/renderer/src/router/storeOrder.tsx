@@ -1,7 +1,5 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, ChangeEvent, useEffect } from 'react'
-//import Select from 'react-select'
-//import { useLoaderData } from 'react-router-dom'
 import WordSearch from '../comp/ProductSearchWord'
 import '../css/Receiving.css'
 import { Button } from '@mui/material'
@@ -9,8 +7,8 @@ import { Autocomplete, TextField } from '@mui/material';
 import LinkBaner from '../comp/Linkbanar'
 import SendIcon from '@mui/icons-material/Send'
 //import DeleteIcon from '@mui/icons-material/Delete'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
+//import FormControl from '@mui/material/FormControl'
+//import InputLabel from '@mui/material/InputLabel'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import SweetAlert2 from 'react-sweetalert2';
 import Swal from 'sweetalert2'
@@ -61,20 +59,22 @@ type FormValues = {
   }[]
 }
 
+const defaultRowData = {
+  vendor: '',
+  code: '',
+  name: '',
+  detail: null,
+  detailList: [],
+  quantity: '',
+  person: '',
+  remarks: '',
+  price: ''
+}
+
 const defaultSet = (): FormValues["rows"] => {
   const result: FormValues["rows"] = []
   for (let i = 0; i < 20; i++) {
-    result.push({
-      vendor: '',
-      code: '',
-      name: '',
-      detail: null,
-      detailList: [],
-      quantity: '',
-      person: '',
-      remarks: '',
-      price: ''
-    })
+    result.push(defaultRowData)
   }
   return result
 }
@@ -144,17 +144,7 @@ export default function StoreOrderPage() {
 
   const addNewForm = () => {
     for (let i = 0; i < 20; i++) {
-      append({
-        vendor: '',
-        code: '',
-        name: '',
-        detail: null,
-        detailList: [],
-        quantity: '',
-        person: '',
-        remarks: '',
-        price: ''
-      })
+      append(defaultRowData)
     }
   }
 
@@ -348,17 +338,7 @@ export default function StoreOrderPage() {
   const RowRemove = async (index) => {
     const scrollY = window.scrollY
     remove(index)
-    append({
-      vendor: '',
-      code: '',
-      name: '',
-      detail: null,
-      detailList: [],
-      quantity: '',
-      person: '',
-      remarks: '',
-      price: ''
-    })
+    append(defaultRowData)
     setTimeout(() => {
       window.scrollTo(0, scrollY);
     }, 0);
@@ -513,9 +493,7 @@ export default function StoreOrderPage() {
           >
             <StoreDialogTable
               tableData={getValues().rows}
-              storeName={storeSelect}
             />
-            
           </SweetAlert2>
         </div>
       </div>
