@@ -1,6 +1,5 @@
 import React from 'react'
 import Select from 'react-select'
-import { useLoaderData } from "react-router-dom"
 
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { Button } from '@mui/material'
@@ -16,39 +15,24 @@ import '../css/setting.css'
 
 type FormValues = {
   rows: {
+    id: string
     store: string
     type: { value: string; label: string } | null
   }[]
 }
 
 
+export default function StoreDataUpDate({storeData}) {
 
-
-export const loader = async () => {
-  const Lists = await window.myInventoryAPI.ListGet({
-    sheetName: 'その他一覧',
-    action: 'ListGet',
-    ranges: 'A2:N'
-  })
-
-  const storeData = Lists.map(item => {
-    const result = [item[0], item[1]]
-    return result
-  })
-  return { Lists, storeData }
-}
-
-export default function StoreDataUpDate() {
-  const { Lists, storeData } = useLoaderData<typeof loader>()
-  console.log(Lists)
 
   const NumberOfStores = storeData.length
 
   const StoreDataDefaultSet = () => {
     const result = storeData.map(item => {
       const resultdata = {
-        store: item[0],
-        type: {value: item[1], label: item[1]},
+        id: item[0],
+        store: item[1],
+        type: {value: item[2], label: item[2]},
       }
       return resultdata
     })
@@ -80,6 +64,7 @@ export default function StoreDataUpDate() {
 
   const appendStore = () => {
     append({
+      id: '',
       store: '',
       type: null,
     })
@@ -90,6 +75,7 @@ export default function StoreDataUpDate() {
     console.log(data)
     const senddata = data.map(item => {
       const result = [
+        item.id,
         item.store,
         item.type?.value ?? ''
       ]
@@ -106,7 +92,7 @@ export default function StoreDataUpDate() {
       updataValue: storedata,
       clearNumber: NumberOfStores,
       updataColumnNumber: 1,
-      updataColumnNums: 2,
+      updataColumnNums: 3,
     })
   }
 
@@ -123,9 +109,11 @@ export default function StoreDataUpDate() {
           <div>
             {fields.map((field, index) => (
               <div key={field.id} className="storeupdateArea">
-                <div style={{minWidth: 25, display: 'flex'}}>
-                  <div className="setting-rowNumber">{index}</div>
-                </div>
+                <input
+                  style={{ width: 40 }}
+                  {...register(`rows.${index}.id`)}
+                  placeholder='ID'
+                />
                 <input
                   {...register(`rows.${index}.store`)}
                   placeholder="店舗名"

@@ -1,53 +1,43 @@
 import React from 'react'
-//import Select from 'react-select'
 import { useLoaderData } from "react-router-dom"
 
-//import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import LinkBaner from '../comp/Linkbanar'
 import '../css/setting.css'
 
-
 import StoreDataUpDate from '../comp/storeDataUpdate'
 import VendorDataUpDate from '@renderer/comp/vendorDataUpdata'
-
-
-
-// interface SelectOption {
-//   value: string
-//   label: string
-// }
-
-
-// type FormValues = {
-//   rows: {
-//     vendor: { value: string; label: string } | null
-//     code: string
-//     name: string
-//     quantity: string
-//     price: string
-//   }[]
-// }
-
+import TypeDataUpDate from '../comp/productType'
 
 
 export const loader = async () => {
-  const Lists = await window.myInventoryAPI.ListGet({
-    sheetName: 'その他一覧',
+  const Vendors = await window.myInventoryAPI.ListGet({
+    sheetName: '業者一覧',
     action: 'ListGet',
-    ranges: 'A2:N'
+    ranges: 'A2:B'
   })
-  const storeData = Lists.map(item => {
-    const result = [item[0], item[1]]
-    return result
+
+  const Types = await window.myInventoryAPI.ListGet({
+    sheetName: '商品タイプ一覧',
+    action: 'ListGet',
+    ranges: 'A2:B'
   })
-  const vendorData = Lists.map(item => item[3])
-  //const storedata = await window.myInventoryAPI.shortageGet()
-  return { Lists, storeData, vendorData }
+
+  const Stores = await window.myInventoryAPI.ListGet({
+    sheetName: '店舗一覧',
+    action: 'ListGet',
+    ranges: 'A2:C'
+  })
+
+  const storeData = Stores?.filter(item => item[0] !== "")
+  const vendorData = Vendors?.filter(item => item[0] !== "")
+
+  const typeData = Types?.filter(item => item[0] !== "")
+  return { storeData, vendorData, typeData }
 }
 
 export default function SettingPage() {
-  const { Lists, storeData, vendorData } = useLoaderData<typeof loader>()
-  console.log(Lists, storeData, vendorData)
+  const { storeData, vendorData, typeData } = useLoaderData<typeof loader>()
+
 
 
   return (
@@ -60,8 +50,21 @@ export default function SettingPage() {
           設定ページ
         </div>
         <div style={{display: 'flex'}}>
-          <StoreDataUpDate/>
-          <VendorDataUpDate/>
+          <div>
+            <StoreDataUpDate
+              storeData={storeData}
+            />
+          </div>
+          <div>
+            <VendorDataUpDate
+              vendorData={vendorData}
+            /> 
+          </div>
+          <div>
+            <TypeDataUpDate
+              typeData={typeData}
+            />
+          </div>
         </div>
       </div>
     </>

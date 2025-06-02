@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-//import { ProcessConfirmationGet, OrderDeadline, orderGet, GASProcessUpdate, QuantityReset, shortageGet,kaigisituOrder } from '../backend/Server_end';
-//import { localStoreSet, PrintDataSet, SelectlocalStoreSet, ETCDATAGET } from '../backend/WebStorage';
-import Select from 'react-select';
-import '../css/process_check.css';
-import LinkBaner from '../comp/Linkbanar';
+import React, { useEffect, useState } from 'react'
+//import { ProcessConfirmationGet, OrderDeadline, orderGet, GASProcessUpdate, QuantityReset, shortageGet,kaigisituOrder } from '../backend/Server_end'
+//import { localStoreSet, PrintDataSet, SelectlocalStoreSet, ETCDATAGET } from '../backend/WebStorage'
+import Select from 'react-select'
+import '../css/process_check.css'
+import LinkBaner from '../comp/Linkbanar'
 
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast'
 
-import { Button } from '@mui/material';
+import { Button } from '@mui/material'
 
-import MoonLoader from 'react-spinners/MoonLoader';
+import MoonLoader from 'react-spinners/MoonLoader'
 
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 // import { createTheme, ThemeProvider } from '@mui/material/styles'
 // import { TextField } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
