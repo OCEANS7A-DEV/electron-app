@@ -3,23 +3,42 @@ import React, { useEffect, useState } from 'react';
 //import { localStoreSet, PrintDataSet, SelectlocalStoreSet, ETCDATAGET } from '../backend/WebStorage';
 import Select from 'react-select';
 import '../css/process_check.css';
-// import '../css/a_button.css';
 import LinkBaner from '../comp/Linkbanar';
-//import DeadLineDialog from './DeadLineDialog';
-//import QuantityResetDialog from './QuantityResetDialog';
+
 import toast, { Toaster } from 'react-hot-toast';
 
 import { Button } from '@mui/material';
 
 import MoonLoader from 'react-spinners/MoonLoader';
 
-//import { useNavigate } from "react-router-dom";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { TextField } from '@mui/material';
+import dayjs, { Dayjs } from 'dayjs'
+import 'dayjs/locale/ja'
 
 
-// import { useNavigate } from "@remix-run/react";
 
+// const darkTheme = createTheme({
+//   palette: {
+//     mode: 'dark',
+//     background: {
+//       default: '#2a2a30',
+//       paper: '#333',
+//     },
+//     primary: {
+//       main: '#90caf9',
+//     },
+//     text: {
+//       primary: '#ffffff',
+//     },
+//   },
+// })
 
-// import { useLoaderData, Link, useNavigation } from "@remix-run/react";
+dayjs.locale('ja')
+
 
 
 type CheckResultItem = {
@@ -85,10 +104,13 @@ export default function HQPage() {
   const [orderData, setOrderData] = useState([]);
 
   const [Listload, setListload] = useState(false);
+  const [dateValue, setDateValue] = useState<Dayjs | null>(dayjs());
 
-  //const navigate = useNavigate();
 
 
+  useEffect(() => {
+    setGetDate(dateValue?.format('YYYY-MM-DD') ?? "")
+  }, [dateValue])
 
 
   const OceanListGet = async () => {
@@ -342,7 +364,6 @@ export default function HQPage() {
     console.log(VendorList)
   }
 
-
   const casePrint = async () => {
     const setDate = new Date(getDate).toLocaleDateString()
     const stores = checkresult.filter((item: CheckResultItem) => item.process !== '未注文' && item.process !== '印刷済' && item.process !== '注文無')
@@ -424,7 +445,7 @@ export default function HQPage() {
       updataValue: '印刷済',
       updataDate: setDate
     })
-  };
+  }
 
 
   return (
@@ -437,13 +458,26 @@ export default function HQPage() {
         <div className="check_area">
           <div className="check_set">
             <Button variant="outlined" onClick={() => PrintProcessList()}>取得</Button>
-            <input
-              type="date"
-              className="insert_order_date"
-              max="9999-12-31"
-              value={getDate}
-              onChange={(e) => Dateset(e.target.value)}
-            />
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ja">
+              <DatePicker
+                slotProps={{
+                  textField: {
+                    size: 'small',
+                    fullWidth: true,
+                    sx: {
+                      fontSize: '1rem',
+                      '& input': {
+                        height: '1.5em',
+                      },
+                      width: '150px',
+                    },
+                  },
+                }}
+                value={dateValue}
+                onChange={(e) => setDateValue(e)}
+              />
+            </LocalizationProvider>
+            
           </div>
           {/* テーブルを表示 */}
           <div className="check">

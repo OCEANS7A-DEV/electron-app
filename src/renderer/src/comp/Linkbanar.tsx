@@ -99,7 +99,6 @@ const LinkBaner = () => {
           
         </div>
       </div>
-
       <div className="DrawerArea">
         <Drawer
           variant="persistent"
@@ -108,29 +107,24 @@ const LinkBaner = () => {
           sx={{
             '& .MuiDrawer-paper': {
               backgroundColor: "#40404a",
-              top: '30px',
+              top: '20px',
               marginTop: "40px",
               maxHeight: 'calc(100vh - 100px)',
             }
           }}
         >
           <div className="Link-button" style={{ marginTop: "40px" }}>
-            {/* <Link className="link" to="/">トップ</Link> */}
-            {/* <Link className="link" to="/about">テスト用</Link> */}
-            {/* <Link className="link" to="/">入庫</Link> */}
-            <Button variant="outlined" onClick={() => navigate('/')} sx={{height:'30px', margin: "5px 10px"}}>入庫</Button>
-            <Button variant='outlined' onClick={() => navigate('/StoreOrder')} sx={{height:'30px', margin: "5px 10px"}}>店舗注文</Button>
-            <Button variant='outlined' onClick={() => navigate('/Moving')} sx={{height:'30px', margin: "5px 10px"}}>店舗間移動</Button>
-            <Button variant="outlined" onClick={() => navigate('/HQ_Stocks')} sx={{height:'30px', margin: "5px 10px"}}>在庫数</Button>
+            <Button variant="outlined" onClick={() => navigate('/')} sx={{height:'30px', margin: "5px 10px", width: 120}}>入庫</Button>
+            <Button variant='outlined' onClick={() => navigate('/StoreOrder')} sx={{height:'30px', margin: "5px 10px", width: 120}}>店舗注文</Button>
+            <Button variant='outlined' onClick={() => navigate('/Moving')} sx={{height:'30px', margin: "5px 10px", width: 120}}>店舗間移動</Button>
+            <Button variant="outlined" onClick={() => navigate('/HQ_Stocks')} sx={{height:'30px', margin: "5px 10px", width: 120}}>在庫数</Button>
             {/* <Link className="link" to="/service">サービス品入庫</Link>
             <Link className="link" to="/HQ_Stocks">在庫数</Link>
             <Link className="link" to="/ImgUpload">商品画像設定</Link> */}
-            <Button variant="outlined" onClick={() => navigate('/netOrder')} sx={{height:'30px', margin: "5px 10px"}}>発注サイト</Button>
-            <Button variant="outlined" onClick={() => navigate('/process_chack')} sx={{height:'30px', margin: "5px 10px"}}>印刷関係</Button>
-            {/* <Link className="link" to="/netOrder">発注サイトリンク</Link> */}
-            {/* <Link className="link" to="/process_chack">印刷関係</Link> */}
-            <Button variant="outlined" onClick={() => navigate('/ProductListUpdata')} sx={{height:'30px', margin: "5px 10px"}}>商品設定</Button>
-            <Button variant="outlined" onClick={() => navigate('/setting')} sx={{height:'30px', margin: "5px 10px"}}>設定</Button>
+            <Button variant="outlined" onClick={() => navigate('/netOrder')} sx={{height:'30px', margin: "5px 10px", width: 120}}>発注サイト</Button>
+            <Button variant="outlined" onClick={() => navigate('/process_chack')} sx={{height:'30px', margin: "5px 10px", width: 120}}>印刷関係</Button>
+            <Button variant="outlined" onClick={() => navigate('/ProductListUpdata')} sx={{height:'30px', margin: "5px 10px", width: 120}}>商品設定</Button>
+            <Button variant="outlined" onClick={() => navigate('/setting')} sx={{height:'30px', margin: "5px 10px", width: 120}}>設定</Button>
           </div>
         </Drawer>
       </div>

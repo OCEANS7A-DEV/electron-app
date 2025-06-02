@@ -149,8 +149,6 @@ export default function StoreOrderPage() {
   }
 
   const insertPost = async () => {
-    //await Swal.fire("")
-    //toast.success('送信しました(test)')
     if(storeSelect == ''){
       await Swal.fire({
         icon: 'warning',
