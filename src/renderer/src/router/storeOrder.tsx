@@ -57,6 +57,7 @@ type FormValues = {
     quantity: string
     person: string
     remarks: string
+    price: string
   }[]
 }
 
@@ -71,7 +72,8 @@ const defaultSet = (): FormValues["rows"] => {
       detailList: [],
       quantity: '',
       person: '',
-      remarks: ''
+      remarks: '',
+      price: ''
     })
   }
   return result
@@ -108,7 +110,7 @@ export default function StoreOrderPage() {
   const swalWindow = async () => {
     setSwalProps({
       show: true,
-      title: '入力データ',
+      title: storeSelect,
       onConfirm: () => {
         setSwalProps({ show: false })
         insertPost()
@@ -150,7 +152,8 @@ export default function StoreOrderPage() {
         detailList: [],
         quantity: '',
         person: '',
-        remarks: ''
+        remarks: '',
+        price: ''
       })
     }
   }
@@ -167,36 +170,45 @@ export default function StoreOrderPage() {
       })
       return
     }
-    // return
-    // const filterData = getValues().rows.filter((row) => row.code !== '')
-    // const formData = filterData.map((item) => {
-    //   const result = [
-    //     InsertDate,
-    //     item.vendor,
-    //     item.code,
-    //     item.name,
-    //     item.quantity,
-    //     null
-    //   ]
-    //   return result
-    // })
-    // console.log(formData)
+    const Now = await window.myInventoryAPI.NowGet()
+    const filterData = getValues().rows.filter((row) => row.code !== '')
+    const formData = filterData.map((item) => {
+      const result = [
+        InsertDate,
+        storeSelect,
+        item.vendor,
+        item.code,
+        item.name,
+        item.detail?.value,
+        item.quantity,
+        '',
+        item.price,
+        null,
+        item.person,
+        item.remarks,
+        '未印刷',
+        Now[0],
+        Now[1]
+      ]
+      return result
+    })
+    console.log(formData)
 
-    // if (formData.length >= 1) {
-    //   await window.myInventoryAPI.DataInsert({
-    //     sheetName: '店舗へ',
-    //     action: 'insert',
-    //     data: formData,
-    //     formulaConfig: {
-    //       targetCol: 10,
-    //       formula: '=RC[-3]*RC[-1]'
-    //     }
-    //   })
-    // }
+    if (formData.length >= 1) {
+      await window.myInventoryAPI.DataInsert({
+        sheetName: '店舗へ',
+        action: 'insert',
+        data: formData,
+        formulaConfig: {
+          targetCol: 10,
+          formula: '=RC[-3]*RC[-1]'
+        }
+      })
+    }
     reset({
       rows: defaultSet()
     })
-    // toast.success('送信しました')
+    toast.success('送信しました')
   }
 
   const handleOpenDialog = () => {
@@ -223,18 +235,6 @@ export default function StoreOrderPage() {
   const handleChangeDate = (event: ChangeEvent<HTMLInputElement>) => {
     setDate(event.target.value)
   }
-
-  // const dataget = async () => {
-  //   try {
-  //     const data = await window.myInventoryAPI.ListData()
-  //     //console.log(data);
-  //     if (!data) {
-  //       throw new Error('APIからデータが返されませんでした')
-  //     }
-  //   } catch (error) {
-  //     console.error('データ取得エラー:', error)
-  //   }
-  // }
 
   const StoresGet = async () => {
     const stores = await window.myInventoryAPI.ListGet({
@@ -338,6 +338,7 @@ export default function StoreOrderPage() {
         return result
       })
       setValue(`rows.${index}.detailList`, detaillist)
+      setValue(`rows.${index}.price`, productData.newPrice)
       if(detailfilter.length !== 0){
         console.log('詳細あり')
       }
@@ -345,6 +346,7 @@ export default function StoreOrderPage() {
   }
 
   const RowRemove = async (index) => {
+    const scrollY = window.scrollY
     remove(index)
     append({
       vendor: '',
@@ -354,8 +356,12 @@ export default function StoreOrderPage() {
       detailList: [],
       quantity: '',
       person: '',
-      remarks: ''
+      remarks: '',
+      price: ''
     })
+    setTimeout(() => {
+      window.scrollTo(0, scrollY);
+    }, 0);
   }
 
 
@@ -507,6 +513,7 @@ export default function StoreOrderPage() {
           >
             <StoreDialogTable
               tableData={getValues().rows}
+              storeName={storeSelect}
             />
             
           </SweetAlert2>

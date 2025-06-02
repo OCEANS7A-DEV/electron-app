@@ -22,6 +22,7 @@ declare global {
       VendorData: () => Promise<any>;
       shortageGet: () => Promise<any>;
       PrintReady: () => Promise<any>;
+      NowGet: () => Promise<any>;
       orderPrint: (payload: string) => Promise<void>;
       storeSet: (settitle: string, setData: any) => Promise<void>;
       storeGet: (gettitle: string) => Promise<any>;

@@ -570,6 +570,22 @@ ipcMain.handle('Print-Ready', () => {
 
 
 
+ipcMain.handle('now-DateGet', () => {
+  const id = 'OCEAN_HQ'
+  const now = new Date();
+  const DateTime = new Intl.DateTimeFormat('ja-JP', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).format(now);
+
+  return [id, DateTime]
+})
+
+
 
 ipcMain.handle('printStatus', async (_event, payload: any) => {
   try {

@@ -106,7 +106,7 @@ export default function WordSearch({DisplayStatus, setDisplayStatus}) {
 
   return (
     <div className="WordSearch-area">
-      <div>
+      <div className="OandC">
         <Button variant='outlined' onClick={switching} sx={{ height: '30px' }}>
           {buttonlabel}
         </Button>

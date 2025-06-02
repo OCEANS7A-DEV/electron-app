@@ -16,6 +16,7 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   DataInsert: (payload) => ipcRenderer.invoke('data-insert', payload),
   ListData: () => ipcRenderer.invoke('product-list'),
   DetailsData: () => ipcRenderer.invoke('details-list'),
+  NowGet: () => ipcRenderer.invoke('now-DateGet'),
   VendorData: () => ipcRenderer.invoke('vendor-list'),
   shortageGet: () => ipcRenderer.invoke('shortageGet'),
   orderPrint: (payload) => ipcRenderer.invoke('orderPrint', payload),

@@ -82,9 +82,19 @@ export default function ReceivingPage() {
 
   const [InsertDate, setDate] = useState<string>('')
 
-  const [swalProps, setSwalProps] = useState({});
+  const [swalProps, setSwalProps] = useState({})
 
-  
+  const [DisplayStatus, setDisplayStatus] = useState(false)
+
+  const [marginNum, setMarginNum] = useState(100)
+
+  useEffect(() => {
+    if(DisplayStatus){
+      setMarginNum(330)
+    }else{
+      setMarginNum(80)
+    }
+  },[DisplayStatus])
 
   const swalWindow = async () => {
     setSwalProps({
@@ -265,6 +275,7 @@ export default function ReceivingPage() {
   }
 
   const RowRemove = async (index) => {
+    const scrollY = window.scrollY
     remove(index)
     append({
       vendor: null,
@@ -273,6 +284,9 @@ export default function ReceivingPage() {
       quantity: '',
       price: ''
     })
+    setTimeout(() => {
+      window.scrollTo(0, scrollY);
+    }, 0);
   }
 
   return (
@@ -292,8 +306,11 @@ export default function ReceivingPage() {
           />
         </div>
         <div className="form_area">
-          <WordSearch />
-          <div className="in-area">
+          <WordSearch
+            DisplayStatus={DisplayStatus}
+            setDisplayStatus={setDisplayStatus}
+          />
+          <div className="in-area" style={{marginLeft: `${marginNum}px`}}>
             <form onSubmit={handleSubmit(onSubmit)} className="p-4">
               {fields.map((field, index) => (
                 <div key={field.id} className="insert_area">
