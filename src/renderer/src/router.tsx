@@ -10,11 +10,12 @@ import NETOrder, { loader as netOrderLoader } from './router/netOrder'
 import HQStocks, { loader as HQStocksLoader } from './router/HQ_stocks'
 import HQPage from './router/process_chack'
 import PrintContent, { loader as PrintLoader } from './router/PrintContent'
-import TaiyoPrint, {loader as TaiyoLoader} from './router/taiyo'
-import EtcPrint, {loader as EtcLoader} from './router/VendorPrint'
-import SettingPage, {loader as SettingLoader} from './router/setting'
+import TaiyoPrint, { loader as TaiyoLoader } from './router/taiyo'
+import EtcPrint, { loader as EtcLoader } from './router/VendorPrint'
+import SettingPage, { loader as SettingLoader } from './router/setting'
 import DetailContent from './router/productDetailEdit'
 import UpdateWindow from './router/updater'
+import InventoryMoving from './router/Moving'
 
 
 
@@ -74,5 +75,9 @@ export const router = createHashRouter([
   {
     path: '/updater',
     element: <UpdateWindow/>
+  },
+  {
+    path: '/Moving',
+    element: <InventoryMoving />,
   }
 ])

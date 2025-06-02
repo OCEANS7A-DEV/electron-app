@@ -8,6 +8,7 @@ const api = {}
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
 contextBridge.exposeInMainWorld('myInventoryAPI', {
+  isDev: process.env.NODE_ENV === 'development',
   fetchData: () => ipcRenderer.invoke('fetch-data'),
   postData: (endpoint: string, payload: any) => ipcRenderer.invoke('post-data', endpoint, payload),
   postDataGet: (endpoint: string) => ipcRenderer.invoke('post-get-data', endpoint),

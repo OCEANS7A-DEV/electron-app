@@ -5,6 +5,7 @@ export {}
 declare global {
   interface Window {
     myInventoryAPI: {
+      isDev: boolean;
       UpdaterClose: any;
       MainBoot: any;
       onCheckedUpdate(arg0: (value: any) => void): unknown;

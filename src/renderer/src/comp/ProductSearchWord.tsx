@@ -104,6 +104,10 @@ export default function WordSearch({DisplayStatus, setDisplayStatus}) {
     buttonlabelSet()
   }, [])
 
+  useEffect(() => {
+    buttonlabelSet()
+  }, [DisplayStatus])
+
   return (
     <div className="WordSearch-area">
       <div className="OandC">
