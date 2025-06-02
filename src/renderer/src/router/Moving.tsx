@@ -104,6 +104,8 @@ export default function InventoryMoving() {
 
   const [storeOptions, setStoreOptions] = useState<SelectOption[]>([])
 
+  const [ProductdetailsList, setProductdetailsList] = useState([])
+
 
 
   const { control, register, handleSubmit, getValues, setValue, reset } =
@@ -149,9 +151,15 @@ export default function InventoryMoving() {
     }
   }, [DisplayStatus])
 
+  const DetailsSet = async () => {
+    const list = await window.myInventoryAPI.DetailsData()
+    const filtered = list.filter(row => row[1] !== '')
+    setProductdetailsList(filtered)
+  }
 
   useEffect(() => {
     StoresGet()
+    DetailsSet()
   }, [])
 
 
