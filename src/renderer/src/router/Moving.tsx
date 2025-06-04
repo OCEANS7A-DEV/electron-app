@@ -269,6 +269,10 @@ export default function InventoryMoving() {
     toast.success('送信しました')
   }
 
+  const RegisterData = async (data) => {
+    console.log(data)
+  }
+
   return (
     <>
       <div>
@@ -280,6 +284,7 @@ export default function InventoryMoving() {
           <WordSearch
             DisplayStatus={DisplayStatus}
             setDisplayStatus={setDisplayStatus}
+            RegisterData={RegisterData}
           />
           <div className='in-area' style={{marginLeft: `${marginNum}px`, flex: 1}}>
             {(!isDev && !Completeness) ? (
