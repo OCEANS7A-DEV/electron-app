@@ -82,10 +82,10 @@
 .search-data-table tr:nth-child(even) {
   background-color: #f9f9f9; /* 偶数行の背景色を変更 */
 }
+
 .search-table {
   display: flex;
   flex: 1;
-  height: calc(100vh - 230px);
   overflow-y: scroll; /* 縦スクロールを追加 */
   width: 310px; /* 親要素の幅いっぱいに */
 }
@@ -123,12 +123,13 @@
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;  /* 長いテキストは「...」で省略 */
+  text-overflow: ellipsis;
 }
 
 .stcode{
   width: 75px;
 }
+
 .stname{
   display: flex;
   width: 180px;
@@ -137,14 +138,17 @@
 }
 
 
-
-
 .WordSearchA {
-  flex: 1;
+  height: calc(100% - 30px);
+  display: flex;
+  flex-direction: column;
 }
 
 
 .OandC {
   display: flex;
 }
+
+
+
 

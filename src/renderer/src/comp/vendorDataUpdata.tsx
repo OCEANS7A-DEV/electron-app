@@ -99,7 +99,7 @@ export default function VendorDataUpDate({ vendorData }) {
             {fields.map((field, index) => (
               <div key={field.id} className="storeupdateArea">
                 <input
-                  style={{ height: 32, width: 40 }}
+                  style={{ height: 32, width: 40, textAlign: 'right' }}
                   {...register(`rows.${index}.id`)}
                   placeholder='ID'
                 />

@@ -95,22 +95,28 @@ export default function TypeDataUpDate({ typeData }) {
             {fields.map((field, index) => (
               <div key={field.id} className="storeupdateArea">
                 <input
-                  style={{ height: 32, width: 40 }}
+                  style={{ height: 32, width: 40, textAlign: 'right' }}
                   {...register(`rows.${index}.id`)}
-                  placeholder='ID'
+                  placeholder="ID"
                 />
                 <input
                   style={{ height: 32, width: 150 }}
                   {...register(`rows.${index}.type`)}
                   placeholder="タイプ名"
                 />
-                <Button variant='outlined' onClick={() => deleteRow(index)}>削除</Button>
+                <Button variant="outlined" onClick={() => deleteRow(index)}>
+                  削除
+                </Button>
               </div>
             ))}
           </div>
           <div className="buttonArea">
-            <Button variant='outlined' onClick={() => appendStore()}>追加</Button>
-            <Button variant='outlined' onClick={() => sendData()}>データ送信</Button>
+            <Button variant="outlined" onClick={() => appendStore()}>
+              追加
+            </Button>
+            <Button variant="outlined" onClick={() => sendData()}>
+              データ送信
+            </Button>
           </div>
         </div>
       </div>

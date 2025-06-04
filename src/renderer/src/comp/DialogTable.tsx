@@ -1,17 +1,16 @@
 // ConfirmDialog.tsx
-import React from 'react';
-//import ReactDOM from 'react-dom';
+import React from 'react'
+//import ReactDOM from 'react-dom'
 
 
 
-import '../css/orderDialog.css';
+import '../css/orderDialog.css'
 
 interface ConfirmDialogProps {
-  tableData: Array<any>;
+  tableData: Array<any>
 }
 
-const ConfirmDialogTable: React.FC<ConfirmDialogProps> = ({tableData}) => {
-  console.log(tableData)
+const ConfirmDialogTable: React.FC<ConfirmDialogProps> = ({ tableData }) => {
   return (
     <div className="modal-dialog-table-area">
       <table className='data-table'>
@@ -27,8 +26,8 @@ const ConfirmDialogTable: React.FC<ConfirmDialogProps> = ({tableData}) => {
         <tbody>
           {tableData
             .filter((row) => {
-              const 商品コード = row.code;
-              return 商品コード !== '';
+              const 商品コード = row.code
+              return 商品コード !== ''
             })
             .map((row, index) => (
               <tr key={index}>
@@ -42,7 +41,7 @@ const ConfirmDialogTable: React.FC<ConfirmDialogProps> = ({tableData}) => {
         </tbody>
       </table>
     </div>
-  );
-};
+  )
+}
 
-export default ConfirmDialogTable;
+export default ConfirmDialogTable

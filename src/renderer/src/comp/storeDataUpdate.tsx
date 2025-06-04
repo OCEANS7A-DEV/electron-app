@@ -110,7 +110,7 @@ export default function StoreDataUpDate({storeData}) {
             {fields.map((field, index) => (
               <div key={field.id} className="storeupdateArea">
                 <input
-                  style={{ width: 40 }}
+                  style={{ width: 40, textAlign: 'right' }}
                   {...register(`rows.${index}.id`)}
                   placeholder='ID'
                 />

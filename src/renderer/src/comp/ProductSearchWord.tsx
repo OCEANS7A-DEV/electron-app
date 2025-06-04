@@ -10,7 +10,7 @@ import jaconv from 'jaconv';
 
 
 
-export default function WordSearch({DisplayStatus, setDisplayStatus}) {
+export default function WordSearch({DisplayStatus, setDisplayStatus, RegisterData}) {
   const [SWord, setSWord] = useState<string>('')
   const [tableData, setTableData] = useState<any[]>([])
   const [data, setData] = useState<any[]>([])
@@ -23,9 +23,10 @@ export default function WordSearch({DisplayStatus, setDisplayStatus}) {
   }
   
   const productReSearch = async () => {
-    if(!SWord){
+    //console.log(SWord)
+    if (!SWord){
       setTableData(data)
-    }else {
+    } else {
       const swKZ = jaconv.toKatakana(SWord);
       const swHZ = jaconv.toHiragana(swKZ);
       const swKH = jaconv.toHan(swKZ);
@@ -42,6 +43,7 @@ export default function WordSearch({DisplayStatus, setDisplayStatus}) {
       const flatData = resultSearch.flat(1)
       const matchedRowsF = flatData.map((r: any) => r.item)
       const NotDuplicated = [...new Set(matchedRowsF)]
+      //console.log(NotDuplicated)
       setTableData(NotDuplicated)
     }
   }
@@ -99,6 +101,10 @@ export default function WordSearch({DisplayStatus, setDisplayStatus}) {
     setButtonLabel(result)
   }
 
+  const ProductClick = async(row) => {
+    RegisterData(row)
+  }
+
   useEffect(() => {
     dataSet()
     buttonlabelSet()
@@ -143,8 +149,19 @@ export default function WordSearch({DisplayStatus, setDisplayStatus}) {
               <tbody className="datail">
                 {tableData.map((row, index) => (
                   <tr key={index}>
-                    <td className="scode">{row.code}</td> {/* 商品コードは配列の2番目の要素 */}
-                    <td className="sname">{row.name}</td> {/* 商品名は配列の3番目の要素 */}
+                    <td className="scode">
+                      <Button sx={{ height: '30px' }} onClick={() => ProductClick(row)}>
+                        {row.code}
+                      </Button>
+                    </td>
+                    <td className="sname">
+                      <Button
+                        sx={{ height: '30px', color: 'black' }}
+                        onClick={() => ProductClick(row)}
+                      >
+                        {row.name}
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -140,7 +140,7 @@ export const productGet = async () => {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: JSON.stringify({ sheetName: '在庫一覧', action: 'ListGet', ranges: 'A2:L' })
+      body: JSON.stringify({ sheetName: '在庫一覧', action: 'ListGet', ranges: 'A2:N' })
     })
     const result = await response.json()
     return result
@@ -157,7 +157,7 @@ export const vendorGet = async () => {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: JSON.stringify({ sheetName: 'その他一覧', action: 'ListGet', ranges: 'D2:D' })
+      body: JSON.stringify({ sheetName: '業者一覧', action: 'ListGet', ranges: 'A2:B' })
     })
     const result = await response.json()
     return result
@@ -243,7 +243,8 @@ export const StartUpSet = async () => {
       remarks: item[8],
       Possibility: item[9],
       service: item[10],
-      order: item[11]
+      order: item[11],
+      vendorid: item[13]
     }
     return result
   })

@@ -26,6 +26,7 @@ import toast, { Toaster } from 'react-hot-toast';
 interface SelectOption {
   value: string
   label: string
+  id: string
 }
 
 // interface InventoryDataType {
@@ -46,7 +47,7 @@ interface SelectOption {
 
 type FormValues = {
   rows: {
-    vendor: { value: string, label: string } | null
+    vendor: { value: string, label: string, id: string } | null
     code: string
     name: string
     quantity: string
@@ -76,9 +77,6 @@ const defaultSet = (): FormValues["rows"] => {
 
 export default function ReceivingPage() {
   const [VendorList, setVendorList] = useState<SelectOption[]>([])
-  //const [isDialogOpen, setDialogOpen] = useState(false)
-  // const message =
-  //   '入庫内容は以下の通りです\n以下の内容でよろしければOKをクリックしてください\n内容の変更がある場合にはキャンセルをクリックしてください'
 
   const [InsertDate, setDate] = useState<string>('')
 
@@ -101,14 +99,17 @@ export default function ReceivingPage() {
       show: true,
       title: '入力データ',
       onConfirm: () => {
-        setSwalProps({ show: false })
-        insertPost()
-        toast.success('送信しました')
+        const filterData = getValues().rows.filter((row) => row.code !== '')
+        if(filterData.length !== 0){
+          setSwalProps({ show: false })
+          insertPost()
+          toast.success('送信しました')
+        }else{
+          toast.error('送信できるデータがありません')
+        }
       }
-    }); 
+    })
   }
-
-
 
 
   const { control, register, handleSubmit, getValues, setValue, reset } =
@@ -118,7 +119,7 @@ export default function ReceivingPage() {
       }
     })
 
-  const { fields, append, remove } = useFieldArray<FormValues>({
+  const { fields, append, remove, insert } = useFieldArray<FormValues>({
     control,
     name: 'rows'
   })
@@ -131,14 +132,16 @@ export default function ReceivingPage() {
   const isHalfWidth = (value: string) => /^[\x20-\x7E]*$/.test(value)
 
   const VendorListGet = async () => {
-    const result: SelectOption[] = []
     const list = await window.myInventoryAPI.VendorData()
-    for (let i = 0; i < list.length; i++) {
-      result.push({
-        value: list[i][0],
-        label: list[i][0]
-      })
-    }
+    const filtered = list.filter(item => item[0] !== '')
+    const result = filtered.map(item => {
+      const data = {
+        value: item[1],
+        label: item[1],
+        id: item[0]
+      }
+      return data
+    })
     setVendorList(result)
   }
 
@@ -150,7 +153,7 @@ export default function ReceivingPage() {
         name: '',
         quantity: '',
         price: ''
-      })
+      }, { shouldFocus: false })
     }
   }
 
@@ -164,7 +167,8 @@ export default function ReceivingPage() {
         item.name,
         item.quantity,
         item.price,
-        null
+        null,
+        item.vendor?.id
       ]
       return result
     })
@@ -175,8 +179,8 @@ export default function ReceivingPage() {
         action: 'insert',
         data: formData,
         formulaConfig: {
-          targetCol: 7,    // 合計金額を入れる列（例：G列 → 7）
-          formula: '=RC[-2]*RC[-1]'  // R1C1形式の式
+          targetCol: 7,
+          formula: '=RC[-2]*RC[-1]'
         }
       })
     }
@@ -194,38 +198,11 @@ export default function ReceivingPage() {
     //setDialogOpen(true)
   }
 
-  // const handleConfirm = () => {
-  //   alert('確認が完了しました')
-  //   insertPost()
-  //   setDialogOpen(false)
-  //   setFormData(initialFormData)
-  // }
-
-  // const handleCancel = () => {
-  //   alert('キャンセルされました')
-  //   setDialogOpen(false)
-  // }
-
   const handleChangeDate = (event: ChangeEvent<HTMLInputElement>) => {
     setDate(event.target.value)
   }
 
-  // const dataget = async () => {
-  //   try {
-  //     const data = await window.myInventoryAPI.ListData()
-  //     //console.log(data);
-  //     if (!data) {
-  //       throw new Error('APIからデータが返されませんでした')
-  //     }
-  //   } catch (error) {
-  //     console.error('データ取得エラー:', error)
-  //   }
-  // }
-
   useEffect(() => {
-    //dataget()
-    //defaultSet()
-
     VendorListGet()
   }, [])
 
@@ -248,11 +225,24 @@ export default function ReceivingPage() {
 
         if (nextElement && nextElement.type !== 'button') {
           nextElement.focus()
+          
         } else {
           const nextCodeInput = document.querySelector<HTMLInputElement>(
             `input[name="rows.${rowIndex + 1}.code"]`
           )
           nextCodeInput?.focus()
+          const headerHeight = 80;
+          const footerHeight = 60;
+          const buffer = 20;
+          const rect = nextElement.getBoundingClientRect();
+          const isOutOfViewTop = rect.top < headerHeight + buffer;
+          const isOutOfViewBottom = rect.bottom > window.innerHeight - footerHeight - buffer;
+          if (isOutOfViewTop || isOutOfViewBottom) {
+            window.scrollBy({
+              top: rect.top - headerHeight - buffer,
+              behavior: 'smooth',
+            });
+          }
         }
       }
       
@@ -265,7 +255,7 @@ export default function ReceivingPage() {
     const code = values.rows[index].code
     const productData = List.find((item) => item.code === Number(code))
     if (productData) {
-      const vendordata = { value: productData.vendor, label: productData.vendor }
+      const vendordata = { value: productData.vendor, label: productData.vendor, id: productData.vendorid }
       const name = productData.name
       const Price = productData.newPrice
       setValue(`rows.${index}.vendor`, vendordata)
@@ -275,7 +265,6 @@ export default function ReceivingPage() {
   }
 
   const RowRemove = async (index) => {
-    const scrollY = window.scrollY
     remove(index)
     append({
       vendor: null,
@@ -283,10 +272,19 @@ export default function ReceivingPage() {
       name: '',
       quantity: '',
       price: ''
+    }, { shouldFocus: false })
+  }
+
+  const RegisterData = async(data) => {
+    const filterData = getValues().rows.filter((row) => row.code !== '')
+    const vendordata = { value: data.vendor, label: data.vendor, id: data.vendorid }
+    insert(filterData.length, {
+      vendor: vendordata,
+      code: data.code,
+      name: data.name,
+      quantity: '',
+      price: data.newPrice
     })
-    setTimeout(() => {
-      window.scrollTo(0, scrollY);
-    }, 0);
   }
 
   return (
@@ -309,6 +307,7 @@ export default function ReceivingPage() {
           <WordSearch
             DisplayStatus={DisplayStatus}
             setDisplayStatus={setDisplayStatus}
+            RegisterData={RegisterData}
           />
           <div className="in-area" style={{marginLeft: `${marginNum}px`}}>
             <form onSubmit={handleSubmit(onSubmit)} className="p-4">
@@ -382,15 +381,6 @@ export default function ReceivingPage() {
           <Button variant="outlined" onClick={handleOpenDialog} endIcon={<SendIcon />}>
             入庫実行
           </Button>
-          {/* <a className="buttonUnderlineS" type="button" onClick={handleOpenDialog}>入庫実行＞＞</a> */}
-          {/* <ConfirmDialog
-            title="確認"
-            message={message}
-            tableData={formData}
-            onConfirm={handleConfirm}
-            onCancel={handleCancel}
-            isOpen={isDialogOpen}
-          /> */}
           <SweetAlert2
             {...swalProps}
             didClose={() => {
@@ -401,7 +391,6 @@ export default function ReceivingPage() {
             <ConfirmDialogTable
               tableData={getValues().rows}
             />
-            
           </SweetAlert2>
         </div>
       </div>

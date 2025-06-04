@@ -54,7 +54,7 @@ export const loader = async () => {
   })
 
   const vendorSelect = vendorData.filter(row => row[0] !== "").map(item => {
-    const result = {value: item[0], label: item[0]}
+    const result = { value: item[1], label: item[1] }
     return result
   })
 

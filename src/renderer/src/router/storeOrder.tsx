@@ -128,7 +128,7 @@ export default function StoreOrderPage() {
       }
     })
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, insert } = useFieldArray({
     control,
     name: 'rows'
   })
@@ -144,7 +144,7 @@ export default function StoreOrderPage() {
 
   const addNewForm = () => {
     for (let i = 0; i < 20; i++) {
-      append(defaultRowData)
+      append(defaultRowData, { shouldFocus: false })
     }
   }
 
@@ -237,7 +237,7 @@ export default function StoreOrderPage() {
         value: item[0],
         label: item[0]
       }));
-    console.log(storenames)
+    //console.log(storenames)
     setStoreOptions(storenames);
   }
 
@@ -284,8 +284,10 @@ export default function StoreOrderPage() {
       if (form) {
         const elements = Array.from(form.elements) as HTMLElement[];
         const index = elements.indexOf(e.target as HTMLElement);
+        let focused = false;
         for (let i = index + 1; i < elements.length; i++) {
           const next = elements[i] as HTMLElement;
+          console.log(index)
           if (
             next &&
             typeof next.focus === 'function' &&
@@ -298,8 +300,25 @@ export default function StoreOrderPage() {
             next.type !== 'button'
           ) {
             next.focus();
+            const headerHeight = 80;
+            const footerHeight = 60;
+            const buffer = 20;
+            const rect = next.getBoundingClientRect();
+            const isOutOfViewTop = rect.top < headerHeight + buffer;
+            const isOutOfViewBottom = rect.bottom > window.innerHeight - footerHeight - buffer;
+
+            if (isOutOfViewTop || isOutOfViewBottom) {
+              window.scrollBy({
+                top: rect.top - headerHeight - buffer,
+                behavior: 'smooth',
+              });
+            }
+            focused = true;
             break;
           }
+        }
+        if (!focused) {
+          addNewForm()
         }
       }
     }
@@ -333,19 +352,47 @@ export default function StoreOrderPage() {
     }
   }
 
+  const selectForcus = async(row) => {
+    const input = document.querySelector<HTMLInputElement>(
+      `input[name="rows.${row}.code"]`
+    )
+    if (input) input.focus();
+  }
+
+
+
   const RowRemove = async (index) => {
-    const scrollY = window.scrollY
     remove(index)
-    append(defaultRowData)
+    append(defaultRowData, { shouldFocus: false })
     setTimeout(() => {
-      window.scrollTo(0, scrollY);
-    }, 0);
+      selectForcus(index)
+    }, 0)
   }
 
 
   const handleStoreChange = (event: SelectChangeEvent) => {
     setStoreSelect(event.target.value as string);
   };
+
+  const RegisterData = async(data) => {
+    //console.log(data)
+    const filterData = getValues().rows.filter((row) => row.code !== '')
+    //const vendordata = { value: data.vendor, label: data.vendor, id: data.vendorid }
+    const list = await window.myInventoryAPI.DetailsData()
+    const filtered = list.filter(row => row[1] !== '')
+    const details = filtered.filter(item => item[0] == data.code)
+    insert(filterData.length, {
+      vendor: data.vendor,
+      code: data.code,
+      name: data.name,
+      detail: null,
+      detailList: details,
+      quantity: '',
+      person: '',
+      remarks: '',
+      price: data.newPrice
+    })
+  }
 
 
   return (
@@ -359,6 +406,7 @@ export default function StoreOrderPage() {
           <WordSearch
             DisplayStatus={DisplayStatus}
             setDisplayStatus={setDisplayStatus}
+            RegisterData={RegisterData}
           />
           <div className="in-area" style={{marginLeft: `${marginNum}px`}}>
             <div className="insertDate">
@@ -390,6 +438,7 @@ export default function StoreOrderPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="p-4">
               {fields.map((field, index) => (
                 <div key={field.id} className="insert_area_store">
+                  <div style={{width: 24, textAlign: 'right', color: 'white', marginRight: 4}}>{index + 1}</div>
                   <input
                     {...register(`rows.${index}.vendor`)}
                     className="insert_vendor"

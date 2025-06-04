@@ -9,10 +9,10 @@ interface ConfirmDialogProps {
   tableData: Array<any>;
 }
 
-const StoreDialogTable: React.FC<ConfirmDialogProps> = ({tableData}) => {
+const StoreDialogTable: React.FC<ConfirmDialogProps> = ({ tableData }) => {
   return (
     <div className="modal-dialog-table-area">
-      <table className='data-table'>
+      <table className="data-table">
         <thead>
           <tr>
             <th className='dtvendor'>業者</th>
