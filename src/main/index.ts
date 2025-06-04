@@ -307,6 +307,7 @@ const setupAutoUpdater = () => {
       }
     }catch{
       // エラー時は何もしない
+      createWindow()
     }
     
     
@@ -325,12 +326,14 @@ const setupAutoUpdater = () => {
       }
     }catch{
       // エラー時は何もしない
+      createWindow()
     }
     
   })
 
   autoUpdater.on('error', (error) => {
     log.error('アップデートエラー:', error)
+    createWindow()
   })
 
   autoUpdater.on('update-downloaded', () => {
@@ -348,6 +351,7 @@ const setupAutoUpdater = () => {
         }
       }catch{
         // エラー時は何もしない
+        createWindow()
       }
     }
   })

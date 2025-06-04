@@ -427,7 +427,7 @@ export default function StoreOrderPage() {
                   </MenuItem>
                 ))}
               </Select>
-              <h2 style={{ color: 'white' }}>入庫日付</h2>
+              <h2 style={{ color: 'white' }}>注文日付</h2>
               <input
                 type="date"
                 className="insert_date"
