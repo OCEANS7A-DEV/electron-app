@@ -110,6 +110,7 @@
 .cell-vendor {
   min-width: 160px;
   max-width: 160px;
+  
 }
 .cell-code {
   min-width: 80px;
@@ -123,6 +124,7 @@
 .cell-price {
   min-width: 80px;
   max-width: 80px;
+  margin-right: 2px;
 }
 .cell-type {
   min-width: 160px;
@@ -164,6 +166,29 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
+}
+
+.div-name{
+  width: 296px;
+  height: 36px;
+  align-items: center;
+  background-color: white;
+  display: flex;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.div-vendor {
+  min-width: 156px;
+  max-width: 156px;
+  height: 36px;
+  align-items: center;
+  background-color: white;
+  display: flex;
+  white-space: nowrap;
+  overflow: hidden;
+  border: 1px solid gray;
+  padding-left: 4px;
 }
 
 

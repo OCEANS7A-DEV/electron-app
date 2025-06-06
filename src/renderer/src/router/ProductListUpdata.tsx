@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { useLoaderData } from "react-router-dom"
 import LinkBaner from '../comp/Linkbanar'
@@ -12,10 +12,12 @@ import { Button } from '@mui/material'
 import Switch from '@mui/material/Switch'
 import { LinearProgress } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-
+import toast, { Toaster } from 'react-hot-toast';
 
 import { FixedSizeList as List } from 'react-window';
 
+import AddProductDialogTable from '../comp/NewProduct';
+import SweetAlert2 from 'react-sweetalert2';
 
 
 
@@ -38,29 +40,45 @@ type FormValues = {
   }[]
 }
 
+const defaultRowData = {
+  vendor: null,
+  code: '',
+  name: '',
+  defPrice: '',
+  newPrice: '',
+  VCPrice: '',
+  valuePrice: '',
+  type: null,
+  remarks: '',
+  possibility: false,
+  service: '',
+  orderNum: ''
+}
+
 
 export const loader = async () => {
   const vendorData = await window.myInventoryAPI.VendorData() ?? []
+  //console.log(vendorData)
   const Lists = await window.myInventoryAPI.ListGet({
-    sheetName: '在庫一覧',
+    sheetName: '在庫一覧テスト',
     action: 'ListGet',
-    ranges: 'A2:L'
+    ranges: 'B3:L'
   })
 
-  const etcList =  await window.myInventoryAPI.ListGet({
-    sheetName: 'その他一覧',
+  const typeList = await window.myInventoryAPI.ListGet({
+    sheetName: '商品タイプ一覧',
     action: 'ListGet',
-    ranges: 'A2:F'
+    ranges: 'A2:B'
   })
 
   const vendorSelect = vendorData.filter(row => row[0] !== "").map(item => {
-    const result = { value: item[1], label: item[1] }
+    const result = { value: item[1], label: item[1], id: item[0] }
     return result
   })
 
-  const types = etcList
-  .filter(item => item[5] && item[5] !== "")
-  .map(item => ({ value: item[5], label: item[5] }));
+  const types = typeList
+  .filter(item => item[0] && item[0] !== "")
+  .map(item => ({ value: item[1], label: item[1], id: item[0] }));
 
   return { vendorSelect, Lists, types }
 }
@@ -69,11 +87,33 @@ export const loader = async () => {
 export default function ProductDetailChangePage() {
   const { vendorSelect, Lists, types } = useLoaderData<typeof loader>()
   const [modalOpen, setModalOpen] = useState(false)
+  const [newmodalOpen, setnewModalOpen] = useState(false)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
+  const [addRowIndex, setAddRowIndex] = useState<number>(0)
   const [loading, setLoading] = useState(false)
   const defListsLength = Lists.length
 
   const [height, setHeight] = useState<number>(0);
+
+  const [swalProps, setSwalProps] = useState({})
+
+  const swalWindow = async () => {
+    setSwalProps({
+      show: true,
+      title: '入力データ',
+      onConfirm: () => {
+        const filterData = getValues().rows.filter((row) => row.code !== '')
+        if(filterData.length !== 0){
+          setSwalProps({ show: false })
+          //insertPost()
+          toast.success('送信しました')
+        } else {
+          toast.error('送信できるデータがありません')
+        }
+      }
+    })
+  }
+
 
   useEffect(() => {
     const updateHeight = () => {
@@ -86,30 +126,27 @@ export default function ProductDetailChangePage() {
   }, []);
 
   const StoreDataDefaultSet = () => {
-    const result = Lists.map(item => {
-      const resultdata = {
-        vendor: {value: item[0], label: item[0]},
-        code: item[1],
-        name: item[2],
-        defPrice: item[3],
-        newPrice: item[4],
-        VCPrice: item[5],
-        valuePrice: item[6],
-        type: {value: item[7], label: item[7]},
-        remarks: item[8],
-        possibility: item[9] === false ? false : true,
-        service: item[10],
-        orderNum: item[11]
-      }
-      return resultdata
-    })
-    return result
+    return Lists.map(item => ({
+      vendor: vendorSelect.find(row => row.id == item[0]) ?? null,
+      code: item[1],
+      name: item[2],
+      newPrice: String(item[3]),
+      VCPrice: String(item[4]),
+      valuePrice: String(item[5]),
+      type: types.find(row => row.id == item[6]) ?? null,
+      remarks: item[7],
+      possibility: item[8] === false ? false : true,
+      service: item[9],
+      orderNum: item[10],
+    }))
   }
+
+  const defaultRows = useRef(StoreDataDefaultSet())
 
   const { control, register, getValues, reset } =
     useForm<FormValues>({
       defaultValues: {
-        rows: StoreDataDefaultSet()
+        rows: defaultRows.current,
       }
     })
 
@@ -169,6 +206,7 @@ export default function ProductDetailChangePage() {
   }
 
   const RowAppend = () => {
+    
     append({
       vendor: null,
       code: '',
@@ -220,10 +258,85 @@ export default function ProductDetailChangePage() {
     })
   }
 
+  const getDiffKeys = (newData: Record<string, any>, originalData: Record<string, any>) => {
+    return Object.keys(newData).filter(key => {
+      const a = newData[key];
+      const b = originalData[key];
+
+      // 両方オブジェクト（nullも弾く）で、valueキーがあるなら value を比較
+      if (
+        typeof a === 'object' &&
+        typeof b === 'object' &&
+        a !== null &&
+        b !== null &&
+        'value' in a &&
+        'value' in b
+      ) {
+        return a.value !== b.value;
+      }
+
+      return a !== b;
+    });
+  }
+
+
+  const update = async (index) => {
+    const data = getValues().rows[index]
+    console.log(data)
+    const search = defaultRows.current.find(item => item.code == data.code)
+    if (search) {
+      const original = defaultRows.current[index]
+      const diffKeys = getDiffKeys(data, original)
+      if (diffKeys.length === 0) {
+        toast.error('変更箇所はありません')
+        setModalOpen(false)
+        return
+      }
+      const now = new Date().toLocaleString()
+      diffKeys.forEach(async (item) => {
+        console.log(item)
+        let sheet
+        let insertData
+        if (item == 'name'){
+          insertData = [data.code, data.name, now]
+          sheet = '商品名'
+        } else if (item == 'newPrice'){
+          insertData = [data.code, data.newPrice, now]
+          sheet = '価格'
+        } else if (item == 'VCPrice'){
+          insertData = [data.code, data.VCPrice, now]
+          sheet = 'VC価格'
+        } else if (item == 'valuePrice'){
+          insertData = [data.code, data.valuePrice, now]
+          sheet = '店販'
+        } else if (item == 'remarks'){
+          insertData = [data.code, data.remarks, now]
+          sheet = '備考'
+        } else if (item == 'possibility'){
+          insertData = [data.code, data.possibility, now]
+          sheet = '発注可否'
+        } else if (item == 'service'){
+          insertData = [data.code, data.service, now]
+          sheet = 'サービス数'
+        }
+        console.log(sheet)
+        console.log(insertData)
+        // await window.myInventoryAPI.DataInsert({
+        //   sheetName: sheet,
+        //   action: 'DataHistory',
+        //   updataValue: insertData,
+        // })
+      })
+      setModalOpen(false)
+    }
+    
+  }
+
   return(
     <div>
       <div>
         <LinkBaner />
+        <Toaster />
         {loading && (
           <div
             className="LinearProgress"
@@ -239,15 +352,15 @@ export default function ProductDetailChangePage() {
           </div>
         )}
       </div>
-      <div style={{paddingLeft: 20}}>
+      <div style={{ paddingLeft: 20 }}>
         <div className="productRow-header">
           <div className="virtual-table-cell cell-vendor">業者</div>
           <div className="virtual-table-cell cell-code">商品コード</div>
           <div className="virtual-table-cell cell-name">商品名</div>
           <div className="virtual-table-cell cell-price">最新価格</div>
           <div className="virtual-table-cell cell-type">商品タイプ</div>
-          <div className="virtual-table-cell cell-switch">可否</div>
-          <div className="virtual-table-cell cell-dialog">詳細</div>
+          {/* <div className="virtual-table-cell cell-switch">可否</div> */}
+          <div className="virtual-table-cell cell-dialog">編集</div>
           <div className="virtual-table-cell cell-actions">行の編集</div>
         </div>
         <div>
@@ -261,34 +374,10 @@ export default function ProductDetailChangePage() {
               const field = fields[index]
               return (
                 <div key={field.id} style={style} className="virtual-table-row">
-                  <div className="virtual-table-cell cell-vendor">
-                    <Controller
-                      name={`rows.${index}.vendor`}
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          value={field.value?.value || ''}
-                          onChange={(e) => {
-                            const selectedValue = e.target.value;
-                            const selectedOption = vendorSelect.find(v => v.value === selectedValue) || null;
-                            field.onChange(selectedOption);
-                          }}
-                          displayEmpty
-                          size="small"
-                          style={{ width: 160, backgroundColor: 'white' }}
-                        >
-                          <MenuItem value="">
-                            <em>業者なし</em>
-                          </MenuItem>
-                          {vendorSelect.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      )}
-                    />
+                  <div className="virtual-table-cell cell-vendor" >
+                    <div className="div-vendor">
+                      {getValues(`rows.${index}.vendor`)?.value ?? ''}
+                    </div>
                   </div>
                   <div className="virtual-table-cell cell-code">
                     <input
@@ -297,10 +386,12 @@ export default function ProductDetailChangePage() {
                     />
                   </div>
                   <div className="virtual-table-cell cell-name">
-                    <input
-                      style={{ height: 32, width: '100%', textAlign: 'left' }}
-                      {...register(`rows.${index}.name`)}
-                    />
+                    <Box className="div-name" style={{ display: 'flex' }}>
+                      <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
+                      <div>
+                        {getValues(`rows.${index}.name`)}
+                      </div>
+                    </Box>
                   </div>
                   <div className="virtual-table-cell cell-price">
                     {/* @ts-ignore */}
@@ -314,7 +405,10 @@ export default function ProductDetailChangePage() {
                     </Tooltip>
                   </div>
                   <div className="virtual-table-cell cell-type">
-                    <Controller
+                    <div className="div-vendor">
+                      {getValues(`rows.${index}.type`)?.value ?? ''}
+                    </div>
+                    {/* <Controller
                       name={`rows.${index}.type`}
                       control={control}
                       render={({ field }) => (
@@ -340,9 +434,9 @@ export default function ProductDetailChangePage() {
                           ))}
                         </Select>
                       )}
-                    />
+                    /> */}
                   </div>
-                  <div className="virtual-table-cell cell-switch">
+                  {/* <div className="virtual-table-cell cell-switch">
                     <Controller
                       name={`rows.${index}.possibility`}
                       control={control}
@@ -354,7 +448,7 @@ export default function ProductDetailChangePage() {
                         />
                       )}
                     />
-                  </div>
+                  </div> */}
                   <div className="virtual-table-cell cell-dialog">
                     <Button variant="outlined" onClick={() => dialogOpen(index)}>編集</Button>
                   </div>
@@ -373,36 +467,108 @@ export default function ProductDetailChangePage() {
       <div className={`modalOverlay ${modalOpen ? 'open' : ''}`}>
         {selectedRowIndex !== null && (
           <div className="modalContent">
-            <h3>詳細編集</h3>
-            <div style={{display: 'flex'}}>
-              <label style={{display: 'flex', alignItems: 'center', padding: '0px 10px'}}>商品名:</label>
-              <div style={{ padding: '6px 0', fontWeight: 'bold' }}>
-                {getValues(`rows.${selectedRowIndex}.name`)}
+            <h3>編集</h3>
+            <div style={{ display: 'flex' }}>
+              <label style={{ display: 'flex', alignItems: 'center', padding: '0px 10px' }}>
+                商品コード:
+              </label>
+              <div>
+                {getValues(`rows.${selectedRowIndex}.code`)}
               </div>
             </div>
             <div style={{display: 'flex'}}>
-              <div className="price-div">
-                <label style={{display: 'flex', alignItems: 'center', padding: '0px 10px'}}>初期価格</label>
-                <input
-                  style={{height: 32, width: 80, textAlign: 'right'}}
-                  {...register(`rows.${selectedRowIndex}.defPrice`)}
+              <label style={{ display: 'flex', alignItems: 'center', padding: '0px 10px' }}>
+                商品名:
+              </label>
+              <input
+                style={{ height: 32 }}
+                {...register(`rows.${selectedRowIndex}.name`)}
+              />
+            </div>
+            <div style={{ display: 'flex', margin: '10px 0px' }}>
+              <div className="div-vendor">
+                <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
+                {getValues(`rows.${selectedRowIndex}.vendor`)?.value ?? ''}
+              </div>
+              {/* <Controller
+                name={`rows.${selectedRowIndex}.vendor`}
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    value={field.value?.value || ''}
+                    onChange={(e) => {
+                      const selectedValue = e.target.value;
+                      const selectedOption = vendorSelect.find(v => v.value === selectedValue) || null;
+                      field.onChange(selectedOption);
+                    }}
+                    displayEmpty
+                    size="small"
+                    style={{ width: 160, backgroundColor: 'white' }}
+                  >
+                    <MenuItem value="">
+                      <em>業者なし</em>
+                    </MenuItem>
+                    {vendorSelect.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              /> */}
+              <Controller
+                name={`rows.${selectedRowIndex}.type`}
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    value={field.value?.value || ''}
+                    onChange={(e) => {
+                      const selectedValue = e.target.value;
+                      const selectedOption = types.find(t => t.value === selectedValue) || null;
+                      field.onChange(selectedOption);
+                    }}
+                    displayEmpty
+                    size="small"
+                    style={{ width: 160, backgroundColor: 'white' }}
+                  >
+                    <MenuItem value="">
+                      <em>タイプなし</em>
+                    </MenuItem>
+                    {types.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              />
+              <div style={{ display: 'flex', marginLeft: 4, alignItems: 'center' }}>
+                <div>注文可否:</div>
+                <Controller
+                  name={`rows.${selectedRowIndex}.possibility`}
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Switch
+                      checked={value}
+                      onChange={onChange}
+                      color="primary"
+                    />
+                  )}
                 />
               </div>
+              
+            </div>
+            <div style={{display: 'flex'}}>
               <div className="price-div">
                 <label style={{ display: 'flex', alignItems: 'center', padding: '0px 10px' }}>
-                  最新価格
+                  価格
                 </label>
-                <div className="detail-newprice">
-                  {/* @ts-ignore */}
-                  <Tooltip title="最新価格は自動反映されます" arrow>
-                    <Box className="new-price" style={{display: 'flex'}}>
-                      <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
-                      <div>
-                        {(Number(getValues(`rows.${selectedRowIndex}.newPrice`)) || 0).toLocaleString()}
-                      </div>
-                    </Box>
-                  </Tooltip>
-                </div>
+                <input
+                  style={{ height: 32, textAlign: 'right', width: 80 }}
+                  {...register(`rows.${selectedRowIndex}.newPrice`)}
+                />
               </div>
               <div className="price-div">
                 <label style={{display: 'flex', alignItems: 'center', padding: '0px 10px'}}>VC価格</label>
@@ -429,24 +595,51 @@ export default function ProductDetailChangePage() {
                 )}
               />
             </div>
-            <div style={{display: 'flex'}}>
-              <label style={{display: 'flex', alignItems: 'center', padding: '0px 10px'}}>サービス:</label>
-              <Controller
-                name={`rows.${selectedRowIndex}.service`}
-                control={control}
-                render={({ field }) => (
-                  <input {...field} />
-                )}
-              />
+            <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <label style={{ alignItems: 'center', padding: '0px 10px' }}>注文単位:</label>
+                <Controller
+                  name={`rows.${selectedRowIndex}.orderNum`}
+                  control={control}
+                  render={({ field }) => (
+                    <input {...field}
+                      style={{ width: 60 }}
+                    />
+                  )}
+                />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <label style={{ alignItems: 'center', padding: '0px 10px' }}>サービス:</label>
+                <Controller
+                  name={`rows.${selectedRowIndex}.service`}
+                  control={control}
+                  render={({ field }) => (
+                    <input {...field} style={{ width: 60 }} />
+                  )}
+                />
+              </div>
+              
             </div>
             <div style={{ marginTop: 10 }}>
-              <Button variant='outlined' onClick={() => setModalOpen(false)}>
+              <Button variant='outlined' onClick={() => update(selectedRowIndex)}>更新</Button>
+              {/* <Button variant='outlined' onClick={() => setModalOpen(false)}>
                 保存して閉じる
-              </Button>
+              </Button> */}
             </div>
           </div>
         )}
       </div>
+      <SweetAlert2
+        {...swalProps}
+        didClose={() => {
+          console.log('ダイアログが閉じられました');
+          setSwalProps({ show: false });
+        }}
+      >
+        <AddProductDialogTable
+          addRowNumber={addRowIndex}
+        />
+      </SweetAlert2>
       <div className="Product-Bottom-button-area">
         <div>
           <Button variant='outlined' onClick={() => ListReacquisition()}>
@@ -459,9 +652,10 @@ export default function ProductDetailChangePage() {
           </Button>
         </div>
         <div>
-          <Button variant='outlined' onClick={() => ProductDataUpdata()}>
+          <Button variant="outlined" onClick={swalWindow}>新規商品追加</Button>
+          {/* <Button variant='outlined' onClick={() => ProductDataUpdata()}>
             データ送信
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>
