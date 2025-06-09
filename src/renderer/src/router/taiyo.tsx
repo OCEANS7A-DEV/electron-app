@@ -2,6 +2,7 @@ import React,{ useEffect } from 'react';
 //import { kaigisituOrder, taiyoOrder, shortageGet, stockList } from '../backend/Server_end';
 import '../css/taiyoPrint.css';
 import { useLoaderData } from "react-router-dom";
+import { Button } from '@mui/material'
 //import LinkBaner from '../comp/Linkbanar'
 //import { useLoaderData, useNavigate, useSearchParams } from "@remix-run/react";
 //import { Print } from '../backend/utils';
@@ -114,6 +115,9 @@ export default function TaiyoPrint() {
   return(
     <div className="taiyobackGround">
       {/* <LinkBaner /> */}
+      <div className="PrintButton">
+        <Button variant='outlined' onClick={()=> console.log('印刷')}>印刷</Button>
+      </div>
       <div className="taiyotop">
         <h1 className="taiyoH1">FAX注文書</h1>
       </div>

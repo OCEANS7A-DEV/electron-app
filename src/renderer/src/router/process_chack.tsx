@@ -447,6 +447,16 @@ export default function HQPage() {
     })
   }
 
+  const nomalPrint = () => {
+    window.myInventoryAPI.orderPrint('NetEtcPrint')
+  }
+
+  const NotListed = () => {
+    const Vendorparams = new URLSearchParams();
+    Vendorparams.set("date", getDate);
+    window.myInventoryAPI.orderPrint(`NotListed?${Vendorparams.toString()}`)
+  }
+
 
   return (
     <div className='check_window'>
@@ -588,13 +598,13 @@ export default function HQPage() {
               }}
             >
               <div style={{textAlign: 'center', color: 'white'}}>ネット発注用</div>
-              <Button variant='outlined' onClick={() => console.log('ネット発注分印刷')}>
+              <Button variant='outlined' onClick={() => nomalPrint()}>
                 通常商品印刷
               </Button>
               <Button variant='outlined' onClick={() => console.log('詳細印刷')}>
                 詳細印刷
               </Button>
-              <Button variant='outlined' onClick={() => console.log('商品一覧外印刷')}>
+              <Button variant='outlined' onClick={() => NotListed()}>
                 商品一覧外印刷
               </Button>
             </div>

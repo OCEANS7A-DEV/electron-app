@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { useLoaderData } from "react-router-dom"
 //import { getMonthString } from '../backend/utils'
 //import { shortageGet, ListGet, orderGet } from '../backend/Server_end';
@@ -7,7 +7,7 @@ import '../css/taiyoPrint.css';
 //import { useLoaderData, useNavigate, useSearchParams, json } from "@remix-run/react";
 //import { Print } from '../backend/utils';
 import jaconv from 'jaconv';
-
+import { Button } from '@mui/material'
 
 
 // interface SettingProps {
@@ -69,6 +69,12 @@ export const loader =  async ({ request }: { request: Request }) => {
       }
     })
     if(item == 'タムラ'){
+      const newOrder = orderData.filter(item => item[2] == 'タムラ' && isoToJstYMD(item[0]) == date && typeof item[3] == 'string' )
+      //console.log(newOrder)
+      newOrder.forEach(item => {
+        const result = [item[4], item[6]]
+        mapData.push(result)
+      })
       const addData = orderData.filter(item => item[4].includes('eco') && isoToJstYMD(item[0]) == date )
       addData.forEach(item => {
         const result = [`${item[4]} ${item[5]}`, item[6]]
@@ -97,8 +103,7 @@ export const loader =  async ({ request }: { request: Request }) => {
     vendors,
     Addressdata,
     resultdata
-  };
-  
+  }
 }
 
 
@@ -116,9 +121,13 @@ export default function EtcPrint() {
 
 
 
-  useEffect(() => {
-    window.myInventoryAPI.PrintReady()
-  },[])
+  useLayoutEffect(() => {
+    const timer = setTimeout(() => {
+      window.myInventoryAPI.PrintReady();
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const AddressFindData = (data,col) => {
     const result = Addressdata.address.find(row => row[0] == data)
@@ -130,6 +139,9 @@ export default function EtcPrint() {
 
   return(
     <div>
+      <div className="PrintButton">
+        <Button variant='outlined' onClick={()=> window.myInventoryAPI.PrintReady()}>印刷</Button>
+      </div>
       {vendors.map((item,index) => (
         <div key={index}>
           <div className="PrintbackGround">

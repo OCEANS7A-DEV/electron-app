@@ -7,6 +7,8 @@ import StoreOrderPage from './router/storeOrder'
 import ProductDetailChangePage, { loader as productsLoader } from './router/ProductListUpdata'
 
 import NETOrder, { loader as netOrderLoader } from './router/netOrder'
+import NetEtcPrint, { loader as NetEtcLoader } from './router/etcPrint'
+import NotListed, { loader as NotListedLoader } from './router/NotListed'
 import HQStocks, { loader as HQStocksLoader } from './router/HQ_stocks'
 import HQPage from './router/process_chack'
 import PrintContent, { loader as PrintLoader } from './router/PrintContent'
@@ -16,6 +18,7 @@ import SettingPage, { loader as SettingLoader } from './router/setting'
 import DetailContent from './router/productDetailEdit'
 import UpdateWindow from './router/updater'
 import InventoryMoving from './router/Moving'
+import CatalogView from './router/Catalog'
 
 
 
@@ -33,6 +36,16 @@ export const router = createHashRouter([
     path: '/NETOrder',
     element: <NETOrder />,
     loader: netOrderLoader
+  },
+  {
+    path: '/NetEtcPrint',
+    element: <NetEtcPrint/>,
+    loader: NetEtcLoader
+  },
+  {
+    path: '/NotListed',
+    element: <NotListed/>,
+    loader: NotListedLoader
   },
   {
     path: '/HQ_stocks',
@@ -79,5 +92,9 @@ export const router = createHashRouter([
   {
     path: '/Moving',
     element: <InventoryMoving />,
+  },
+  {
+    path: '/CatalogView',
+    element: <CatalogView />
   }
 ])

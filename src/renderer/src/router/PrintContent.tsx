@@ -18,7 +18,23 @@ export const loader = async () => {
   const resultdata = await Promise.all(
     stores.map(async (storeName) => {
       const storeData = ordersGet.filter(row => row[1] === storeName);
-      const printdata = storeData;
+      console.log(storeData)
+      const printdata = storeData.flatMap(item => {
+        if (item[7] === '') {
+          return [item]
+        } else {
+          return [
+            [
+              item[0], item[1], item[2], item[3], item[4], item[5],
+              item[6] - item[7], '', item[8], item[9], item[10], item[11], item[12]
+            ],
+            [
+              item[0], item[1], item[2], item[3], item[4], item[5],
+              item[7], item[7], item[8], item[9], item[10], item[11], item[12]
+            ]
+          ]
+        }
+      })
       let pages = 1
       if(printdata.length !== 0){
         pages = Math.ceil(printdata.length / rowNum);
@@ -38,6 +54,7 @@ export const loader = async () => {
 
 const PrintContent = () => {
   const { printDate, resultdata, stores } = useLoaderData<typeof loader>()
+  console.log(resultdata)
   const SetRows = 19;
 
 
@@ -96,9 +113,47 @@ const PrintContent = () => {
     }
   }
 
-    useEffect(() => {
-      window.myInventoryAPI.PrintReady()
-    },[])
+  const serviceCheck = ( row, index ) => {
+    if (row[7] == ''){
+      return(
+        <tr key={index} className="special-row no-break">
+          <td>
+            <div className="P-code">{row[3]}</div>
+            <div className="P-name">{row[4]}</div>
+          </td>
+          <td className="P-detail">{row[5]}</td>
+          <td className="P-number">{row[6]}</td>
+          <td className="P-price">{Number(row[8]).toLocaleString('ja-JP') ?? ''}</td>
+          <td className="P-totalprice">{totalResult(row[6],row[8])}</td>
+          <td className="P-personal">{personalData(row[10])}</td>
+          <td className="P-personal-taxin">{personalTotalAmount(row[6],row[8],row[10])}</td>
+          <td className="P-remarks">{row[11]}</td>
+        </tr>
+      )
+    } else if (row[7] !== ''){
+      return(
+        <tr key={index} className="special-row no-break">
+          <td>
+            <div className="P-code">{row[3]}</div>
+            <div className="P-name">{row[4]}</div>
+          </td>
+          <td className="P-detail">{row[5]}</td>
+          <td className="P-number">{Number(row[7])}</td>
+          <td className="P-price">{Number(row[8]).toLocaleString('ja-JP') ?? ''}</td>
+          <td className="P-totalprice">0</td>
+          <td className="P-personal"></td>
+          <td className="P-personal-taxin"></td>
+          <td className="P-remarks">サービス</td>
+        </tr>
+      )
+    }
+  }
+
+
+
+  useEffect(() => {
+    window.myInventoryAPI.PrintReady()
+  }, [])
 
 
   return (
@@ -148,19 +203,7 @@ const PrintContent = () => {
                       </tr>
                     </>
                   )}
-                  <tr key={index} className="special-row no-break">
-                    <td>
-                      <div className="P-code">{row[3]}</div>
-                      <div className="P-name">{row[4]}</div>
-                    </td>
-                    <td className="P-detail">{row[5]}</td>
-                    <td className="P-number">{row[6]}</td>
-                    <td className="P-price">{Number(row[8]).toLocaleString('ja-JP') ?? ''}</td>
-                    <td className="P-totalprice">{totalResult(row[6],row[8])}</td>
-                    <td className="P-personal">{personalData(row[10])}</td>
-                    <td className="P-personal-taxin">{personalTotalAmount(row[6],row[8],row[10])}</td>
-                    <td className="P-remarks">{row[11]}</td>
-                  </tr>
+                  {serviceCheck(row, index)}
                 </React.Fragment>
               ))}
               <>
@@ -177,10 +220,8 @@ const PrintContent = () => {
           </table>
         ))}
       </div>
-      
     </div>
-  );
-};
+  )
+}
 
 export default PrintContent;
-// ReactDOM.createRoot(document.getElementById('root')!).render(<PrintContent />)

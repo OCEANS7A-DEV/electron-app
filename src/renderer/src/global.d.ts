@@ -8,6 +8,8 @@ declare global {
       isDev: boolean;
       UpdaterClose: any;
       MainBoot: any;
+      getFileList: () => Promise<any>;
+      getFilePath: (filename: string) => Promise<any>;
       onCheckedUpdate(arg0: (value: any) => void): unknown;
       onProgressUpdate(arg0: (value: any) => void): unknown;
       upGrade: any;

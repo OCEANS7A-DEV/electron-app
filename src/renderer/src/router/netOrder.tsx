@@ -13,11 +13,22 @@ const columns: GridColDef[] = [
 ];
 
 
+const ImageUrlSet = (URL:string) => {
+  const match = URL.match(/\/file\/d\/([^/]+)/);
+  let fileId = ''
+  if (match && match[1]) {
+    fileId = match[1];
+  }
+  const result = `https://drive.google.com/file/d/${fileId}`
+  return result
+}
+
 
 
 export const loader = async() => {
-  const URLs = await window.myInventoryAPI.ListGet({sheetName: 'ネット発注', action: 'ListGet', ranges: 'A2:B'})
-  return URLs;
+  const data = await window.myInventoryAPI.ListGet({sheetName: 'ネット発注', action: 'ListGet', ranges: 'A2:B'})
+  const URLs = data.filter(item => item[0] !== '')
+  return URLs
 };
 
 export default function NETOrder() {
@@ -25,6 +36,7 @@ export default function NETOrder() {
   
   const [rows, setRows] = useState([])
 
+  const [pdfSrc, setPdfSrc] = useState('');
 
   useEffect(() => {
     //console.log(loaderData)
@@ -43,6 +55,11 @@ export default function NETOrder() {
 
 
 
+  useEffect(() => {
+    const URL = ImageUrlSet('https://drive.google.com/file/d/1vLorVoN-9quUpO_N7Bp8n0SDKm5PUZfc/view?usp=drive_link')
+    setPdfSrc(URL)
+  },[])
+  
 
 
   return(
@@ -51,11 +68,16 @@ export default function NETOrder() {
         <LinkBaner/>
       </div>
       <div className="NetOrderLinkArea">
-        <div className="NetOrderLinkTitle">ネット発注リンク一覧</div>
+        <div className="NetOrderLinkTitle" style={{ color: 'white' }}>ネット発注リンク一覧</div>
         <DataGrid
           rows={rows}
           columns={columns}
-        />        
+        />
+        <iframe
+          src="https://drive.google.com/file/d/1vLorVoN-9quUpO_N7Bp8n0SDKm5PUZfc/preview"
+          width="100%"
+          height="600px"
+        />
       </div>
     </div>
   );

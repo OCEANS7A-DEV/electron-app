@@ -37,7 +37,9 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
     ipcRenderer.on('check', (_, data) => callback(data))
   },
   MainBoot: () => ipcRenderer.send('Main-boot'),
-  UpdaterClose: () => ipcRenderer.send('startUpClose')
+  UpdaterClose: () => ipcRenderer.send('startUpClose'),
+  getFileList: () => ipcRenderer.invoke('get-file-list'),
+  getFilePath: (filename: string) => ipcRenderer.invoke('get-file-path', filename),
 })
 
 if (process.contextIsolated) {

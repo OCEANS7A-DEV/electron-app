@@ -7,6 +7,10 @@ import log from 'electron-log'
 import updater from 'electron-updater'
 const { autoUpdater } = updater
 
+import fs from 'fs';
+import path from 'path';
+import https from 'https';
+
 
 
 // import React from 'react'
@@ -97,7 +101,8 @@ function createWindow(): void {
       preload: is.dev
         ? join(__dirname, '../preload/index.mjs')
         : join(app.getAppPath(), 'out/preload/index.mjs'),
-      sandbox: false
+      sandbox: false,
+      webSecurity: false,
     }
   })
 
@@ -629,4 +634,15 @@ const NotificationEXE = (bodyString) => {
     body: bodyString
   }).show()
 }
+const userDataDir = path.join(app.getPath('userData'), 'files');
 
+ipcMain.handle('get-file-list', async () => {
+  if (!fs.existsSync(userDataDir)) return [];
+  const files = fs.readdirSync(userDataDir);
+  return files;
+});
+
+ipcMain.handle('get-file-path', async ( _event, filename ) => {
+  const fullPath = path.join(app.getPath('userData'), 'files', filename);
+  return fullPath;
+});

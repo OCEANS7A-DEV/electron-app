@@ -176,6 +176,9 @@
   body {
     zoom: 1;
   }
+  .PrintButton{
+    display: none;
+  }
 }
 
 .murakami-header th {
@@ -244,5 +247,26 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+
+
+
+
+.NetEtcPrintW {
+  background-color: white;
+  max-width: 210mm;
+  max-height: 297mm;
+  min-width: 210mm;
+  min-height: 297mm;
+}
+
+.NetEtcPrint{
+  padding: 20px;
+}
+
+.NetEtcPrint th, .NetEtcPrint td{
+  border: 1px solid black;
+  padding: 10px;
 }
 
