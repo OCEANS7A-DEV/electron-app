@@ -2,5 +2,10 @@
 
 .HelloWorkMainArea {
   padding-top: 60px;
+  display: flex;
 }
 
+.ButtonArea {
+  background-color: azure;
+  border-radius: 6px;
+}

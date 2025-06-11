@@ -17,11 +17,14 @@ export default function HelloWork() {
   const loaderData = useLoaderData()
 
   const [list, setList] = useState([])
+  
+  const [loading, setLoading] = React.useState(true);
 
   const start = async () => {
     const result = await window.myInventoryAPI.WorkGet()
     console.log(result)
     setList(result)
+    setLoading(false)
   }
 
   const PDFGet = async() => {
@@ -53,7 +56,10 @@ export default function HelloWork() {
         <LinkBaner/>
       </div>
       <div className="HelloWorkMainArea">
-        <Button variant="outlined" onClick={() => PDFGet()}>PDFGet</Button>
+        <div className="ButtonArea">
+          <Button variant="outlined" onClick={() => PDFGet()} loading={loading}>PDFGet</Button>
+        </div>
+        
       </div>
     </div>
   )
