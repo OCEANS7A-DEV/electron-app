@@ -13,18 +13,6 @@ const columns: GridColDef[] = [
 ];
 
 
-const ImageUrlSet = (URL:string) => {
-  const match = URL.match(/\/file\/d\/([^/]+)/);
-  let fileId = ''
-  if (match && match[1]) {
-    fileId = match[1];
-  }
-  const result = `https://drive.google.com/file/d/${fileId}`
-  return result
-}
-
-
-
 export const loader = async() => {
   const data = await window.myInventoryAPI.ListGet({sheetName: 'ネット発注', action: 'ListGet', ranges: 'A2:B'})
   const URLs = data.filter(item => item[0] !== '')

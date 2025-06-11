@@ -168,6 +168,7 @@ export default function ReceivingPage() {
         item.quantity,
         item.price,
         null,
+        '', // 後で備考入力ができるようにする
         item.vendor?.id
       ]
       return result
