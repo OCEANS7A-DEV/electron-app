@@ -750,40 +750,22 @@ ipcMain.handle('hellowork-PDF', async (_event, relativeUrl: string, filename: st
     throw new Error('対象のiframeが見つかりませんでした');
   }
 
-  // // ボタンのセレクタは正確に
-  // const button = await targetFrame.$('cr-icon-button[id="download"]'); // 例: 実際の属性に合わせてください
-  // if (!button) {
-  //   //await browser.close();
-  //   throw new Error('ダウンロードボタンが見つかりませんでした');
-  // }
 
-  // await button.click();
-
-  const buttonHandle = await targetFrame.evaluateHandle(() => {
-    // 例: shadowRoot内のボタン取得
-    const viewer = document.querySelector('pdf-viewer');
-    if (!viewer || !viewer.shadowRoot) return null;
-    return viewer.shadowRoot.querySelector('cr-icon-button[id="download"]');
+  const tagNames = await page.evaluate(() => {
+    const elements = document.querySelectorAll('*');
+    return Array.from(elements).map(el => ({
+      tag: el.tagName.toLowerCase(),
+      id: el.id,
+      className: el.className,
+      name: el.getAttribute('name'),
+      type: el.getAttribute('type'),
+      role: el.getAttribute('role'),
+      ariaLabel: el.getAttribute('aria-label'),
+    }));
   });
 
-  // asElement() で ElementHandle<Element> 取得
-  const elementHandle = buttonHandle.asElement();
-  if (!elementHandle) {
-    throw new Error('要素がElementHandleではありません');
-  }
 
-  // ここで elementHandle を ElementHandle<Element> と明示キャスト
-  const button = elementHandle as puppeteer.ElementHandle<Element>;
-
-  await button.click();
-
-
-  // ダウンロードが完了するまで少し待つ（適宜調整）
-  await page.waitForTimeout(5000);
-
-  //await browser.close();
-
-  return downloadsPath;
+  return tagNames;
 });
 
 

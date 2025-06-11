@@ -29,7 +29,8 @@ export default function HelloWork() {
 
   const PDFGet = async() => {
     console.log(list)
-    window.myInventoryAPI.HelloWorkPDFGet(list[0].求人票URL, `${list[0].求人番号}`)
+    const tlist = await window.myInventoryAPI.HelloWorkPDFGet(list[0].求人票URL, `${list[0].求人番号}`)
+    console.log(tlist)
     // list.forEach(item => {
     //   window.myInventoryAPI.HelloWorkPDFGet(item.求人票URL, `${item.求人番号}`)
     // })
