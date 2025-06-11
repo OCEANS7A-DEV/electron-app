@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React from 'react';
 import { useLoaderData } from "react-router-dom"
 //import { getMonthString } from '../backend/utils'
 //import { shortageGet, ListGet, orderGet } from '../backend/Server_end';
@@ -121,13 +121,13 @@ export default function EtcPrint() {
 
 
 
-  useLayoutEffect(() => {
-    const timer = setTimeout(() => {
-      window.myInventoryAPI.PrintReady();
-    }, 4000);
+  // useLayoutEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     window.myInventoryAPI.PrintReady();
+  //   }, 4000);
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   const AddressFindData = (data,col) => {
     const result = Addressdata.address.find(row => row[0] == data)
@@ -140,7 +140,7 @@ export default function EtcPrint() {
   return(
     <div>
       <div className="PrintButton">
-        <Button variant='outlined' onClick={()=> window.myInventoryAPI.PrintReady()}>印刷</Button>
+        <Button variant='outlined' onClick={()=> window.myInventoryAPI.PrintReady()}>印刷開始</Button>
       </div>
       {vendors.map((item,index) => (
         <div key={index}>

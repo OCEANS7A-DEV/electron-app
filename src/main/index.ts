@@ -103,6 +103,7 @@ function createWindow(): void {
         : join(app.getAppPath(), 'out/preload/index.mjs'),
       sandbox: false,
       webSecurity: false,
+      webviewTag: true,
     }
   })
 
