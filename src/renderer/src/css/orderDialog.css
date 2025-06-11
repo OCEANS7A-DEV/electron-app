@@ -160,3 +160,17 @@
   max-width: 100%;
   height: auto;
 }
+
+
+.modal-dialog-newProduct {
+  display: flex;
+  justify-content: center;
+}
+
+
+.newProductInsert {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 6px;
+}

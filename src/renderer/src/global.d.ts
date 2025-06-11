@@ -26,6 +26,8 @@ declare global {
       shortageGet: () => Promise<any>;
       PrintReady: () => Promise<any>;
       NowGet: () => Promise<any>;
+      WorkGet: () => Promise<any>;
+      HelloWorkPDFGet: (url: string, filename: string) => Promise<void>;
       orderPrint: (payload: string) => Promise<void>;
       storeSet: (settitle: string, setData: any) => Promise<void>;
       storeGet: (gettitle: string) => Promise<any>;

@@ -6,6 +6,8 @@ import Store from 'electron-store'
 import log from 'electron-log'
 import updater from 'electron-updater'
 const { autoUpdater } = updater
+import puppeteer from "puppeteer"
+import os from 'os';
 
 import fs from 'fs';
 import path from 'path';
@@ -156,6 +158,24 @@ export const productGet = async () => {
   }
 }
 
+export const productTypesGet = async () => {
+  try {
+    const response = await net.fetch(GetAPI_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: JSON.stringify({ sheetName: '商品タイプ一覧', action: 'ListGet', ranges: 'A2:B' })
+    })
+    const result = await response.json()
+    return result
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+    return errorMessage
+  }
+}
+
+
 export const vendorGet = async () => {
   try {
     const response = await net.fetch(GetAPI_URL, {
@@ -257,6 +277,10 @@ export const StartUpSet = async () => {
 
   store.set('data', ListResult)
 
+  const types = await productTypesGet()
+
+  store.set('types', types)
+
   const VendorList = await vendorGet()
 
   store.set('vendor', VendorList)
@@ -278,6 +302,8 @@ export const StartUpSet = async () => {
     })
   }
 }
+
+
 
 
 
@@ -614,6 +640,157 @@ ipcMain.handle('printStatus', async (_event, payload: any) => {
     return errorMessage
   }
 })
+
+ipcMain.handle('hellowork-get', async () => {
+  async function scrapeHelloWork() {
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+
+    // 検索画面を開く
+    await page.goto('https://www.hellowork.mhlw.go.jp/kensaku/GECA110010.do?action=initDisp&screenId=GECA110010', {
+      waitUntil: 'networkidle2'
+    });
+
+    await page.type('input[name="jGSHNoJo"]', '3401')
+    await page.type('input[name="jGSHNoChuu"]', '625381')
+    await page.type('input[name="jGSHNoGe"]', '7')
+
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle2' }),
+      page.click('input[name="searchNoBtn"]'),
+    ]);
+
+
+    const jobData = await page.evaluate(() => {
+      const jobs = [];
+
+      const tables = document.querySelectorAll('table.kyujin');
+
+      tables.forEach(table => {
+        const job = {};
+
+        // 職種
+        const shokushu = table.querySelector('.kyujin_head strong')?.parentElement?.nextElementSibling?.textContent?.trim();
+        job.職種 = shokushu;
+
+        // 受付年月日・紹介期限日（テキストからではなく <div> から正確に）
+        const dateRow = Array.from(table.querySelectorAll('tr')).find(tr => tr.textContent.includes('受付年月日'));
+        const dateDivs = dateRow?.querySelectorAll('div') ?? [];
+
+        job.受付年月日 = dateDivs[1]?.textContent?.trim() ?? '';
+        job.紹介期限日 = dateDivs[2]?.textContent?.trim() ?? '';
+
+        // 左テーブル項目（ラベルと値ペア）
+        const leftTds = table.querySelectorAll('.left-side table tr');
+        leftTds.forEach(tr => {
+          const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
+          const value = tr.querySelector('td:nth-child(2)')?.innerText?.replace(/\s+/g, ' ').trim();
+          if (label) job[label] = value;
+        });
+
+        // 右テーブル項目（同上）
+        const rightTds = table.querySelectorAll('.right-side table tr');
+        rightTds.forEach(tr => {
+          const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
+          const value = tr.querySelector('td:nth-child(2)')?.innerText?.replace(/\s+/g, ' ').trim();
+          if (label) job[label] = value;
+        });
+
+        // こだわり条件
+        const kodawari = Array.from(table.querySelectorAll('.kodawari span.nes_label.any')).map(span => span.textContent.trim());
+        job.こだわり条件 = kodawari;
+
+        const link = table.querySelector('#ID_kyujinhyoBtn')?.getAttribute('href');
+        if (link) {
+          job.求人票URL = link;
+        }
+
+        // 求人数
+        const kyujinCount = table.querySelector('tr:last-of-type')?.textContent?.match(/求人数：(.+?)名/)?.[1]?.trim();
+        job.求人数 = kyujinCount;
+
+        jobs.push(job);
+      });
+
+      return jobs;
+    });
+
+    return jobData
+  }
+
+  //scrapeHelloWork().catch(console.error);
+  const result = scrapeHelloWork().catch(console.error);
+  return result
+})
+
+
+ipcMain.handle('hellowork-PDF', async (_event, relativeUrl: string, filename: string) => {
+  const baseUrl = 'https://www.hellowork.mhlw.go.jp/kensaku/';
+  const jobUrl = new URL(relativeUrl, baseUrl).toString();
+  const downloadsPath = path.join(os.homedir(), 'Downloads', `${filename}.pdf`);
+
+  const browser = await puppeteer.launch({ headless: false });
+  const page = await browser.newPage();
+
+  // Puppeteerで自動ダウンロード先を設定
+  const client = await page.target().createCDPSession();
+  await client.send('Page.setDownloadBehavior', {
+    behavior: 'allow',
+    downloadPath: path.dirname(downloadsPath),
+  });
+
+  await page.goto(jobUrl, { waitUntil: 'networkidle2' });
+
+  // iframeの中から目的のフレームを探す
+  const frames = page.frames();
+  const targetFrame = frames.find(f => f.url().includes('GECA110010.do'));
+
+  if (!targetFrame) {
+    //await browser.close();
+    throw new Error('対象のiframeが見つかりませんでした');
+  }
+
+  // // ボタンのセレクタは正確に
+  // const button = await targetFrame.$('cr-icon-button[id="download"]'); // 例: 実際の属性に合わせてください
+  // if (!button) {
+  //   //await browser.close();
+  //   throw new Error('ダウンロードボタンが見つかりませんでした');
+  // }
+
+  // await button.click();
+
+  const buttonHandle = await targetFrame.evaluateHandle(() => {
+    // 例: shadowRoot内のボタン取得
+    const viewer = document.querySelector('pdf-viewer');
+    if (!viewer || !viewer.shadowRoot) return null;
+    return viewer.shadowRoot.querySelector('cr-icon-button[id="download"]');
+  });
+
+  // asElement() で ElementHandle<Element> 取得
+  const elementHandle = buttonHandle.asElement();
+  if (!elementHandle) {
+    throw new Error('要素がElementHandleではありません');
+  }
+
+  // ここで elementHandle を ElementHandle<Element> と明示キャスト
+  const button = elementHandle as puppeteer.ElementHandle<Element>;
+
+  await button.click();
+
+
+  // ダウンロードが完了するまで少し待つ（適宜調整）
+  await page.waitForTimeout(5000);
+
+  //await browser.close();
+
+  return downloadsPath;
+});
+
+
+
+
+
+
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

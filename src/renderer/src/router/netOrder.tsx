@@ -26,7 +26,6 @@ export default function NETOrder() {
 
 
   useEffect(() => {
-    //console.log(loaderData)
     const pushData = loaderData.map((item,index) => {
       const result = {
         id: index,

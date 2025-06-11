@@ -126,6 +126,7 @@ const LinkBaner = () => {
             <Button variant="outlined" onClick={() => navigate('/process_chack')} sx={{height:'30px', margin: "5px 10px", width: 120}}>印刷関係</Button>
             <Button variant="outlined" onClick={() => navigate('/ProductListUpdata')} sx={{height:'30px', margin: "5px 10px", width: 120}}>商品設定</Button>
             <Button variant="outlined" onClick={() => navigate('/setting')} sx={{height:'30px', margin: "5px 10px", width: 120}}>設定</Button>
+            <Button variant="outlined" onClick={() => navigate('/HelloWork')} sx={{height:'30px', margin: "5px 10px", width: 120}}>ハロワ</Button>
           </div>
         </Drawer>
       </div>

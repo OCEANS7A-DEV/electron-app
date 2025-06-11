@@ -15,6 +15,7 @@ import PrintContent, { loader as PrintLoader } from './router/PrintContent'
 import TaiyoPrint, { loader as TaiyoLoader } from './router/taiyo'
 import EtcPrint, { loader as EtcLoader } from './router/VendorPrint'
 import SettingPage, { loader as SettingLoader } from './router/setting'
+import HelloWork, { loader as HelloWorkLoader } from './router/helloWork'
 import DetailContent from './router/productDetailEdit'
 import UpdateWindow from './router/updater'
 import InventoryMoving from './router/Moving'
@@ -96,5 +97,10 @@ export const router = createHashRouter([
   {
     path: '/CatalogView',
     element: <CatalogView />
+  },
+  {
+    path: '/HelloWork',
+    element: <HelloWork/>,
+    loader: HelloWorkLoader
   }
 ])
