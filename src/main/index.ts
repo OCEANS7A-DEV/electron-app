@@ -9,7 +9,7 @@ const { autoUpdater } = updater
 
 import fs from 'fs';
 import path from 'path';
-import https from 'https';
+//import https from 'https';
 
 
 
