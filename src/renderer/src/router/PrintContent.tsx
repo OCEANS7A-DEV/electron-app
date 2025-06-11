@@ -130,7 +130,7 @@ const PrintContent = () => {
           <td className="P-remarks">{row[11]}</td>
         </tr>
       )
-    } else if (row[7] !== ''){
+    } else {
       return(
         <tr key={index} className="special-row no-break">
           <td>

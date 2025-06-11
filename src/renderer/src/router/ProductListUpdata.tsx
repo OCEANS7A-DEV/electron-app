@@ -87,11 +87,11 @@ export const loader = async () => {
 export default function ProductDetailChangePage() {
   const { vendorSelect, Lists, types } = useLoaderData<typeof loader>()
   const [modalOpen, setModalOpen] = useState(false)
-  const [newmodalOpen, setnewModalOpen] = useState(false)
+  //const [newmodalOpen, setnewModalOpen] = useState(false)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const [addRowIndex, setAddRowIndex] = useState<number>(0)
   const [loading, setLoading] = useState(false)
-  const defListsLength = Lists.length
+  //const defListsLength = Lists.length
 
   const [height, setHeight] = useState<number>(0);
 
@@ -156,25 +156,15 @@ export default function ProductDetailChangePage() {
   })
 
   const NewRowInsert = (row) => {
-    insert(row, {
-      vendor: null,
-      code: '',
-      name: '',
-      defPrice: '',
-      newPrice: '',
-      VCPrice: '',
-      valuePrice: '',
-      type: null,
-      remarks: '',
-      possibility: false,
-      service: '',
-      orderNum: ''
-    })
+    insert(row, 
+      defaultRowData
+    )
   }
 
   const dialogOpen = (index) => {
     setSelectedRowIndex(index)
     setModalOpen(true)
+    setAddRowIndex(index)
   }
 
   const ListReacquisition = async() => {
@@ -206,57 +196,43 @@ export default function ProductDetailChangePage() {
   }
 
   const RowAppend = () => {
-    
-    append({
-      vendor: null,
-      code: '',
-      name: '',
-      defPrice: '',
-      newPrice: '',
-      VCPrice: '',
-      valuePrice: '',
-      type: null,
-      remarks: '',
-      possibility: false,
-      service: '',
-      orderNum: ''
-    })
+    append(defaultRowData)
   } 
 
 
-  const ProductDataUpdata = async() => {
-    const data = getValues().rows
-    const newData = data.map(item => {
-      const result = [
-        item.vendor?.value,
-        item.code,
-        item.name,
-        item.defPrice,
-        null,
-        item.VCPrice,
-        item.valuePrice,
-        item.type?.value,
-        item.remarks,
-        item.possibility ?? '',
-        item.service,
-        item.orderNum
-      ]
-      return result
-    })
-    //console.log(newData)
-    await window.myInventoryAPI.DataInsert({
-      sheetName: '在庫一覧',
-      action: 'ListcellUpdate',
-      updataValue: newData,
-      clearNumber: defListsLength,
-      updataColumnNumber: 1,
-      updataColumnNums: 12,
-      formulaConfig: {
-        targetCol: 5,
-        formula: `=IF(XLOOKUP(RC2,'最新単価'!C1,'最新単価'!C2,RC4)="", RC4, XLOOKUP(RC2,'最新単価'!C1,'最新単価'!C2,RC4))`
-      }
-    })
-  }
+  // const ProductDataUpdata = async() => {
+  //   const data = getValues().rows
+  //   const newData = data.map(item => {
+  //     const result = [
+  //       item.vendor?.value,
+  //       item.code,
+  //       item.name,
+  //       item.defPrice,
+  //       null,
+  //       item.VCPrice,
+  //       item.valuePrice,
+  //       item.type?.value,
+  //       item.remarks,
+  //       item.possibility ?? '',
+  //       item.service,
+  //       item.orderNum
+  //     ]
+  //     return result
+  //   })
+  //   //console.log(newData)
+  //   await window.myInventoryAPI.DataInsert({
+  //     sheetName: '在庫一覧',
+  //     action: 'ListcellUpdate',
+  //     updataValue: newData,
+  //     clearNumber: defListsLength,
+  //     updataColumnNumber: 1,
+  //     updataColumnNums: 12,
+  //     formulaConfig: {
+  //       targetCol: 5,
+  //       formula: `=IF(XLOOKUP(RC2,'最新単価'!C1,'最新単価'!C2,RC4)="", RC4, XLOOKUP(RC2,'最新単価'!C1,'最新単価'!C2,RC4))`
+  //     }
+  //   })
+  // }
 
   const getDiffKeys = (newData: Record<string, any>, originalData: Record<string, any>) => {
     return Object.keys(newData).filter(key => {

@@ -36,7 +36,6 @@ export default function NETOrder() {
   
   const [rows, setRows] = useState([])
 
-  const [pdfSrc, setPdfSrc] = useState('');
 
   useEffect(() => {
     //console.log(loaderData)
@@ -55,10 +54,7 @@ export default function NETOrder() {
 
 
 
-  useEffect(() => {
-    const URL = ImageUrlSet('https://drive.google.com/file/d/1vLorVoN-9quUpO_N7Bp8n0SDKm5PUZfc/view?usp=drive_link')
-    setPdfSrc(URL)
-  },[])
+
   
 
 
@@ -72,11 +68,6 @@ export default function NETOrder() {
         <DataGrid
           rows={rows}
           columns={columns}
-        />
-        <iframe
-          src="https://drive.google.com/file/d/1vLorVoN-9quUpO_N7Bp8n0SDKm5PUZfc/preview"
-          width="100%"
-          height="600px"
         />
       </div>
     </div>
