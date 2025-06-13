@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   VendorData: () => ipcRenderer.invoke('vendor-list'),
   shortageGet: () => ipcRenderer.invoke('shortageGet'),
   orderPrint: (payload) => ipcRenderer.invoke('orderPrint', payload),
-  HelloWorkPDFGet: (url, filename) => ipcRenderer.invoke('hellowork-PDF', url, filename),
+  HelloWorkPDFGet: (lists) => ipcRenderer.invoke('hellowork-PDF', lists),
   PrintReady: () => ipcRenderer.invoke('Print-Ready'),
   storeSet: (settitle: string, setData: any) => ipcRenderer.invoke('storeSet', settitle, setData),
   storeGet: (gettitle: string) => ipcRenderer.invoke('storeGet', gettitle),
@@ -42,6 +42,14 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   UpdaterClose: () => ipcRenderer.send('startUpClose'),
   getFileList: () => ipcRenderer.invoke('get-file-list'),
   getFilePath: (filename: string) => ipcRenderer.invoke('get-file-path', filename),
+  onHelloWorkProgress: (callback) => {
+    // callback(data) の形にラップして登録
+    ipcRenderer.on('helloWork-progress', (_event, data) => callback(data))
+  },
+  removeHelloWorkProgress: () => {
+    // チャンネル全解除
+    ipcRenderer.removeAllListeners('helloWork-progress')
+  },
 })
 
 if (process.contextIsolated) {

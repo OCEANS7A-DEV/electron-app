@@ -643,7 +643,16 @@ ipcMain.handle('printStatus', async (_event, payload: any) => {
 
 ipcMain.handle('hellowork-get', async () => {
   async function scrapeHelloWork() {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ 
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-cache',
+        '--disable-application-cache',
+        '--disk-cache-size=0',
+      ],
+    });
     const page = await browser.newPage();
 
     // 検索画面を開く
@@ -724,49 +733,94 @@ ipcMain.handle('hellowork-get', async () => {
 })
 
 
-ipcMain.handle('hellowork-PDF', async (_event, relativeUrl: string, filename: string) => {
-  const baseUrl = 'https://www.hellowork.mhlw.go.jp/kensaku/';
-  const jobUrl = new URL(relativeUrl, baseUrl).toString();
-  const downloadsPath = path.join(os.homedir(), 'Downloads', `${filename}.pdf`);
+//const wait = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
+ipcMain.handle(
+  'hellowork-PDF',
+  async (_event: IpcMainInvokeEvent, lists) => {
+    const total = lists.length
+    let count = 0
+    for (const item of lists) {
+      const filename = `${item.就業場所}_${item.求人区分}_${item.職種}`;
+      try{
+        //await wait(1000);
+        count = count + 1
+        //mainWindow.webContents.send('helloWork-progress', { count: count });
+        //continue
+        //await window.myInventoryAPI.HelloWorkPDFGet(item.求人票URL, fileName);
+        const downloadDir = path.join(os.homedir(), 'Downloads');
+        const finalFilename = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
+        const downloadsPath = path.join(downloadDir, finalFilename);
+        const jobUrl = `https://www.hellowork.mhlw.go.jp/kensaku/${item.求人票URL}`;
 
-  const browser = await puppeteer.launch({ headless: false });
-  const page = await browser.newPage();
+        let browser: Browser | null = null;
+        let page: Page | null = null;
 
-  // Puppeteerで自動ダウンロード先を設定
-  const client = await page.target().createCDPSession();
-  await client.send('Page.setDownloadBehavior', {
-    behavior: 'allow',
-    downloadPath: path.dirname(downloadsPath),
-  });
+        try {
+          // 1) Puppeteer でページにアクセスし、クッキーを取得
+          browser = await puppeteer.launch({
+            headless: true,
+            args: [
+              '--no-sandbox',
+              '--disable-setuid-sandbox',
+              '--disable-cache',
+              '--disable-application-cache',
+              '--disk-cache-size=0',
+            ],
+          });
+          page = await browser.newPage();
+          await page.goto(jobUrl, { waitUntil: 'networkidle2', timeout: 60000 });
 
-  await page.goto(jobUrl, { waitUntil: 'networkidle2' });
+          // 2) セッション維持用の Cookie を抜き出す
+          const cookies = await page.cookies();
+          const cookieHeader = cookies.map(c => `${c.name}=${c.value}`).join('; ');
 
-  // iframeの中から目的のフレームを探す
-  const frames = page.frames();
-  const targetFrame = frames.find(f => f.url().includes('GECA110010.do'));
+          // 3) Puppeteer は閉じてもOK
+          //await browser.close();
+          browser = null;
 
-  if (!targetFrame) {
-    //await browser.close();
-    throw new Error('対象のiframeが見つかりませんでした');
+          const res = await fetch(jobUrl, {
+            headers: { Cookie: cookieHeader },
+          });
+          if (!res.ok) {
+            throw new Error(`HTTP エラー ${res.status} ${res.statusText}`);
+          }
+          // arrayBuffer→Buffer に変換
+          const arrayBuffer = await res.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+
+          if (buffer.length < 20000) {
+            throw new Error(`取得データが小さすぎます (${buffer.length} bytes)`);
+          }
+
+          fs.writeFileSync(downloadsPath, buffer);
+          mainWindow.webContents.send('helloWork-progress', { count: count, total: total, success: item.求人番号 });
+
+        } catch (err: any) {
+          //console.error('❌ PDFダウンロード失敗:', err);
+          mainWindow.webContents.send('helloWork-progress', { count: count, total: total, error: item.求人番号 });
+        } finally {
+          //mainWindow.webContents.send('helloWork-progress', { count: count, total: total });
+          if (browser) await browser.close();
+        }
+      } catch (e) {
+        //
+      }
+
+    }
+    NotificationEXE('すべてのPDFのダウンロード完了')
   }
+);
 
 
-  const tagNames = await page.evaluate(() => {
-    const elements = document.querySelectorAll('*');
-    return Array.from(elements).map(el => ({
-      tag: el.tagName.toLowerCase(),
-      id: el.id,
-      className: el.className,
-      name: el.getAttribute('name'),
-      type: el.getAttribute('type'),
-      role: el.getAttribute('role'),
-      ariaLabel: el.getAttribute('aria-label'),
-    }));
-  });
 
 
-  return tagNames;
-});
+
+
+
+
+
+
+
 
 
 

@@ -3,9 +3,36 @@
 .HelloWorkMainArea {
   padding-top: 60px;
   display: flex;
+  flex-flow: column;
+  padding-left: 20px;
 }
 
 .ButtonArea {
-  background-color: azure;
+  /* background-color: azure; */
   border-radius: 6px;
+  padding-top: 20px;
+}
+
+.HelloWorkProgress{
+  height: 100px;
+  /* background-color: aliceblue; */
+  display: flex;
+  align-items: center;
+  padding-left: 60px;
+}
+
+.HelloType{
+  min-width: 400px;
+  max-width: 400px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.HelloWorkWindow table {
+  border-collapse: collapse;  
+}
+
+.HelloWorkWindow td{
+  border: 1px solid white;
+  padding: 8px 12px;
 }

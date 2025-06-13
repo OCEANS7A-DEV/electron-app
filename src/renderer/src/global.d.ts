@@ -5,6 +5,8 @@ export {}
 declare global {
   interface Window {
     myInventoryAPI: {
+      onHelloWorkProgress(progressHandler: (data: { count: number; total: number; }) => void): unknown;
+      removeHelloWorkProgress(): unknown;
       isDev: boolean;
       UpdaterClose: any;
       MainBoot: any;
@@ -27,7 +29,7 @@ declare global {
       PrintReady: () => Promise<any>;
       NowGet: () => Promise<any>;
       WorkGet: () => Promise<any>;
-      HelloWorkPDFGet: (url: string, filename: string) => Promise<void>;
+      HelloWorkPDFGet: (lists: any) => Promise<void>;
       orderPrint: (payload: string) => Promise<void>;
       storeSet: (settitle: string, setData: any) => Promise<void>;
       storeGet: (gettitle: string) => Promise<any>;
