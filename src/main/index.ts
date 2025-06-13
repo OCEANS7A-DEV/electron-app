@@ -641,6 +641,8 @@ ipcMain.handle('printStatus', async (_event, payload: any) => {
   }
 })
 
+
+
 ipcMain.handle('hellowork-get', async () => {
   async function scrapeHelloWork() {
     const browser = await puppeteer.launch({ 
@@ -655,88 +657,142 @@ ipcMain.handle('hellowork-get', async () => {
     });
     const page = await browser.newPage();
 
-    // 検索画面を開く
-    await page.goto('https://www.hellowork.mhlw.go.jp/kensaku/GECA110010.do?action=initDisp&screenId=GECA110010', {
-      waitUntil: 'networkidle2'
-    });
-
-    await page.type('input[name="jGSHNoJo"]', '3401')
-    await page.type('input[name="jGSHNoChuu"]', '625381')
-    await page.type('input[name="jGSHNoGe"]', '7')
-
+    // 検索画面を開いて検索条件を入力
+    await page.goto(
+      'https://www.hellowork.mhlw.go.jp/kensaku/GECA110010.do?action=initDisp&screenId=GECA110010',
+      { waitUntil: 'networkidle2' }
+    );
+    await page.type('input[name="jGSHNoJo"]', '3401');
+    await page.type('input[name="jGSHNoChuu"]', '625381');
+    await page.type('input[name="jGSHNoGe"]', '7');
     await Promise.all([
       page.waitForNavigation({ waitUntil: 'networkidle2' }),
       page.click('input[name="searchNoBtn"]'),
     ]);
 
+    const allJobs: any[] = [];
+    let pageIndex = 1;
 
-    const jobData = await page.evaluate(() => {
-      const jobs = [];
+    while (true) {
+      //console.log(`📄 ページ ${pageIndex} をスクレイピング中…`);
 
-      const tables = document.querySelectorAll('table.kyujin');
+      // 現ページの求人テーブルを評価
+      const jobsOnPage = await page.evaluate(() => {
+        const jobs: any[] = [];
+        const tables = document.querySelectorAll('table.kyujin');
+        tables.forEach(table => {
+          const job: any = {};
 
-      tables.forEach(table => {
-        const job = {};
+          // 職種
+          job.職種 = table
+            .querySelector('.kyujin_head strong')
+            ?.parentElement?.nextElementSibling?.textContent?.trim() ?? '';
 
-        // 職種
-        const shokushu = table.querySelector('.kyujin_head strong')?.parentElement?.nextElementSibling?.textContent?.trim();
-        job.職種 = shokushu;
+          // 受付年月日・紹介期限日
+          const dateRow = Array.from(table.querySelectorAll('tr')).find(tr =>
+            tr.textContent?.includes('受付年月日')
+          );
+          const dateDivs = dateRow?.querySelectorAll('div') ?? [];
+          job.受付年月日 = dateDivs[1]?.textContent?.trim() ?? '';
+          job.紹介期限日 = dateDivs[2]?.textContent?.trim() ?? '';
 
-        // 受付年月日・紹介期限日（テキストからではなく <div> から正確に）
-        const dateRow = Array.from(table.querySelectorAll('tr')).find(tr => tr.textContent.includes('受付年月日'));
-        const dateDivs = dateRow?.querySelectorAll('div') ?? [];
+          // 左／右テーブルのラベル・値ペア
+          const parseSide = (selector: string) => {
+            document.querySelectorAll(selector).forEach(tr => {
+              const label =
+                tr.querySelector('td:nth-child(1)')?.textContent?.trim() ?? '';
+              const value =
+                tr.querySelector('td:nth-child(2)')?.textContent
+                  ?.replace(/\s+/g, ' ')
+                  .trim() ?? '';
+              if (label) job[label] = value;
+            });
+          };
+          parseSide('.left-side table tr');
+          parseSide('.right-side table tr');
 
-        job.受付年月日 = dateDivs[1]?.textContent?.trim() ?? '';
-        job.紹介期限日 = dateDivs[2]?.textContent?.trim() ?? '';
+          // こだわり条件
+          job.こだわり条件 = Array.from(
+            table.querySelectorAll('.kodawari span.nes_label.any')
+          ).map(span => span.textContent?.trim());
 
-        // 左テーブル項目（ラベルと値ペア）
-        const leftTds = table.querySelectorAll('.left-side table tr');
-        leftTds.forEach(tr => {
-          const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
-          const value = tr.querySelector('td:nth-child(2)')?.innerText?.replace(/\s+/g, ' ').trim();
-          if (label) job[label] = value;
+          // 求人票URL
+          job.求人票URL =
+            table.querySelector('#ID_kyujinhyoBtn')?.getAttribute('href') ?? '';
+
+          // 求人数
+          job.求人数 =
+            table
+              .querySelector('tr:last-of-type')
+              ?.textContent?.match(/求人数：(.+?)名/)?.[1]
+              ?.trim() ?? '';
+
+          jobs.push(job);
         });
-
-        // 右テーブル項目（同上）
-        const rightTds = table.querySelectorAll('.right-side table tr');
-        rightTds.forEach(tr => {
-          const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
-          const value = tr.querySelector('td:nth-child(2)')?.innerText?.replace(/\s+/g, ' ').trim();
-          if (label) job[label] = value;
-        });
-
-        // こだわり条件
-        const kodawari = Array.from(table.querySelectorAll('.kodawari span.nes_label.any')).map(span => span.textContent.trim());
-        job.こだわり条件 = kodawari;
-
-        const link = table.querySelector('#ID_kyujinhyoBtn')?.getAttribute('href');
-        if (link) {
-          job.求人票URL = link;
-        }
-
-        // 求人数
-        const kyujinCount = table.querySelector('tr:last-of-type')?.textContent?.match(/求人数：(.+?)名/)?.[1]?.trim();
-        job.求人数 = kyujinCount;
-
-        jobs.push(job);
+        return jobs;
       });
 
-      return jobs;
-    });
+      allJobs.push(...jobsOnPage);
 
-    return jobData
+      // 「次へ」リンクを探す
+      const nextButton = await page.$('input[name="fwListNaviBtnNext"]');
+      if (!nextButton) {
+        // ボタン自体がない → 最終ページ到達
+        break;
+      }
+
+      // disabled 属性を評価
+      const isDisabled = await nextButton.evaluate((btn: HTMLInputElement) => btn.disabled);
+      if (isDisabled) {
+        // disabled ならループを抜ける
+        break;
+      }
+
+      // 有効ならクリックして次ページへ
+      pageIndex++;
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'networkidle2' }),
+        nextButton.click(),
+      ]);
+    
+    }
+
+    //await browser.close();
+    return allJobs;
   }
 
-  //scrapeHelloWork().catch(console.error);
-  const result = scrapeHelloWork().catch(console.error);
-  return result
-})
+  try {
+    const result = await scrapeHelloWork();
+    return result;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+});
 
+interface Works {
+  'こだわり条件': any[];
+  '事業所名': string;
+  '仕事の内容': string;
+  '休日': string;
+  '公開範囲': string;
+  '受付年月日': string;
+  '就業場所': string;
+  '就業時間': string;
+  '年齢': string;
+  '求人区分': string;
+  '求人番号': string;
+  '求人票URL': string;
+  '紹介期限日': string;
+  '職種': string;
+  '賃金（手当等を含む）': string;
+  '雇用形態': string;
+}
 
 //const wait = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 ipcMain.handle(
   'hellowork-PDF',
-  async (_event: IpcMainInvokeEvent, lists) => {
+  async (_event: IpcMainInvokeEvent, lists: Works[]) => {
     const total = lists.length
     let count = 0
     for (const item of lists) {

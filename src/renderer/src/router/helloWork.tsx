@@ -28,6 +28,8 @@ interface Works {
 }
 
 
+
+
 export const loader = async() => {
   //const works = await window.myInventoryAPI.WorkGet()
   const works = []
@@ -60,6 +62,8 @@ export default function HelloWork() {
 
   useEffect(() => {
     setAllPDFNum(jobList.length)
+    console.log(jobList)
+    toast.success(`取得した求人数:${jobList.length}`)
   }, [jobList])
 
 
