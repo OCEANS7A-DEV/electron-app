@@ -696,20 +696,19 @@ ipcMain.handle('hellowork-get', async () => {
           job.受付年月日 = dateDivs[1]?.textContent?.trim() ?? '';
           job.紹介期限日 = dateDivs[2]?.textContent?.trim() ?? '';
 
-          // 左／右テーブルのラベル・値ペア
-          const parseSide = (selector: string) => {
-            document.querySelectorAll(selector).forEach(tr => {
-              const label =
-                tr.querySelector('td:nth-child(1)')?.textContent?.trim() ?? '';
-              const value =
-                tr.querySelector('td:nth-child(2)')?.textContent
-                  ?.replace(/\s+/g, ' ')
-                  .trim() ?? '';
-              if (label) job[label] = value;
-            });
-          };
-          parseSide('.left-side table tr');
-          parseSide('.right-side table tr');
+          const leftTds = table.querySelectorAll('.left-side table tr');
+          leftTds.forEach(tr => {
+            const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
+            const value = tr.querySelector('td:nth-child(2)')?.innerText?.replace(/\s+/g, ' ').trim();
+            if (label) job[label] = value;
+          });
+          // 右テーブル項目（同上）
+          const rightTds = table.querySelectorAll('.right-side table tr');
+          rightTds.forEach(tr => {
+            const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
+            const value = tr.querySelector('td:nth-child(2)')?.innerText?.replace(/\s+/g, ' ').trim();
+            if (label) job[label] = value;
+          });
 
           // こだわり条件
           job.こだわり条件 = Array.from(
@@ -731,24 +730,15 @@ ipcMain.handle('hellowork-get', async () => {
         });
         return jobs;
       });
-
       allJobs.push(...jobsOnPage);
-
-      // 「次へ」リンクを探す
       const nextButton = await page.$('input[name="fwListNaviBtnNext"]');
       if (!nextButton) {
-        // ボタン自体がない → 最終ページ到達
         break;
       }
-
-      // disabled 属性を評価
       const isDisabled = await nextButton.evaluate((btn: HTMLInputElement) => btn.disabled);
       if (isDisabled) {
-        // disabled ならループを抜ける
         break;
       }
-
-      // 有効ならクリックして次ページへ
       pageIndex++;
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
@@ -756,11 +746,8 @@ ipcMain.handle('hellowork-get', async () => {
       ]);
     
     }
-
-    //await browser.close();
     return allJobs;
   }
-
   try {
     const result = await scrapeHelloWork();
     return result;
@@ -769,6 +756,10 @@ ipcMain.handle('hellowork-get', async () => {
     throw err;
   }
 });
+
+
+
+
 
 interface Works {
   'こだわり条件': any[];

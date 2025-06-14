@@ -101,6 +101,7 @@ export default function HelloWork() {
     const result = await window.myInventoryAPI.WorkGet()
     setJobList(result)
     setLoading(false)
+    
   }
 
   
