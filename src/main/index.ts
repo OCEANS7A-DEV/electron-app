@@ -303,6 +303,31 @@ export const StartUpSet = async () => {
   }
 }
 
+export const DetailsGet = async () => {
+  try {
+    const response = await fetch(GetAPI_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: JSON.stringify({
+        sheetName: '',
+        action: 'TotallingGet',
+        ranges: 'A2:N'
+      })
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const result = await response.json()
+    //console.log(result)
+    return result
+  } catch (error) {
+    console.error('Error:', error)
+    throw error
+  }
+}
+
 
 
 

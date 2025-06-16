@@ -218,7 +218,7 @@ export default function HQPage() {
     if(getDate !== ''){
       PrintProcessList()
     }
-  },[getDate])
+  }, [getDate])
 
   // useEffect(() =>{
   //   const resetDate = sessionStorage.getItem('printdate') ?? ''
@@ -458,6 +458,17 @@ export default function HQPage() {
   }
 
 
+  const DetailsPrint = async() => {
+    const setdate = getDate
+    const Vendorparams = new URLSearchParams()
+    Vendorparams.set("date", setdate)
+
+    await window.myInventoryAPI.storeSet('printData', JSON.stringify(orderData))
+    await window.myInventoryAPI.storeSet('printDate', setdate)
+    window.myInventoryAPI.orderPrint(`OrderDetails`)
+  }
+
+
   return (
     <div className='check_window'>
       <Toaster />
@@ -601,7 +612,7 @@ export default function HQPage() {
               <Button variant='outlined' onClick={() => nomalPrint()}>
                 通常商品印刷
               </Button>
-              <Button variant='outlined' onClick={() => console.log('詳細印刷')}>
+              <Button variant='outlined' onClick={() => DetailsPrint()}>
                 詳細印刷
               </Button>
               <Button variant='outlined' onClick={() => NotListed()}>

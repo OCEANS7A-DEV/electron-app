@@ -20,6 +20,22 @@ import AddProductDialogTable from '../comp/NewProduct';
 import SweetAlert2 from 'react-sweetalert2';
 
 
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+
+
 
 
 
@@ -79,7 +95,6 @@ export const loader = async () => {
   const types = typeList
   .filter(item => item[0] && item[0] !== "")
   .map(item => ({ value: item[1], label: item[1], id: item[0] }));
-
   return { vendorSelect, Lists, types }
 }
 
@@ -87,31 +102,97 @@ export const loader = async () => {
 export default function ProductDetailChangePage() {
   const { vendorSelect, Lists, types } = useLoaderData<typeof loader>()
   const [modalOpen, setModalOpen] = useState(false)
-  //const [newmodalOpen, setnewModalOpen] = useState(false)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
   const [addRowIndex, setAddRowIndex] = useState<number>(0)
   const [loading, setLoading] = useState(false)
-  //const defListsLength = Lists.length
+
+  const [InsertDate, setDate] = useState<string>('')
 
   const [height, setHeight] = useState<number>(0);
 
   const [swalProps, setSwalProps] = useState({})
 
+  const addDialogRef = useRef<any>(null)
+
   const swalWindow = async () => {
     setSwalProps({
       show: true,
       title: '入力データ',
-      onConfirm: () => {
+      preConfirm: () => {
+        const data = addDialogRef.current.getFormData()
+        if (data.code == ''){
+          toast.error('商品コードを入力してください')
+          return false
+        } else if (data.name == ''){
+          toast.error('商品名を入力してください')
+          return false
+        }
         const filterData = getValues().rows.filter((row) => row.code !== '')
-        if(filterData.length !== 0){
-          setSwalProps({ show: false })
-          //insertPost()
-          toast.success('送信しました')
-        } else {
+        const search = filterData.find(item => item.code == data.code)
+        if ((data && !search) || (data && search && !search.possibility)){
+          //setSwalProps({ show: false })
+          ProductNewDataInsert(data)
+          toast.success('送信しました(開発中では閉じない)')
+          return false
+        } else if (!data) {
           toast.error('送信できるデータがありません')
+          return false
+        } else if (data && search && search.possibility){
+          toast.error('その商品コードはすでに存在しています')
+          return false
         }
       }
     })
+  }
+
+
+  const ProductNewDataInsert = async (data) => {
+    console.log(data)
+    const now = InsertDate.replace(/-/g, '/')
+    const insertResult = ['商品コード']
+    Object.keys(data).forEach(async (item) => {
+      let sheet
+      let insertData
+      if (item == 'name' && data.name !== ''){
+        insertData = [data.code, data.name, now]
+        sheet = '商品名'
+      } else if (item == 'newPrice' && data.newPrice !== ''){
+        insertData = [data.code, data.newPrice, now]
+        sheet = '価格'
+      } else if (item == 'VCPrice' && data.VCPrice !== ''){
+        insertData = [data.code, data.VCPrice, now]
+        sheet = 'VC価格'
+      } else if (item == 'valuePrice' && data.valuePrice !== ''){
+        insertData = [data.code, data.valuePrice, now]
+        sheet = '店販'
+      } else if (item == 'remarks' && data.remarks !== ''){
+        insertData = [data.code, data.remarks, now]
+        sheet = '備考'
+      } else if (item == 'possibility' && data.possibility !== ''){
+        insertData = [data.code, data.possibility, now]
+        sheet = '発注可否'
+      } else if (item == 'service' && data.service !== ''){
+        insertData = [data.code, data.service, now]
+        sheet = 'サービス数'
+      } else if (item == 'type' && data.type){
+        console.log(data.type)
+        insertData = [data.code, data.type?.value ?? '', now]
+        sheet = '商品タイプ'
+      } else if (item == 'vendor' || item == 'code' || item == 'defPrice') {
+        //console.log('キャンセル')
+        return
+      } else {
+        //console.log('キャンセル')
+        return
+      }
+      insertResult.push(sheet)
+      await window.myInventoryAPI.DataInsert({
+        sheetName: sheet,
+        action: 'DataHistory',
+        data: [insertData],
+      })
+    })
+    toast.success(`${insertResult}の登録が完了しました`)
   }
 
 
@@ -123,7 +204,15 @@ export default function ProductDetailChangePage() {
     updateHeight();
     window.addEventListener('resize', updateHeight);
     return () => window.removeEventListener('resize', updateHeight);
-  }, []);
+  }, [])
+
+  useEffect(() => {
+    const today = new Date()
+    const yyyy = today.getFullYear()
+    const mm = String(today.getMonth() + 1).padStart(2, '0')
+    const dd = String(today.getDate()).padStart(2, '0')
+    setDate(`${yyyy}-${mm}-${dd}`)
+  }, [])
 
   const StoreDataDefaultSet = () => {
     return Lists.map(item => ({
@@ -308,6 +397,13 @@ export default function ProductDetailChangePage() {
     
   }
 
+
+  const DialogClosed = async () => {
+    //console.log('閉じる')
+    setModalOpen(false)
+  }
+
+
   return(
     <div>
       <div>
@@ -335,112 +431,61 @@ export default function ProductDetailChangePage() {
           <div className="virtual-table-cell cell-name">商品名</div>
           <div className="virtual-table-cell cell-price">最新価格</div>
           <div className="virtual-table-cell cell-type">商品タイプ</div>
-          {/* <div className="virtual-table-cell cell-switch">可否</div> */}
           <div className="virtual-table-cell cell-dialog">編集</div>
           <div className="virtual-table-cell cell-actions">行の編集</div>
         </div>
         <div>
-          <List
-            height={height}
-            itemCount={fields.length}
-            itemSize={48}
-            width="1200px"
-          >
-            {({ index, style }) => {
-              const field = fields[index]
-              return (
-                <div key={field.id} style={style} className="virtual-table-row">
-                  <div className="virtual-table-cell cell-vendor" >
-                    <div className="div-vendor">
-                      {getValues(`rows.${index}.vendor`)?.value ?? ''}
-                    </div>
-                  </div>
-                  <div className="virtual-table-cell cell-code">
-                    <input
-                      style={{ height: 32, width: '100%', textAlign: 'right' }}
-                      {...register(`rows.${index}.code`)}
-                    />
-                  </div>
-                  <div className="virtual-table-cell cell-name">
-                    <Box className="div-name" style={{ display: 'flex' }}>
-                      <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
-                      <div>
-                        {getValues(`rows.${index}.name`)}
-                      </div>
-                    </Box>
-                  </div>
-                  <div className="virtual-table-cell cell-price">
-                    {/* @ts-ignore */}
-                    <Tooltip title="最新価格は自動反映されます" arrow>
-                      <Box className="new-price" style={{display: 'flex'}}>
-                        <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
-                        <div>
-                          {(Number(getValues(`rows.${index}.newPrice`)) || 0).toLocaleString()}
-                        </div>
-                      </Box>
-                    </Tooltip>
-                  </div>
-                  <div className="virtual-table-cell cell-type">
-                    <div className="div-vendor">
-                      {getValues(`rows.${index}.type`)?.value ?? ''}
-                    </div>
-                    {/* <Controller
-                      name={`rows.${index}.type`}
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          {...field}
-                          value={field.value?.value || ''}
-                          onChange={(e) => {
-                            const selectedValue = e.target.value;
-                            const selectedOption = types.find(t => t.value === selectedValue) || null;
-                            field.onChange(selectedOption);
-                          }}
-                          displayEmpty
-                          size="small"
-                          style={{ width: 160, backgroundColor: 'white' }}
-                        >
-                          <MenuItem value="">
-                            <em>タイプなし</em>
-                          </MenuItem>
-                          {types.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      )}
-                    /> */}
-                  </div>
-                  {/* <div className="virtual-table-cell cell-switch">
-                    <Controller
-                      name={`rows.${index}.possibility`}
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <Switch
-                          checked={value}
-                          onChange={onChange}
-                          color="primary"
-                        />
-                      )}
-                    />
-                  </div> */}
-                  <div className="virtual-table-cell cell-dialog">
-                    <Button variant="outlined" onClick={() => dialogOpen(index)}>編集</Button>
-                  </div>
-                  <div className="virtual-table-cell cell-actions">
-                    <div style={{ whiteSpace: 'nowrap' }}>
-                      <Button variant="outlined" onClick={() => NewRowInsert(index)}>追加</Button>
-                      <Button variant="outlined" onClick={() => remove(index)}>削除</Button>
-                    </div>
-                  </div>
+          {fields.map((field, index) => (
+            <div key={field.id} className="virtual-table-row">
+              <div className="virtual-table-cell cell-vendor">
+                <div className="div-vendor">
+                  {getValues(`rows.${index}.vendor`)?.value ?? ''}
                 </div>
-              )
-            }}
-          </List>
+              </div>
+              <div className="virtual-table-cell cell-code">
+                <input
+                  style={{ height: 32, width: '100%', textAlign: 'right' }}
+                  {...register(`rows.${index}.code`)}
+                />
+              </div>
+              <div className="virtual-table-cell cell-name">
+                <Box className="div-name" style={{ display: 'flex' }}>
+                  <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
+                  <div>
+                    {getValues(`rows.${index}.name`)}
+                  </div>
+                </Box>
+              </div>
+              <div className="virtual-table-cell cell-price">
+                {/* @ts-ignore */}
+                <Tooltip title="最新価格は自動反映されます" arrow>
+                  <Box className="new-price" style={{display: 'flex'}}>
+                    <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
+                    <div>
+                      {(Number(getValues(`rows.${index}.newPrice`)) || 0).toLocaleString()}
+                    </div>
+                  </Box>
+                </Tooltip>
+              </div>
+              <div className="virtual-table-cell cell-type">
+                <div className="div-vendor">
+                  {getValues(`rows.${index}.type`)?.value ?? ''}
+                </div>
+              </div>
+              <div className="virtual-table-cell cell-dialog">
+                <Button variant="outlined" onClick={() => dialogOpen(index)}>編集</Button>
+              </div>
+              <div className="virtual-table-cell cell-actions">
+                <div style={{ whiteSpace: 'nowrap' }}>
+                  <Button variant="outlined" onClick={() => NewRowInsert(index)}>追加</Button>
+                  <Button variant="outlined" onClick={() => remove(index)}>削除</Button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      <div className={`modalOverlay ${modalOpen ? 'open' : ''}`}>
+      <div className={`modalOverlay ${modalOpen ? 'open' : ''}`} onClick={DialogClosed}>
         {selectedRowIndex !== null && (
           <div className="modalContent">
             <h3>編集</h3>
@@ -466,33 +511,6 @@ export default function ProductDetailChangePage() {
                 <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
                 {getValues(`rows.${selectedRowIndex}.vendor`)?.value ?? ''}
               </div>
-              {/* <Controller
-                name={`rows.${selectedRowIndex}.vendor`}
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    value={field.value?.value || ''}
-                    onChange={(e) => {
-                      const selectedValue = e.target.value;
-                      const selectedOption = vendorSelect.find(v => v.value === selectedValue) || null;
-                      field.onChange(selectedOption);
-                    }}
-                    displayEmpty
-                    size="small"
-                    style={{ width: 160, backgroundColor: 'white' }}
-                  >
-                    <MenuItem value="">
-                      <em>業者なし</em>
-                    </MenuItem>
-                    {vendorSelect.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              /> */}
               <Controller
                 name={`rows.${selectedRowIndex}.type`}
                 control={control}
@@ -609,11 +627,12 @@ export default function ProductDetailChangePage() {
         {...swalProps}
         didClose={() => {
           console.log('ダイアログが閉じられました');
-          setSwalProps({ show: false });
+          setSwalProps({ show: false })
         }}
       >
         <AddProductDialogTable
           addRowNumber={addRowIndex}
+          ref={addDialogRef}
         />
       </SweetAlert2>
       <div className="Product-Bottom-button-area">

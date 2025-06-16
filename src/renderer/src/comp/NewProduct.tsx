@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { Button } from '@mui/material'
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+//import { Button } from '@mui/material'
 import '../css/orderDialog.css'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
-import { MenuItem } from '@mui/material'
+import { MenuItem, TextField } from '@mui/material'
 
 type FormValues = {
   vendor: { value: string, label: string, id: string } | null;
@@ -20,11 +20,15 @@ type FormValues = {
   orderNum: string;
 };
 
-interface ConfirmDialogProps {
-  addRowNumber: number;
+// interface ConfirmDialogProps {
+//   addRowNumber: number;
+// }
+
+interface Props {
+  addRowNumber: number
 }
 
-const AddProductDialogTable: React.FC<ConfirmDialogProps> = ({ addRowNumber }) => {
+const AddProductDialogTable = forwardRef(({ addRowNumber }: Props, ref) => {
 
   const defaultValues: FormValues = {
     vendor: null,
@@ -43,6 +47,8 @@ const AddProductDialogTable: React.FC<ConfirmDialogProps> = ({ addRowNumber }) =
 
   const [types, setTypes] = useState([])
 
+  //const [Lists, setLists] = useState([])
+
   const typesGet = async () => {
     const list = await window.myInventoryAPI.storeGet('types')
     const filtered = list.types.filter(item => item[0] !== '')
@@ -58,20 +64,27 @@ const AddProductDialogTable: React.FC<ConfirmDialogProps> = ({ addRowNumber }) =
     setTypes(setdata)
   }
 
+  useImperativeHandle(ref, () => ({
+    getFormData: () => getValues()
+  }))
+
   useEffect(() => {
     typesGet()
-  },[])
+    //Products()
+  }, [])
 
-  const { register, getValues } = useForm<FormValues>({ defaultValues });
+  const { register, getValues, control } = useForm<FormValues>({ defaultValues });
 
   const Add = () => {
     console.log(getValues());
     console.log(addRowNumber);
+    //console.log(Lists)
+    //const check = Lists.filter(item => item.)
   };
 
   return (
     <div className="modal-dialog-newProduct">
-      <div style={{ width: '50%' }}>
+      <div className="newProductInputArea">
 
         {/* <div className="newProductInsert">
           <div>店販価格(税込):</div>
@@ -79,55 +92,80 @@ const AddProductDialogTable: React.FC<ConfirmDialogProps> = ({ addRowNumber }) =
         </div> */}
 
         <div className="newProductInsert">
-          <div>商品コード:</div>
+          <div className="newProductLabel">商品コード:</div>
           <input style={{ height: 32 }} {...register('code')} />
         </div>
 
         <div className="newProductInsert">
-          <div>商品名:</div>
+          <div className="newProductLabel">商品名:</div>
           <input style={{ height: 32 }} {...register('name')} />
         </div>
 
         <div className="newProductInsert">
-          <div>商品単価:</div>
+          <div className="newProductLabel">商品単価:</div>
           <input style={{ height: 32 }} {...register('newPrice')} />
         </div>
 
         <div className="newProductInsert">
-          <div>VC価格:</div>
+          <div className="newProductLabel">VC価格:</div>
           <input style={{ height: 32 }} {...register('VCPrice')} />
         </div>
 
         <div className="newProductInsert">
-          <div>店販価格(税込):</div>
+          <div className="newProductLabel">店販価格(税込):</div>
           <input style={{ height: 32 }} {...register('valuePrice')} />
         </div>
 
         <div className="newProductInsert">
-          <div>商品タイプ:</div>
-          {/* <Select
-            label='タイプ'
-            {...register(`rows.type`)}
-            displayEmpty
-            size="small"
-            style={{ width: 120, backgroundColor: 'white' }}
-          >
-            <MenuItem value="">
-              <em>未選択</em>
-            </MenuItem>
-            {types.map((option) => (
-              <MenuItem key={option.value} value={option.value} id={option.id}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select> */}
+          <div className="newProductLabel">商品タイプ:</div>
+          <Controller
+            name="type"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                value={field.value?.value || ''} // 初期値が undefined でも警告が出ないように
+                onChange={(e) => {
+                  const selected = types.find((t) => t.value === e.target.value) || null;
+                  field.onChange(selected);
+                }}
+                displayEmpty
+                size="small"
+                style={{ width: 120, backgroundColor: 'white' }}
+              >
+                <MenuItem value="">
+                  <em>未選択</em>
+                </MenuItem>
+                {types.map((option) => (
+                  <MenuItem key={option.value} value={option.value} id={option.id}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            )}
+          />
+        </div>
+
+        <div className="newProductInsert">
+          <div className="newProductLabel">注文単位:</div>
+          <input style={{ height: 32 }} {...register('orderNum')} />
+        </div>
+
+        <div className="newProductInsert">
+          <div className="newProductLabel">サービス単位:</div>
+          <input style={{ height: 32 }} {...register('service')} />
+        </div>
+
+        <div className="newProductInsert">
+          <div className="newProductLabel">備考:</div>
+          <TextField
+            {...register('remarks')}
+            multiline
+          />
         </div>
       </div>
-      
-
-      {/* <Button variant="outlined" onClick={Add}>test</Button> */}
     </div>
-  );
-};
+  )
+})
 
 export default AddProductDialogTable;

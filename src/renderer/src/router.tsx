@@ -20,6 +20,10 @@ import DetailContent from './router/productDetailEdit'
 import UpdateWindow from './router/updater'
 import InventoryMoving from './router/Moving'
 import CatalogView from './router/Catalog'
+import NetDetailsPrint, { loader as NetDetailsLoader} from './router/OrderDetails'
+
+
+
 
 
 
@@ -47,6 +51,11 @@ export const router = createHashRouter([
     path: '/NotListed',
     element: <NotListed/>,
     loader: NotListedLoader
+  },
+  {
+    path: '/OrderDetails',
+    element: <NetDetailsPrint />,
+    loader: NetDetailsLoader
   },
   {
     path: '/HQ_stocks',
