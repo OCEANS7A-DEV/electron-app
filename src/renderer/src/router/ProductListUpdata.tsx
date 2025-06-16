@@ -72,6 +72,30 @@ const defaultRowData = {
 }
 
 
+
+function SortableRow({ id, index, children }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      {children(listeners)}
+    </div>
+  );
+}
+
+
+
 export const loader = async () => {
   const vendorData = await window.myInventoryAPI.VendorData() ?? []
   //console.log(vendorData)
@@ -239,10 +263,12 @@ export default function ProductDetailChangePage() {
       }
     })
 
-  const { fields, append, remove, insert } = useFieldArray({
+  const { fields, append, remove, insert, move } = useFieldArray({
     control,
     name: 'rows'
   })
+
+  const sensors = useSensors(useSensor(PointerSensor));
 
   const NewRowInsert = (row) => {
     insert(row, 
@@ -435,54 +461,85 @@ export default function ProductDetailChangePage() {
           <div className="virtual-table-cell cell-actions">行の編集</div>
         </div>
         <div>
-          {fields.map((field, index) => (
-            <div key={field.id} className="virtual-table-row">
-              <div className="virtual-table-cell cell-vendor">
-                <div className="div-vendor">
-                  {getValues(`rows.${index}.vendor`)?.value ?? ''}
-                </div>
-              </div>
-              <div className="virtual-table-cell cell-code">
-                <input
-                  style={{ height: 32, width: '100%', textAlign: 'right' }}
-                  {...register(`rows.${index}.code`)}
-                />
-              </div>
-              <div className="virtual-table-cell cell-name">
-                <Box className="div-name" style={{ display: 'flex' }}>
-                  <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
-                  <div>
-                    {getValues(`rows.${index}.name`)}
-                  </div>
-                </Box>
-              </div>
-              <div className="virtual-table-cell cell-price">
-                {/* @ts-ignore */}
-                <Tooltip title="最新価格は自動反映されます" arrow>
-                  <Box className="new-price" style={{display: 'flex'}}>
-                    <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
-                    <div>
-                      {(Number(getValues(`rows.${index}.newPrice`)) || 0).toLocaleString()}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={({ active, over }) => {
+              if (active.id !== over?.id) {
+                const oldIndex = fields.findIndex(f => f.id === active.id);
+                const newIndex = fields.findIndex(f => f.id === over?.id);
+                move(oldIndex, newIndex);
+              }
+            }}
+          >
+            <SortableContext items={fields.map(f => f.id)} strategy={verticalListSortingStrategy}>
+              {fields.map((field, index) => (
+                <SortableRow key={field.id} id={field.id} index={index}>
+                  {(listeners) => (
+                    <div className="virtual-table-row">
+                      <div
+                        {...listeners}
+                        style={{
+                          cursor: 'grab',
+                          padding: '4px 8px',
+                          background: '#ddd',
+                          borderRadius: '4px',
+                          userSelect: 'none',
+                        }}
+                      >
+                        ::
+                      </div>
+                      <div className="virtual-table-cell cell-vendor">
+                        <div className="div-vendor">
+                          {getValues(`rows.${index}.vendor`)?.value ?? ''}
+                        </div>
+                      </div>
+                      <div className="virtual-table-cell cell-code">
+                        <input
+                          style={{ height: 32, width: '100%', textAlign: 'right' }}
+                          {...register(`rows.${index}.code`)}
+                        />
+                      </div>
+                      <div className="virtual-table-cell cell-name">
+                        <Box className="div-name" style={{ display: 'flex' }}>
+                          <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
+                          <div>
+                            {getValues(`rows.${index}.name`)}
+                          </div>
+                        </Box>
+                      </div>
+                      <div className="virtual-table-cell cell-price">
+                        {/* @ts-ignore */}
+                        <Tooltip title="最新価格は自動反映されます" arrow>
+                          <Box className="new-price" style={{display: 'flex'}}>
+                            <LockOutlinedIcon fontSize="small" style={{ marginLeft: 2, color: '#aaa' }} />
+                            <div>
+                              {(Number(getValues(`rows.${index}.newPrice`)) || 0).toLocaleString()}
+                            </div>
+                          </Box>
+                        </Tooltip>
+                      </div>
+                      <div className="virtual-table-cell cell-type">
+                        <div className="div-vendor">
+                          {getValues(`rows.${index}.type`)?.value ?? ''}
+                        </div>
+                      </div>
+                      <div className="virtual-table-cell cell-dialog">
+                        <Button variant="outlined" onClick={() => dialogOpen(index)}>編集</Button>
+                      </div>
+                      <div className="virtual-table-cell cell-actions">
+                        <div style={{ whiteSpace: 'nowrap' }}>
+                          <Button variant="outlined" onClick={() => NewRowInsert(index)}>追加</Button>
+                          <Button variant="outlined" onClick={() => remove(index)}>削除</Button>
+                        </div>
+                      </div>
                     </div>
-                  </Box>
-                </Tooltip>
-              </div>
-              <div className="virtual-table-cell cell-type">
-                <div className="div-vendor">
-                  {getValues(`rows.${index}.type`)?.value ?? ''}
-                </div>
-              </div>
-              <div className="virtual-table-cell cell-dialog">
-                <Button variant="outlined" onClick={() => dialogOpen(index)}>編集</Button>
-              </div>
-              <div className="virtual-table-cell cell-actions">
-                <div style={{ whiteSpace: 'nowrap' }}>
-                  <Button variant="outlined" onClick={() => NewRowInsert(index)}>追加</Button>
-                  <Button variant="outlined" onClick={() => remove(index)}>削除</Button>
-                </div>
-              </div>
-            </div>
-          ))}
+                  )}
+                  
+                </SortableRow>
+              ))}
+            </SortableContext>
+          </DndContext>
         </div>
       </div>
       <div className={`modalOverlay ${modalOpen ? 'open' : ''}`} onClick={DialogClosed}>
