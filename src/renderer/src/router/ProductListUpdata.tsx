@@ -82,6 +82,7 @@ function SortableRow({ id, index, children }) {
     transition,
   } = useSortable({ id });
 
+  console.log(index)
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -218,6 +219,7 @@ export default function ProductDetailChangePage() {
     })
     toast.success(`${insertResult}の登録が完了しました`)
   }
+  console.log(height)
 
 
   useEffect(() => {
