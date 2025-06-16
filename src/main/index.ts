@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, net, Notification } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, net, Notification, IpcMainInvokeEvent } from 'electron'
 import { join } from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -6,7 +6,8 @@ import Store from 'electron-store'
 import log from 'electron-log'
 import updater from 'electron-updater'
 const { autoUpdater } = updater
-import puppeteer from "puppeteer"
+import puppeteer from 'puppeteer'
+import { Browser, Page } from 'puppeteer'
 import os from 'os';
 
 import fs from 'fs';
@@ -724,14 +725,16 @@ ipcMain.handle('hellowork-get', async () => {
           const leftTds = table.querySelectorAll('.left-side table tr');
           leftTds.forEach(tr => {
             const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
-            const value = tr.querySelector('td:nth-child(2)')?.innerText?.replace(/\s+/g, ' ').trim();
+            const td = tr.querySelector('td:nth-child(2)');
+            const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
             if (label) job[label] = value;
           });
           // 右テーブル項目（同上）
           const rightTds = table.querySelectorAll('.right-side table tr');
           rightTds.forEach(tr => {
             const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
-            const value = tr.querySelector('td:nth-child(2)')?.innerText?.replace(/\s+/g, ' ').trim();
+            const td = tr.querySelector('td:nth-child(2)');
+            const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
             if (label) job[label] = value;
           });
 
