@@ -105,6 +105,10 @@ export default function StoreOrderPage() {
 
   const [ProductdetailsList, setProductdetailsList] = useState([])
 
+  const [AllOrderData, setAllrderData] = useState([])
+
+  const [DeleteRowNum, setDeleteRowNum] = useState(0)
+
 
 
   const swalWindow = async () => {
@@ -180,17 +184,19 @@ export default function StoreOrderPage() {
       ]
       return result
     })
+    console.log(DeleteRowNum)
     console.log(formData)
-
+    //return
     if (formData.length >= 1) {
       await window.myInventoryAPI.DataInsert({
         sheetName: '店舗へ',
-        action: 'insert',
+        action: 'Orderinsert',
         data: formData,
         formulaConfig: {
           targetCol: 10,
           formula: '=RC[-3]*RC[-1]'
-        }
+        },
+        deleteNum: DeleteRowNum
       })
     }
     reset({
@@ -252,14 +258,7 @@ export default function StoreOrderPage() {
     return result
   }
 
-  useEffect(() => {
-    //dataget()
-    //defaultSet()
 
-    //VendorListGet()
-    StoresGet()
-    DetailsSet()
-  }, [])
 
   useEffect(() => {
     if(DisplayStatus){
@@ -323,6 +322,82 @@ export default function StoreOrderPage() {
       }
     }
   };
+
+
+  const OrderDataGet = async () => {
+    const ordersGet = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M'})
+    setAllrderData(ordersGet)
+  }
+
+  const orderDataGetSelect = async () => {
+    const ordersGet = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M'})
+    const targetDateStr = new Date(InsertDate).toDateString();
+    const filtered = ordersGet.filter(item => new Date(item[0]).toDateString() == targetDateStr && item[1] == storeSelect)
+    const UpDataRowNum = filtered.length
+    setDeleteRowNum(UpDataRowNum)
+    console.log(filtered)
+    if (filtered[0][12] == '注文無'){
+      reset({
+        rows: defaultSet()
+      })
+      return filtered
+    }
+
+    if (filtered.length > 0){
+      reset({
+        rows: defaultSet()
+      })
+      if (UpDataRowNum > 20){
+        const diffcount = Math.ceil(UpDataRowNum / 20) - 1
+        for (let i = 0; i < diffcount; i++ ){
+          await addNewForm()
+        }
+      }
+      let count = 0
+      filtered.forEach(item => {
+        setValue(`rows.${count}.vendor`, item[2])
+        setValue(`rows.${count}.code`, item[3])
+        const detailfilter = ProductdetailsList.filter(row => row[0] == item[3] && row[1] !== '')
+        const detaillist = detailfilter.map(item => {
+          const result = {value: item[1] ?? '', label: item[1] ?? ''}
+          return result
+        })
+        setValue(`rows.${count}.detailList`, detaillist)
+        const detail = {value: item[5], label: item[5]}
+        setValue(`rows.${count}.detail`, detail)
+        setValue(`rows.${count}.name`, item[4])
+        setValue(`rows.${count}.quantity`, item[6])
+        setValue(`rows.${count}.person`, item[10])
+        setValue(`rows.${count}.price`, item[8])
+        setValue(`rows.${count}.remarks`, item[11])
+        count ++
+      })
+    }
+    return filtered
+  }
+
+  useEffect(() => {
+    if (storeSelect !== ""){
+      toast.promise(
+        orderDataGetSelect(),
+        {
+          loading: '注文データ読み込み中…',
+          success: (data) => {
+            if (data.length == 0){
+              return `${InsertDate}の${storeSelect}店は注文されていません`
+            } else if (data.length == 1 && data[0][12]){
+              return `${InsertDate}の${storeSelect}店は注文無し`
+            } else {
+              return `${InsertDate}の${storeSelect}店の注文数${data.length}`
+            }
+          },
+          error: () => `エラーが発生しました`,
+        },
+      )
+    }
+    
+  }, [InsertDate, storeSelect])
+
 
 
 
@@ -394,6 +469,11 @@ export default function StoreOrderPage() {
     })
   }
 
+  useEffect(() => { //最初に起動
+    //OrderDataGet()
+    StoresGet()
+    DetailsSet()
+  }, [])
 
   return (
     <>

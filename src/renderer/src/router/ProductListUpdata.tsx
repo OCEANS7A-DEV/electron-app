@@ -71,7 +71,7 @@ const defaultRowData = {
 
 
 
-function SortableRow({ id, index, children }) {
+function SortableRow({ id, _index, children }) {
   const {
     attributes,
     listeners,
@@ -80,7 +80,7 @@ function SortableRow({ id, index, children }) {
     transition,
   } = useSortable({ id });
 
-  console.log(index)
+  //console.log(index)
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
