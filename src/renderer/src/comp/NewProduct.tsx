@@ -31,7 +31,7 @@ interface Props {
 }
 
 const AddProductDialogTable = forwardRef(({ addRowNumber }: Props, ref) => {
-
+  console.log(addRowNumber)
   const defaultValues: FormValues = {
     vendor: null,
     code: '',
