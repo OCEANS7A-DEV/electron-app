@@ -2,7 +2,7 @@ import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'rea
 import { useForm, Controller } from 'react-hook-form'
 //import { Button } from '@mui/material'
 import '../css/orderDialog.css'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Select from '@mui/material/Select'
 import { MenuItem, TextField } from '@mui/material'
 
 type FormValues = {
@@ -23,6 +23,8 @@ type FormValues = {
 // interface ConfirmDialogProps {
 //   addRowNumber: number;
 // }
+
+type Option = { value: string; label: string; id: string };
 
 interface Props {
   addRowNumber: number
@@ -45,7 +47,7 @@ const AddProductDialogTable = forwardRef(({ addRowNumber }: Props, ref) => {
     orderNum: ''
   };
 
-  const [types, setTypes] = useState([])
+  const [types, setTypes] = useState<Option[]>([])
 
   //const [Lists, setLists] = useState([])
 
@@ -75,12 +77,12 @@ const AddProductDialogTable = forwardRef(({ addRowNumber }: Props, ref) => {
 
   const { register, getValues, control } = useForm<FormValues>({ defaultValues });
 
-  const Add = () => {
-    console.log(getValues());
-    console.log(addRowNumber);
-    //console.log(Lists)
-    //const check = Lists.filter(item => item.)
-  };
+  // const Add = () => {
+  //   console.log(getValues());
+  //   console.log(addRowNumber);
+  //   //console.log(Lists)
+  //   //const check = Lists.filter(item => item.)
+  // };
 
   return (
     <div className="modal-dialog-newProduct">

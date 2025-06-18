@@ -14,8 +14,6 @@ import { LinearProgress } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import toast, { Toaster } from 'react-hot-toast';
 
-import { FixedSizeList as List } from 'react-window';
-
 import AddProductDialogTable from '../comp/NewProduct';
 import SweetAlert2 from 'react-sweetalert2';
 
@@ -29,7 +27,7 @@ import {
 } from '@dnd-kit/core'
 import {
   SortableContext,
-  arrayMove,
+  //arrayMove,
   verticalListSortingStrategy,
   useSortable,
 } from '@dnd-kit/sortable'
@@ -166,6 +164,7 @@ export default function ProductDetailChangePage() {
           toast.error('その商品コードはすでに存在しています')
           return false
         }
+        return
       }
     })
   }
