@@ -1,9 +1,9 @@
-import { useLoaderData } from "react-router-dom";
-//import { kaigisituOrder, taiyoOrder, shortageGet, stockList, AllClearCells } from '../backend/Server_end';
+import { useLoaderData } from "react-router-dom"
 import '../css/stocks.css'
-import LinkBaner from '../comp/Linkbanar';
-import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
+import LinkBaner from '../comp/Linkbanar'
+import React, { useState, useEffect } from 'react'
+import Swal from 'sweetalert2'
+import { Button } from '@mui/material'
 
 
 
@@ -61,14 +61,9 @@ export default function HQStocks() {
       </div>
       <div className="stocksWindow">
         <div className="stocks-button-area">
-          <button type="button" onClick={dataset}>在庫データ再取得</button>
-          <button type="button" onClick={dialog}>現物数オールクリア</button>
-          <a
-            href={URL}
-            target="_blank"
-          >
-            入出庫等入力データへ
-          </a>
+          <Button variant="outlined" onClick={dataset}>在庫データ再取得</Button>
+          <Button variant="outlined" onClick={dialog}>現物数オールクリア</Button>
+          <Button variant="outlined" href={URL} target="_blank">入出庫等入力データへ</Button>
         </div>
         <table>
           <thead>

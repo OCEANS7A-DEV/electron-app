@@ -1,14 +1,11 @@
 /* eslint-disable prettier/prettier */
-import React, { useState, ChangeEvent, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import WordSearch from '../comp/ProductSearchWord'
 import '../css/Receiving.css'
 import { Button } from '@mui/material'
 import { Autocomplete, TextField } from '@mui/material';
 import LinkBaner from '../comp/Linkbanar'
 import SendIcon from '@mui/icons-material/Send'
-//import DeleteIcon from '@mui/icons-material/Delete'
-//import FormControl from '@mui/material/FormControl'
-//import InputLabel from '@mui/material/InputLabel'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import SweetAlert2 from 'react-sweetalert2';
 import Swal from 'sweetalert2'
@@ -17,27 +14,14 @@ import toast, { Toaster } from 'react-hot-toast';
 import { SubmitHandler } from 'react-hook-form'
 import { MenuItem } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import dayjs, { Dayjs } from 'dayjs'
+import 'dayjs/locale/ja'
 
-// interface InsertData {
-//   業者: { value: string; label: string }[]
-//   商品コード: string
-//   商品名: string
-//   数量: string
-//   商品単価: string
-//   VendorList: { value: string; label: string }[]
-// }
+dayjs.locale('ja')
 
-// interface SelectOption {
-//   value: string
-//   label: string
-// }
-
-// interface InventoryDataType {
-//   業者: string
-//   商品コード: string
-//   商品名: string
-//   商品単価: string
-// }
 
 interface SelectOption {
   value: string
@@ -80,16 +64,22 @@ const defaultSet = (): FormValues["rows"] => {
 }
 
 
-
-
+const getNearestMonday = (D) => {
+  const date = new Date(D);
+  const dayOfWeek = date.getDay();
+  const diffToMonday = dayOfWeek <= 3 ? 1 - dayOfWeek : 8 - dayOfWeek;
+  const nearestMonday = new Date(date);
+  nearestMonday.setDate(date.getDate() + diffToMonday);
+  const year = nearestMonday.getFullYear();
+  const month = String(nearestMonday.getMonth() + 1).padStart(2, "0");
+  const day = String(nearestMonday.getDate()).padStart(2, "0");
+  const result = `${year}-${month}-${day}`
+  return result
+};
 
 
 
 export default function StoreOrderPage() {
-  //const [VendorList, setVendorList] = useState<SelectOption[]>([])
-  // const [isDialogOpen, setDialogOpen] = useState(false)
-  // const message =
-  //   '入庫内容は以下の通りです\n以下の内容でよろしければOKをクリックしてください\n内容の変更がある場合にはキャンセルをクリックしてください'
 
   const [DisplayStatus, setDisplayStatus] = useState(false)
 
@@ -105,9 +95,9 @@ export default function StoreOrderPage() {
 
   const [ProductdetailsList, setProductdetailsList] = useState([])
 
-  const [AllOrderData, setAllrderData] = useState([])
-
   const [DeleteRowNum, setDeleteRowNum] = useState(0)
+
+  const [dateValue, setDateValue] = useState<Dayjs | null>(null);
 
 
 
@@ -184,9 +174,6 @@ export default function StoreOrderPage() {
       ]
       return result
     })
-    console.log(DeleteRowNum)
-    console.log(formData)
-    //return
     if (formData.length >= 1) {
       await window.myInventoryAPI.DataInsert({
         sheetName: '店舗へ',
@@ -206,28 +193,7 @@ export default function StoreOrderPage() {
   }
 
   const handleOpenDialog = () => {
-    // if (Date === '') {
-    //   alert('日付が入力されていません')
-    //   return
-    // }
     swalWindow()
-    //setDialogOpen(true)
-  }
-
-  // const handleConfirm = () => {
-  //   alert('確認が完了しました')
-  //   insertPost()
-  //   setDialogOpen(false)
-  //   setFormData(initialFormData)
-  // }
-
-  // const handleCancel = () => {
-  //   alert('キャンセルされました')
-  //   setDialogOpen(false)
-  // }
-
-  const handleChangeDate = (event: ChangeEvent<HTMLInputElement>) => {
-    setDate(event.target.value)
   }
 
   const StoresGet = async () => {
@@ -258,8 +224,6 @@ export default function StoreOrderPage() {
     return result
   }
 
-
-
   useEffect(() => {
     if(DisplayStatus){
       setMarginNum(330)
@@ -270,10 +234,9 @@ export default function StoreOrderPage() {
 
   useEffect(() => {
     const today = new Date()
-    const yyyy = today.getFullYear()
-    const mm = String(today.getMonth() + 1).padStart(2, '0')
-    const dd = String(today.getDate()).padStart(2, '0')
-    setDate(`${yyyy}-${mm}-${dd}`)
+    const date = getNearestMonday(today)
+    setDateValue(dayjs(date))
+    setDate(date)
   }, [])
 
   const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>) => {
@@ -322,12 +285,6 @@ export default function StoreOrderPage() {
       }
     }
   };
-
-
-  const OrderDataGet = async () => {
-    const ordersGet = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M'})
-    setAllrderData(ordersGet)
-  }
 
   const orderDataGetSelect = async () => {
     const ordersGet = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M'})
@@ -397,11 +354,6 @@ export default function StoreOrderPage() {
     }
     
   }, [InsertDate, storeSelect])
-
-
-
-
-
   
 
   const search = async (index) => {
@@ -434,8 +386,6 @@ export default function StoreOrderPage() {
     if (input) input.focus();
   }
 
-
-
   const RowRemove = async (index) => {
     remove(index)
     append(defaultRowData, { shouldFocus: false })
@@ -444,6 +394,9 @@ export default function StoreOrderPage() {
     }, 0)
   }
 
+  const RowInsert = async (index) => {
+    insert(index, defaultRowData, { shouldFocus: false })
+  }
 
   const handleStoreChange = (event: SelectChangeEvent) => {
     setStoreSelect(event.target.value as string);
@@ -469,11 +422,12 @@ export default function StoreOrderPage() {
     })
   }
 
-  useEffect(() => { //最初に起動
-    //OrderDataGet()
+  useEffect(() => {
     StoresGet()
     DetailsSet()
   }, [])
+
+  
 
   return (
     <>
@@ -507,13 +461,30 @@ export default function StoreOrderPage() {
                   </MenuItem>
                 ))}
               </Select>
-              <h2 style={{ color: 'white' }}>注文日付</h2>
-              <input
-                type="date"
-                className="insert_date"
-                value={InsertDate}
-                onChange={(e) => handleChangeDate(e)}
-              />
+              <div className="insert_Title">
+                <h2 style={{ color: 'white' }}>注文日付</h2>
+              </div>
+              <div className="insert_DatePicker">
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ja">
+                  <DatePicker
+                    slotProps={{
+                      textField: {
+                        size: 'small',
+                        fullWidth: true,
+                        sx: {
+                          fontSize: '1rem',
+                          '& input': {
+                            height: '1.5em',
+                          },
+                          width: '150px',
+                        },
+                      },
+                    }}
+                    value={dateValue}
+                    onChange={(e) => setDateValue(e)}
+                  />
+                </LocalizationProvider>
+              </div>
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="p-4">
               {fields.map((field, index) => (
@@ -589,6 +560,11 @@ export default function StoreOrderPage() {
                     onKeyDown={(e) => handleEnterFocusNext(e)}
                     type="text"
                   />
+                  <Button variant="outlined"
+                    onClick={() => RowInsert(index)}
+                  >
+                    追加
+                  </Button>
                   <Button variant='outlined'
                     onClick={() => RowRemove(index)}
                     className="text-red-500 hover:underline"
@@ -602,10 +578,10 @@ export default function StoreOrderPage() {
         </div>
         <div className="button_area">
           <Button variant="outlined" onClick={addNewForm}>
-            入庫枠追加
+            注文枠追加
           </Button>
           <Button variant="outlined" onClick={handleOpenDialog} endIcon={<SendIcon />}>
-            入庫実行
+            注文実行
           </Button>
           <SweetAlert2
             {...swalProps}

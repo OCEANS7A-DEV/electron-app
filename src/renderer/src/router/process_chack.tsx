@@ -1,44 +1,17 @@
 import React, { useEffect, useState } from 'react'
-//import { ProcessConfirmationGet, OrderDeadline, orderGet, GASProcessUpdate, QuantityReset, shortageGet,kaigisituOrder } from '../backend/Server_end'
-//import { localStoreSet, PrintDataSet, SelectlocalStoreSet, ETCDATAGET } from '../backend/WebStorage'
 import Select from 'react-select'
 import '../css/process_check.css'
 import LinkBaner from '../comp/Linkbanar'
-
 import toast, { Toaster } from 'react-hot-toast'
-
 import { Button } from '@mui/material'
-
 import MoonLoader from 'react-spinners/MoonLoader'
-
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-// import { createTheme, ThemeProvider } from '@mui/material/styles'
-// import { TextField } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/ja'
 
-
-
-// const darkTheme = createTheme({
-//   palette: {
-//     mode: 'dark',
-//     background: {
-//       default: '#2a2a30',
-//       paper: '#333',
-//     },
-//     primary: {
-//       main: '#90caf9',
-//     },
-//     text: {
-//       primary: '#ffffff',
-//     },
-//   },
-// })
-
 dayjs.locale('ja')
-
 
 
 type CheckResultItem = {
@@ -64,54 +37,32 @@ const isoToJstYMD = (isoString) => {
 }
 
 
-const getNearestMonday = () => {
-  const date = new Date();
-  const dayOfWeek = date.getDay();
-  const diffToMonday = dayOfWeek <= 3 ? 1 - dayOfWeek : 8 - dayOfWeek;
-  const nearestMonday = new Date(date);
-  nearestMonday.setDate(date.getDate() + diffToMonday);
-  const year = nearestMonday.getFullYear();
-  const month = String(nearestMonday.getMonth() + 1).padStart(2, "0");
-  const day = String(nearestMonday.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-};
-
-
-
-// const CurrentDate = () => {
-//   const today = new Date()
-//   const year = today.getFullYear()
-//   const month = ('0' + (today.getMonth() + 1)).slice(-2)
-//   const day = ('0' + today.getDate()).slice(-2)
-//   const resultdate = year + '/' + month + '/' + day
-//   return resultdate
-// }
-// const DateNow = CurrentDate();
 
 export default function HQPage() {
-  const [checkresult, setCheckResult] = useState([]);
-  //const [isDialogOpen, setDialogOpen] = useState(false);
-  const [storeSelect, setStoreSelect] = useState<SelectOption | null>(null);
+  const [checkresult, setCheckResult] = useState([])
+  const [storeSelect, setStoreSelect] = useState<SelectOption | null>(null)
   const [selectOptions, setSelectOptions] = useState<SelectOption[]>([])
-  //const message = `今回の店舗からの注文を${DateNow}で締め切りますか？`;
-  const [getDate, setGetDate] = useState(getNearestMonday());
-  
-  const [vendorSelect, setVendorSelect] = useState<SelectOption | null>(null);
+  const [getDate, setGetDate] = useState('')
+  const [vendorSelect, setVendorSelect] = useState<SelectOption | null>(null)
   const [VendorList, setVendorList] = useState<SelectOption[]>([])
   const [AddressList, setAddressList] = useState<SelectOption[]>([])
-  const [addressSelect, setAdoressSelect] = useState<SelectOption | null>(null);
-  const [orderData, setOrderData] = useState([]);
-
-  const [Listload, setListload] = useState(false);
-  const [dateValue, setDateValue] = useState<Dayjs | null>(dayjs());
-
+  const [addressSelect, setAdoressSelect] = useState<SelectOption | null>(null)
+  const [orderData, setOrderData] = useState([])
+  const [Listload, setListload] = useState(false)
+  const [dateValue, setDateValue] = useState<Dayjs | null>(null)
 
 
   useEffect(() => {
-    setGetDate(dateValue?.format('YYYY-MM-DD') ?? "")
-  }, [dateValue])
-
+    const init = async () => {
+      const nearestMondayStr = await sessionStorage.getItem('printDate')
+      if (nearestMondayStr){
+        setDateValue(dayjs(nearestMondayStr))
+      } else {
+        setDateValue(dayjs())
+      }
+    };
+    init();
+  }, []);
 
   const OceanListGet = async () => {
     const alllist = await window.myInventoryAPI.ListGet({sheetName: 'その他データ', action: 'ListGet', ranges: 'A2:H'})
@@ -149,18 +100,13 @@ export default function HQPage() {
 
   const PrintProcessList = async () => {
     setListload(true)
+    const Date = dateValue?.format('YYYY-MM-DD')
     const ordersGet = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M'})
-
     const storeData = await window.myInventoryAPI.ListGet({sheetName: 'その他一覧', action: 'ListGet', ranges: 'A2:B'})
-
     const storefilter = storeData.filter(item => item[1] !== '')
-
     const storeList = storefilter.map(item => item[0])
-
-    const filterd = ordersGet.filter(row => isoToJstYMD(row[0]) == getDate)
-
+    const filterd = ordersGet.filter(row => isoToJstYMD(row[0]) == Date)
     setOrderData(filterd)
-
     const storeOrders = storeList.map(item => {
       const storeOrder = filterd.filter(row => row[1] == item)
       let processdata = ''
@@ -194,116 +140,16 @@ export default function HQPage() {
   useEffect(() => {
     StoresGet()
     OceanListGet()
-    PrintProcessList()
-    // const getLocalStorageSize = async () => {
-    //   const cachedData = await JSON.parse(localStorage.getItem('storeData') ?? '');
-    //   const storedatalist: SelectOption[] = [];
-    //   for (let i = 0; i < cachedData.length; i++){
-    //     storedatalist.push(
-    //       {
-    //         value: cachedData[i],
-    //         label: cachedData[i],
-    //       }
-    //     )
-    //   }
-    //   setSelectOptions(storedatalist);
-    //   await SelectlocalStoreSet(storedatalist);
-    // }
-    // setGetDate(sessionStorage.getItem('setDATE') ?? '');
-    // VendorListGet();
-    // OceanListGet();
   },[])
 
   useEffect(() => {
-    if(getDate !== ''){
+    setGetDate(dateValue?.format('YYYY-MM-DD') ?? "")
+    if (dateValue?.format('YYYY-MM-DD')){
       PrintProcessList()
     }
-  }, [getDate])
-
-  // useEffect(() =>{
-  //   const resetDate = sessionStorage.getItem('printdate') ?? ''
-  //   if(resetDate !== ''){
-  //     setGetDate(resetDate);
-  //     PrintProcessList(resetDate);
-  //   }else{
-  //     const utcDate = new Date();
-  //     const japanTime = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-  //     const formattedJapanDate = japanTime.toISOString().split('T')[0];
-  //     setGetDate(formattedJapanDate)
-  //   }
-  // },[])
-
-  // useEffect(() => {
-  //   const setdate = sessionStorage.getItem('setDATE') ?? ''
-  //   if (setdate === '') {
-  //     const today = new Date();
-  //     const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-  //     setGetDate(formattedDate);
-  //   }
-  // }, []);
-  
+  }, [dateValue])
 
 
-
-
-  // const handleConfirm = () => {
-  //   OrderDeadline();
-  //   alert('確認が完了しました');
-  //   setDialogOpen(false);
-  // };
-
-  // const handleCancel = () => {
-  //   alert('キャンセルされました');
-  //   setDialogOpen(false);
-  // };
-
-  // const handleOrderPrint = async () => {
-  //   //console.log(storeSelect)
-  //   let storeprintname = '';
-  //   if (storeSelect){
-  //     storeprintname = storeSelect.value
-  //   }
-
-  //   //console.log(getDate)
-    
-  //   if (getDate !== '' && storeprintname !== '') {
-  //     const setStore = [storeprintname]
-  //     const params = new URLSearchParams();
-  //     params.set("date", getDate);
-  //     setStore.forEach(store => {
-  //       params.append("store", store);
-  //     });
-  //     navigate(
-  //       `/orderPrint?${params.toString()}`
-  //     )
-  //   }
-  // };
-
-  // const handleOrderPrintAll = async (setStore:any) => {
-  //   const params = new URLSearchParams();
-  //   if (getDate !== '' ) {
-  //     params.set("date", getDate);
-  //     setStore.forEach(store => {
-  //       params.append("store", store);
-  //     });
-      
-  //     await navigate(
-  //       `/orderPrint?${params.toString()}`
-  //     )
-  //   }
-  // };
-
-  // const allPrint = async () => {
-  //   const printstoreList = checkresult.filter(row => row.process == '未印刷' || row.process == '一部未印刷')
-  //   const stores = printstoreList.map(item => item.storeName)
-  //   handleOrderPrintAll(stores);
-  // };
-
-  // const allPrintTRUE = async () => {
-  //   const printstoreList = checkresult.filter(row => row.process !== '未注文' && row.process !== '注文無')
-  //   const stores = printstoreList.map(item => item.storeName)
-  //   handleOrderPrintAll(stores);
-  // }
 
   const VendorPrint = async () => {
     if (!addressSelect || !vendorSelect) {
@@ -313,6 +159,7 @@ export default function HQPage() {
     const setdate = getDate
     const Vendorparams = new URLSearchParams();
     Vendorparams.set("date", setdate);
+    sessionStorage.setItem('printDate', getDate)
     Vendorparams.set("address", addressSelect.value);
     Vendorparams.set("vendor",vendorSelect.value)
 
@@ -324,34 +171,6 @@ export default function HQPage() {
     }
   }
 
-  // const detailPrint = () => {
-  //   const setdate = sessionStorage.getItem('setDATE') ?? '';
-  //   if(getDate === '') {
-  //     toast.error('取得する日付が入力されていません。')
-  //     return
-  //   }
-  //   const Orderparams = new URLSearchParams();
-  //   Orderparams.set("date", getDate);
-  //   navigate(`/detailPrint?${Orderparams.toString()}`)
-  // }
-
-  // const datalistElseCasePrint = () => {
-  //   const setdate = sessionStorage.getItem('setDATE') ?? '';
-  //   if(getDate === '') {
-  //     toast.error('取得する日付が入力されていません。')
-  //     return
-  //   }
-  //   const Orderparams = new URLSearchParams();
-  //   Orderparams.set("date", getDate);
-  //   navigate(`/elsecasePrint?${Orderparams.toString()}`)
-  // }
-
-
-
-  // const Dateset = (date) => {
-  //   setGetDate(date)
-  //   sessionStorage.setItem('setDATE',date)
-  // }
 
 
   const VendorOrderData = async () => {
@@ -388,6 +207,7 @@ export default function HQPage() {
     })
     await window.myInventoryAPI.storeSet('printData', JSON.stringify(orderresult.flat(1)));
     await window.myInventoryAPI.storeSet('printDate', setDate);
+    sessionStorage.setItem('printDate', getDate)
     window.myInventoryAPI.orderPrint('PrintContent');
   }
 
@@ -405,6 +225,7 @@ export default function HQPage() {
 
     await window.myInventoryAPI.storeSet('printData', JSON.stringify(filterData))
     await window.myInventoryAPI.storeSet('printDate', setDate)
+    sessionStorage.setItem('printDate', getDate)
 
     window.myInventoryAPI.orderPrint('PrintContent');
     window.myInventoryAPI.DataInsert({
@@ -433,6 +254,7 @@ export default function HQPage() {
     const setdata = JSON.stringify(filterd)
     await window.myInventoryAPI.storeSet('printData', setdata)
     await window.myInventoryAPI.storeSet('printDate', getDate)
+    sessionStorage.setItem('printDate', getDate)
     //store.set('printData',setData)
     //const setData = encodeURIComponent(JSON.stringify(orderData))
     window.myInventoryAPI.orderPrint('PrintContent');
@@ -468,7 +290,6 @@ export default function HQPage() {
     window.myInventoryAPI.orderPrint(`OrderDetails`)
   }
 
-
   return (
     <div className='check_window'>
       <Toaster />
@@ -498,9 +319,7 @@ export default function HQPage() {
                 onChange={(e) => setDateValue(e)}
               />
             </LocalizationProvider>
-            
           </div>
-          {/* テーブルを表示 */}
           <div className="check">
             <table className='check'>
               <thead>
@@ -528,7 +347,7 @@ export default function HQPage() {
             </table>
           </div>
         </div>
-        <div style={{padding: 20, position: 'sticky', top: 60}}>
+        <div style={{ padding: 20, position: 'sticky', top: 60 }}>
           <div>
             {/* <div className='operation_area'>
               <a className="buttonUnderline" type="button" onClick={() => setDialogOpen(true)}>
@@ -633,9 +452,7 @@ export default function HQPage() {
           </div>
           
         </div>
-        
         <div>
-
         </div>
       </div>
     </div>

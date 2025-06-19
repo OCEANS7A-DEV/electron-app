@@ -252,3 +252,15 @@
 .custom-swal-html {
   overflow-y: auto;
 }
+
+
+
+.insert_DatePicker {
+  background-color: white;
+  border-radius: 4px;
+  margin-left: 10px;
+}
+
+.insert_Title {
+  margin-left: 10px;
+}
