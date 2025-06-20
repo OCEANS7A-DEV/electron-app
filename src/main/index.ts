@@ -1093,6 +1093,7 @@ ipcMain.handle(
         //
       }
     }
+    //PDFをマージしたら真っ白 修正する
      const files = fs.readdirSync(downloadDir)
       .filter(f => f.toLowerCase().endsWith('.pdf'))
       .map(f => path.join(downloadDir, f))
