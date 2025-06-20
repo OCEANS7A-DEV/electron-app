@@ -7,6 +7,8 @@ import LinkBaner from '../comp/Linkbanar'
 
 import { Select, MenuItem, Tooltip, Box } from '@mui/material'
 
+
+
 import '../css/ProductsEdit.css'
 import { Button } from '@mui/material'
 import Switch from '@mui/material/Switch'
@@ -69,29 +71,36 @@ const defaultRowData = {
   orderNum: ''
 }
 
+type SortableRowProps = {
+  id: string
+  children: (handleListeners: ReturnType<typeof useSortable>['listeners']) => React.ReactNode
+}
 
-
-function SortableRow({ id, _index, children }) {
+const SortableRow: React.FC<SortableRowProps> = React.memo(({ id, children }) => {
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id });
+  } = useSortable({ id })
 
-  //console.log(index)
-  const style = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-  };
+  }
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
       {children(listeners)}
     </div>
-  );
-}
+  )
+})
 
 
 
@@ -466,6 +475,8 @@ export default function ProductDetailChangePage() {
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragEnd={({ active, over }) => {
+              console.log("active.id:", active.id)
+              console.log("over?.id:", over?.id)
               if (active.id !== over?.id) {
                 const oldIndex = fields.findIndex(f => f.id === active.id);
                 const newIndex = fields.findIndex(f => f.id === over?.id);
@@ -475,11 +486,11 @@ export default function ProductDetailChangePage() {
           >
             <SortableContext items={fields.map(f => f.id)} strategy={verticalListSortingStrategy}>
               {fields.map((field, index) => (
-                <SortableRow key={field.id} id={field.id} index={index}>
-                  {(listeners) => (
+                <SortableRow key={field.id} id={field.id}>
+                  {(handleListeners) => (
                     <div className="virtual-table-row">
                       <div
-                        {...listeners}
+                        {...handleListeners}
                         style={{
                           cursor: 'grab',
                           padding: '4px 8px',
