@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, net, Notification, IpcMainInvokeEvent } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, net, Notification, IpcMainInvokeEvent, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -12,9 +12,10 @@ import os from 'os';
 
 import fs from 'fs';
 import path from 'path';
+import PDFMerger from 'pdf-merger-js'
 //import https from 'https';
 
-
+//
 
 // import React from 'react'
 // import ReactDOMServer from 'react-dom/server'
@@ -669,6 +670,123 @@ ipcMain.handle('printStatus', async (_event, payload: any) => {
 
 
 
+// ipcMain.handle('hellowork-get', async () => {
+//   async function scrapeHelloWork() {
+//     const browser = await puppeteer.launch({ 
+//       headless: true,
+//       args: [
+//         '--no-sandbox',
+//         '--disable-setuid-sandbox',
+//         '--disable-cache',
+//         '--disable-application-cache',
+//         '--disk-cache-size=0',
+//       ],
+//     });
+//     const page = await browser.newPage();
+
+//     // 検索画面を開いて検索条件を入力
+//     await page.goto(
+//       'https://www.hellowork.mhlw.go.jp/kensaku/GECA110010.do?action=initDisp&screenId=GECA110010',
+//       { waitUntil: 'networkidle2' }
+//     );
+//     await page.type('input[name="jGSHNoJo"]', '3401');
+//     await page.type('input[name="jGSHNoChuu"]', '625381');
+//     await page.type('input[name="jGSHNoGe"]', '7');
+//     await Promise.all([
+//       page.waitForNavigation({ waitUntil: 'networkidle2' }),
+//       page.click('input[name="searchNoBtn"]'),
+//     ]);
+
+//     const allJobs: any[] = [];
+//     let pageIndex = 1;
+
+//     while (true) {
+//       //console.log(`📄 ページ ${pageIndex} をスクレイピング中…`);
+
+//       // 現ページの求人テーブルを評価
+//       const jobsOnPage = await page.evaluate(() => {
+//         const jobs: any[] = [];
+//         const tables = document.querySelectorAll('table.kyujin');
+//         tables.forEach(table => {
+//           const job: any = {};
+
+//           // 職種
+//           job.職種 = table
+//             .querySelector('.kyujin_head strong')
+//             ?.parentElement?.nextElementSibling?.textContent?.trim() ?? '';
+
+//           // 受付年月日・紹介期限日
+//           const dateRow = Array.from(table.querySelectorAll('tr')).find(tr =>
+//             tr.textContent?.includes('受付年月日')
+//           );
+//           const dateDivs = dateRow?.querySelectorAll('div') ?? [];
+//           job.受付年月日 = dateDivs[1]?.textContent?.trim() ?? '';
+//           job.紹介期限日 = dateDivs[2]?.textContent?.trim() ?? '';
+
+//           const leftTds = table.querySelectorAll('.left-side table tr');
+//           leftTds.forEach(tr => {
+//             const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
+//             const td = tr.querySelector('td:nth-child(2)');
+//             const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
+//             if (label) job[label] = value;
+//           });
+//           // 右テーブル項目（同上）
+//           const rightTds = table.querySelectorAll('.right-side table tr');
+//           rightTds.forEach(tr => {
+//             const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
+//             const td = tr.querySelector('td:nth-child(2)');
+//             const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
+//             if (label) job[label] = value;
+//           });
+
+//           // こだわり条件
+//           job.こだわり条件 = Array.from(
+//             table.querySelectorAll('.kodawari span.nes_label.any')
+//           ).map(span => span.textContent?.trim());
+
+//           // 求人票URL
+//           job.求人票URL =
+//             table.querySelector('#ID_kyujinhyoBtn')?.getAttribute('href') ?? '';
+
+//           // 求人数
+//           job.求人数 =
+//             table
+//               .querySelector('tr:last-of-type')
+//               ?.textContent?.match(/求人数：(.+?)名/)?.[1]
+//               ?.trim() ?? '';
+
+//           jobs.push(job);
+//         });
+//         return jobs;
+//       });
+//       allJobs.push(...jobsOnPage);
+//       const nextButton = await page.$('input[name="fwListNaviBtnNext"]');
+//       if (!nextButton) {
+//         break;
+//       }
+//       const isDisabled = await nextButton.evaluate((btn: HTMLInputElement) => btn.disabled);
+//       if (isDisabled) {
+//         break;
+//       }
+//       pageIndex++;
+//       await Promise.all([
+//         page.waitForNavigation({ waitUntil: 'networkidle2' }),
+//         nextButton.click(),
+//       ]);
+    
+//     }
+//     return allJobs;
+//   }
+//   try {
+//     const result = await scrapeHelloWork();
+//     return result;
+//   } catch (err) {
+//     console.error(err);
+//     throw err;
+//   }
+// });
+
+
 ipcMain.handle('hellowork-get', async () => {
   async function scrapeHelloWork() {
     const browser = await puppeteer.launch({ 
@@ -685,26 +803,33 @@ ipcMain.handle('hellowork-get', async () => {
 
     // 検索画面を開いて検索条件を入力
     await page.goto(
-      'https://www.hellowork.mhlw.go.jp/kensaku/GECA110010.do?action=initDisp&screenId=GECA110010',
+      'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
       { waitUntil: 'networkidle2' }
     );
-    await page.type('input[name="jGSHNoJo"]', '3401');
-    await page.type('input[name="jGSHNoChuu"]', '625381');
-    await page.type('input[name="jGSHNoGe"]', '7');
+    await page.type('input[name="mail"]', 'oceans7a@gmail.com');
+    await page.type('input[name="password"]', 'ocean@1115');
+
     await Promise.all([
       page.waitForNavigation({ waitUntil: 'networkidle2' }),
-      page.click('input[name="searchNoBtn"]'),
+      page.click('button[name="loginBtn"]'),
+    ]);
+
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle2' }),
+      page.evaluate(() => {
+        const btn = document.getElementById('ID_yukoKyujinBtn') as HTMLAnchorElement;
+        if (!btn) throw new Error('ボタンが見つかりません');
+        btn.click();
+      })
     ]);
 
     const allJobs: any[] = [];
     let pageIndex = 1;
 
     while (true) {
-      //console.log(`📄 ページ ${pageIndex} をスクレイピング中…`);
-
-      // 現ページの求人テーブルを評価
       const jobsOnPage = await page.evaluate(() => {
         const jobs: any[] = [];
+
         const tables = document.querySelectorAll('table.kyujin');
         tables.forEach(table => {
           const job: any = {};
@@ -713,6 +838,13 @@ ipcMain.handle('hellowork-get', async () => {
           job.職種 = table
             .querySelector('.kyujin_head strong')
             ?.parentElement?.nextElementSibling?.textContent?.trim() ?? '';
+
+
+          job.status = table
+            .querySelector('.nes_label.nes')
+            ?.textContent
+            ?.trim() ?? '';
+
 
           // 受付年月日・紹介期限日
           const dateRow = Array.from(table.querySelectorAll('tr')).find(tr =>
@@ -753,11 +885,14 @@ ipcMain.handle('hellowork-get', async () => {
               .querySelector('tr:last-of-type')
               ?.textContent?.match(/求人数：(.+?)名/)?.[1]
               ?.trim() ?? '';
-
+          
+          job.detailUrl = table.querySelector('#ID_dispDetailBtn')?.getAttribute('href') ?? '';
+          
           jobs.push(job);
         });
         return jobs;
       });
+
       allJobs.push(...jobsOnPage);
       const nextButton = await page.$('input[name="fwListNaviBtnNext"]');
       if (!nextButton) {
@@ -774,7 +909,56 @@ ipcMain.handle('hellowork-get', async () => {
       ]);
     
     }
-    return allJobs;
+    const filterd = allJobs.filter(item => item.status !== '非公開')
+
+
+    const jushos: string[] = [];
+
+    for (const item of filterd) {
+      // detailUrl は e.g. "./GEAB100020.do?…” のような相対パス
+      const url = new URL(item.detailUrl, page.url()).toString();
+
+      try {
+        // 詳細ページへ移動
+        await page.goto(url, { waitUntil: 'networkidle2' });
+      } catch (err) {
+        //console.warn(`詳細ページへ移動失敗: ${url}`, err);
+        jushos.push('');
+        continue;
+      }
+
+      let address = '';
+      try {
+        // 要素取得。見つからなければ null が返る
+        const cell = await page.$('div[name="shgBsJusho"]');
+        const cellSub = await page.$('div[name="gsShgBsJusho"]');
+        if (cell && !cellSub) {
+          address = (await page.evaluate(el => el.textContent, cell))?.trim() ?? '';
+        } else if (cellSub && !cell){
+          address = (await page.evaluate(el => el.textContent, cellSub))?.trim() ?? '';
+        } else {
+          //console.info(`住所セルなし: ${url}`);
+          address = '';
+        }
+      } catch (err) {
+        //console.error(`住所取得中にエラー: ${url}`, err);
+        address = '';
+      }
+      const pushdata = item
+      pushdata.address = address
+
+      jushos.push(pushdata);
+
+      // 一覧ページに戻る
+      try {
+        await page.goBack({ waitUntil: 'networkidle2' });
+      } catch (err) {
+        console.warn('一覧ページに戻れませんでした:', err);
+        // 必要なら再度一覧URLへ飛ばすか break する
+      }
+    }
+
+    return [filterd, jushos];
   }
   try {
     const result = await scrapeHelloWork();
@@ -784,7 +968,6 @@ ipcMain.handle('hellowork-get', async () => {
     throw err;
   }
 });
-
 
 
 
@@ -806,43 +989,72 @@ interface Works {
   '職種': string;
   '賃金（手当等を含む）': string;
   '雇用形態': string;
+  'status': string;
+  'address': string;
 }
-
+// https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB100020.do?screenId=GEAB100020&action=kyujinhyoBtn&kjNo=3401031501251&kariTrkNo=&kjKbn1=1&kjKbn1Shsi=+
 //const wait = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 ipcMain.handle(
   'hellowork-PDF',
   async (_event: IpcMainInvokeEvent, lists: Works[]) => {
     const total = lists.length
     let count = 0
+
+    const date = new Date()
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const today = `${y}.${m}.${d}`
+    const downloadDir = path.join(os.homedir(), 'Downloads', `ハロワPDFs${today}`);
+    // フォルダがなければ作成する
+    if (!fs.existsSync(downloadDir)) {
+      fs.mkdirSync(downloadDir, { recursive: true });
+    }
+
+    let browser: Browser | null = null;
+    let page: Page | null = null;
+    browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-cache',
+        '--disable-application-cache',
+        '--disk-cache-size=0',
+      ],
+    });
+    page = await browser.newPage();
+    await page.goto(
+      'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
+      { waitUntil: 'networkidle2' }
+    );
+    await page.type('input[name="mail"]', 'oceans7a@gmail.com');
+    await page.type('input[name="password"]', 'ocean@1115');
+
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle2' }),
+      page.click('button[name="loginBtn"]'),
+    ]);
+    
+
     for (const item of lists) {
-      const filename = `${item.就業場所}_${item.求人区分}_${item.職種}`;
+      const afterNewline = item.address
+        .split(/\r?\n/)
+        .filter(line => line.trim() !== '')
+        .pop()!
+        .trim();
+      const filename = `${afterNewline}_${item.求人区分}_${item.職種}`;
       try{
-        //await wait(1000);
         count = count + 1
-        //mainWindow.webContents.send('helloWork-progress', { count: count });
-        //continue
-        //await window.myInventoryAPI.HelloWorkPDFGet(item.求人票URL, fileName);
-        const downloadDir = path.join(os.homedir(), 'Downloads');
+        //const downloadDir = path.join(os.homedir(), 'Downloads');
         const finalFilename = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
         const downloadsPath = path.join(downloadDir, finalFilename);
-        const jobUrl = `https://www.hellowork.mhlw.go.jp/kensaku/${item.求人票URL}`;
+        const jobUrl = `https://kyujin.hellowork.mhlw.go.jp/kyujin/${item.求人票URL}`
 
-        let browser: Browser | null = null;
-        let page: Page | null = null;
+        
 
         try {
           // 1) Puppeteer でページにアクセスし、クッキーを取得
-          browser = await puppeteer.launch({
-            headless: true,
-            args: [
-              '--no-sandbox',
-              '--disable-setuid-sandbox',
-              '--disable-cache',
-              '--disable-application-cache',
-              '--disk-cache-size=0',
-            ],
-          });
-          page = await browser.newPage();
           await page.goto(jobUrl, { waitUntil: 'networkidle2', timeout: 60000 });
 
           // 2) セッション維持用の Cookie を抜き出す
@@ -863,16 +1075,16 @@ ipcMain.handle(
           const arrayBuffer = await res.arrayBuffer();
           const buffer = Buffer.from(arrayBuffer);
 
-          if (buffer.length < 20000) {
+          if (buffer.length < 10000) {
             throw new Error(`取得データが小さすぎます (${buffer.length} bytes)`);
           }
 
           fs.writeFileSync(downloadsPath, buffer);
-          mainWindow.webContents.send('helloWork-progress', { count: count, total: total, success: item.求人番号 });
+          mainWindow.webContents.send('helloWork-progress', { count: count, total: total, success: item.求人番号, url: jobUrl });
 
         } catch (err: any) {
-          //console.error('❌ PDFダウンロード失敗:', err);
-          mainWindow.webContents.send('helloWork-progress', { count: count, total: total, error: item.求人番号 });
+          console.error('❌ PDFダウンロード失敗:', err);
+          mainWindow.webContents.send('helloWork-progress', { count: count, total: total, error: item.求人番号, url: filename });
         } finally {
           //mainWindow.webContents.send('helloWork-progress', { count: count, total: total });
           if (browser) await browser.close();
@@ -880,8 +1092,36 @@ ipcMain.handle(
       } catch (e) {
         //
       }
-
     }
+     const files = fs.readdirSync(downloadDir)
+      .filter(f => f.toLowerCase().endsWith('.pdf'))
+      .map(f => path.join(downloadDir, f))
+      .sort();
+
+    if (files.length < 2) {
+      throw new Error('マージする PDF が 2 つ以上ありません');
+    }
+
+    // 2) pdf-merger-js のインスタンスを作成
+    const merger = new PDFMerger();
+
+    // 3) 1 つずつ追加
+    for (const pdfPath of files) {
+      await merger.add(pdfPath);
+    }
+
+    // 4) 保存先ダイアログ
+    const { filePath: outPath } = await dialog.showSaveDialog({
+      title: 'マージ後の PDF を保存',
+      defaultPath: path.join(downloadDir, `ハロワPDFs${today}_merged.pdf`),
+      filters: [{ name: 'PDF', extensions: ['pdf'] }],
+    });
+    if (!outPath) throw new Error('保存先が選択されませんでした');
+
+    // 5) 出力
+    await merger.save(outPath);
+    //return outPath;
+    
     NotificationEXE('すべてのPDFのダウンロード完了')
   }
 );

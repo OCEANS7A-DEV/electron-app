@@ -25,6 +25,8 @@ interface Works {
   '職種': string;
   '賃金（手当等を含む）': string;
   '雇用形態': string;
+  'status': string;
+  'address': string;
 }
 
 
@@ -60,20 +62,20 @@ export default function HelloWork() {
     await window.myInventoryAPI.HelloWorkPDFGet(jobList);
   }
 
+
   useEffect(() => {
     setAllPDFNum(jobList.length)
-    console.log(jobList)
+    //console.log(jobList)
     toast.success(`取得した求人数:${jobList.length}`)
   }, [jobList])
 
 
   useEffect(() => {
     start()
-  },[])
+  }, [])
 
   useEffect(() => {
-    const progressHandler = (data: { count: number; total: number; error?: string; success?: string }) => {
-      
+    const progressHandler = (data: { count: number; total: number; error?: string; success?: string; url?: string }) => {
       if (data.success) {
         toast.success(`進捗: ${data.count}/${data.total}`)
       } else {
@@ -96,15 +98,40 @@ export default function HelloWork() {
   }, [])
 
 
-  const workResearch = async () => {
-    setLoading(true)
+  const Research = async () => {
     const result = await window.myInventoryAPI.WorkGet()
-    setJobList(result)
-    setLoading(false)
+    setJobList(result[1])
+    //console.log(result[0])
+    //console.log(result[1])
+  }
+
+  const workResearch = () => {
+    setLoading(true)
+    toast.promise(
+      Research(),
+      {
+        loading: '読み込み中…',
+        success: () => {
+          setLoading(false)
+          return '読み込み完了'
+        },
+        error: () => {
+          setLoading(false)
+          return 'エラーが発生しました'
+        },
+      },
+    )
     
   }
 
-  
+  const storeName = (name: string) => {
+    const afterNewline = name
+      .split(/\r?\n/)
+      .filter(line => line.trim() !== '')
+      .pop()!
+      .trim();
+    return afterNewline
+  }
 
   
 
@@ -131,7 +158,7 @@ export default function HelloWork() {
             </div>
           )}
         </div>
-        <div style={{color: 'white', padding: 20}}>
+        <div style={{ color: 'white', paddingBottom: 20, minWidth: 1100 }}>
           <div>フルタイム</div>
           <table className="fullTime">
             <thead>
@@ -139,14 +166,16 @@ export default function HelloWork() {
                 <td className="HelloType">職種</td>
                 <td className="HelloWhere">就業場所</td>
                 <td className="HelloLimit">紹介期限</td>
+                <td className="HelloStatus">ステータス</td>
               </tr>
             </thead>
             <tbody>
               {jobList.filter(item => item.求人区分 == 'フルタイム').map((row,index) => (
                 <tr key={index}>
                   <td className="HelloType">{row.職種}</td>
-                  <td>{row.就業場所}</td>
-                  <td>{row.紹介期限日}</td>
+                  <td className="HelloWhere">{storeName(row.address)}</td>
+                  <td className="HelloLimit">{row.紹介期限日}</td>
+                  <td>{row.status}</td>
                 </tr>
               ))}
             </tbody>
@@ -158,14 +187,39 @@ export default function HelloWork() {
                 <td className="HelloType">職種</td>
                 <td className="HelloWhere">就業場所</td>
                 <td className="HelloLimit">紹介期限</td>
+                <td className="HelloStatus">ステータス</td>
               </tr>
             </thead>
             <tbody>
               {jobList.filter(item => item.求人区分 == 'パート').map((row,index) => (
                 <tr key={index}>
                   <td className="HelloType">{row.職種}</td>
-                  <td>{row.就業場所}</td>
-                  <td>{row.紹介期限日}</td>
+                  <td className="HelloWhere">{storeName(row.address)}</td>
+                  <td className="HelloLimit">{row.紹介期限日}</td>
+                  <td>{row.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div style={{marginTop: 20}}>その他</div>
+          <table className="fullTime">
+            <thead>
+              <tr>
+                <td className="HelloType">職種</td>
+                <td className="HelloWhere">就業場所</td>
+                <td className="HelloLimit">紹介期限</td>
+                <td className="HelloStatus">ステータス</td>
+                <td>求人区分</td>
+              </tr>
+            </thead>
+            <tbody>
+              {jobList.filter(item => item.求人区分 !== 'パート' && item.求人区分 !== 'フルタイム').map((row,index) => (
+                <tr key={index}>
+                  <td className="HelloType">{row.職種}</td>
+                  <td className="HelloWhere">{storeName(row.address)}</td>
+                  <td className="HelloLimit">{row.紹介期限日}</td>
+                  <td>{row.status}</td>
+                  <td>{row.求人区分}</td>
                 </tr>
               ))}
             </tbody>

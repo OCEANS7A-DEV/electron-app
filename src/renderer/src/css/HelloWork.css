@@ -28,6 +28,22 @@
   white-space: nowrap;
 }
 
+.HelloWhere{
+  min-width: 300px;
+  max-width: 300px;
+
+}
+
+.HelloLimit {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.fulltime {
+  min-width: 1100px;
+  max-width: 100%;
+}
+
 .HelloWorkWindow table {
   border-collapse: collapse;  
 }
