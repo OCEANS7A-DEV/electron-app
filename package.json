@@ -16,7 +16,13 @@
       "out/preload",
       "out/renderer"
     ],
-    "extraResources": [],
+    "extraResources": [
+      {
+        "from": "vendor/qpdf",
+        "to": "qpdf",
+        "filter": ["**/*"]
+      }
+    ],
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "win": {
       "target": "nsis"
