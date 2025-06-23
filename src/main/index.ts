@@ -1009,8 +1009,9 @@ interface Works {
   'status': string;
   'address': string;
 }
-// https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB100020.do?screenId=GEAB100020&action=kyujinhyoBtn&kjNo=3401031501251&kariTrkNo=&kjKbn1=1&kjKbn1Shsi=+
-//const wait = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
+
+
+
 ipcMain.handle(
   'hellowork-PDF',
   async (_event: IpcMainInvokeEvent, lists: Works[]) => {
@@ -1122,80 +1123,12 @@ ipcMain.handle(
 
 
 ipcMain.on('PDF-Marge', () => {
-  //PDFfileMarge()
-  PDFfileMargeH()
+  PDFfileMarge()
 })
 
 
 
 const PDFfileMarge = async (): Promise<{
-  canceled: boolean;
-  output?: string;
-  error?: string;
-}> => {
-  try {
-    // 1) フォルダ選択
-    const { filePaths, canceled } = await dialog.showOpenDialog({
-      title: 'PDF を結合するフォルダを選択',
-      properties: ['openDirectory']
-    });
-    if (canceled || filePaths.length === 0) {
-      return { canceled: true };
-    }
-    const folder = filePaths[0];
-
-    // 2) フォルダ内の PDF リスト取得
-    const pdfFiles = (await fs.promises.readdir(folder))
-      .filter(f => f.toLowerCase().endsWith('.pdf'))
-      .map(f => path.join(folder, f))
-      .sort();
-
-    if (pdfFiles.length < 2) {
-      return { canceled: true, error: 'PDF が 2 つ以上必要です。' };
-    }
-
-    
-    
-    // ── ここまで内部構造ログ出力 ──
-
-
-
-    // 3) 保存先ダイアログ
-    const { filePath: outPath, canceled: saveCanceled } = await dialog.showSaveDialog({
-      title: '結合後の PDF を保存',
-      defaultPath: path.join(folder, 'merged.pdf'),
-      filters: [{ name: 'PDF', extensions: ['pdf'] }]
-    });
-    if (saveCanceled || !outPath) {
-      return { canceled: true };
-    }
-
-    // 4) pdf-merger-js で結合
-    const merger = new PDFMerger();
-    for (const file of pdfFiles) {
-      await merger.add(file);
-    }
-    await merger.save(outPath);
-
-    // 5) 成功表示
-    dialog.showMessageBox({
-      type: 'info',
-      title: 'PDF結合完了',
-      message: 'PDF の結合が正常に完了しました！',
-      detail: `保存先：${outPath}`,
-      buttons: ['OK']
-    });
-
-    return { canceled: false, output: outPath };
-  } catch (err: any) {
-    log.error('PDFfileMerge でエラー:', err);
-    dialog.showErrorBox('PDF結合エラー', err.message || String(err));
-    return { canceled: true, error: err.message || String(err) };
-  }
-};
-
-
-const PDFfileMargeH = async (): Promise<{
   canceled: boolean;
   output?: string;
   error?: string;
