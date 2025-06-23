@@ -174,7 +174,7 @@ export default function StoreOrderPage() {
       ]
       return result
     })
-
+    console.log(DeleteRowNum)
     if (formData.length >= 1) {
       await window.myInventoryAPI.DataInsert({
         sheetName: '店舗へ',

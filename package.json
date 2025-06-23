@@ -23,6 +23,9 @@
         "filter": ["**/*"]
       }
     ],
+    "asarUnpack": [
+      "qpdf/**"
+    ],
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "win": {
       "target": "nsis"
