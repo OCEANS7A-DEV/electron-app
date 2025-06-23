@@ -1122,118 +1122,12 @@ ipcMain.handle(
 
 
 ipcMain.on('PDF-Marge', () => {
-  PDFfileMergeBuild()
+  PDFfileMerge()
 })
 
 
 
-
-const PDFfileMarge = async (): Promise<{
-  canceled: boolean;
-  output?: string;
-  error?: string;
-}> => {
-  
-  const qpdfBinary = getQpdfBinaryPath();
-  // 存在確認
-  const exists = fs.existsSync(qpdfBinary);
-  log.info(`QPDF exists?: ${exists}`);
-  if (!exists) {
-    return { canceled: true, error: `バイナリが見つかりません: ${qpdfBinary}` };
-  }
-  // さらに親フォルダの一覧も出す
-  const parent = path.dirname(qpdfBinary);
-  log.info('Parent folder contents:', fs.readdirSync(parent));
-
-
-  
-  try{
-    const { filePaths, canceled } = await dialog.showOpenDialog({
-      title: 'PDF を結合するフォルダを選択',
-      properties: ['openDirectory']
-    });
-    if (canceled || filePaths.length === 0) {
-      return { canceled: true };
-    }
-    const folder = filePaths[0];
-
-    // 2) フォルダ内の PDF リスト取得
-    const pdfFiles = (await fs.promises.readdir(folder))
-      .filter(f => f.toLowerCase().endsWith('.pdf'))
-      .map(f => path.join(folder, f))
-
-
-    if (pdfFiles.length < 2) {
-      // canceled を必ず含める
-      return { canceled: true, error: 'PDF が 2 つ以上必要です。' };
-    }
-
-    // 3) 保存先ダイアログ
-    const { filePath: outPath, canceled: saveCanceled } = await dialog.showSaveDialog({
-      title: '結合後の PDF を保存',
-      defaultPath: path.join(folder, 'merged.pdf'),
-      filters: [{ name: 'PDF', extensions: ['pdf'] }]
-    });
-    if (saveCanceled || !outPath) {
-      return { canceled: true };
-    }
-
-    // 4) QPDF Portable バイナリパス
-    const base = app.isPackaged
-      ? process.resourcesPath
-      : path.resolve(__dirname, '../../vendor/qpdf');
-    const qpdfBinary = path.join(base, 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf');
-
-    console.log('▶️ using qpdfBinary:', qpdfBinary);
-    if (!fs.existsSync(qpdfBinary)) {
-      return { canceled: true, error: `qpdf バイナリが見つかりません: ${qpdfBinary}` };
-    }
-
-    const args = ['--empty', '--pages', ...pdfFiles, '--', outPath];
-
-    return new Promise(resolve => {
-      execFile(qpdfBinary, args, (err, stdout, stderr) => {
-        // まず err を必ずログ出力
-        if (err) {
-          log.info(err)
-          console.error('execFile エラー:', err);
-        }
-        if (stdout) {
-          log.info('qpdf stdout:', stdout)
-          console.log('qpdf stdout:', stdout);
-        }
-        if (stderr) {
-          log.info('qpdf stderr:', stderr)
-          console.warn('qpdf stderr:', stderr);
-        }
-
-        if (err) {
-          // err.message も返す
-          resolve({ canceled: true, error: err.message });
-        } else {
-          resolve({ canceled: false, output: outPath });
-        }
-      });
-    });
-  } catch (err: any) {
-    log.info(err);
-    console.error('PDFfileMarge で予期せぬエラー:', err);
-    // ここでも必ず返す
-    return { canceled: true, error: err.message || String(err) };
-  }
-};
-
-const getQpdfBinaryPath = (): string => {
-  const p = app.isPackaged
-    ? path.join(process.resourcesPath, 'qpdf', 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf')
-    : path.resolve(__dirname, '../../vendor/qpdf/bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf');
-  log.info('QPDF path:', p);
-  return p;
-};
-
-
-
-const PDFfileMergeBuild = async (): Promise<{
+const PDFfileMerge = async (): Promise<{
   canceled: boolean;
   output?: string;
   error?: string;
@@ -1272,7 +1166,7 @@ const PDFfileMergeBuild = async (): Promise<{
     // 4) pdf-merger-js で結合
     const merger = new PDFMerger();
     for (const file of pdfFiles) {
-      merger.add(file);
+      await merger.add(file);
     }
     await merger.save(outPath);
 
