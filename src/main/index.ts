@@ -1231,38 +1231,40 @@ const PDFfileMargeH = async (): Promise<{
     return { canceled: true };
   }
 
-  // 4) QPDF Portable バイナリパス
-  const base = app.isPackaged
-    ? process.resourcesPath
-    : path.resolve(__dirname, '../../vendor/qpdf');
-  const qpdfBinary = path.join(base, 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf');
+  // ４）QPDF バイナリのパスを組み立て
+  let qpdfDir: string;
+  if (app.isPackaged) {
+    // リソースフォルダ配下の qpdf ディレクトリを指す
+    qpdfDir = path.join(process.resourcesPath, 'qpdf');
+  } else {
+    // 開発時はプロジェクト直下の vendor/qpdf
+    qpdfDir = path.resolve(__dirname, '../../vendor/qpdf');
+  }
 
-  console.log('▶️ using qpdfBinary:', qpdfBinary);
+  const qpdfBinary = path.join(
+    qpdfDir,
+    'bin',
+    process.platform === 'win32' ? 'qpdf.exe' : 'qpdf'
+  );
+
+  console.log('▶️ QPDF バイナリ:', qpdfBinary);
+
   if (!fs.existsSync(qpdfBinary)) {
-    return { canceled: true, error: `qpdf バイナリが見つかりません: ${qpdfBinary}` };
+    return { canceled: true, error: `qpdf が見つかりません: ${qpdfBinary}` };
   }
 
   const args = ['--empty', '--pages', ...pdfFiles, '--', outPath];
 
+  // Promise でラップして非同期実行
   return new Promise(resolve => {
     execFile(qpdfBinary, args, (err, stdout, stderr) => {
-      // まず err を必ずログ出力
       if (err) {
         console.error('execFile エラー:', err);
+        return resolve({ canceled: true, error: err.message });
       }
-      if (stdout) {
-        console.log('qpdf stdout:', stdout);
-      }
-      if (stderr) {
-        console.warn('qpdf stderr:', stderr);
-      }
-
-      if (err) {
-        // err.message も返す
-        resolve({ canceled: true, error: err.message });
-      } else {
-        resolve({ canceled: false, output: outPath });
-      }
+      console.log('qpdf stdout:', stdout);
+      console.warn('qpdf stderr:', stderr);
+      resolve({ canceled: false, output: outPath });
     });
   });
 };
