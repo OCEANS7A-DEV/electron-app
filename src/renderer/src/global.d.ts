@@ -5,6 +5,7 @@ export {}
 declare global {
   interface Window {
     myInventoryAPI: {
+      PDFMarge: any;
       onHelloWorkProgress(progressHandler: (data: { count: number; total: number; }) => void): unknown;
       removeHelloWorkProgress(): unknown;
       isDev: boolean;

@@ -12,8 +12,7 @@ import os from 'os';
 
 import fs from 'fs';
 import path from 'path';
-import PDFMerger from 'pdf-merger-js'
-import { PDFDocument } from 'pdf-lib'
+
 import { execFile } from 'child_process';
 
 
@@ -1106,6 +1105,15 @@ ipcMain.handle(
 );
 
 
+
+
+ipcMain.on('PDF-Marge', () => {
+  PDFfileMarge()
+})
+
+
+
+
 const PDFfileMarge = async (): Promise<{
   canceled: boolean;
   output?: string;
@@ -1125,7 +1133,7 @@ const PDFfileMarge = async (): Promise<{
   const pdfFiles = (await fs.promises.readdir(folder))
     .filter(f => f.toLowerCase().endsWith('.pdf'))
     .map(f => path.join(folder, f))
-    .sort();
+
 
   if (pdfFiles.length < 2) {
     // canceled を必ず含める

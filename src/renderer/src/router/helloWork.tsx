@@ -5,7 +5,7 @@ import { useLoaderData } from "react-router-dom"
 //import puppeteer from "puppeteer"
 import { Button } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast'
 
 
 interface Works {

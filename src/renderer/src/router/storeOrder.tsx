@@ -177,7 +177,8 @@ export default function StoreOrderPage() {
     if (formData.length >= 1) {
       await window.myInventoryAPI.DataInsert({
         sheetName: '店舗へ',
-        action: 'Orderinsert',
+        // action: 'Orderinsert',
+        action: 'insert',
         data: formData,
         formulaConfig: {
           targetCol: 10,

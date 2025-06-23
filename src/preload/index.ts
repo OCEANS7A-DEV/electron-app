@@ -50,6 +50,7 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
     // チャンネル全解除
     ipcRenderer.removeAllListeners('helloWork-progress')
   },
+  PDFMarge: () => ipcRenderer.send('PDF-Marge'),
 })
 
 if (process.contextIsolated) {

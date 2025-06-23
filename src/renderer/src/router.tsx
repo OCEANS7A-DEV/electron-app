@@ -21,6 +21,7 @@ import UpdateWindow from './router/updater'
 import InventoryMoving from './router/Moving'
 import CatalogView from './router/Catalog'
 import NetDetailsPrint, { loader as NetDetailsLoader} from './router/OrderDetails'
+import PDFOperationPage from './router/PDFOperation'
 
 
 
@@ -56,6 +57,10 @@ export const router = createHashRouter([
     path: '/OrderDetails',
     element: <NetDetailsPrint />,
     loader: NetDetailsLoader
+  },
+  {
+    path: '/PDFOperation',
+    element: <PDFOperationPage/>
   },
   {
     path: '/HQ_stocks',
