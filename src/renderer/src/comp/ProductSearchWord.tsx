@@ -4,7 +4,6 @@ import { Button } from '@mui/material'
 //import { searchStr } from '../backend/WebStorage.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 /* @ts-ignore */
-import Fuse from 'fuse.js'
 import jaconv from 'jaconv';
 
 
@@ -14,7 +13,6 @@ export default function WordSearch({DisplayStatus, setDisplayStatus, RegisterDat
   const [SWord, setSWord] = useState<string>('')
   const [tableData, setTableData] = useState<any[]>([])
   const [data, setData] = useState<any[]>([])
-  const [fuse, setFuse] = useState<any>(null)
   const [buttonlabel, setButtonLabel] = useState('閉じる')
 
   // 入力値変更時に呼び出される
@@ -22,31 +20,7 @@ export default function WordSearch({DisplayStatus, setDisplayStatus, RegisterDat
     setSWord(event.target.value)
   }
   
-  const productReSearch = async () => {
-    //console.log(SWord)
-    if (!SWord){
-      setTableData(data)
-    } else {
-      const swKZ = jaconv.toKatakana(SWord);
-      const swHZ = jaconv.toHiragana(swKZ);
-      const swKH = jaconv.toHan(swKZ);
-      const SearchWords = [SWord,swKZ,swHZ,swKH]
-      if (!SWord || !fuse) {
-        console.warn('検索語またはfuseが無効')
-        setTableData([])
-        return
-      }
-      const resultSearch = SearchWords.map(row => {
-        const result = fuse.search(row)
-        return result
-      })
-      const flatData = resultSearch.flat(1)
-      const matchedRowsF = flatData.map((r: any) => r.item)
-      const NotDuplicated = [...new Set(matchedRowsF)]
-      //console.log(NotDuplicated)
-      setTableData(NotDuplicated)
-    }
-  }
+
   
 
   // データ更新
@@ -67,20 +41,6 @@ export default function WordSearch({DisplayStatus, setDisplayStatus, RegisterDat
     setData(data)
   }
 
-  // fuseの初期化
-  useEffect(() => {
-    if (data.length > 0) {
-      //console.log('Fuseに渡すデータ:', data)
-  
-      const fuse = new Fuse(data, {
-        threshold: 0,
-        includeScore: true,
-        keys: ["code", "name"],
-      })
-  
-      setFuse(fuse)
-    }
-  }, [data])
 
   // 入力内容が変わったときに検索ワードをセット
   const handleKeyDown = (e: any) => {
@@ -103,6 +63,28 @@ export default function WordSearch({DisplayStatus, setDisplayStatus, RegisterDat
 
   const ProductClick = async(row) => {
     RegisterData(row)
+  }
+
+
+
+  const productReSearch = async() => {
+    if (!SWord){
+      setTableData(data)
+    } else {
+      const swKZ = jaconv.toKatakana(SWord);
+      const swHZ = jaconv.toHiragana(swKZ);
+      const swKH = jaconv.toHan(swKZ);
+      const SearchWords = [SWord,swKZ,swHZ,swKH]
+      if (!SWord) {
+        setTableData([])
+        return
+      }
+      const searchresult = data.filter(item => {
+        const nameStr = String(item.name ?? '');
+        return SearchWords.some(sw => nameStr.includes(sw));
+      });
+      setTableData(searchresult)
+    }
   }
 
   useEffect(() => {

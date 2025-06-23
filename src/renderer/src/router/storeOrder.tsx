@@ -174,11 +174,11 @@ export default function StoreOrderPage() {
       ]
       return result
     })
+
     if (formData.length >= 1) {
       await window.myInventoryAPI.DataInsert({
         sheetName: '店舗へ',
-        // action: 'Orderinsert',
-        action: 'insert',
+        action: 'Orderinsert',
         data: formData,
         formulaConfig: {
           targetCol: 10,
@@ -187,9 +187,6 @@ export default function StoreOrderPage() {
         deleteNum: DeleteRowNum
       })
     }
-    reset({
-      rows: defaultSet()
-    })
     toast.success('送信しました')
   }
 
@@ -293,15 +290,14 @@ export default function StoreOrderPage() {
     const filtered = ordersGet.filter(item => new Date(item[0]).toDateString() == targetDateStr && item[1] == storeSelect)
     const UpDataRowNum = filtered.length
     setDeleteRowNum(UpDataRowNum)
-    console.log(filtered)
-    if (filtered[0][12] == '注文無'){
-      reset({
-        rows: defaultSet()
-      })
-      return filtered
-    }
 
     if (filtered.length > 0){
+      if (filtered[0][12] == '注文無'){
+        reset({
+          rows: defaultSet()
+        })
+        return filtered
+      }
       reset({
         rows: defaultSet()
       })
@@ -329,6 +325,10 @@ export default function StoreOrderPage() {
         setValue(`rows.${count}.price`, item[8])
         setValue(`rows.${count}.remarks`, item[11])
         count ++
+      })
+    } else {
+      reset({
+        rows: defaultSet()
       })
     }
     return filtered
