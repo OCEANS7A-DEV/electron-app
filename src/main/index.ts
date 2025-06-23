@@ -1196,10 +1196,12 @@ const PDFfileMarge = async (): Promise<{
         }
       });
     });
-  } catch (err){
-    log.info(err)
+  } catch (err: any) {
+    log.info(err);
+    console.error('PDFfileMarge で予期せぬエラー:', err);
+    // ここでも必ず返す
+    return { canceled: true, error: err.message || String(err) };
   }
-  
 };
 
 
