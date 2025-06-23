@@ -80,9 +80,9 @@ export default function WordSearch({DisplayStatus, setDisplayStatus, RegisterDat
         return
       }
       const searchresult = data.filter(item => {
-        const nameStr = String(item.name ?? '');
-        return SearchWords.some(sw => nameStr.includes(sw));
-      });
+        const nameStr = String(item.name ?? '')
+        return SearchWords.some(sw => nameStr.includes(sw))
+      })
       setTableData(searchresult)
     }
   }

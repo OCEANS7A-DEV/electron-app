@@ -1128,70 +1128,78 @@ const PDFfileMarge = async (): Promise<{
   error?: string;
 }> => {
   // 1) フォルダ選択
-  const { filePaths, canceled } = await dialog.showOpenDialog({
-    title: 'PDF を結合するフォルダを選択',
-    properties: ['openDirectory']
-  });
-  if (canceled || filePaths.length === 0) {
-    return { canceled: true };
-  }
-  const folder = filePaths[0];
-
-  // 2) フォルダ内の PDF リスト取得
-  const pdfFiles = (await fs.promises.readdir(folder))
-    .filter(f => f.toLowerCase().endsWith('.pdf'))
-    .map(f => path.join(folder, f))
-
-
-  if (pdfFiles.length < 2) {
-    // canceled を必ず含める
-    return { canceled: true, error: 'PDF が 2 つ以上必要です。' };
-  }
-
-  // 3) 保存先ダイアログ
-  const { filePath: outPath, canceled: saveCanceled } = await dialog.showSaveDialog({
-    title: '結合後の PDF を保存',
-    defaultPath: path.join(folder, 'merged.pdf'),
-    filters: [{ name: 'PDF', extensions: ['pdf'] }]
-  });
-  if (saveCanceled || !outPath) {
-    return { canceled: true };
-  }
-
-  // 4) QPDF Portable バイナリパス
-  const base = app.isPackaged
-    ? process.resourcesPath
-    : path.resolve(__dirname, '../../vendor/qpdf');
-  const qpdfBinary = path.join(base, 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf');
-
-  console.log('▶️ using qpdfBinary:', qpdfBinary);
-  if (!fs.existsSync(qpdfBinary)) {
-    return { canceled: true, error: `qpdf バイナリが見つかりません: ${qpdfBinary}` };
-  }
-
-  const args = ['--empty', '--pages', ...pdfFiles, '--', outPath];
-
-  return new Promise(resolve => {
-    execFile(qpdfBinary, args, (err, stdout, stderr) => {
-      // まず err を必ずログ出力
-      if (err) {
-        console.error('execFile エラー:', err);
-      }
-      if (stdout) {
-        console.log('qpdf stdout:', stdout);
-      }
-      if (stderr) {
-        console.warn('qpdf stderr:', stderr);
-      }
-
-      if (err) {
-        // err.message も返す
-        resolve({ canceled: true, error: err.message });
-      } else {
-        resolve({ canceled: false, output: outPath });
-      }
+  try{
+    const { filePaths, canceled } = await dialog.showOpenDialog({
+      title: 'PDF を結合するフォルダを選択',
+      properties: ['openDirectory']
     });
-  });
+    if (canceled || filePaths.length === 0) {
+      return { canceled: true };
+    }
+    const folder = filePaths[0];
+
+    // 2) フォルダ内の PDF リスト取得
+    const pdfFiles = (await fs.promises.readdir(folder))
+      .filter(f => f.toLowerCase().endsWith('.pdf'))
+      .map(f => path.join(folder, f))
+
+
+    if (pdfFiles.length < 2) {
+      // canceled を必ず含める
+      return { canceled: true, error: 'PDF が 2 つ以上必要です。' };
+    }
+
+    // 3) 保存先ダイアログ
+    const { filePath: outPath, canceled: saveCanceled } = await dialog.showSaveDialog({
+      title: '結合後の PDF を保存',
+      defaultPath: path.join(folder, 'merged.pdf'),
+      filters: [{ name: 'PDF', extensions: ['pdf'] }]
+    });
+    if (saveCanceled || !outPath) {
+      return { canceled: true };
+    }
+
+    // 4) QPDF Portable バイナリパス
+    const base = app.isPackaged
+      ? process.resourcesPath
+      : path.resolve(__dirname, '../../vendor/qpdf');
+    const qpdfBinary = path.join(base, 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf');
+
+    console.log('▶️ using qpdfBinary:', qpdfBinary);
+    if (!fs.existsSync(qpdfBinary)) {
+      return { canceled: true, error: `qpdf バイナリが見つかりません: ${qpdfBinary}` };
+    }
+
+    const args = ['--empty', '--pages', ...pdfFiles, '--', outPath];
+
+    return new Promise(resolve => {
+      execFile(qpdfBinary, args, (err, stdout, stderr) => {
+        // まず err を必ずログ出力
+        if (err) {
+          log.info(err)
+          console.error('execFile エラー:', err);
+        }
+        if (stdout) {
+          log.info('qpdf stdout:', stdout)
+          console.log('qpdf stdout:', stdout);
+        }
+        if (stderr) {
+          log.info('qpdf stderr:', stderr)
+          console.warn('qpdf stderr:', stderr);
+        }
+
+        if (err) {
+          // err.message も返す
+          resolve({ canceled: true, error: err.message });
+        } else {
+          resolve({ canceled: false, output: outPath });
+        }
+      });
+    });
+  } catch (err){
+    log.info(err)
+  }
+  
 };
 
 
