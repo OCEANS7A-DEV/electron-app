@@ -18,7 +18,6 @@ import { execFile } from 'child_process';
 
 
 import PDFMerger from 'pdf-merger-js'
-import { PDFDocument, PDFDict, PDFContext, PDFRef, PDFName } from 'pdf-lib';
 
 //import https from 'https';
 
