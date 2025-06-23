@@ -399,7 +399,9 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('error', (error) => {
     log.error('アップデートエラー:', error)
-    createWindow()
+    if (!mainWindow){
+      createWindow()
+    }
   })
 
   autoUpdater.on('update-downloaded', () => {
@@ -418,8 +420,9 @@ const setupAutoUpdater = () => {
           mainWindow.webContents.send('update-available', true)
         }
       }catch{
-        // エラー時は何もしない
-        createWindow()
+        if (!mainWindow){
+          createWindow()
+        }
       }
     }
   })
@@ -1127,7 +1130,20 @@ const PDFfileMarge = async (): Promise<{
   output?: string;
   error?: string;
 }> => {
-  // 1) フォルダ選択
+  
+  const qpdfBinary = getQpdfBinaryPath();
+  // 存在確認
+  const exists = fs.existsSync(qpdfBinary);
+  log.info(`QPDF exists?: ${exists}`);
+  if (!exists) {
+    return { canceled: true, error: `バイナリが見つかりません: ${qpdfBinary}` };
+  }
+  // さらに親フォルダの一覧も出す
+  const parent = path.dirname(qpdfBinary);
+  log.info('Parent folder contents:', fs.readdirSync(parent));
+
+
+  
   try{
     const { filePaths, canceled } = await dialog.showOpenDialog({
       title: 'PDF を結合するフォルダを選択',
@@ -1204,7 +1220,13 @@ const PDFfileMarge = async (): Promise<{
   }
 };
 
-
+const getQpdfBinaryPath = (): string => {
+  const p = app.isPackaged
+    ? path.join(process.resourcesPath, 'qpdf', 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf')
+    : path.resolve(__dirname, '../../vendor/qpdf/bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf');
+  log.info('QPDF path:', p);
+  return p;
+};
 
 
 
