@@ -1155,58 +1155,7 @@ const PDFfileMarge = async (): Promise<{
       return { canceled: true, error: 'PDF が 2 つ以上必要です。' };
     }
 
-    // ── ここから内部構造ログ出力 ──
-    for (const filePath of pdfFiles) {
-      try {
-        const bytes = await fs.promises.readFile(filePath);
-        const doc = await PDFDocument.load(bytes, {
-          ignoreEncryption: true,
-          updateMetadata: false,
-        });
-        const ctx = (doc as any).context as PDFContext;
     
-        // 1) トレーラー辞書の取得チェック
-        const trailer = ctx.trailer;
-        if (!trailer) {
-          console.warn(`${path.basename(filePath)}: trailer が取得できません`);
-          continue;
-        }
-    
-        // 2) Root エントリの存在チェック
-        const catalogRef = trailer.get(PDFName.of('Root')) as PDFRef | undefined;
-        if (!catalogRef) {
-          console.warn(`${path.basename(filePath)}: カタログ(Root)参照がありません`);
-          continue;
-        }
-    
-        // 3) カタログ辞書を lookup
-        const catalog = ctx.lookup(catalogRef) as PDFDict;
-        if (!catalog || !(catalog instanceof PDFDict)) {
-          console.warn(`${path.basename(filePath)}: カタログオブジェクトが不正です`);
-          continue;
-        }
-    
-        // 4) ここでようやく AcroForm をチェック
-        const acroFormRef = catalog.get(PDFName.of('AcroForm')) as PDFRef | undefined;
-        console.log(`\n=== ${path.basename(filePath)} の内部構造 ===`);
-        console.log('ページ数:', doc.getPageCount());
-        console.log(`→ AcroForm: ${acroFormRef ? '存在します' : 'なし'}`);
-        if (acroFormRef) {
-          const acroForm = ctx.lookup(acroFormRef) as PDFDict;
-          const fields = acroForm.get(PDFName.of('Fields'));
-          console.log(
-            '  フィールド数:',
-            Array.isArray(fields) ? fields.length : fields?.toString()
-          );
-          console.log('  XFA:', acroForm.has(PDFName.of('XFA')) ? 'はい' : 'いいえ');
-        }
-    
-        // （必要ならここで各ページオブジェクトも同様にガードを入れて出力）
-    
-      } catch (e: any) {
-        console.error(`${path.basename(filePath)} の解析失敗:`, e.message);
-      }
-    }
     
     // ── ここまで内部構造ログ出力 ──
 
