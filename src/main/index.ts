@@ -1122,12 +1122,12 @@ ipcMain.handle(
 
 
 ipcMain.on('PDF-Marge', () => {
-  PDFfileMerge()
+  PDFfileMarge()
 })
 
 
 
-const PDFfileMerge = async (): Promise<{
+const PDFfileMarge = async (): Promise<{
   canceled: boolean;
   output?: string;
   error?: string;
