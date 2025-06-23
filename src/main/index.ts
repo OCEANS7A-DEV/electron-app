@@ -367,9 +367,11 @@ const setupAutoUpdater = () => {
           status: 'downloading'
         })
       }
-    }catch{
+    } catch {
       // エラー時は何もしない
-      createWindow()
+      if (!mainWindow){
+        createWindow()
+      }
     }
     
     
@@ -379,18 +381,20 @@ const setupAutoUpdater = () => {
     log.info('アップデートはありません。')
 
     if (isFirstRunUpdate) {
-      createWindow()
+      if (!mainWindow){
+        createWindow()
+      }
     }
-    
     try{
       if (mainWindow) {
         mainWindow.webContents.send('update-available', false)
       }
-    }catch{
+    } catch {
       // エラー時は何もしない
-      createWindow()
+      if (!mainWindow){
+        createWindow()
+      }
     }
-    
   })
 
   autoUpdater.on('error', (error) => {
