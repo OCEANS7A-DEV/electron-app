@@ -13,11 +13,12 @@ import os from 'os';
 import fs from 'fs';
 import path from 'path';
 
-//import { execFile } from 'child_process';
+import { execFile } from 'child_process';
 
 
 
-import PDFMerger from 'pdf-merger-js';
+import PDFMerger from 'pdf-merger-js'
+import { PDFDocument, PDFDict, PDFContext, PDFRef, PDFName } from 'pdf-lib';
 
 //import https from 'https';
 
@@ -1122,7 +1123,8 @@ ipcMain.handle(
 
 
 ipcMain.on('PDF-Marge', () => {
-  PDFfileMarge()
+  //PDFfileMarge()
+  PDFfileMargeH()
 })
 
 
@@ -1152,6 +1154,63 @@ const PDFfileMarge = async (): Promise<{
     if (pdfFiles.length < 2) {
       return { canceled: true, error: 'PDF が 2 つ以上必要です。' };
     }
+
+    // ── ここから内部構造ログ出力 ──
+    for (const filePath of pdfFiles) {
+      try {
+        const bytes = await fs.promises.readFile(filePath);
+        const doc = await PDFDocument.load(bytes, {
+          ignoreEncryption: true,
+          updateMetadata: false,
+        });
+        const ctx = (doc as any).context as PDFContext;
+    
+        // 1) トレーラー辞書の取得チェック
+        const trailer = ctx.trailer;
+        if (!trailer) {
+          console.warn(`${path.basename(filePath)}: trailer が取得できません`);
+          continue;
+        }
+    
+        // 2) Root エントリの存在チェック
+        const catalogRef = trailer.get(PDFName.of('Root')) as PDFRef | undefined;
+        if (!catalogRef) {
+          console.warn(`${path.basename(filePath)}: カタログ(Root)参照がありません`);
+          continue;
+        }
+    
+        // 3) カタログ辞書を lookup
+        const catalog = ctx.lookup(catalogRef) as PDFDict;
+        if (!catalog || !(catalog instanceof PDFDict)) {
+          console.warn(`${path.basename(filePath)}: カタログオブジェクトが不正です`);
+          continue;
+        }
+    
+        // 4) ここでようやく AcroForm をチェック
+        const acroFormRef = catalog.get(PDFName.of('AcroForm')) as PDFRef | undefined;
+        console.log(`\n=== ${path.basename(filePath)} の内部構造 ===`);
+        console.log('ページ数:', doc.getPageCount());
+        console.log(`→ AcroForm: ${acroFormRef ? '存在します' : 'なし'}`);
+        if (acroFormRef) {
+          const acroForm = ctx.lookup(acroFormRef) as PDFDict;
+          const fields = acroForm.get(PDFName.of('Fields'));
+          console.log(
+            '  フィールド数:',
+            Array.isArray(fields) ? fields.length : fields?.toString()
+          );
+          console.log('  XFA:', acroForm.has(PDFName.of('XFA')) ? 'はい' : 'いいえ');
+        }
+    
+        // （必要ならここで各ページオブジェクトも同様にガードを入れて出力）
+    
+      } catch (e: any) {
+        console.error(`${path.basename(filePath)} の解析失敗:`, e.message);
+      }
+    }
+    
+    // ── ここまで内部構造ログ出力 ──
+
+
 
     // 3) 保存先ダイアログ
     const { filePath: outPath, canceled: saveCanceled } = await dialog.showSaveDialog({
@@ -1188,7 +1247,77 @@ const PDFfileMarge = async (): Promise<{
 };
 
 
+const PDFfileMargeH = async (): Promise<{
+  canceled: boolean;
+  output?: string;
+  error?: string;
+}> => {
+  // 1) フォルダ選択
+  const { filePaths, canceled } = await dialog.showOpenDialog({
+    title: 'PDF を結合するフォルダを選択',
+    properties: ['openDirectory']
+  });
+  if (canceled || filePaths.length === 0) {
+    return { canceled: true };
+  }
+  const folder = filePaths[0];
 
+  // 2) フォルダ内の PDF リスト取得
+  const pdfFiles = (await fs.promises.readdir(folder))
+    .filter(f => f.toLowerCase().endsWith('.pdf'))
+    .map(f => path.join(folder, f))
+    .sort();
+
+  if (pdfFiles.length < 2) {
+    // canceled を必ず含める
+    return { canceled: true, error: 'PDF が 2 つ以上必要です。' };
+  }
+
+  // 3) 保存先ダイアログ
+  const { filePath: outPath, canceled: saveCanceled } = await dialog.showSaveDialog({
+    title: '結合後の PDF を保存',
+    defaultPath: path.join(folder, 'merged.pdf'),
+    filters: [{ name: 'PDF', extensions: ['pdf'] }]
+  });
+  if (saveCanceled || !outPath) {
+    return { canceled: true };
+  }
+
+  // 4) QPDF Portable バイナリパス
+  const base = app.isPackaged
+    ? process.resourcesPath
+    : path.resolve(__dirname, '../../vendor/qpdf');
+  const qpdfBinary = path.join(base, 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf');
+
+  console.log('▶️ using qpdfBinary:', qpdfBinary);
+  if (!fs.existsSync(qpdfBinary)) {
+    return { canceled: true, error: `qpdf バイナリが見つかりません: ${qpdfBinary}` };
+  }
+
+  const args = ['--empty', '--pages', ...pdfFiles, '--', outPath];
+
+  return new Promise(resolve => {
+    execFile(qpdfBinary, args, (err, stdout, stderr) => {
+      // まず err を必ずログ出力
+      if (err) {
+        console.error('execFile エラー:', err);
+      }
+      if (stdout) {
+        console.log('qpdf stdout:', stdout);
+      }
+      if (stderr) {
+        console.warn('qpdf stderr:', stderr);
+      }
+
+      if (err) {
+        // err.message も返す
+        resolve({ canceled: true, error: err.message });
+      } else {
+        resolve({ canceled: false, output: outPath });
+      }
+    });
+  });
+};
 
 
 

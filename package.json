@@ -17,6 +17,14 @@
       "out/renderer"
     ],
     "extraResources": [
+      {
+        "from": "vendor/qpdf",
+        "to": "qpdf",
+        "filter": ["**/*"]
+      }
+    ],
+    "asarUnpack": [
+      "qpdf/**"
     ],
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "win": {
