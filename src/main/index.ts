@@ -400,8 +400,10 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('update-downloaded', () => {
     log.info('アップデート完了。再起動して更新します。')
+    
 
     if (isFirstRunUpdate) {
+      NotificationEXE('再起動して更新します。')
       autoUpdater.quitAndInstall()
     } else {
       log.info('定期チェックのアップデートは即時インストールしません')
@@ -431,9 +433,11 @@ app.whenReady().then(async () => {
     setupAutoUpdater()
     autoUpdater.checkForUpdates()
     setInterval(() => {
-      isFirstRunUpdate = false
-      log.info('定期アップデート確認中...')
-      autoUpdater.checkForUpdates()
+      if (mainWindow) {
+        isFirstRunUpdate = false
+        log.info('定期アップデート確認中...')
+        autoUpdater.checkForUpdates()
+      }
     }, 30 * 1000)
   }
 
