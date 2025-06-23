@@ -177,36 +177,36 @@ function Row({
 
 
 
-type SortableRowProps = {
-  id: string
-  children: (handleListeners: ReturnType<typeof useSortable>['listeners']) => React.ReactNode
-}
+// type SortableRowProps = {
+//   id: string
+//   children: (handleListeners: ReturnType<typeof useSortable>['listeners']) => React.ReactNode
+// }
 
-const SortableRow: React.FC<SortableRowProps> = React.memo(({ id, children }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id })
+// const SortableRow: React.FC<SortableRowProps> = React.memo(({ id, children }) => {
+//   const {
+//     attributes,
+//     listeners,
+//     setNodeRef,
+//     transform,
+//     transition,
+//   } = useSortable({ id })
 
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  }
+//   const style: React.CSSProperties = {
+//     transform: CSS.Transform.toString(transform),
+//     transition,
+//   }
 
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    >
-      {children(listeners)}
-    </div>
-  )
-})
+//   return (
+//     <div
+//       ref={setNodeRef}
+//       style={style}
+//       {...attributes}
+//       {...listeners}
+//     >
+//       {children(listeners)}
+//     </div>
+//   )
+// })
 
 
 
