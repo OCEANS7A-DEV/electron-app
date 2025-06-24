@@ -26,6 +26,7 @@ dayjs.locale('ja')
 interface SelectOption {
   value: string
   label: string
+  type: string
 }
 
 
@@ -88,6 +89,8 @@ export default function StoreOrderPage() {
   const [storeSelect, setStoreSelect] = React.useState('');
 
   const [storeOptions, setStoreOptions] = useState<SelectOption[]>([])
+
+  const [SelectType, setSelectType] = React.useState('');
 
   const [InsertDate, setDate] = useState<string>('')
 
@@ -174,7 +177,8 @@ export default function StoreOrderPage() {
       ]
       return result
     })
-    console.log(DeleteRowNum)
+    // console.log(formData)
+    // return
     if (formData.length >= 1) {
       await window.myInventoryAPI.DataInsert({
         sheetName: '店舗へ',
@@ -205,7 +209,8 @@ export default function StoreOrderPage() {
       .filter(row => row[0] !== "")
       .map(item => ({
         value: item[0],
-        label: item[0]
+        label: item[0],
+        type: item[1]
       }));
     //console.log(storenames)
     setStoreOptions(storenames);
@@ -358,10 +363,12 @@ export default function StoreOrderPage() {
   
 
   const search = async (index) => {
+    //console.log(SelectType)
     const List = await window.myInventoryAPI.ListData()
     const values = getValues()
     const code = values.rows[index].code
     const productData = List.find((item) => item.code === Number(code))
+    //console.log(productData)
     if (productData) {
       const vendordata = productData.vendor
       const name = productData.name
@@ -373,7 +380,12 @@ export default function StoreOrderPage() {
         return result
       })
       setValue(`rows.${index}.detailList`, detaillist)
-      setValue(`rows.${index}.price`, productData.newPrice)
+      if (SelectType !== 'VC'){
+        setValue(`rows.${index}.price`, productData.newPrice)
+      } else {
+        setValue(`rows.${index}.price`, productData.VC)
+      }
+      
       if(detailfilter.length !== 0){
         console.log('詳細あり')
       }
@@ -400,7 +412,10 @@ export default function StoreOrderPage() {
   }
 
   const handleStoreChange = (event: SelectChangeEvent) => {
-    setStoreSelect(event.target.value as string);
+    const select = event.target.value as string
+    setStoreSelect(select);
+    const type = storeOptions.find(item => item.value == select)?.type ?? ""
+    setSelectType(type)
   };
 
   const RegisterData = async(data) => {
