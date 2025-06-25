@@ -9,6 +9,11 @@ import VendorDataUpDate from '@renderer/comp/vendorDataUpdata'
 import TypeDataUpDate from '../comp/productType'
 
 
+import { Button } from '@mui/material'
+
+
+
+
 export const loader = async () => {
   const Vendors = await window.myInventoryAPI.ListGet({
     sheetName: '業者一覧',
@@ -39,6 +44,10 @@ export default function SettingPage() {
   const { storeData, vendorData, typeData } = useLoaderData<typeof loader>()
 
 
+  const test = async() => {
+    const result = await window.myInventoryAPI.storeGet('')
+    console.log(result)
+  }
 
   return (
     <>
@@ -49,7 +58,7 @@ export default function SettingPage() {
         <div>
           設定ページ
         </div>
-        <div style={{display: 'flex'}}>
+        <div style={{display: 'flex'}} className="setting-area">
           <div>
             <StoreDataUpDate
               storeData={storeData}
@@ -65,6 +74,10 @@ export default function SettingPage() {
               typeData={typeData}
             />
           </div>
+          <div>
+            <Button variant="outlined" onClick={test}>test</Button>
+          </div>
+          
         </div>
       </div>
     </>

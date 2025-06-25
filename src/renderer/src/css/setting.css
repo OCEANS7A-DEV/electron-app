@@ -25,3 +25,8 @@
   padding: 10px 20px;
   margin: 10px;
 }
+
+.setting-area {
+  display: flex;
+  flex-wrap: wrap;
+}
