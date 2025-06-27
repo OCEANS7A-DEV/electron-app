@@ -1012,104 +1012,105 @@ interface Works {
 ipcMain.handle(
   'hellowork-PDF',
   async (_event: IpcMainInvokeEvent, lists: Works[]) => {
-    const total = lists.length
-    let count = 0
+    try{
+      const total = lists.length
+      let count = 0
 
-    const date = new Date()
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    const today = `${y}.${m}.${d}`
-    const downloadDir = path.join(os.homedir(), 'Downloads', `ハロワPDFs${today}`);
-    // フォルダがなければ作成する
-    if (!fs.existsSync(downloadDir)) {
-      fs.mkdirSync(downloadDir, { recursive: true });
-    }
-
-    let browser: Browser | null = null;
-    let page: Page | null = null;
-    browser = await puppeteer.launch({
-      executablePath: process.env.NODE_ENV === 'production'
-        ? app.getPath('exe')
-        : puppeteer.executablePath(),
-      headless: true,
-      args: [ '--no-sandbox', '--disable-setuid-sandbox' ]
-    });
-    page = await browser.newPage();
-    await page.goto(
-      'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
-      { waitUntil: 'networkidle2' }
-    );
-    await page.type('input[name="mail"]', 'oceans7a@gmail.com');
-    await page.type('input[name="password"]', 'ocean@1115');
-
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle2' }),
-      page.click('button[name="loginBtn"]'),
-    ]);
-    
-
-    for (const item of lists) {
-      const afterNewline = item.address
-        .split(/\r?\n/)
-        .filter(line => line.trim() !== '')
-        .pop()!
-        .trim();
-      const filename = `${afterNewline}_${item.求人区分}_${item.職種}`;
-      try{
-        count = count + 1
-        //const downloadDir = path.join(os.homedir(), 'Downloads');
-        const finalFilename = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
-        const downloadsPath = path.join(downloadDir, finalFilename);
-        const jobUrl = `https://kyujin.hellowork.mhlw.go.jp/kyujin/${item.求人票URL}`
-
-        
-
-        try {
-          // 1) Puppeteer でページにアクセスし、クッキーを取得
-          await page.goto(jobUrl, { waitUntil: 'networkidle2', timeout: 60000 });
-
-          // 2) セッション維持用の Cookie を抜き出す
-          const cookies = await page.cookies();
-          const cookieHeader = cookies.map(c => `${c.name}=${c.value}`).join('; ');
-
-          // 3) Puppeteer は閉じてもOK
-          //await browser.close();
-          browser = null;
-
-          const res = await fetch(jobUrl, {
-            headers: { Cookie: cookieHeader },
-          });
-          if (!res.ok) {
-            throw new Error(`HTTP エラー ${res.status} ${res.statusText}`);
-          }
-          // arrayBuffer→Buffer に変換
-          const arrayBuffer = await res.arrayBuffer();
-          const buffer = Buffer.from(arrayBuffer);
-
-          if (buffer.length < 10000) {
-            throw new Error(`取得データが小さすぎます (${buffer.length} bytes)`);
-          }
-
-          fs.writeFileSync(downloadsPath, buffer);
-          mainWindow.webContents.send('helloWork-progress', { count: count, total: total, success: item.求人番号, url: jobUrl });
-
-        } catch (err: any) {
-          console.error('❌ PDFダウンロード失敗:', err);
-          mainWindow.webContents.send('helloWork-progress', { count: count, total: total, error: item.求人番号, url: filename });
-        } finally {
-          //mainWindow.webContents.send('helloWork-progress', { count: count, total: total });
-          if (browser) await browser.close();
-        }
-      } catch (e) {
-        //
+      const date = new Date()
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      const today = `${y}.${m}.${d}`
+      const downloadDir = path.join(os.homedir(), 'Downloads', `ハロワPDFs${today}`);
+      // フォルダがなければ作成する
+      if (!fs.existsSync(downloadDir)) {
+        fs.mkdirSync(downloadDir, { recursive: true });
       }
-    }
 
-    PDFfileMarge()
+      let browser: Browser | null = null;
+      let page: Page | null = null;
+      browser = await puppeteer.launch({
+        executablePath: process.env.NODE_ENV === 'production'
+          ? app.getPath('exe')
+          : puppeteer.executablePath(),
+        headless: true,
+        args: [ '--no-sandbox', '--disable-setuid-sandbox' ]
+      });
+      page = await browser.newPage();
+      await page.goto(
+        'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
+        { waitUntil: 'networkidle2' }
+      );
+      await page.type('input[name="mail"]', 'oceans7a@gmail.com');
+      await page.type('input[name="password"]', 'ocean@1115');
+
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'networkidle2' }),
+        page.click('button[name="loginBtn"]'),
+      ]);
       
-    
-    NotificationEXE('すべてのPDFのダウンロード完了')
+
+      for (const item of lists) {
+        const afterNewline = item.address
+          .split(/\r?\n/)
+          .filter(line => line.trim() !== '')
+          .pop()!
+          .trim();
+        const filename = `${afterNewline}_${item.求人区分}_${item.職種}`;
+        try{
+          count = count + 1
+          //const downloadDir = path.join(os.homedir(), 'Downloads');
+          const finalFilename = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
+          const downloadsPath = path.join(downloadDir, finalFilename);
+          const jobUrl = `https://kyujin.hellowork.mhlw.go.jp/kyujin/${item.求人票URL}`
+
+          
+
+          try {
+            // 1) Puppeteer でページにアクセスし、クッキーを取得
+            await page.goto(jobUrl, { waitUntil: 'networkidle2', timeout: 60000 });
+
+            // 2) セッション維持用の Cookie を抜き出す
+            const cookies = await page.cookies();
+            const cookieHeader = cookies.map(c => `${c.name}=${c.value}`).join('; ');
+
+            // 3) Puppeteer は閉じてもOK
+            //await browser.close();
+            browser = null;
+
+            const res = await fetch(jobUrl, {
+              headers: { Cookie: cookieHeader },
+            });
+            if (!res.ok) {
+              throw new Error(`HTTP エラー ${res.status} ${res.statusText}`);
+            }
+            // arrayBuffer→Buffer に変換
+            const arrayBuffer = await res.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            if (buffer.length < 10000) {
+              throw new Error(`取得データが小さすぎます (${buffer.length} bytes)`);
+            }
+
+            fs.writeFileSync(downloadsPath, buffer);
+            mainWindow.webContents.send('helloWork-progress', { count: count, total: total, success: item.求人番号, url: jobUrl });
+
+          } catch (err: any) {
+            console.error('❌ PDFダウンロード失敗:', err);
+            mainWindow.webContents.send('helloWork-progress', { count: count, total: total, error: item.求人番号, url: filename });
+          } finally {
+            //mainWindow.webContents.send('helloWork-progress', { count: count, total: total });
+            if (browser) await browser.close();
+          }
+        } catch (e) {
+          //
+        }
+      }
+      PDFfileMarge()
+      NotificationEXE('すべてのPDFのダウンロード完了')
+    } catch (e) {
+      log.error('ハロワ取得エラー:', e)
+    }
   }
 );
 
