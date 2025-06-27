@@ -6,7 +6,7 @@ import Store from 'electron-store'
 import log from 'electron-log'
 import updater from 'electron-updater'
 const { autoUpdater } = updater
-import puppeteer, { LaunchOptions, BrowserLaunchArgumentOptions } from 'puppeteer-core'
+import puppeteer, { LaunchOptions } from 'puppeteer-core'
 import { Browser, Page } from 'puppeteer-core'
 import os from 'os';
 
@@ -27,7 +27,7 @@ const PUPPETEER_ARGS = [
 ]
 
 
-function getPuppeteerOptions(): LaunchOptions & BrowserLaunchArgumentOptions {
+function getPuppeteerOptions(): LaunchOptions {
   if (is.dev) {
     // 開発時：システムにある Chrome/Chromium を channel 経由で起動
     return {
