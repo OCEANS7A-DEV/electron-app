@@ -29,14 +29,12 @@ const PUPPETEER_ARGS = [
 
 function getPuppeteerOptions(): LaunchOptions {
   if (is.dev) {
-    // 開発時：システムにある Chrome/Chromium を channel 経由で起動
     return {
       headless: false,
-      channel: 'chrome',     // WindowsならChrome、Mac/LinuxならChromiumを探してくれます
+      channel: 'chrome',
       args: PUPPETEER_ARGS,
     }
   } else {
-    // 本番ビルド時：Electron にバンドルされた実行ファイルを使う
     return {
       headless: true,
       channel: 'chrome',
