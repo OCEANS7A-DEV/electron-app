@@ -806,15 +806,12 @@ ipcMain.handle('printStatus', async (_event, payload: any) => {
 
 ipcMain.handle('hellowork-get', async () => {
   async function scrapeHelloWork() {
-    const browser = await puppeteer.launch({ 
+    const browser = await puppeteer.launch({
+      executablePath: process.env.NODE_ENV === 'production'
+        ? app.getPath('exe')
+        : puppeteer.executablePath(),
       headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-cache',
-        '--disable-application-cache',
-        '--disk-cache-size=0',
-      ],
+      args: [ '--no-sandbox', '--disable-setuid-sandbox' ]
     });
     const page = await browser.newPage();
 
@@ -1032,14 +1029,11 @@ ipcMain.handle(
     let browser: Browser | null = null;
     let page: Page | null = null;
     browser = await puppeteer.launch({
+      executablePath: process.env.NODE_ENV === 'production'
+        ? app.getPath('exe')
+        : puppeteer.executablePath(),
       headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-cache',
-        '--disable-application-cache',
-        '--disk-cache-size=0',
-      ],
+      args: [ '--no-sandbox', '--disable-setuid-sandbox' ]
     });
     page = await browser.newPage();
     await page.goto(
