@@ -987,7 +987,7 @@ ipcMain.handle('hellowork-get', async () => {
     }    
   } catch (e){
     log.error('ハロワ取得エラー:', e)
-    throw err;
+    throw e;
   }
 });
 
