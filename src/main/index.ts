@@ -31,7 +31,7 @@ function getPuppeteerOptions(): LaunchOptions {
   if (is.dev) {
     // 開発時：システムにある Chrome/Chromium を channel 経由で起動
     return {
-      headless: true,
+      headless: false,
       channel: 'chrome',     // WindowsならChrome、Mac/LinuxならChromiumを探してくれます
       args: PUPPETEER_ARGS,
     }
@@ -39,7 +39,7 @@ function getPuppeteerOptions(): LaunchOptions {
     // 本番ビルド時：Electron にバンドルされた実行ファイルを使う
     return {
       headless: true,
-      executablePath: app.getPath('exe'),
+      channel: 'chrome',
       args: PUPPETEER_ARGS,
     }
   }
