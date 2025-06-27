@@ -6,8 +6,8 @@ import Store from 'electron-store'
 import log from 'electron-log'
 import updater from 'electron-updater'
 const { autoUpdater } = updater
-import puppeteer from 'puppeteer'
-import { Browser, Page } from 'puppeteer'
+import puppeteer from 'puppeteer-core'
+import { Browser, Page } from 'puppeteer-core'
 import os from 'os';
 
 import fs from 'fs';
@@ -807,7 +807,11 @@ ipcMain.handle('printStatus', async (_event, payload: any) => {
 ipcMain.handle('hellowork-get', async () => {
   try {
     async function scrapeHelloWork() {
-      const browser = await puppeteer.launch({ 
+      const browser = await puppeteer.launch({
+        executablePath:
+          process.env.NODE_ENV === 'production'
+            ? app.getPath('exe')
+            : undefined,
         headless: true,
         args: [
           '--no-sandbox',
@@ -817,6 +821,7 @@ ipcMain.handle('hellowork-get', async () => {
           '--disk-cache-size=0',
         ],
       });
+
       const page = await browser.newPage();
 
       // 検索画面を開いて検索条件を入力
@@ -1037,13 +1042,22 @@ ipcMain.handle(
 
       let browser: Browser | null = null;
       let page: Page | null = null;
+
       browser = await puppeteer.launch({
-        executablePath: process.env.NODE_ENV === 'production'
-          ? app.getPath('exe')
-          : puppeteer.executablePath(),
+        executablePath:
+          process.env.NODE_ENV === 'production'
+            ? app.getPath('exe')
+            : undefined,
         headless: true,
-        args: [ '--no-sandbox', '--disable-setuid-sandbox' ]
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-cache',
+          '--disable-application-cache',
+          '--disk-cache-size=0',
+        ],
       });
+      
       page = await browser.newPage();
       await page.goto(
         'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',

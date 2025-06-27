@@ -78,7 +78,6 @@
     "mui": "^0.0.1",
     "pdf-lib": "^1.17.1",
     "pdf-merger-js": "^5.1.2",
-    "puppeteer": "^24.10.0",
     "puppeteer-core": "^24.10.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
