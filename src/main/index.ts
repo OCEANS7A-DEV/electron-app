@@ -805,181 +805,188 @@ ipcMain.handle('printStatus', async (_event, payload: any) => {
 
 
 ipcMain.handle('hellowork-get', async () => {
-  async function scrapeHelloWork() {
-    const browser = await puppeteer.launch({
-      executablePath: process.env.NODE_ENV === 'production'
-        ? app.getPath('exe')
-        : puppeteer.executablePath(),
-      headless: true,
-      args: [ '--no-sandbox', '--disable-setuid-sandbox' ]
-    });
-    const page = await browser.newPage();
-
-    // 検索画面を開いて検索条件を入力
-    await page.goto(
-      'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
-      { waitUntil: 'networkidle2' }
-    );
-    await page.type('input[name="mail"]', 'oceans7a@gmail.com');
-    await page.type('input[name="password"]', 'ocean@1115');
-
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle2' }),
-      page.click('button[name="loginBtn"]'),
-    ]);
-
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle2' }),
-      page.evaluate(() => {
-        const btn = document.getElementById('ID_yukoKyujinBtn') as HTMLAnchorElement;
-        if (!btn) throw new Error('ボタンが見つかりません');
-        btn.click();
-      })
-    ]);
-
-    const allJobs: any[] = [];
-    let pageIndex = 1;
-
-    while (true) {
-      const jobsOnPage = await page.evaluate(() => {
-        const jobs: any[] = [];
-
-        const tables = document.querySelectorAll('table.kyujin');
-        tables.forEach(table => {
-          const job: any = {};
-
-          // 職種
-          job.職種 = table
-            .querySelector('.kyujin_head strong')
-            ?.parentElement?.nextElementSibling?.textContent?.trim() ?? '';
-
-
-          job.status = table
-            .querySelector('.nes_label.nes')
-            ?.textContent
-            ?.trim() ?? '';
-
-
-          // 受付年月日・紹介期限日
-          const dateRow = Array.from(table.querySelectorAll('tr')).find(tr =>
-            tr.textContent?.includes('受付年月日')
-          );
-          const dateDivs = dateRow?.querySelectorAll('div') ?? [];
-          job.受付年月日 = dateDivs[1]?.textContent?.trim() ?? '';
-          job.紹介期限日 = dateDivs[2]?.textContent?.trim() ?? '';
-
-          const leftTds = table.querySelectorAll('.left-side table tr');
-          leftTds.forEach(tr => {
-            const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
-            const td = tr.querySelector('td:nth-child(2)');
-            const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
-            if (label) job[label] = value;
-          });
-          // 右テーブル項目（同上）
-          const rightTds = table.querySelectorAll('.right-side table tr');
-          rightTds.forEach(tr => {
-            const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
-            const td = tr.querySelector('td:nth-child(2)');
-            const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
-            if (label) job[label] = value;
-          });
-
-          // こだわり条件
-          job.こだわり条件 = Array.from(
-            table.querySelectorAll('.kodawari span.nes_label.any')
-          ).map(span => span.textContent?.trim());
-
-          // 求人票URL
-          job.求人票URL =
-            table.querySelector('#ID_kyujinhyoBtn')?.getAttribute('href') ?? '';
-
-          // 求人数
-          job.求人数 =
-            table
-              .querySelector('tr:last-of-type')
-              ?.textContent?.match(/求人数：(.+?)名/)?.[1]
-              ?.trim() ?? '';
-          
-          job.detailUrl = table.querySelector('#ID_dispDetailBtn')?.getAttribute('href') ?? '';
-          
-          jobs.push(job);
-        });
-        return jobs;
+  try {
+    async function scrapeHelloWork() {
+      const browser = await puppeteer.launch({ 
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-cache',
+          '--disable-application-cache',
+          '--disk-cache-size=0',
+        ],
       });
+      const page = await browser.newPage();
 
-      allJobs.push(...jobsOnPage);
-      const nextButton = await page.$('input[name="fwListNaviBtnNext"]');
-      if (!nextButton) {
-        break;
-      }
-      const isDisabled = await nextButton.evaluate((btn: HTMLInputElement) => btn.disabled);
-      if (isDisabled) {
-        break;
-      }
-      pageIndex++;
+      // 検索画面を開いて検索条件を入力
+      await page.goto(
+        'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
+        { waitUntil: 'networkidle2' }
+      );
+      await page.type('input[name="mail"]', 'oceans7a@gmail.com');
+      await page.type('input[name="password"]', 'ocean@1115');
+
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
-        nextButton.click(),
+        page.click('button[name="loginBtn"]'),
       ]);
-    
-    }
-    const filterd = allJobs.filter(item => item.status !== '非公開')
+
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'networkidle2' }),
+        page.evaluate(() => {
+          const btn = document.getElementById('ID_yukoKyujinBtn') as HTMLAnchorElement;
+          if (!btn) throw new Error('ボタンが見つかりません');
+          btn.click();
+        })
+      ]);
+
+      const allJobs: any[] = [];
+      let pageIndex = 1;
+
+      while (true) {
+        const jobsOnPage = await page.evaluate(() => {
+          const jobs: any[] = [];
+
+          const tables = document.querySelectorAll('table.kyujin');
+          tables.forEach(table => {
+            const job: any = {};
+
+            // 職種
+            job.職種 = table
+              .querySelector('.kyujin_head strong')
+              ?.parentElement?.nextElementSibling?.textContent?.trim() ?? '';
 
 
-    const jushos: string[] = [];
+            job.status = table
+              .querySelector('.nes_label.nes')
+              ?.textContent
+              ?.trim() ?? '';
 
-    for (const item of filterd) {
-      // detailUrl は e.g. "./GEAB100020.do?…” のような相対パス
-      const url = new URL(item.detailUrl, page.url()).toString();
 
-      try {
-        // 詳細ページへ移動
-        await page.goto(url, { waitUntil: 'networkidle2' });
-      } catch (err) {
-        //console.warn(`詳細ページへ移動失敗: ${url}`, err);
-        jushos.push('');
-        continue;
+            // 受付年月日・紹介期限日
+            const dateRow = Array.from(table.querySelectorAll('tr')).find(tr =>
+              tr.textContent?.includes('受付年月日')
+            );
+            const dateDivs = dateRow?.querySelectorAll('div') ?? [];
+            job.受付年月日 = dateDivs[1]?.textContent?.trim() ?? '';
+            job.紹介期限日 = dateDivs[2]?.textContent?.trim() ?? '';
+
+            const leftTds = table.querySelectorAll('.left-side table tr');
+            leftTds.forEach(tr => {
+              const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
+              const td = tr.querySelector('td:nth-child(2)');
+              const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
+              if (label) job[label] = value;
+            });
+            // 右テーブル項目（同上）
+            const rightTds = table.querySelectorAll('.right-side table tr');
+            rightTds.forEach(tr => {
+              const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
+              const td = tr.querySelector('td:nth-child(2)');
+              const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
+              if (label) job[label] = value;
+            });
+
+            // こだわり条件
+            job.こだわり条件 = Array.from(
+              table.querySelectorAll('.kodawari span.nes_label.any')
+            ).map(span => span.textContent?.trim());
+
+            // 求人票URL
+            job.求人票URL =
+              table.querySelector('#ID_kyujinhyoBtn')?.getAttribute('href') ?? '';
+
+            // 求人数
+            job.求人数 =
+              table
+                .querySelector('tr:last-of-type')
+                ?.textContent?.match(/求人数：(.+?)名/)?.[1]
+                ?.trim() ?? '';
+            
+            job.detailUrl = table.querySelector('#ID_dispDetailBtn')?.getAttribute('href') ?? '';
+            
+            jobs.push(job);
+          });
+          return jobs;
+        });
+
+        allJobs.push(...jobsOnPage);
+        const nextButton = await page.$('input[name="fwListNaviBtnNext"]');
+        if (!nextButton) {
+          break;
+        }
+        const isDisabled = await nextButton.evaluate((btn: HTMLInputElement) => btn.disabled);
+        if (isDisabled) {
+          break;
+        }
+        pageIndex++;
+        await Promise.all([
+          page.waitForNavigation({ waitUntil: 'networkidle2' }),
+          nextButton.click(),
+        ]);
+      
       }
+      const filterd = allJobs.filter(item => item.status !== '非公開')
 
-      let address = '';
-      try {
-        // 要素取得。見つからなければ null が返る
-        const cell = await page.$('div[name="shgBsJusho"]');
-        const cellSub = await page.$('div[name="gsShgBsJusho"]');
-        if (cell && !cellSub) {
-          address = (await page.evaluate(el => el.textContent, cell))?.trim() ?? '';
-        } else if (cellSub && !cell){
-          address = (await page.evaluate(el => el.textContent, cellSub))?.trim() ?? '';
-        } else {
-          //console.info(`住所セルなし: ${url}`);
+
+      const jushos: string[] = [];
+
+      for (const item of filterd) {
+        // detailUrl は e.g. "./GEAB100020.do?…” のような相対パス
+        const url = new URL(item.detailUrl, page.url()).toString();
+
+        try {
+          // 詳細ページへ移動
+          await page.goto(url, { waitUntil: 'networkidle2' });
+        } catch (err) {
+          //console.warn(`詳細ページへ移動失敗: ${url}`, err);
+          jushos.push('');
+          continue;
+        }
+
+        let address = '';
+        try {
+          // 要素取得。見つからなければ null が返る
+          const cell = await page.$('div[name="shgBsJusho"]');
+          const cellSub = await page.$('div[name="gsShgBsJusho"]');
+          if (cell && !cellSub) {
+            address = (await page.evaluate(el => el.textContent, cell))?.trim() ?? '';
+          } else if (cellSub && !cell){
+            address = (await page.evaluate(el => el.textContent, cellSub))?.trim() ?? '';
+          } else {
+            //console.info(`住所セルなし: ${url}`);
+            address = '';
+          }
+        } catch (err) {
+          //console.error(`住所取得中にエラー: ${url}`, err);
           address = '';
         }
-      } catch (err) {
-        //console.error(`住所取得中にエラー: ${url}`, err);
-        address = '';
-      }
-      const pushdata = item
-      pushdata.address = address
+        const pushdata = item
+        pushdata.address = address
 
-      jushos.push(pushdata);
+        jushos.push(pushdata);
 
-      // 一覧ページに戻る
-      try {
-        await page.goBack({ waitUntil: 'networkidle2' });
-      } catch (err) {
-        console.warn('一覧ページに戻れませんでした:', err);
-        // 必要なら再度一覧URLへ飛ばすか break する
+        // 一覧ページに戻る
+        try {
+          await page.goBack({ waitUntil: 'networkidle2' });
+        } catch (err) {
+          console.warn('一覧ページに戻れませんでした:', err);
+          // 必要なら再度一覧URLへ飛ばすか break する
+        }
       }
+
+      return [filterd, jushos];
     }
-
-    return [filterd, jushos];
-  }
-  try {
-    const result = await scrapeHelloWork();
-    return result;
-  } catch (err) {
-    console.error(err);
-    throw err;
+    try {
+      const result = await scrapeHelloWork();
+      return result;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }    
+  } catch (e){
+    log.error('ハロワ取得エラー:', e)
   }
 });
 
