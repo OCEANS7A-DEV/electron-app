@@ -44,17 +44,6 @@ function getPuppeteerOptions(): LaunchOptions {
 }
 
 
-
-//import PDFMerger from 'pdf-merger-js'
-
-//import https from 'https';
-
-//
-
-// import React from 'react'
-// import ReactDOMServer from 'react-dom/server'
-// import PrintContent from '../renderer/src/router/PrintContent'
-
 const store = new Store() as any
 
 // const URL_STRING =
