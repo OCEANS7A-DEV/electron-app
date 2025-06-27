@@ -26,8 +26,7 @@
       }
     ],
     "asarUnpack": [
-      "qpdf/**",
-      "node_modules/puppeteer/.local-chromium/**/*"
+      "qpdf/**"
     ],
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "win": {

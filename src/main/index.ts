@@ -6,7 +6,7 @@ import Store from 'electron-store'
 import log from 'electron-log'
 import updater from 'electron-updater'
 const { autoUpdater } = updater
-import puppeteer from 'puppeteer-core'
+import puppeteer, { LaunchOptions, BrowserLaunchArgumentOptions } from 'puppeteer-core'
 import { Browser, Page } from 'puppeteer-core'
 import os from 'os';
 
@@ -14,6 +14,36 @@ import fs from 'fs';
 import path from 'path';
 
 import { execFile } from 'child_process';
+
+
+
+
+const PUPPETEER_ARGS = [
+  '--no-sandbox',
+  '--disable-setuid-sandbox',
+  '--disable-cache',
+  '--disable-application-cache',
+  '--disk-cache-size=0',
+]
+
+
+function getPuppeteerOptions(): LaunchOptions & BrowserLaunchArgumentOptions {
+  if (is.dev) {
+    // 開発時：システムにある Chrome/Chromium を channel 経由で起動
+    return {
+      headless: true,
+      channel: 'chrome',     // WindowsならChrome、Mac/LinuxならChromiumを探してくれます
+      args: PUPPETEER_ARGS,
+    }
+  } else {
+    // 本番ビルド時：Electron にバンドルされた実行ファイルを使う
+    return {
+      headless: true,
+      executablePath: app.getPath('exe'),
+      args: PUPPETEER_ARGS,
+    }
+  }
+}
 
 
 
@@ -807,20 +837,9 @@ ipcMain.handle('printStatus', async (_event, payload: any) => {
 ipcMain.handle('hellowork-get', async () => {
   try {
     async function scrapeHelloWork() {
-      const browser = await puppeteer.launch({
-        executablePath:
-          process.env.NODE_ENV === 'production'
-            ? app.getPath('exe')
-            : undefined,
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-cache',
-          '--disable-application-cache',
-          '--disk-cache-size=0',
-        ],
-      });
+      const opts = getPuppeteerOptions()
+      // ② ブラウザ起動
+      const browser = await puppeteer.launch(opts)
 
       const page = await browser.newPage();
 
@@ -1043,21 +1062,10 @@ ipcMain.handle(
       let browser: Browser | null = null;
       let page: Page | null = null;
 
-      browser = await puppeteer.launch({
-        executablePath:
-          process.env.NODE_ENV === 'production'
-            ? app.getPath('exe')
-            : undefined,
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-cache',
-          '--disable-application-cache',
-          '--disk-cache-size=0',
-        ],
-      });
-      
+      const opts = getPuppeteerOptions()
+      // ② ブラウザ起動
+      browser = await puppeteer.launch(opts)
+
       page = await browser.newPage();
       await page.goto(
         'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
