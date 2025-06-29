@@ -18,6 +18,37 @@ import { execFile } from 'child_process';
 
 
 
+const testGithubConnection = async () => {
+  const TEST_URL = 'https://api.github.com/repos/OCEANS7A-DEV/electron-app/releases/latest';
+  const TOKEN     = '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';
+
+  try {
+    const res = await net.fetch(TEST_URL, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'electron',
+        'Authorization': `token ${TOKEN}`
+      }
+    });
+
+    log.info('🧪 接続テスト statusCode:', res.status);
+
+    if (res.status === 200) {
+      const json = await res.json();
+      log.info('🧪 接続テストリリース tag_name:', json.tag_name);
+    } else {
+      const text = await res.text();
+      log.warn('🧪 接続テスト body:', text);
+    }
+  } catch (err: any) {
+    log.error('🧪 接続テストエラー:', err.message);
+  }
+}
+
+
+
+
+
 const PUPPETEER_ARGS = [
   '--no-sandbox',
   '--disable-setuid-sandbox',
@@ -393,8 +424,6 @@ const setupAutoUpdater = () => {
         createWindow()
       }
     }
-    
-    
   })
 
   autoUpdater.on('update-not-available', () => {
@@ -439,7 +468,7 @@ const setupAutoUpdater = () => {
         if (mainWindow) {
           mainWindow.webContents.send('update-available', true)
         }
-      }catch{
+      } catch {
         if (!mainWindow){
           createWindow()
         }
@@ -454,6 +483,10 @@ const setupAutoUpdater = () => {
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
   await createUpdaterWindow()
+  // if (is.dev){
+  //   await testGithubConnection();
+  //   setupAutoUpdater()
+  // }
 
   if (!is.dev) {
     isFirstRunUpdate = true

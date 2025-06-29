@@ -34,7 +34,16 @@
     },
     "mac": {
       "target": "dmg"
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "OCEANS7A-DEV",
+        "repo": "electron-app",
+        "private": true,
+        "token": "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"
+      }
+   ]
   },
   "scripts": {
     "format": "prettier --write .",
