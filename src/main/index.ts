@@ -87,6 +87,28 @@ function getPuppeteerOptions(): LaunchOptions {
   }
 }
 
+const TokenCheck = async (token: string) => {
+  let result = false
+  const TEST_URL = "https://api.github.com/repos/OCEANS7A-DEV/electron-app/releases/latest";
+  try {
+    const res = await net.fetch(TEST_URL, {
+      method: "GET",
+      headers: {
+        "User-Agent": "electron",
+        "Authorization": `token ${token}`
+      }
+    });
+    if (res.status === 200) {
+      result = true
+    } else {
+      const text = await res.text();
+      log.warn("🔍 接続テスト body:", text);
+    }
+  } catch (err: any) {
+    log.error("🔍 接続テストエラー:", err.message);
+  }
+  return result
+}
 
 const store = new Store() as any
 
@@ -401,7 +423,6 @@ export const DetailsGet = async () => {
 
 async function testGithubConnection(token: string) {
   const TEST_URL = "https://api.github.com/repos/OCEANS7A-DEV/electron-app/releases/latest";
-
   try {
     const res = await net.fetch(TEST_URL, {
       method: "GET",
@@ -529,13 +550,17 @@ const initAutoUpdater = async (win: BrowserWindow) => {
 }
 
 app.whenReady().then(async () => {
-  
   electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
-  
   await createUpdaterWindow()
   await initAutoUpdater(updaterWindow!);
 
   if (!is.dev) {
+    const token = await getOrPromptToken(mainWindow);
+    const result = await TokenCheck(token)
+    if (!result){
+      app.quit()
+      return
+    }
     isFirstRunUpdate = true
     setupAutoUpdater()
     autoUpdater.checkForUpdates()
