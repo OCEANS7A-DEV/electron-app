@@ -40,10 +40,9 @@
         "provider": "github",
         "owner": "OCEANS7A-DEV",
         "repo": "electron-app",
-        "private": true,
-        "token": "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"
+        "private": true
       }
-   ]
+    ]
   },
   "scripts": {
     "format": "prettier --write .",
@@ -78,11 +77,13 @@
     "@types/react": "^19.1.6",
     "dayjs": "^1.11.13",
     "electron-log": "^5.4.0",
+    "electron-prompt": "^1.7.0",
     "electron-store": "^10.0.1",
     "electron-updater": "^6.6.2",
     "fuse": "^0.12.1",
     "fuse.js": "^7.1.0",
     "jaconv": "^1.0.4",
+    "keytar": "^7.9.0",
     "mui": "^0.0.1",
     "pdf-lib": "^1.17.1",
     "pdf-merger-js": "^5.1.2",

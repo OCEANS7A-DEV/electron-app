@@ -16,36 +16,34 @@ import path from 'path';
 import { execFile } from 'child_process';
 
 
+import keytar from "keytar";
 
+import prompt from "electron-prompt";
 
-const testGithubConnection = async () => {
-  const TEST_URL = 'https://api.github.com/repos/OCEANS7A-DEV/electron-app/releases/latest';
-  const TOKEN     = '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';
+const SERVICE = "electron-app";
+const ACCOUNT = "OCEANS7A-DEV";
 
-  try {
-    const res = await net.fetch(TEST_URL, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'electron',
-        'Authorization': `token ${TOKEN}`
-      }
-    });
-
-    log.info('🧪 接続テスト statusCode:', res.status);
-
-    if (res.status === 200) {
-      const json = await res.json();
-      log.info('🧪 接続テストリリース tag_name:', json.tag_name);
-    } else {
-      const text = await res.text();
-      log.warn('🧪 接続テスト body:', text);
+async function getOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
+  let token = await keytar.getPassword(SERVICE, ACCOUNT);
+  if (!token) {
+    token = await prompt({
+      title: "GitHub トークンの入力",
+      label: "Personal Access Token:",
+      inputAttrs: {
+        type: "password",
+      },
+      width: 400,
+      height: 200,
+      alwaysOnTop: true,
+    }, mainWindow.webContents) as string;
+    if (!token) {
+      throw new Error("GitHub トークンが入力されませんでした");
     }
-  } catch (err: any) {
-    log.error('🧪 接続テストエラー:', err.message);
+    await keytar.setPassword(SERVICE, ACCOUNT, token);
   }
+  console.log(token)
+  return token;
 }
-
-
 
 
 
@@ -478,11 +476,27 @@ const setupAutoUpdater = () => {
 }
 
 
-
+async function initAutoUpdater(win: BrowserWindow) {
+  const token = await getOrPromptToken(win);
+  autoUpdater.setFeedURL({
+    provider: "github",
+    owner: "OCEANS7A-DEV",
+    repo: "electron-app",
+    private: true,
+    token
+  });
+  autoUpdater.requestHeaders = { Authorization: `token ${token}` };
+  autoUpdater.checkForUpdatesAndNotify();
+}
 
 app.whenReady().then(async () => {
+  
   electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
+  
   await createUpdaterWindow()
+
+  await initAutoUpdater(updaterWindow!);
+
   // if (is.dev){
   //   await testGithubConnection();
   //   setupAutoUpdater()
