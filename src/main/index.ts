@@ -39,11 +39,11 @@ async function getOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
     }, mainWindow.webContents) as string | null;
     if (!token) {
       app.quit()
+      log.error("GitHub トークンが入力されませんでした")
       throw new Error("GitHub トークンが入力されませんでした");
     }
     await keytar.setPassword(SERVICE, ACCOUNT, token);
     if (token){
-      console.log(token)
       if (!is.dev){
         restartApp()
       } else {
@@ -166,7 +166,7 @@ const createUpdaterWindow = async() => {
   } else {
     const result = await TokenCheck(token)
     if (!result){
-      updateOrPromptToken(updaterWindow)
+      await updateOrPromptToken(updaterWindow)
       return
     } else {
       console.log('start')
@@ -195,9 +195,25 @@ const createUpdaterWindow = async() => {
             status: 'start'
           });
         }
+
         StartUpSet()
-        isFirstRunUpdate = true
-        setupAutoUpdater()
+        initAutoUpdater(updaterWindow!);
+
+        if (!is.dev) {
+          isFirstRunUpdate = true
+          setupAutoUpdater()
+          autoUpdater.checkForUpdates()
+          setInterval(() => {
+            if (mainWindow) {
+              isFirstRunUpdate = false
+              log.info('定期アップデート確認中...')
+              autoUpdater.checkForUpdates()
+            }
+          }, 30 * 1000)
+        } else {
+          isFirstRunUpdate = true
+          setupAutoUpdater()
+        }
       })
     }
   }
@@ -554,21 +570,6 @@ app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
   
   await createUpdaterWindow()
-  await initAutoUpdater(updaterWindow!);
-
-  if (!is.dev) {
-    isFirstRunUpdate = true
-    setupAutoUpdater()
-    autoUpdater.checkForUpdates()
-    setInterval(() => {
-      if (mainWindow) {
-        isFirstRunUpdate = false
-        log.info('定期アップデート確認中...')
-        autoUpdater.checkForUpdates()
-      }
-    }, 30 * 1000)
-
-  }
 
 
   app.on('browser-window-created', (_, window) => {
