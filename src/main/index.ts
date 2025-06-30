@@ -473,6 +473,7 @@ const setupAutoUpdater = () => {
 
 const initAutoUpdater = async (win: BrowserWindow) => {
   const token = await getOrPromptToken(win);
+  process.env.GH_TOKEN = token;
   autoUpdater.setFeedURL({
     provider: "github",
     owner: "OCEANS7A-DEV",
