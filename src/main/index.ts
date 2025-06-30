@@ -40,6 +40,7 @@ async function getOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
       throw new Error("GitHub トークンが入力されませんでした");
     }
     await keytar.setPassword(SERVICE, ACCOUNT, token);
+    restartApp()
   }
   console.log(token)
   return token;
@@ -1298,3 +1299,11 @@ ipcMain.handle('get-file-path', async ( _event, filename ) => {
   const fullPath = path.join(app.getPath('userData'), 'files', filename);
   return fullPath;
 });
+
+
+const restartApp = () => {
+  // 次回起動時に今の実行ファイルを使って再起動するように指示
+  app.relaunch();  
+  // 現在のプロセスを終了
+  app.exit(0);
+}
