@@ -8,23 +8,23 @@ import updater from 'electron-updater'
 const { autoUpdater } = updater
 import puppeteer, { LaunchOptions } from 'puppeteer-core'
 import { Browser, Page } from 'puppeteer-core'
-import os from 'os';
+import os from 'os'
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
 
-import { execFile } from 'child_process';
+import { execFile } from 'child_process'
 
 
-import keytar from "keytar";
+import keytar from "keytar"
 
-import prompt from "electron-prompt";
+import prompt from "electron-prompt"
 
-const SERVICE = "electron-app";
-const ACCOUNT = "OCEANS7A-DEV";
+const SERVICE = "electron-app"
+const ACCOUNT = "OCEANS7A-DEV"
 
 async function getOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
-  let token = await keytar.getPassword(SERVICE, ACCOUNT);
+  let token = await keytar.getPassword(SERVICE, ACCOUNT)
   if (!token) {
     token = await prompt({
       title: "GitHub トークンの入力",
@@ -42,7 +42,6 @@ async function getOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
     await keytar.setPassword(SERVICE, ACCOUNT, token);
     restartApp()
   }
-  console.log(token)
   return token;
 }
 
@@ -418,7 +417,6 @@ const setupAutoUpdater = () => {
         })
       }
     } catch {
-      // エラー時は何もしない
       if (!mainWindow){
         createWindow()
       }
@@ -427,7 +425,6 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('update-not-available', () => {
     log.info('アップデートはありません。')
-
     if (isFirstRunUpdate) {
       if (!mainWindow){
         createWindow()
@@ -438,7 +435,6 @@ const setupAutoUpdater = () => {
         mainWindow.webContents.send('update-available', false)
       }
     } catch {
-      // エラー時は何もしない
       if (!mainWindow){
         createWindow()
       }
@@ -454,14 +450,12 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('update-downloaded', () => {
     log.info('アップデート完了。再起動して更新します。')
-    
 
     if (isFirstRunUpdate) {
       NotificationEXE('再起動して更新します。')
       autoUpdater.quitAndInstall()
     } else {
       log.info('定期チェックのアップデートは即時インストールしません')
-      // → UI通知 or 次回起動時適用などに切り替え可能
       NotificationEXE('アップデートが利用可能です。')
       try{
         if (mainWindow) {
@@ -477,7 +471,7 @@ const setupAutoUpdater = () => {
 }
 
 
-async function initAutoUpdater(win: BrowserWindow) {
+const initAutoUpdater = async (win: BrowserWindow) => {
   const token = await getOrPromptToken(win);
   autoUpdater.setFeedURL({
     provider: "github",
@@ -498,11 +492,6 @@ app.whenReady().then(async () => {
 
   await initAutoUpdater(updaterWindow!);
 
-  // if (is.dev){
-  //   await testGithubConnection();
-  //   setupAutoUpdater()
-  // }
-
   if (!is.dev) {
     isFirstRunUpdate = true
     setupAutoUpdater()
@@ -517,51 +506,11 @@ app.whenReady().then(async () => {
   }
 
 
-
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  ipcMain.on('ping', () => console.log('pong'))
-
-  // const list = await productGet()
-
-  // const ListResult = list.map((item) => {
-  //   const result = {
-  //     vendor: item[0],
-  //     code: item[1],
-  //     name: item[2],
-  //     defaultPrice: item[3],
-  //     newPrice: item[4],
-  //     VC: item[5],
-  //     store: item[6],
-  //     type: item[7],
-  //     remarks: item[8],
-  //     Possibility: item[9],
-  //     service: item[10],
-  //     order: item[11]
-  //   }
-  //   return result
-  // })
-
-  // store.set('data', ListResult)
-
-  // const VendorList = await vendorGet()
-
-  // store.set('vendor', VendorList)
-
-  // const AddressList = await addressGet()
-
-  // store.set('address', AddressList)
-
-
-  // if(is.dev){
-  //   updaterWindow?.webContents.send('check', {
-  //     status: 'dev',
-  //     value: true
-  //   })
-  // }
-  
+  //ipcMain.on('ping', () => console.log('pong'))
 })
 
 
@@ -751,122 +700,6 @@ ipcMain.handle('printStatus', async (_event, payload: any) => {
 })
 
 
-
-// ipcMain.handle('hellowork-get', async () => {
-//   async function scrapeHelloWork() {
-//     const browser = await puppeteer.launch({ 
-//       headless: true,
-//       args: [
-//         '--no-sandbox',
-//         '--disable-setuid-sandbox',
-//         '--disable-cache',
-//         '--disable-application-cache',
-//         '--disk-cache-size=0',
-//       ],
-//     });
-//     const page = await browser.newPage();
-
-//     // 検索画面を開いて検索条件を入力
-//     await page.goto(
-//       'https://www.hellowork.mhlw.go.jp/kensaku/GECA110010.do?action=initDisp&screenId=GECA110010',
-//       { waitUntil: 'networkidle2' }
-//     );
-//     await page.type('input[name="jGSHNoJo"]', '3401');
-//     await page.type('input[name="jGSHNoChuu"]', '625381');
-//     await page.type('input[name="jGSHNoGe"]', '7');
-//     await Promise.all([
-//       page.waitForNavigation({ waitUntil: 'networkidle2' }),
-//       page.click('input[name="searchNoBtn"]'),
-//     ]);
-
-//     const allJobs: any[] = [];
-//     let pageIndex = 1;
-
-//     while (true) {
-//       //console.log(`📄 ページ ${pageIndex} をスクレイピング中…`);
-
-//       // 現ページの求人テーブルを評価
-//       const jobsOnPage = await page.evaluate(() => {
-//         const jobs: any[] = [];
-//         const tables = document.querySelectorAll('table.kyujin');
-//         tables.forEach(table => {
-//           const job: any = {};
-
-//           // 職種
-//           job.職種 = table
-//             .querySelector('.kyujin_head strong')
-//             ?.parentElement?.nextElementSibling?.textContent?.trim() ?? '';
-
-//           // 受付年月日・紹介期限日
-//           const dateRow = Array.from(table.querySelectorAll('tr')).find(tr =>
-//             tr.textContent?.includes('受付年月日')
-//           );
-//           const dateDivs = dateRow?.querySelectorAll('div') ?? [];
-//           job.受付年月日 = dateDivs[1]?.textContent?.trim() ?? '';
-//           job.紹介期限日 = dateDivs[2]?.textContent?.trim() ?? '';
-
-//           const leftTds = table.querySelectorAll('.left-side table tr');
-//           leftTds.forEach(tr => {
-//             const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
-//             const td = tr.querySelector('td:nth-child(2)');
-//             const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
-//             if (label) job[label] = value;
-//           });
-//           // 右テーブル項目（同上）
-//           const rightTds = table.querySelectorAll('.right-side table tr');
-//           rightTds.forEach(tr => {
-//             const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
-//             const td = tr.querySelector('td:nth-child(2)');
-//             const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
-//             if (label) job[label] = value;
-//           });
-
-//           // こだわり条件
-//           job.こだわり条件 = Array.from(
-//             table.querySelectorAll('.kodawari span.nes_label.any')
-//           ).map(span => span.textContent?.trim());
-
-//           // 求人票URL
-//           job.求人票URL =
-//             table.querySelector('#ID_kyujinhyoBtn')?.getAttribute('href') ?? '';
-
-//           // 求人数
-//           job.求人数 =
-//             table
-//               .querySelector('tr:last-of-type')
-//               ?.textContent?.match(/求人数：(.+?)名/)?.[1]
-//               ?.trim() ?? '';
-
-//           jobs.push(job);
-//         });
-//         return jobs;
-//       });
-//       allJobs.push(...jobsOnPage);
-//       const nextButton = await page.$('input[name="fwListNaviBtnNext"]');
-//       if (!nextButton) {
-//         break;
-//       }
-//       const isDisabled = await nextButton.evaluate((btn: HTMLInputElement) => btn.disabled);
-//       if (isDisabled) {
-//         break;
-//       }
-//       pageIndex++;
-//       await Promise.all([
-//         page.waitForNavigation({ waitUntil: 'networkidle2' }),
-//         nextButton.click(),
-//       ]);
-    
-//     }
-//     return allJobs;
-//   }
-//   try {
-//     const result = await scrapeHelloWork();
-//     return result;
-//   } catch (err) {
-//     console.error(err);
-//     throw err;
-//   }
-// });
 
 
 ipcMain.handle('hellowork-get', async () => {
@@ -1264,20 +1097,11 @@ const PDFfileMarge = async (): Promise<{
 
 
 
-
-
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
 
 
 
@@ -1302,8 +1126,6 @@ ipcMain.handle('get-file-path', async ( _event, filename ) => {
 
 
 const restartApp = () => {
-  // 次回起動時に今の実行ファイルを使って再起動するように指示
-  app.relaunch();  
-  // 現在のプロセスを終了
+  app.relaunch();
   app.exit(0);
 }
