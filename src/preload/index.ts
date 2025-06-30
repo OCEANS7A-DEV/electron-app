@@ -51,6 +51,7 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
     ipcRenderer.removeAllListeners('helloWork-progress')
   },
   PDFMarge: () => ipcRenderer.send('PDF-Marge'),
+  TokenChange: () => ipcRenderer.send('change-github-token'),
 })
 
 if (process.contextIsolated) {

@@ -49,6 +49,10 @@ export default function SettingPage() {
     console.log(result)
   }
 
+  // const handleTokenChange = async() => {
+  //   await window.myInventoryAPI.TokenChange()
+  // }
+
   return (
     <>
       <div>
@@ -56,7 +60,7 @@ export default function SettingPage() {
       </div>
       <div style={{color: 'white', paddingTop: 60, paddingLeft: 20}}>
         <div>
-          設定ページ
+          在庫管理設定ページ
         </div>
         <div style={{display: 'flex'}} className="setting-area">
           <div>
@@ -77,7 +81,6 @@ export default function SettingPage() {
           <div>
             <Button variant="outlined" onClick={test}>test</Button>
           </div>
-          
         </div>
       </div>
     </>

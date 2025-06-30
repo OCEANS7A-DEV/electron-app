@@ -35,13 +35,28 @@ async function getOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
       width: 400,
       height: 200,
       alwaysOnTop: true,
-    }, mainWindow.webContents) as string;
+    }, mainWindow.webContents) as string | null;
     if (!token) {
       throw new Error("GitHub トークンが入力されませんでした");
     }
     await keytar.setPassword(SERVICE, ACCOUNT, token);
     restartApp()
   }
+  return token;
+}
+
+async function updateOrPromptToken(): Promise<string> {
+  let token = await keytar.getPassword(SERVICE, ACCOUNT)
+  token = await prompt({
+    title: "GitHub トークンの入力",
+    label: "Personal Access Token:",
+    inputAttrs: {
+      type: "password",
+    },
+    width: 400,
+    height: 200,
+    alwaysOnTop: true,
+  }, mainWindow.webContents) as string;
   return token;
 }
 
@@ -121,7 +136,7 @@ const createUpdaterWindow = () => {
         updaterWindow.webContents.openDevTools({ mode: 'detach' });
       }
     }, 300);
-  
+    console.log(is.dev)
     if (is.dev) {
       if (updaterWindow && !updaterWindow.isDestroyed()) {
         updaterWindow.webContents.send('check', { status: 'dev', value: true });
@@ -384,11 +399,36 @@ export const DetailsGet = async () => {
 
 
 
+async function testGithubConnection(token: string) {
+  const TEST_URL = "https://api.github.com/repos/OCEANS7A-DEV/electron-app/releases/latest";
 
+  try {
+    const res = await net.fetch(TEST_URL, {
+      method: "GET",
+      headers: {
+        "User-Agent": "electron",
+        "Authorization": `token ${token}`
+      }
+    });
+
+    log.info("🔍 接続テスト statusCode:", res.status);
+
+    if (res.status === 200) {
+      const json = await res.json();
+      log.info("🔍 接続テスト tag_name:", json.tag_name);
+    } else {
+      const text = await res.text();
+      log.warn("🔍 接続テスト body:", text);
+    }
+  } catch (err: any) {
+    log.error("🔍 接続テストエラー:", err.message);
+  }
+}
 
 
 
 const setupAutoUpdater = () => {
+
   autoUpdater.on('checking-for-update', () => {
     log.info('アップデートを確認中...')
   })
@@ -481,7 +521,9 @@ const initAutoUpdater = async (win: BrowserWindow) => {
     private: true,
     token
   });
-  log.info(token)
+  if (is.dev){
+    await testGithubConnection(token)
+  }
   autoUpdater.requestHeaders = { Authorization: `token ${token}` };
   autoUpdater.checkForUpdatesAndNotify();
 }
@@ -491,15 +533,8 @@ app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
   
   await createUpdaterWindow()
-
   await initAutoUpdater(updaterWindow!);
 
-  // if (is.dev){
-  //   isFirstRunUpdate = true
-  //   setupAutoUpdater()
-  //   autoUpdater.checkForUpdates()
-  // }
-  log.info('UpdataCheck')
   if (!is.dev) {
     isFirstRunUpdate = true
     setupAutoUpdater()
@@ -1103,6 +1138,15 @@ const PDFfileMarge = async (): Promise<{
   });
 };
 
+ipcMain.on('change-github-token', async () => {
+  const token = await updateOrPromptToken()
+  if (!token){
+    return
+  }
+  await clearStoredToken()
+  process.env.GH_TOKEN = token
+})
+
 
 
 app.on('window-all-closed', () => {
@@ -1136,4 +1180,8 @@ ipcMain.handle('get-file-path', async ( _event, filename ) => {
 const restartApp = () => {
   app.relaunch();
   app.exit(0);
+}
+
+const clearStoredToken = async(): Promise<void> => {
+  await keytar.deletePassword(SERVICE, ACCOUNT)
 }

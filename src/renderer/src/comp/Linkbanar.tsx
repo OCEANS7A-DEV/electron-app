@@ -125,9 +125,11 @@ const LinkBaner = () => {
             <Button variant="outlined" onClick={() => navigate('/CatalogView')} sx={{height:'30px', margin: "5px 10px", width: 120}}>カタログ</Button>
             <Button variant="outlined" onClick={() => navigate('/process_chack')} sx={{height:'30px', margin: "5px 10px", width: 120}}>印刷関係</Button>
             <Button variant="outlined" onClick={() => navigate('/ProductListUpdata')} sx={{height:'30px', margin: "5px 10px", width: 120}}>商品設定</Button>
-            <Button variant="outlined" onClick={() => navigate('/setting')} sx={{height:'30px', margin: "5px 10px", width: 120}}>設定</Button>
+            <Button variant="outlined" onClick={() => navigate('/zaikosetting')} sx={{height:'30px', margin: "5px 10px", width: 120}}>在庫設定</Button>
             <Button variant="outlined" onClick={() => navigate('/HelloWork')} sx={{height:'30px', margin: "5px 10px", width: 120}}>ハロワ</Button>
             <Button variant="outlined" onClick={() => navigate('/PDFOperation')} sx={{height:'30px', margin: "5px 10px", width: 120}}>PDF操作</Button>
+
+            <Button variant="outlined" onClick={() => navigate('/systemSetting')} sx={{height:'30px', margin: "5px 10px", width: 120}}>システム設定</Button>
           </div>
         </Drawer>
       </div>

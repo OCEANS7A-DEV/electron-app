@@ -1,0 +1,40 @@
+import React from 'react'
+
+import LinkBaner from '../comp/Linkbanar'
+import '../css/setting.css'
+
+
+
+import { Button } from '@mui/material'
+
+
+
+
+
+export default function SystemSettingPage() {
+
+
+
+  const handleTokenChange = async() => {
+    await window.myInventoryAPI.TokenChange()
+  }
+
+  return (
+    <>
+      <div>
+        <LinkBaner />
+      </div>
+      <div style={{color: 'white', paddingTop: 60, paddingLeft: 20}}>
+        <div>
+          設定ページ
+          <div style={{ display: 'flex' }} className="system-setting-area">
+            <div className="Token">
+              <Button variant="outlined" onClick={handleTokenChange}>トークン変更</Button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </>
+  )
+}

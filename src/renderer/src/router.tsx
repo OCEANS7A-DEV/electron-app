@@ -14,7 +14,7 @@ import HQPage from './router/process_chack'
 import PrintContent, { loader as PrintLoader } from './router/PrintContent'
 import TaiyoPrint, { loader as TaiyoLoader } from './router/taiyo'
 import EtcPrint, { loader as EtcLoader } from './router/VendorPrint'
-import SettingPage, { loader as SettingLoader } from './router/setting'
+import ZaikoSettingPage, { loader as ZaikoSettingLoader } from './router/setting'
 import HelloWork, { loader as HelloWorkLoader } from './router/helloWork'
 import DetailContent from './router/productDetailEdit'
 import UpdateWindow from './router/updater'
@@ -22,6 +22,7 @@ import InventoryMoving from './router/Moving'
 import CatalogView from './router/Catalog'
 import NetDetailsPrint, { loader as NetDetailsLoader} from './router/OrderDetails'
 import PDFOperationPage from './router/PDFOperation'
+import SystemSettingPage from './router/systemSetting'
 
 
 
@@ -87,9 +88,13 @@ export const router = createHashRouter([
     loader: EtcLoader
   },
   {
-    path: '/setting',
-    element: <SettingPage />,
-    loader: SettingLoader
+    path: '/zaikosetting',
+    element: <ZaikoSettingPage />,
+    loader: ZaikoSettingLoader
+  },
+  {
+    path: '/systemSetting',
+    element: <SystemSettingPage />
   },
   {
     path: '/ProductListUpdata',
