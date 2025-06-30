@@ -25,6 +25,7 @@ const ACCOUNT = "OCEANS7A-DEV"
 
 async function getOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
   let token = await keytar.getPassword(SERVICE, ACCOUNT)
+  //console.log(token)
   if (!token) {
     token = await prompt({
       title: "GitHub トークンの入力",
@@ -37,15 +38,23 @@ async function getOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
       alwaysOnTop: true,
     }, mainWindow.webContents) as string | null;
     if (!token) {
+      app.quit()
       throw new Error("GitHub トークンが入力されませんでした");
     }
     await keytar.setPassword(SERVICE, ACCOUNT, token);
-    restartApp()
+    if (token){
+      console.log(token)
+      if (!is.dev){
+        restartApp()
+      } else {
+        app.quit()
+      }
+    }
   }
   return token;
 }
 
-async function updateOrPromptToken(): Promise<string> {
+async function updateOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
   let token = await keytar.getPassword(SERVICE, ACCOUNT)
   token = await prompt({
     title: "GitHub トークンの入力",
@@ -57,6 +66,7 @@ async function updateOrPromptToken(): Promise<string> {
     height: 200,
     alwaysOnTop: true,
   }, mainWindow.webContents) as string;
+  await keytar.setPassword(SERVICE, ACCOUNT, token);
   return token;
 }
 
@@ -90,6 +100,7 @@ function getPuppeteerOptions(): LaunchOptions {
 const TokenCheck = async (token: string) => {
   let result = false
   const TEST_URL = "https://api.github.com/repos/OCEANS7A-DEV/electron-app/releases/latest";
+  
   try {
     const res = await net.fetch(TEST_URL, {
       method: "GET",
@@ -98,15 +109,19 @@ const TokenCheck = async (token: string) => {
         "Authorization": `token ${token}`
       }
     });
+    //log.info("🔍 TEST statusCode:", res.status);
     if (res.status === 200) {
+      //console.log(res)
       result = true
     } else {
       const text = await res.text();
       log.warn("🔍 接続テスト body:", text);
     }
   } catch (err: any) {
-    log.error("🔍 接続テストエラー:", err.message);
+    log.error("🔍 :", err.message);
+    result = false
   }
+  //console.log(result)
   return result
 }
 
@@ -129,7 +144,7 @@ const InsertAPI_URL =
 let isFirstRunUpdate = true
 let updaterWindow: BrowserWindow | null = null
 
-const createUpdaterWindow = () => {
+const createUpdaterWindow = async() => {
   updaterWindow = new BrowserWindow({
     width: 300,
     height: 500,
@@ -144,37 +159,48 @@ const createUpdaterWindow = () => {
       sandbox: false
     }
   })
-
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    updaterWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#updater`)
+  const token = await keytar.getPassword(SERVICE, ACCOUNT)
+  if (!token){
+    await getOrPromptToken(updaterWindow)
+    return
   } else {
-    updaterWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'updater' })
-  }
+    const result = await TokenCheck(token)
+    if (!result){
+      updateOrPromptToken(updaterWindow)
+      return
+    } else {
+      console.log('start')
 
-  updaterWindow.once('ready-to-show', () => {
-    updaterWindow?.show()
-    setTimeout(() => {
-      if (updaterWindow && !updaterWindow.isDestroyed() && is.dev) {
-        updaterWindow.webContents.openDevTools({ mode: 'detach' });
+      if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+        updaterWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#updater`)
+      } else {
+        updaterWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'updater' })
       }
-    }, 300);
-    console.log(is.dev)
-    if (is.dev) {
-      if (updaterWindow && !updaterWindow.isDestroyed()) {
-        updaterWindow.webContents.send('check', { status: 'dev', value: true });
-      }
+      updaterWindow.once('ready-to-show', () => {
+        updaterWindow?.show()
+        setTimeout(() => {
+          if (updaterWindow && !updaterWindow.isDestroyed() && is.dev) {
+            updaterWindow.webContents.openDevTools({ mode: 'detach' });
+          }
+        }, 300);
+        if (is.dev) {
+          if (updaterWindow && !updaterWindow.isDestroyed()) {
+            updaterWindow.webContents.send('check', { status: 'dev', value: true });
+          }
+        }
+        if (updaterWindow && !updaterWindow.isDestroyed()) {
+          updaterWindow.webContents.send('progress', {
+            percent: 0,
+            message: '起動中...',
+            status: 'start'
+          });
+        }
+        StartUpSet()
+        isFirstRunUpdate = true
+        setupAutoUpdater()
+      })
     }
-    if (updaterWindow && !updaterWindow.isDestroyed()) {
-      updaterWindow.webContents.send('progress', {
-        percent: 0,
-        message: '起動中...',
-        status: 'start'
-      });
-    }
-    StartUpSet()
-    isFirstRunUpdate = true
-    setupAutoUpdater()
-  })
+  }
 }
 
 
@@ -421,31 +447,6 @@ export const DetailsGet = async () => {
 
 
 
-async function testGithubConnection(token: string) {
-  const TEST_URL = "https://api.github.com/repos/OCEANS7A-DEV/electron-app/releases/latest";
-  try {
-    const res = await net.fetch(TEST_URL, {
-      method: "GET",
-      headers: {
-        "User-Agent": "electron",
-        "Authorization": `token ${token}`
-      }
-    });
-
-    log.info("🔍 接続テスト statusCode:", res.status);
-
-    if (res.status === 200) {
-      const json = await res.json();
-      log.info("🔍 接続テスト tag_name:", json.tag_name);
-    } else {
-      const text = await res.text();
-      log.warn("🔍 接続テスト body:", text);
-    }
-  } catch (err: any) {
-    log.error("🔍 接続テストエラー:", err.message);
-  }
-}
-
 
 
 const setupAutoUpdater = () => {
@@ -542,25 +543,20 @@ const initAutoUpdater = async (win: BrowserWindow) => {
     private: true,
     token
   });
-  if (is.dev){
-    await testGithubConnection(token)
-  }
   autoUpdater.requestHeaders = { Authorization: `token ${token}` };
   autoUpdater.checkForUpdatesAndNotify();
 }
 
 app.whenReady().then(async () => {
+  // await clearStoredToken()
+  //await keytar.deletePassword(SERVICE, ACCOUNT);
+  // process.env.GH_TOKEN = ''
   electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
+  
   await createUpdaterWindow()
   await initAutoUpdater(updaterWindow!);
 
   if (!is.dev) {
-    const token = await getOrPromptToken(mainWindow);
-    const result = await TokenCheck(token)
-    if (!result){
-      app.quit()
-      return
-    }
     isFirstRunUpdate = true
     setupAutoUpdater()
     autoUpdater.checkForUpdates()
@@ -571,6 +567,7 @@ app.whenReady().then(async () => {
         autoUpdater.checkForUpdates()
       }
     }, 30 * 1000)
+
   }
 
 
@@ -1164,7 +1161,7 @@ const PDFfileMarge = async (): Promise<{
 };
 
 ipcMain.on('change-github-token', async () => {
-  const token = await updateOrPromptToken()
+  const token = await updateOrPromptToken(mainWindow)
   if (!token){
     return
   }
