@@ -481,6 +481,7 @@ const initAutoUpdater = async (win: BrowserWindow) => {
     private: true,
     token
   });
+  log.info(token)
   autoUpdater.requestHeaders = { Authorization: `token ${token}` };
   autoUpdater.checkForUpdatesAndNotify();
 }
@@ -493,6 +494,12 @@ app.whenReady().then(async () => {
 
   await initAutoUpdater(updaterWindow!);
 
+  // if (is.dev){
+  //   isFirstRunUpdate = true
+  //   setupAutoUpdater()
+  //   autoUpdater.checkForUpdates()
+  // }
+  log.info('UpdataCheck')
   if (!is.dev) {
     isFirstRunUpdate = true
     setupAutoUpdater()
