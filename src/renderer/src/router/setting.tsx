@@ -49,10 +49,6 @@ export default function SettingPage() {
     console.log(result)
   }
 
-  // const handleTokenChange = async() => {
-  //   await window.myInventoryAPI.TokenChange()
-  // }
-
   return (
     <>
       <div>

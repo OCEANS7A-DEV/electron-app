@@ -139,7 +139,8 @@ const GetAPI_URL =
   'https://script.google.com/macros/s/AKfycbwCAqk6CMJl2obU-0edITVdKHEcXLwVhiD81ilwv2xuRWPSSr537A1cfaUSs5FvYn8D-g/exec'
 const InsertAPI_URL =
   'https://script.google.com/macros/s/AKfycbylyaUttaEI9jYGJM_CQWOWyWAd3C9Q-ikbkNAMCUIPDYIWqtUHgrw9GHNgmgkWKE-M/exec'
-
+//const Archive_URL = ''
+//const Claim_URL = ''
 
 let isFirstRunUpdate = true
 let updaterWindow: BrowserWindow | null = null
@@ -343,6 +344,32 @@ export const addressGet = async () => {
     return errorMessage
   }
 }
+
+export const ArchiveGet = async () => {
+  try {
+    const response = await fetch(GetAPI_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: JSON.stringify({
+        sheetName: '本部在庫',
+        action: 'ArchiveGet',
+        ranges: 'A3:C'
+      })
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const result = await response.json()
+    //console.log(result)
+    return result
+  } catch (error) {
+    console.error('Error:', error)
+    throw error
+  }
+}
+
 
 export const shortageGet = async () => {
   try {
@@ -599,6 +626,11 @@ ipcMain.handle('details-list', async () => {
 
 ipcMain.handle('shortageGet', async () => {
   const data = await shortageGet()
+  return data
+})
+
+ipcMain.handle('archiveGet', async () => {
+  const data = await ArchiveGet()
   return data
 })
 

@@ -1,6 +1,6 @@
 .stocksWindow {
   padding: 60px;
-  padding-left: 40px;
+  padding-left: 20px;
   width: 1000px;
 }
 
@@ -8,12 +8,12 @@
 .stocksWindow table {
   border-collapse: collapse;
   background-color: white;
-  margin-left: 15px;
 }
 
 .stocksWindow th, .stocksWindow td {
   border: 1px solid black;
   padding: 6px 8px;
+  white-space: nowrap;
 }
 
 .stocksNum {
@@ -21,7 +21,6 @@
 }
 
 .stocks-button-area {
-  margin-left: 15px;
   display: flex;
   align-items: center;
   height: 40px;

@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   WorkGet: () => ipcRenderer.invoke('hellowork-get'),
   VendorData: () => ipcRenderer.invoke('vendor-list'),
   shortageGet: () => ipcRenderer.invoke('shortageGet'),
+  archiveGet: () => ipcRenderer.invoke('archiveGet'),
   orderPrint: (payload) => ipcRenderer.invoke('orderPrint', payload),
   HelloWorkPDFGet: (lists) => ipcRenderer.invoke('hellowork-PDF', lists),
   PrintReady: () => ipcRenderer.invoke('Print-Ready'),

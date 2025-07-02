@@ -84,7 +84,7 @@ export default function HQPage() {
       sheetName: 'その他一覧',
       action: 'ListGet',
       ranges: 'A2:B'
-    });
+    })
 
   
     const storenames: SelectOption[] = stores
@@ -92,7 +92,7 @@ export default function HQPage() {
       .map(item => ({
         value: item[0],
         label: item[0]
-      }));
+      }))
     setSelectOptions(storenames);
   };
   
