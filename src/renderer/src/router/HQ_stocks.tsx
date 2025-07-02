@@ -80,7 +80,7 @@ export default function HQStocks() {
   const [value, setValue] = React.useState(0)
   const [date, setDate] = React.useState(archiveDateList[0].value)
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
   };
   const handleDateChange = (event: SelectChangeEvent) => {
