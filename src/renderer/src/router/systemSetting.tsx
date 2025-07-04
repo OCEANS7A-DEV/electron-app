@@ -18,6 +18,9 @@ export default function SystemSettingPage() {
   const handleTokenChange = async() => {
     await window.myInventoryAPI.TokenChange()
   }
+  const handleGoogleLogout = async () => {
+    await window.myInventoryAPI.GoogleLogout()
+  }
 
   return (
     <>
@@ -30,6 +33,10 @@ export default function SystemSettingPage() {
           <div style={{ display: 'flex' }} className="system-setting-area">
             <div className="Token">
               <Button variant="outlined" onClick={handleTokenChange}>トークン変更</Button>
+            </div>
+            <div className="Google">
+              <div>Google関係</div>
+              <Button variant="outlined" onClick={handleGoogleLogout}>ログアウト</Button>
             </div>
           </div>
           

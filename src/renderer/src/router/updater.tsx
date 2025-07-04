@@ -9,8 +9,10 @@ export default function UpdateWindow() {
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState('')
   const [updateCheck, setUpdateCheck] = useState(false)
+  const [DevCheck, setDevCheck] = useState(false)
 
   const [Startup, setStartup] = useState(false)
+  const [Google, setGoogle] = useState(false)
 
   useEffect(() => {
     window.myInventoryAPI.onProgressUpdate((value) => {
@@ -22,24 +24,25 @@ export default function UpdateWindow() {
 
   useEffect(() => {
     window.myInventoryAPI.onCheckedUpdate((value) => {
-      //console.log(value)
       if (value.status == 'dev'){
-        window.myInventoryAPI.MainBoot()
+        setDevCheck(true)
       } else if (value.status == 'updateCheck'){
         setUpdateCheck(true)
       } else if (value.status == 'bootCheck'){
         window.myInventoryAPI.UpdaterClose()
       } else if (value.status == 'startup'){
         setStartup(true)
+      } else if (value.status == 'google'){
+        setGoogle(true)
       }
     })
   }, [])
 
   useEffect(() => {
-    if (updateCheck && Startup) {
+    if ((updateCheck && Startup && Google) || (DevCheck && Google)) {
       window.myInventoryAPI.MainBoot()
     }
-  }, [ updateCheck, Startup ])
+  }, [updateCheck, Startup, Google, DevCheck])
 
 
 

@@ -154,13 +154,16 @@ export default function InventoryAmount () {
     const filter = DATA.filter(item => formatDate(item[0]) == selectDate)
     if (filter.length == 0){
       setInsertStatus('insert')
+      reset({
+        rows: defaultSet(storenames)
+      })
     } else {
       setInsertStatus('InventoryAmountUpdate')
+      dataSet(filter)
     }
-    dataSet(filter)
   }, [Year, Month, DATA])
 
-  const { control, register, handleSubmit, getValues, setValue, watch } =
+  const { control, register, handleSubmit, getValues, setValue, watch, reset } =
   useForm<FormValues>({
     defaultValues: {
       rows: defaultSet(storenames)

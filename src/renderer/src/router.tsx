@@ -24,7 +24,7 @@ import NetDetailsPrint, { loader as NetDetailsLoader } from './router/OrderDetai
 import PDFOperationPage from './router/PDFOperation'
 import SystemSettingPage from './router/systemSetting'
 import InventoryAmount, { loader as InventoryAmountLoader } from './router/InventoryAmount'
-
+import GoogleWindow from './router/GoogleLogin'
 
 
 
@@ -108,6 +108,10 @@ export const router = createHashRouter([
   {
     path: '/updater',
     element: <UpdateWindow/>
+  },
+  {
+    path: '/Google',
+    element: <GoogleWindow/>
   },
   {
     path: '/Moving',

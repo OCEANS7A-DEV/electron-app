@@ -5,6 +5,7 @@ export {}
 declare global {
   interface Window {
     myInventoryAPI: {
+      GoogleLogout(): unknown;
       archiveGet(): unknown;
       TokenChange(): unknown;
       PDFMarge: any;

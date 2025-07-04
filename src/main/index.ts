@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, net, Notification, IpcMainInvokeEvent, dialog } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, net, Notification, IpcMainInvokeEvent, dialog, session } from 'electron'
 import { join } from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -14,7 +14,6 @@ import fs from 'fs'
 import path from 'path'
 
 import { execFile } from 'child_process'
-
 
 import keytar from "keytar"
 
@@ -135,13 +134,17 @@ const store = new Store() as any
 //   'https://script.google.com/macros/s/AKfycbzCrMJDEFvfTTTCjb2b-8SwVgc2ySlsKwpf7c49H08DS6P4-ZulaS4zcNtiioytK0i6/exec'
 
 
-const GetAPI_URL =
-  'https://script.google.com/macros/s/AKfycbwCAqk6CMJl2obU-0edITVdKHEcXLwVhiD81ilwv2xuRWPSSr537A1cfaUSs5FvYn8D-g/exec'
-const InsertAPI_URL =
-  'https://script.google.com/macros/s/AKfycbylyaUttaEI9jYGJM_CQWOWyWAd3C9Q-ikbkNAMCUIPDYIWqtUHgrw9GHNgmgkWKE-M/exec'
+// const GetAPI_URL =
+//   'https://script.google.com/macros/s/AKfycbwCAqk6CMJl2obU-0edITVdKHEcXLwVhiD81ilwv2xuRWPSSr537A1cfaUSs5FvYn8D-g/exec'
+// const InsertAPI_URL =
+//   'https://script.google.com/macros/s/AKfycbylyaUttaEI9jYGJM_CQWOWyWAd3C9Q-ikbkNAMCUIPDYIWqtUHgrw9GHNgmgkWKE-M/exec'
 //const Archive_URL = ''
 //const Claim_URL = ''
 
+const GetAPI_URL = 'https://script.google.com/macros/s/AKfycbyu7GnlZ-yGcLn1j02ER3hiyKWeUcugopVAh4niSmM9j2_nIA9DhsXFu87PgKr4eBUBhA/exec'
+
+
+const InsertAPI_URL = GetAPI_URL
 let isFirstRunUpdate = true
 let updaterWindow: BrowserWindow | null = null
 
@@ -199,6 +202,16 @@ const createUpdaterWindow = async() => {
 
         StartUpSet()
         initAutoUpdater(updaterWindow!);
+        hasGoogleLoginCookie().then(isLoggedIn => {
+
+          if (!isLoggedIn) {
+            createGoogleLoginWindow()
+          } else {
+            if (updaterWindow && !updaterWindow.isDestroyed()) {
+              updaterWindow.webContents.send('check', { status: 'google', value: true });
+            }
+          }
+        });
 
         if (!is.dev) {
           isFirstRunUpdate = true
@@ -218,6 +231,55 @@ const createUpdaterWindow = async() => {
       })
     }
   }
+}
+
+let GoogleLoginWindow: BrowserWindow
+
+const createGoogleLoginWindow = async() => {
+  GoogleLoginWindow = new BrowserWindow({
+    width: 600,
+    height: 400,
+    minWidth: 600,
+    show: false,
+    autoHideMenuBar: true,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: is.dev
+        ? join(__dirname, '../preload/index.mjs')
+        : join(app.getAppPath(), 'out/preload/index.mjs'),
+      sandbox: false,
+      webSecurity: false,
+      webviewTag: true,
+    }
+  })
+
+  
+  GoogleLoginWindow.on('ready-to-show', () => {
+    GoogleLoginWindow.show()
+    if (is.dev) {
+      GoogleLoginWindow.webContents.openDevTools()
+    }
+  })
+
+  GoogleLoginWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+  GoogleLoginWindow.loadURL(GetAPI_URL)
+  GoogleLoginWindow.webContents.on('did-navigate', async (_evt, url) => {
+
+    if (url.startsWith(GetAPI_URL)) {
+      const cookies = await GoogleLoginWindow.webContents.session.cookies.get({ url: GetAPI_URL })
+      const hasAuth = cookies.some(c => ['SID','HSID','SSID','SAPISID'].includes(c.name));
+      if (hasAuth) {
+
+        // if (updaterWindow && !updaterWindow.isDestroyed()) {
+        //   updaterWindow.webContents.send('check', { status: 'google', value: true });
+        // }
+        // GoogleLoginWindow.close()
+      }
+    }
+  })
 }
 
 
@@ -270,7 +332,21 @@ function createWindow(): void {
 
 let printWindow: BrowserWindow | null = null;
 
+const hasGoogleLoginCookie = async(): Promise<boolean> => {
+  const domains = [
+    'https://accounts.google.com',
+    'https://www.google.com',
+  ];
+  const authCookieNames = ['SID', 'HSID', 'SSID', 'SAPISID'];
 
+  let allCookies = [] as Electron.Cookie[];
+  for (const url of domains) {
+    const cookies = await session.defaultSession.cookies.get({ url });
+    allCookies = allCookies.concat(cookies);
+  }
+
+  return allCookies.some(c => authCookieNames.includes(c.name));
+}
 
 
 
@@ -595,9 +671,7 @@ app.whenReady().then(async () => {
   //await keytar.deletePassword(SERVICE, ACCOUNT);
   // process.env.GH_TOKEN = ''
   electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
-  
   await createUpdaterWindow()
-
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
@@ -645,10 +719,16 @@ ipcMain.handle('storeGet', async (_event, payload: { gettitle: string }) => {
 ipcMain.handle('list-get', async (_event, payload: any) => {
   //const SetDomain = await getEndpoint()
   try {
+    const cookies1 = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
+    const allCookies = [...cookies1, ...cookies2];
+    const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
+    
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Cookie': cookieHeader
       },
       body: JSON.stringify(payload)
     })
@@ -1201,6 +1281,29 @@ ipcMain.on('change-github-token', async () => {
   await clearStoredToken()
   process.env.GH_TOKEN = token
 })
+
+
+ipcMain.on('google-logout', async() => {
+  // 1) accounts.google.com のクッキーを削除
+  const accountCookies = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
+  for (const c of accountCookies) {
+    await session.defaultSession.cookies.remove('https://' + c.domain + c.path, c.name);
+  }
+
+  // 2) script.google.com（GAS） のクッキーも消したいなら同様に
+  const scriptCookies = await session.defaultSession.cookies.get({ url: 'https://script.google.com' });
+  for (const c of scriptCookies) {
+    await session.defaultSession.cookies.remove('https://' + c.domain + c.path, c.name);
+  }
+  
+})
+
+ipcMain.on('google-login', async () => {
+  createGoogleLoginWindow()
+})
+
+
+
 
 
 
