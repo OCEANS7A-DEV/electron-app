@@ -1,0 +1,74 @@
+
+
+
+.Inventory_Amount_area {
+  padding: 80px 0px 80px 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: center;
+  overflow: nowrap;
+  color: white;
+}
+
+.Inventory_Amount_title {
+  display: flex;
+  width: 400px;
+  justify-content: space-around;
+  margin-left: 30px;
+  align-items: center;
+}
+
+.Inventory_Amount_table_area {
+  padding-top: 10px;
+  display: flex;
+}
+
+.Inventory_Amount_table {
+  display: flex;
+  flex-flow: column;
+  padding-left: 30px;
+}
+
+.Inventory_Amount_table_area table {
+
+}
+
+.Inventory_Amount_rows {
+  display: flex;
+  align-items: center;
+  margin: 8px 0px;
+}
+
+.Inventory_Amount_rows_header {
+  display: flex;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px white solid;
+}
+
+.Inventory_Amount_rows_header div {
+  width: 140px;
+  font-size: 20px;
+  margin: 0px 10px;
+  padding: 0px 8px;
+}
+
+.Inventory_Amount_Store,
+.Inventory_Amount_stocking,
+.Inventory_Amount_used,
+.Inventory_Amount_inventoryamount {
+  width: 140px;
+  font-size: 20px;
+  margin: 0px 10px;
+  padding: 0px 8px;
+}
+
+.Inventory_Amount_stocking,
+.Inventory_Amount_used,
+.Inventory_Amount_inventoryamount {
+  text-align: right;
+}
+
+
+

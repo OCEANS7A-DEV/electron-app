@@ -20,10 +20,10 @@ import DetailContent from './router/productDetailEdit'
 import UpdateWindow from './router/updater'
 import InventoryMoving from './router/Moving'
 import CatalogView from './router/Catalog'
-import NetDetailsPrint, { loader as NetDetailsLoader} from './router/OrderDetails'
+import NetDetailsPrint, { loader as NetDetailsLoader } from './router/OrderDetails'
 import PDFOperationPage from './router/PDFOperation'
 import SystemSettingPage from './router/systemSetting'
-
+import InventoryAmount, { loader as InventoryAmountLoader } from './router/InventoryAmount'
 
 
 
@@ -121,5 +121,10 @@ export const router = createHashRouter([
     path: '/HelloWork',
     element: <HelloWork/>,
     loader: HelloWorkLoader
+  },
+  {
+    path: '/InventoryAmount',
+    element: <InventoryAmount/>,
+    loader: InventoryAmountLoader
   }
 ])

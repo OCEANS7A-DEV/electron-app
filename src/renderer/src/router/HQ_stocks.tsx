@@ -82,10 +82,11 @@ export default function HQStocks() {
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
-  };
+  }
+  
   const handleDateChange = (event: SelectChangeEvent) => {
     setDate(event.target.value as string);
-  };
+  }
 
   
   const URL = "https://docs.google.com/spreadsheets/d/1UK3huzFfa3lQnhqWylJU65IeF8z-L39zgj3bSKDMALI/edit?gid=0#gid=0"

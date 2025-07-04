@@ -1,6 +1,6 @@
 {
   "name": "zaiko-kanri",
-  "productName": "在庫管理",
+  "productName": "オーシャン",
   "version": "1.0.0",
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
@@ -9,7 +9,7 @@
   "type": "module",
   "build": {
     "appId": "com.OCEANS7A-DEV.Oceanstockman",
-    "productName": "在庫管理",
+    "productName": "オーシャン",
     "files": [
       "dist",
       "out/main",
