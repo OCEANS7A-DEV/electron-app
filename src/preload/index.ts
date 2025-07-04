@@ -54,7 +54,8 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   PDFMarge: () => ipcRenderer.send('PDF-Marge'),
   TokenChange: () => ipcRenderer.send('change-github-token'),
   GoogleLogout: () => ipcRenderer.send('google-logout'),
-  GoogleLogin: () => ipcRenderer.send('google-login')
+  GoogleLogin: () => ipcRenderer.send('google-login'),
+  GoogleConfirmation: () => ipcRenderer.send('google-login-confirmation')
 })
 
 if (process.contextIsolated) {

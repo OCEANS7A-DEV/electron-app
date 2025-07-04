@@ -5,6 +5,7 @@ export {}
 declare global {
   interface Window {
     myInventoryAPI: {
+      GoogleConfirmation(): unknown;
       GoogleLogout(): unknown;
       archiveGet(): unknown;
       TokenChange(): unknown;
