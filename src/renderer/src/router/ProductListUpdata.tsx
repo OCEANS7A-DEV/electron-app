@@ -549,7 +549,7 @@ export default function ProductDetailChangePage() {
   return(
     <div>
       <div>
-        <LinkBaner />
+        <LinkBaner id="zaiko" />
         <Toaster />
         {loading && (
           <div

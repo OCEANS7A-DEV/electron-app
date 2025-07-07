@@ -1,0 +1,15 @@
+.app-select-area {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  flex-flow: column;
+  color: white;
+}
+
+
+.app-select-title {
+  margin: 20px;
+}
+
+
+

@@ -292,7 +292,7 @@ export default function ReceivingPage() {
   return (
     <>
       <div>
-        <LinkBaner />
+        <LinkBaner id="zaiko" />
         <Toaster />
       </div>
       <div className="window_area">

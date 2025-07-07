@@ -34,6 +34,8 @@ export default function UpdateWindow() {
         setStartup(true)
       } else if (value.status == 'google'){
         setGoogle(true)
+      } else if (value.status == 'text'){
+        setMessage('アップデートの確認中...')
       }
     })
   }, [])

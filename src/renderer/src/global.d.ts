@@ -5,6 +5,11 @@ export {}
 declare global {
   interface Window {
     myInventoryAPI: {
+      OfficeWorkWindow(): unknown;
+      SettingWindow(): unknown;
+      HelloWorkWindow(): unknown;
+      WindowZaiko(): unknown;
+      WindowInfoGet(): unknown;
       GoogleConfirmation(): unknown;
       GoogleLogout(): unknown;
       archiveGet(): unknown;

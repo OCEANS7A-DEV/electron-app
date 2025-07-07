@@ -18,7 +18,7 @@ export default function PDFOperationPage () {
   return (
     <div className="PDF-page">
       <div className="banner">
-        <LinkBaner/>
+        <LinkBaner id='OfficeWork'/>
       </div>
       <div className="PDF-page-main">
         <div>PDF</div>

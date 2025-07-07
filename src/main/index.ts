@@ -19,10 +19,16 @@ import keytar from "keytar"
 
 import prompt from "electron-prompt"
 
+
+const windowManager = new Map()
+
+
+
+
 const SERVICE = "electron-app"
 const ACCOUNT = "OCEANS7A-DEV"
 
-async function getOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
+async function getOrPromptToken(launcherWindow: BrowserWindow): Promise<string> {
   let token = await keytar.getPassword(SERVICE, ACCOUNT)
   //console.log(token)
   if (!token) {
@@ -35,7 +41,7 @@ async function getOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
       width: 400,
       height: 200,
       alwaysOnTop: true,
-    }, mainWindow.webContents) as string | null;
+    }, launcherWindow.webContents) as string | null;
     if (!token) {
       app.quit()
       log.error("GitHub トークンが入力されませんでした")
@@ -53,7 +59,7 @@ async function getOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
   return token;
 }
 
-async function updateOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
+async function updateOrPromptToken(launcherWindow: BrowserWindow): Promise<string> {
   let token = await keytar.getPassword(SERVICE, ACCOUNT)
   token = await prompt({
     title: "GitHub トークンの入力",
@@ -64,7 +70,7 @@ async function updateOrPromptToken(mainWindow: BrowserWindow): Promise<string> {
     width: 400,
     height: 200,
     alwaysOnTop: true,
-  }, mainWindow.webContents) as string;
+  }, launcherWindow.webContents) as string;
   await keytar.setPassword(SERVICE, ACCOUNT, token);
   return token;
 }
@@ -218,7 +224,7 @@ const createUpdaterWindow = async() => {
           setupAutoUpdater()
           autoUpdater.checkForUpdates()
           setInterval(() => {
-            if (mainWindow) {
+            if (launcherWindow) {
               isFirstRunUpdate = false
               log.info('定期アップデート確認中...')
               autoUpdater.checkForUpdates()
@@ -277,12 +283,82 @@ const createGoogleLoginWindow = async() => {
 }
 
 
-let mainWindow: BrowserWindow
+//let mainWindow: BrowserWindow
 
 
 
-function createWindow(): void {
-  mainWindow = new BrowserWindow({
+
+let zaikoWindow: BrowserWindow
+
+
+
+function createZaikoWindow(): void {
+
+  if (windowManager.has("zaiko")){
+    const win = windowManager.get("zaiko")
+    if (win) win.focus();
+    return
+  }
+
+  zaikoWindow = new BrowserWindow({
+    width: 950,
+    height: 670,
+    minWidth: 950,
+    show: false,
+    autoHideMenuBar: true,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: is.dev
+        ? join(__dirname, '../preload/index.mjs')
+        : join(app.getAppPath(), 'out/preload/index.mjs'),
+      sandbox: false,
+      webSecurity: false,
+      webviewTag: true,
+    }
+  })
+  windowManager.set("zaiko", zaikoWindow)
+
+  //このときに指定のIDをつけたい
+
+  zaikoWindow.on('ready-to-show', () => {
+    zaikoWindow.show()
+    if (is.dev) {
+      zaikoWindow.webContents.openDevTools()
+    }
+    updaterWindow?.webContents.send('check', {
+      status: 'bootCheck',
+      value: true
+    })
+  })
+
+  zaikoWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    zaikoWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  } else {
+    zaikoWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
+  NotificationEXE('アプリが起動しました')
+
+  zaikoWindow.on('closed', () => {
+    windowManager.delete("zaiko")
+  })
+}
+
+
+
+let launcherWindow: BrowserWindow
+
+const createLauncherWindow = (): void => {
+  if (windowManager.has("Launcher")){
+    const win = windowManager.get("Launcher")
+    if (win) win.focus();
+    return
+  }
+
+  launcherWindow = new BrowserWindow({
     width: 950,
     height: 670,
     minWidth: 950,
@@ -299,10 +375,12 @@ function createWindow(): void {
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+  windowManager.set("Launcher", launcherWindow)
+
+  launcherWindow.on('ready-to-show', () => {
+    launcherWindow.show()
     if (is.dev) {
-      mainWindow.webContents.openDevTools()
+      launcherWindow.webContents.openDevTools()
     }
     updaterWindow?.webContents.send('check', {
       status: 'bootCheck',
@@ -310,17 +388,188 @@ function createWindow(): void {
     })
   })
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
+  launcherWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    launcherWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#launcher`)
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    launcherWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'launcher' })
   }
-  NotificationEXE('アプリが起動しました')
+  launcherWindow.on('closed', () => {
+    windowManager.delete("Launcher")
+  })
 }
+
+
+let HelloWorkWindow: BrowserWindow
+
+const createHelloWorkWindow = (): void => {
+  if (windowManager.has("HelloWork")){
+    const win = windowManager.get("HelloWork")
+    if (win) win.focus();
+    return
+  }
+
+  HelloWorkWindow = new BrowserWindow({
+    width: 950,
+    height: 670,
+    minWidth: 950,
+    show: false,
+    autoHideMenuBar: true,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: is.dev
+        ? join(__dirname, '../preload/index.mjs')
+        : join(app.getAppPath(), 'out/preload/index.mjs'),
+      sandbox: false,
+      webSecurity: false,
+      webviewTag: true,
+    }
+  })
+
+  windowManager.set("HelloWork", HelloWorkWindow)
+
+  HelloWorkWindow.on('ready-to-show', () => {
+    HelloWorkWindow.show()
+    if (is.dev) {
+      HelloWorkWindow.webContents.openDevTools()
+    }
+    updaterWindow?.webContents.send('check', {
+      status: 'bootCheck',
+      value: true
+    })
+  })
+
+  HelloWorkWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    HelloWorkWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#HelloWork`)
+  } else {
+    HelloWorkWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'HelloWork' })
+  }
+  HelloWorkWindow.on('closed', () => {
+    windowManager.delete("HelloWork")
+  })
+}
+
+
+let OfficeWorkWindow: BrowserWindow
+
+const createOfficeWorkWindow = (): void => {
+  if (windowManager.has("OfficeWork")){
+    const win = windowManager.get("OfficeWork")
+    if (win) win.focus();
+    return
+  }
+
+  OfficeWorkWindow = new BrowserWindow({
+    width: 950,
+    height: 670,
+    minWidth: 950,
+    show: false,
+    autoHideMenuBar: true,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: is.dev
+        ? join(__dirname, '../preload/index.mjs')
+        : join(app.getAppPath(), 'out/preload/index.mjs'),
+      sandbox: false,
+      webSecurity: false,
+      webviewTag: true,
+    }
+  })
+
+  windowManager.set("OfficeWork", OfficeWorkWindow)
+
+  OfficeWorkWindow.on('ready-to-show', () => {
+    OfficeWorkWindow.show()
+    if (is.dev) {
+      OfficeWorkWindow.webContents.openDevTools()
+    }
+    updaterWindow?.webContents.send('check', {
+      status: 'bootCheck',
+      value: true
+    })
+  })
+
+  OfficeWorkWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    OfficeWorkWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#PDFOperation`)
+  } else {
+    OfficeWorkWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: '#PDFOperation' })
+  }
+  OfficeWorkWindow.on('closed', () => {
+    windowManager.delete("OfficeWork")
+  })
+}
+
+
+let SettingWindow: BrowserWindow
+
+const createSettingWindow = (): void => {
+  if (windowManager.has("Setting")){
+    const win = windowManager.get("Setting")
+    if (win) win.focus();
+    return
+  }
+
+  SettingWindow = new BrowserWindow({
+    width: 950,
+    height: 670,
+    minWidth: 950,
+    show: false,
+    autoHideMenuBar: true,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: is.dev
+        ? join(__dirname, '../preload/index.mjs')
+        : join(app.getAppPath(), 'out/preload/index.mjs'),
+      sandbox: false,
+      webSecurity: false,
+      webviewTag: true,
+    }
+  })
+
+  windowManager.set("Setting", SettingWindow)
+
+  SettingWindow.on('ready-to-show', () => {
+    SettingWindow.show()
+    if (is.dev) {
+      SettingWindow.webContents.openDevTools()
+    }
+    updaterWindow?.webContents.send('check', {
+      status: 'bootCheck',
+      value: true
+    })
+  })
+
+  SettingWindow.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return { action: 'deny' }
+  })
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    SettingWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#systemSetting`)
+  } else {
+    SettingWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: '#systemSetting' })
+  }
+  SettingWindow.on('closed', () => {
+    windowManager.delete("Setting")
+  })
+}
+
+
+
+
+
+
+
 
 
 
@@ -598,6 +847,9 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('checking-for-update', () => {
     log.info('アップデートを確認中...')
+    if (updaterWindow && !updaterWindow.isDestroyed()) {
+      updaterWindow.webContents.send('check', { status: 'text', value: true });
+    }
   })
 
   autoUpdater.on('update-available', () => {
@@ -624,8 +876,8 @@ const setupAutoUpdater = () => {
         })
       }
     } catch {
-      if (!mainWindow){
-        createWindow()
+      if (!launcherWindow){
+        createLauncherWindow()
       }
     }
   })
@@ -633,25 +885,25 @@ const setupAutoUpdater = () => {
   autoUpdater.on('update-not-available', () => {
     log.info('アップデートはありません。')
     if (isFirstRunUpdate) {
-      if (!mainWindow){
-        createWindow()
+      if (!launcherWindow){
+        createLauncherWindow()
       }
     }
     try{
-      if (mainWindow) {
-        mainWindow.webContents.send('update-available', false)
+      if (launcherWindow) {
+        launcherWindow.webContents.send('update-available', false)
       }
     } catch {
-      if (!mainWindow){
-        createWindow()
+      if (!launcherWindow){
+        createLauncherWindow()
       }
     }
   })
 
   autoUpdater.on('error', (error) => {
     log.error('アップデートエラー:', error)
-    if (!mainWindow){
-      createWindow()
+    if (!launcherWindow){
+      createLauncherWindow()
     }
   })
 
@@ -665,12 +917,12 @@ const setupAutoUpdater = () => {
       log.info('定期チェックのアップデートは即時インストールしません')
       NotificationEXE('アップデートが利用可能です。')
       try{
-        if (mainWindow) {
-          mainWindow.webContents.send('update-available', true)
+        if (launcherWindow) {
+          launcherWindow.webContents.send('update-available', false)
         }
       } catch {
-        if (!mainWindow){
-          createWindow()
+        if (!launcherWindow){
+          createLauncherWindow()
         }
       }
     }
@@ -693,17 +945,11 @@ const initAutoUpdater = async (win: BrowserWindow) => {
 }
 
 app.whenReady().then(async () => {
-  // await clearStoredToken()
-  //await keytar.deletePassword(SERVICE, ACCOUNT);
-  // process.env.GH_TOKEN = ''
   electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
   await createUpdaterWindow()
-
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
-
-  //ipcMain.on('ping', () => console.log('pong'))
 })
 
 
@@ -818,8 +1064,28 @@ ipcMain.on('button-Upgrade', () => {
 })
 
 ipcMain.on('Main-boot', () => {
-  createWindow()
+  createLauncherWindow()
 })
+
+
+
+
+ipcMain.on('WindowZaiko', () => {
+  createZaikoWindow()
+})
+
+ipcMain.on('HelloWorkWindow', () => {
+  createHelloWorkWindow()
+})
+
+ipcMain.on('OfficeWorkWindow', () => {
+  createOfficeWorkWindow()
+})
+
+ipcMain.on('SettingWindow', () => {
+  createSettingWindow()
+})
+
 
 ipcMain.on('startUpClose', () => {
   try{
@@ -1205,11 +1471,11 @@ ipcMain.handle(
             }
 
             fs.writeFileSync(downloadsPath, buffer);
-            mainWindow.webContents.send('helloWork-progress', { count: count, total: total, success: item.求人番号, url: jobUrl });
+            HelloWorkWindow.webContents.send('helloWork-progress', { count: count, total: total, success: item.求人番号, url: jobUrl });
 
           } catch (err: any) {
             console.error('❌ PDFダウンロード失敗:', err);
-            mainWindow.webContents.send('helloWork-progress', { count: count, total: total, error: item.求人番号, url: filename });
+            HelloWorkWindow.webContents.send('helloWork-progress', { count: count, total: total, error: item.求人番号, url: filename });
           } finally {
             //mainWindow.webContents.send('helloWork-progress', { count: count, total: total });
             if (browser) await browser.close();
@@ -1310,7 +1576,7 @@ const PDFfileMarge = async (): Promise<{
 };
 
 ipcMain.on('change-github-token', async () => {
-  const token = await updateOrPromptToken(mainWindow)
+  const token = await updateOrPromptToken(launcherWindow)
   if (!token){
     return
   }
@@ -1345,6 +1611,18 @@ ipcMain.on('google-login-confirmation', async () => {
 })
 
 
+
+ipcMain.handle('windowInfo', async() => {
+  const Focuswin = BrowserWindow.getFocusedWindow();
+  if (!Focuswin) return null;
+
+  return {
+    id: Focuswin.id,
+    title: Focuswin.getTitle(),
+    bounds: Focuswin.getBounds(),
+    url: Focuswin.webContents.getURL()
+  };
+})
 
 
 

@@ -25,7 +25,7 @@ import PDFOperationPage from './router/PDFOperation'
 import SystemSettingPage from './router/systemSetting'
 import InventoryAmount, { loader as InventoryAmountLoader } from './router/InventoryAmount'
 import GoogleWindow from './router/GoogleLogin'
-
+import LauncherPage from './router/launcher'
 
 
 
@@ -130,5 +130,9 @@ export const router = createHashRouter([
     path: '/InventoryAmount',
     element: <InventoryAmount/>,
     loader: InventoryAmountLoader
+  },
+  {
+    path: '/launcher',
+    element: <LauncherPage/>
   }
 ])

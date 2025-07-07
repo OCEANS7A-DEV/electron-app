@@ -25,7 +25,7 @@ export default function SystemSettingPage() {
   return (
     <>
       <div>
-        <LinkBaner />
+        <LinkBaner id='Setting' />
       </div>
       <div style={{color: 'white', paddingTop: 60, paddingLeft: 20}}>
         <div>

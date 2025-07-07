@@ -263,7 +263,7 @@ export default function InventoryAmount () {
   return (
     <div>
       <div>
-        <LinkBaner/>
+        <LinkBaner id="zaiko"/>
       </div>
       <div className="Inventory_Amount_area">
         <ThemeProvider theme={darkTheme}>

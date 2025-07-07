@@ -133,13 +133,17 @@ export default function HelloWork() {
     return afterNewline
   }
 
+  const handlePDFMarge = async() => {
+    await window.myInventoryAPI.PDFMarge()
+  }
+
   
 
 
   return(
     <div className="HelloWorkWindow">
       <div className="banner">
-        <LinkBaner/>
+        <LinkBaner id="helloWork"/>
         <Toaster />
       </div>
       <div className="HelloWorkMainArea">
@@ -150,6 +154,7 @@ export default function HelloWork() {
           ) : (
             <Button variant="outlined" onClick={PDFGet} loading={loading} disabled>PDFGet</Button>
           )}
+          <Button variant="outlined" onClick={handlePDFMarge}>PDF結合</Button>
         </div>
         <div className="HelloWorkProgress">
           {loading && (

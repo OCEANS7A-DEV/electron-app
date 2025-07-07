@@ -296,7 +296,7 @@ export default function HQPage() {
     <div className='check_window'>
       <Toaster />
       <div className="banner">
-        <LinkBaner/>
+        <LinkBaner id="zaiko"/>
       </div>
       <div className="chack_etc">
         <div className="check_area">

@@ -48,7 +48,7 @@ export default function NETOrder() {
   return(
     <div className="NetOrderLinkWindow">
       <div className="banner">
-        <LinkBaner/>
+        <LinkBaner id="zaiko"/>
       </div>
       <div className="NetOrderLinkArea">
         <div className="NetOrderLinkTitle" style={{ color: 'white' }}>ネット発注リンク一覧</div>

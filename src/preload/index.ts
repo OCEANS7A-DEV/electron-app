@@ -55,7 +55,12 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   TokenChange: () => ipcRenderer.send('change-github-token'),
   GoogleLogout: () => ipcRenderer.send('google-logout'),
   GoogleLogin: () => ipcRenderer.send('google-login'),
-  GoogleConfirmation: () => ipcRenderer.send('google-login-confirmation')
+  GoogleConfirmation: () => ipcRenderer.send('google-login-confirmation'),
+  WindowInfoGet: () => ipcRenderer.invoke('windowInfo'),
+  WindowZaiko: () => ipcRenderer.send('WindowZaiko'),
+  HelloWorkWindow: () => ipcRenderer.send('HelloWorkWindow'),
+  OfficeWorkWindow: () => ipcRenderer.send('OfficeWorkWindow'),
+  SettingWindow: () => ipcRenderer.send('SettingWindow')
 })
 
 if (process.contextIsolated) {

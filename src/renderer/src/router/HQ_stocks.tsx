@@ -136,7 +136,7 @@ export default function HQStocks() {
   return(
     <div>
       <div>
-        <LinkBaner/>
+        <LinkBaner id="zaiko"/>
       </div>
       <div className="stocksWindow">
         <div>
