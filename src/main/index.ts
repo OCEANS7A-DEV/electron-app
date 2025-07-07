@@ -357,7 +357,7 @@ export const productGet = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': cookieHeader
+        Cookie: cookieHeader
       },
       body: JSON.stringify({ sheetName: '在庫一覧', action: 'ListGet', ranges: 'A2:N' })
     })
@@ -380,7 +380,7 @@ export const productTypesGet = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': cookieHeader
+        Cookie: cookieHeader
       },
       body: JSON.stringify({ sheetName: '商品タイプ一覧', action: 'ListGet', ranges: 'A2:B' })
     })
@@ -404,7 +404,7 @@ export const vendorGet = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': cookieHeader
+        Cookie: cookieHeader
       },
       body: JSON.stringify({ sheetName: '業者一覧', action: 'ListGet', ranges: 'A2:B' })
     })
@@ -428,7 +428,7 @@ export const addressGet = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': cookieHeader
+        Cookie: cookieHeader
       },
       body: JSON.stringify({ sheetName: 'その他データ', action: 'ListGet', ranges: 'A2:H' })
     })
@@ -446,12 +446,12 @@ export const ArchiveGet = async () => {
     const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
     const allCookies = [...cookies1, ...cookies2];
     const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
-    
-    const response = await fetch(GetAPI_URL, {
+
+    const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': cookieHeader
+        Cookie: cookieHeader
       },
       body: JSON.stringify({
         sheetName: '本部在庫',
@@ -478,30 +478,22 @@ export const shortageGet = async () => {
     const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
     const allCookies = [...cookies1, ...cookies2];
     const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
-    
-    const response = await fetch(GetAPI_URL, {
+
+    const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': cookieHeader
+        Cookie: cookieHeader
       },
-      body: JSON.stringify({
-        sheetName: '在庫一覧',
-        action: 'TotallingGet',
-        ranges: 'A2:N'
-      })
+      body: JSON.stringify({ sheetName: '在庫一覧', action: 'TotallingGet', ranges: 'A2:N' })
     })
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
     const result = await response.json()
-    //console.log(result)
     return result
-  } catch (error) {
-    console.error('Error:', error)
-    throw error
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+    return errorMessage
   }
-}
+};
 
 export const ProductDetails = async () => {
   try {
@@ -514,7 +506,7 @@ export const ProductDetails = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': cookieHeader
+        Cookie: cookieHeader
       },
       body: JSON.stringify({ sheetName: '商品詳細一覧', action: 'ListGet', ranges: 'A2:B' })
     })
