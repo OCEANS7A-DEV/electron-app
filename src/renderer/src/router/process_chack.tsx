@@ -219,6 +219,7 @@ export default function HQPage() {
     }
     const store = storeSelect.value
     const filterData = orderData.filter(item => item[1] == store)
+    console.log(orderData)
     if(filterData.length === 0){
       return
     }
@@ -231,6 +232,7 @@ export default function HQPage() {
     window.myInventoryAPI.DataInsert({
       sheetName: '店舗へ',
       action: 'PrintcellUpdate',
+      sub_action: 'insert',
       searchData: [store],
       searchColumn: 1,
       updataColumnNumber: 13,

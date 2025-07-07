@@ -178,6 +178,7 @@ export default function ReceivingPage() {
       await window.myInventoryAPI.DataInsert({
         sheetName: '本部入庫',
         action: 'insert',
+        sub_action: 'insert',
         data: formData,
         formulaConfig: {
           targetCol: 7,

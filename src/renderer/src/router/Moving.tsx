@@ -256,6 +256,7 @@ export default function InventoryMoving() {
       await window.myInventoryAPI.DataInsert({
         sheetName: '店舗間移動',
         action: 'insert',
+        sub_action: 'insert',
         data: formData,
         formulaConfig: {
           targetCol: 8,

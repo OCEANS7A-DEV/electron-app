@@ -183,6 +183,7 @@ export default function StoreOrderPage() {
       await window.myInventoryAPI.DataInsert({
         sheetName: '店舗へ',
         action: 'Orderinsert',
+        sub_action: 'insert',
         data: formData,
         formulaConfig: {
           targetCol: 10,
@@ -290,6 +291,9 @@ export default function StoreOrderPage() {
   };
 
   const orderDataGetSelect = async () => {
+    reset({
+      rows: defaultSet()
+    })
     const ordersGet = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M'})
     const targetDateStr = new Date(InsertDate).toDateString();
     const filtered = ordersGet.filter(item => new Date(item[0]).toDateString() == targetDateStr && item[1] == storeSelect)
@@ -298,14 +302,8 @@ export default function StoreOrderPage() {
 
     if (filtered.length > 0){
       if (filtered[0][12] == '注文無'){
-        reset({
-          rows: defaultSet()
-        })
         return filtered
       }
-      reset({
-        rows: defaultSet()
-      })
       if (UpDataRowNum > 20){
         const diffcount = Math.ceil(UpDataRowNum / 20) - 1
         for (let i = 0; i < diffcount; i++ ){

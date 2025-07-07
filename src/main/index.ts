@@ -204,7 +204,6 @@ const createUpdaterWindow = async() => {
         StartUpSet()
         initAutoUpdater(updaterWindow!);
         hasGoogleLoginCookie().then(isLoggedIn => {
-
           if (!isLoggedIn) {
             createGoogleLoginWindow()
           } else {
@@ -254,6 +253,7 @@ const createGoogleLoginWindow = async() => {
     }
   })
 
+  GoogleLoginWindow.loadURL(GetAPI_URL)
   
   GoogleLoginWindow.on('ready-to-show', () => {
     GoogleLoginWindow.show()
@@ -266,7 +266,14 @@ const createGoogleLoginWindow = async() => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
-  GoogleLoginWindow.loadURL(GetAPI_URL)
+  GoogleLoginWindow.webContents.on('did-navigate', async (_evt, url) => {
+    if (!url.startsWith(GetAPI_URL)) return;
+    const cookies = await GoogleLoginWindow.webContents.session.cookies.get({ url: 'https://script.google.com' });
+    const hasAuth = cookies.some(c => ['SID','HSID','SSID','SAPISID'].includes(c.name));
+    if (hasAuth){
+      //
+    }
+  });
 }
 
 
@@ -327,6 +334,7 @@ const hasGoogleLoginCookie = async(): Promise<boolean> => {
   const authCookieNames = ['SID', 'HSID', 'SSID', 'SAPISID'];
 
   let allCookies = [] as Electron.Cookie[];
+
   for (const url of domains) {
     const cookies = await session.defaultSession.cookies.get({ url });
     allCookies = allCookies.concat(cookies);
