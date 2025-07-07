@@ -139,7 +139,7 @@ export default function InventoryAmount () {
   const dataSet = (data) => {
     const fData = watch().rows
     data.forEach(item => {
-      console.log(item)
+      //console.log(item)
       const indexNum = fData.findIndex(row => row.store == item[1])
       setValue(`rows.${indexNum}.stocking`, item[2])
       setValue(`rows.${indexNum}.used`, item[3])

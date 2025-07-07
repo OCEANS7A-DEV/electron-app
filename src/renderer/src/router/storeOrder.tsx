@@ -329,10 +329,6 @@ export default function StoreOrderPage() {
         setValue(`rows.${count}.remarks`, item[11])
         count ++
       })
-    } else {
-      reset({
-        rows: defaultSet()
-      })
     }
     return filtered
   }
