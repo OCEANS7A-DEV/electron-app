@@ -99,37 +99,47 @@ export default function HQPage() {
 
 
   const PrintProcessList = async () => {
-    setListload(true)
-    const Date = dateValue?.format('YYYY-MM-DD')
-    const ordersGet = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M'})
-    const storeData = await window.myInventoryAPI.ListGet({sheetName: 'その他一覧', action: 'ListGet', ranges: 'A2:B'})
-    const storefilter = storeData.filter(item => item[1] !== '')
-    const storeList = storefilter.map(item => item[0])
-    const filterd = ordersGet.filter(row => isoToJstYMD(row[0]) == Date)
-    setOrderData(filterd)
-    const storeOrders = storeList.map(item => {
-      const storeOrder = filterd.filter(row => row[1] == item)
-      let processdata = ''
-      const processlist = storeOrder.map(process => process[12])
-      const donere = processlist.includes('印刷済')
-      const notre = processlist.includes('未印刷')
-      const nonere = processlist.includes('注文無')
-      if(donere && !notre && !nonere){
-        processdata = '印刷済';
-      }else if(!donere && notre && !nonere){
-        processdata = '未印刷';
-      }else if(donere && notre && !nonere){
-        processdata = '一部未印刷';
-      }else if(!donere && !notre && !nonere){
-        processdata = '未注文';
-      }else if(nonere && !donere && !notre){
-        processdata = '注文無';
-      }
-      let resultdata = {storeName: item, process: processdata}
-      return resultdata
-    })
-    setCheckResult(storeOrders)
-    setListload(false)
+    try{
+      setListload(true)
+      const Date = dateValue?.format('YYYY-MM-DD')
+      const ordersGet = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M'})
+      const storeData = await window.myInventoryAPI.ListGet({sheetName: 'その他一覧', action: 'ListGet', ranges: 'A2:B'})
+      const storefilter = storeData.filter(item => item[1] !== '')
+      const storeList = storefilter.map(item => item[0])
+      const filterd = ordersGet.filter(row => isoToJstYMD(row[0]) == Date)
+      setOrderData(filterd)
+      const storeOrders = storeList.map(item => {
+        const storeOrder = filterd.filter(row => row[1] == item)
+        let processdata = ''
+        const processlist = storeOrder.map(process => process[12])
+        const donere = processlist.includes('印刷済')
+        const notre = processlist.includes('未印刷')
+        const nonere = processlist.includes('注文無')
+        if(donere && !notre && !nonere){
+          processdata = '印刷済';
+        }else if(!donere && notre && !nonere){
+          processdata = '未印刷';
+        }else if(donere && notre && !nonere){
+          processdata = '一部未印刷';
+        }else if(!donere && !notre && !nonere){
+          processdata = '未注文';
+        }else if(nonere && !donere && !notre){
+          processdata = '注文無';
+        }
+        let resultdata = {storeName: item, process: processdata}
+        return resultdata
+      })
+      setCheckResult(storeOrders)
+    } catch (error){
+      toast(
+        `${error}`,
+        {
+          duration: 6000,
+        }
+      )
+    } finally {
+      setListload(false)
+    }
   };
 
 
@@ -140,7 +150,7 @@ export default function HQPage() {
   useEffect(() => {
     StoresGet()
     OceanListGet()
-  },[])
+  }, [])
 
   useEffect(() => {
     setGetDate(dateValue?.format('YYYY-MM-DD') ?? "")
@@ -165,9 +175,8 @@ export default function HQPage() {
 
     if (vendorSelect.value == '大洋商会') {
       window.myInventoryAPI.orderPrint(`taiyo?${Vendorparams.toString()}`)
-    }else{
+    } else {
       window.myInventoryAPI.orderPrint(`VendorPrint?${Vendorparams.toString()}`)
-      //navigate(`/etcPrint?${Vendorparams.toString()}`);
     }
   }
 
@@ -175,9 +184,7 @@ export default function HQPage() {
 
   const VendorOrderData = async () => {
     const data = await window.myInventoryAPI.ListGet({sheetName: '在庫一覧', action: 'TotallingGet', ranges: 'A2:M'})
-    //const FAX = VendorList.map(item => item.value)
     const filterdata = data.filter(item => item[12] < 0)
-
     console.log(data)
     console.log(filterdata)
     console.log(VendorList)
@@ -219,7 +226,6 @@ export default function HQPage() {
     }
     const store = storeSelect.value
     const filterData = orderData.filter(item => item[1] == store)
-    console.log(orderData)
     if(filterData.length === 0){
       return
     }
@@ -246,19 +252,15 @@ export default function HQPage() {
     const updataStore = checkresult
       .filter((row: CheckResultItem) => !['注文無', '未注文'].includes(row.process))
       .map((row: CheckResultItem) => row.storeName);
-    //console.log(updataStore)
     if(orderData.length === 0){
       toast.error('印刷できるデータがありません')
       return
     }
     const filterd = orderData.filter(row => updataStore.includes(row[1]))
-    //console.log(filterd)
     const setdata = JSON.stringify(filterd)
     await window.myInventoryAPI.storeSet('printData', setdata)
     await window.myInventoryAPI.storeSet('printDate', getDate)
     sessionStorage.setItem('printDate', getDate)
-    //store.set('printData',setData)
-    //const setData = encodeURIComponent(JSON.stringify(orderData))
     window.myInventoryAPI.orderPrint('PrintContent');
     window.myInventoryAPI.DataInsert({
       sheetName: '店舗へ',
