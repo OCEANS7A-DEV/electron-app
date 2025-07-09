@@ -47,6 +47,8 @@ export default function Uriage() {
 
   const [SalseData, setSalesData] = useState([])
 
+  const [SalseDataF, setSalesDataF] = useState([])
+
   const [headers, setHeaders] = useState([])
 
 
@@ -66,6 +68,7 @@ export default function Uriage() {
     })
     setHeaders(result[0])
     const data = result.filter(item => item[0] !== '日')
+    dataFilter(data)
     setSalesData(data)
   }
 
@@ -86,6 +89,18 @@ export default function Uriage() {
     }
     setMonths(monthList)
   }
+
+  const dataFilter = (data) => {
+    const start = new Date(Year, Month - 1, 1)
+    const end = new Date(Year, Month - 1, 1)
+    end.setMonth(end.getMonth()+1, 0);
+    const filterd = data.filter(item => new Date(item[0]) >= start)
+    setSalesDataF(filterd)
+  }
+
+  useEffect(() => {
+    dataFilter(SalseData)
+  }, [Year, Month])
 
   useEffect(() => {
     ListSet()
@@ -158,7 +173,7 @@ export default function Uriage() {
           </ThemeProvider>
         </div>
         <div className="uriage">
-          <table style={{}}>
+          <table>
             <thead>
               <tr>
                 {headers.map((row) => (
@@ -167,7 +182,7 @@ export default function Uriage() {
               </tr>
             </thead>
             <tbody>
-              {SalseData.map((row,index) => (
+              {SalseDataF.map((row,index) => (
                 <tr key={index}>
                   {row.map((item, colIdx) => (
                     <React.Fragment key={colIdx}>

@@ -13,9 +13,16 @@ table {
 
 .uriage th{
   white-space: nowrap;
+  background-color: #696969;
 }
 
 .uriage td, .uriage th{
   border: 1px white solid;
   padding: 10px;
+  min-width: 70px;
+}
+
+
+.uriage {
+  margin-top: 10px;
 }
