@@ -1,13 +1,10 @@
 import LinkBaner from '../comp/Linkbanar'
-
 import '../css/uriage.css'
 import { Button } from '@mui/material'
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
-} from 'recharts';
+// import { 
+//   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
+// } from 'recharts';
 import React, { useState, useEffect } from 'react'
-
-
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
@@ -51,6 +48,8 @@ export default function Uriage() {
 
   const [headers, setHeaders] = useState([])
 
+  const [allTotal, setAllTotal] = useState(0)
+
 
   const handleYearChange = (e: SelectChangeEvent<number>) => {
     setYear(e.target.value)
@@ -69,20 +68,27 @@ export default function Uriage() {
     setHeaders(result[0])
     const data = result.filter(item => item[0] !== '日')
     dataFilter(data)
+    const uniqueYears = Array.from(
+      new Set(
+        data.map(item => {
+          const date = new Date(item[0])
+          return date.getFullYear()
+        })
+      )
+    )
+    const yearsset: SelectOption[] = uniqueYears.map(year => ({
+      value: year,
+      label: `${year}年`
+    }))
+    const yearssetReversed = [...yearsset].reverse()
+    setYears(yearssetReversed)
+
     setSalesData(data)
   }
 
 
 
   const ListSet = () => {
-    const now = new Date()
-    const year = now.getFullYear()
-    const yearList: SelectOption[] = [
-      { value: year + 1, label: `${year + 1}年`},
-      { value: year, label: `${year}年`},
-      { value: year - 1, label: `${year - 1}年`}
-    ]
-    setYears(yearList)
     const monthList: SelectOption[] = []
     for (let i = 0; i < 12; i++){
       monthList.push({ value: i + 1, label: `${i + 1}月`})
@@ -94,7 +100,12 @@ export default function Uriage() {
     const start = new Date(Year, Month - 1, 1)
     const end = new Date(Year, Month - 1, 1)
     end.setMonth(end.getMonth()+1, 0);
-    const filterd = data.filter(item => new Date(item[0]) >= start)
+    const filterd = data.filter(item => new Date(item[0]) >= start && new Date(item[0]) <= end)
+    let result = 0
+    filterd.forEach(item => {
+      result = result + Number(item[2])
+    })
+    setAllTotal(result)
     setSalesDataF(filterd)
   }
 
@@ -131,7 +142,7 @@ export default function Uriage() {
       <div className="uriage-main">
         <div className="uriage-top">
           <ThemeProvider theme={darkTheme}>
-            <div className="Inventory_Amount_title">
+            <div className="uriage-title">
               <div style={{ width: 120 }}>
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">年</InputLabel>
@@ -169,6 +180,10 @@ export default function Uriage() {
                 </FormControl>
               </div>
               <Button variant="outlined" onClick={SalesGet}>売上取得</Button>
+              <div className="all-total">
+                <div>当月売上</div>
+                <div>{allTotal.toLocaleString()}</div>
+              </div>
             </div>
           </ThemeProvider>
         </div>
