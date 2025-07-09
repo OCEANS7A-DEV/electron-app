@@ -17,10 +17,8 @@ const isoToJstYMD = (isoString) => {
 
 export const loader =  async ({ request }: { request: Request }) => {
   const data = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:L'})
-  
   const url = new URL(request.url);
   const date = url.searchParams.get("date") ?? '2025-06-09';
-  console.log(date)
   const shortage = data.filter(item => item[2] !== '' && (isoToJstYMD(item[0]) == date) && typeof item[3] == 'string')
   return shortage
 }

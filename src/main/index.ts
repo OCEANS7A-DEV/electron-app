@@ -19,7 +19,7 @@ import keytar from "keytar"
 
 import prompt from "electron-prompt"
 
-
+const gotTheLock = app.requestSingleInstanceLock();
 const windowManager = new Map()
 
 
@@ -945,6 +945,10 @@ const initAutoUpdater = async (win: BrowserWindow) => {
 }
 
 app.whenReady().then(async () => {
+  if(gotTheLock){
+    app.quit();
+    return
+  }
   electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
   await createUpdaterWindow()
   app.on('browser-window-created', (_, window) => {

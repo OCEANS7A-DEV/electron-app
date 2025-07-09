@@ -396,8 +396,6 @@ export default function HQPage() {
                       value={vendorSelect}
                       onChange={(e) => setVendorSelect(e)}
                       options={VendorList}
-                      // menuPlacement="auto"
-                      // menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                     />
                   </div>
                   <div>
@@ -408,8 +406,6 @@ export default function HQPage() {
                       value={addressSelect}
                       onChange={(e) => setAdoressSelect(e)}
                       options={AddressList}
-                      // menuPlacement="auto"
-                      // menuPortalTarget={typeof document !== "undefined" ? document.body : null}
                     />
                   </div>
                   <Button variant='outlined' onClick={VendorOrderData}>取得</Button>
