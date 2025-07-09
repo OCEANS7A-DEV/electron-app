@@ -141,6 +141,7 @@ const LinkBaner = (data) => {
             {data.id == 'OfficeWork' && (
               <div className="Link-button" style={{ marginTop: "40px" }}>
                 <Button variant="outlined" onClick={() => navigate('/PDFOperation')} sx={{height:'30px', margin: "5px 10px", width: 120}}>PDF操作</Button>
+                <Button variant="outlined" onClick={() => navigate('/Uriage')} sx={{height:'30px', margin: "5px 10px", width: 120}}>売上</Button>
               </div>
             )}
             {data.id == 'Setting' && (

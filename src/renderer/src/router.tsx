@@ -26,6 +26,7 @@ import SystemSettingPage from './router/systemSetting'
 import InventoryAmount, { loader as InventoryAmountLoader } from './router/InventoryAmount'
 import GoogleWindow from './router/GoogleLogin'
 import LauncherPage from './router/launcher'
+import Uriage from './router/Uriage'
 
 
 
@@ -134,5 +135,9 @@ export const router = createHashRouter([
   {
     path: '/launcher',
     element: <LauncherPage/>
+  },
+  {
+    path: '/Uriage',
+    element: <Uriage/>
   }
 ])

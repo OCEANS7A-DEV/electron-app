@@ -1,0 +1,21 @@
+table {
+  border-collapse: collapse;
+}
+
+
+.uriage-main {
+  color: white;
+  padding-top: 80px;
+  display: flex;
+  flex-flow: column;
+  padding-left: 20px;
+}
+
+.uriage th{
+  white-space: nowrap;
+}
+
+.uriage td, .uriage th{
+  border: 1px white solid;
+  padding: 10px;
+}

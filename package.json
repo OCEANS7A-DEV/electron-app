@@ -99,6 +99,7 @@
     "react-sweetalert2": "^0.6.0",
     "react-virtualized": "^9.22.6",
     "react-window": "^1.8.11",
+    "recharts": "^3.1.0",
     "router": "^2.2.0",
     "sweetalert2": "^11.19.1"
   },
