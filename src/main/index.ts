@@ -945,7 +945,7 @@ const initAutoUpdater = async (win: BrowserWindow) => {
 }
 
 app.whenReady().then(async () => {
-  if(!gotTheLock){
+  if(!gotTheLock){//多重起動しないように
     app.quit();
     return
   }
