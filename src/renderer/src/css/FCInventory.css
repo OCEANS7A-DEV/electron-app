@@ -1,0 +1,25 @@
+
+
+.FCInventoryText-code{
+  padding: 0px 8px;
+  width: 110px;
+}
+
+.FCInventoryText-name{
+  padding: 0px 8px;
+  width: 300px;
+}
+
+.FCInventoryText-quantity{
+  padding: 0px 8px;
+  width: 80px;
+}
+
+.FCInventoryButton {
+  padding: 0px 8px;
+}
+
+.FC-Select {
+  padding: 8px;
+  margin-left: 60px;
+}

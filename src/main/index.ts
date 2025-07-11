@@ -1069,6 +1069,7 @@ ipcMain.on('button-Upgrade', () => {
 
 ipcMain.on('Main-boot', () => {
   createLauncherWindow()
+  launcherWindow.show()
 })
 
 
@@ -1076,18 +1077,22 @@ ipcMain.on('Main-boot', () => {
 
 ipcMain.on('WindowZaiko', () => {
   createZaikoWindow()
+  launcherWindow.minimize()
 })
 
 ipcMain.on('HelloWorkWindow', () => {
   createHelloWorkWindow()
+  launcherWindow.minimize()
 })
 
 ipcMain.on('OfficeWorkWindow', () => {
   createOfficeWorkWindow()
+  launcherWindow.minimize()
 })
 
 ipcMain.on('SettingWindow', () => {
   createSettingWindow()
+  launcherWindow.minimize()
 })
 
 

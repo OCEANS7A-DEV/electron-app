@@ -125,12 +125,14 @@ const LinkBaner = (data) => {
                 <Button variant='outlined' onClick={() => navigate('/StoreOrder')} sx={{height:'30px', margin: "5px 10px", width: 120}}>店舗注文</Button>
                 <Button variant='outlined' onClick={() => navigate('/Moving')} sx={{height:'30px', margin: "5px 10px", width: 120}}>店舗間移動</Button>
                 <Button variant="outlined" onClick={() => navigate('/HQ_Stocks')} sx={{height:'30px', margin: "5px 10px", width: 120}}>在庫数</Button>
+                <Button variant="outlined" onClick={() => navigate('/FCInventory')} sx={{height:'30px', margin: "5px 10px", width: 120}}>FC在庫数</Button>
                 <Button variant="outlined" onClick={() => navigate('/netOrder')} sx={{height:'30px', margin: "5px 10px", width: 120}}>発注サイト</Button>
                 <Button variant="outlined" onClick={() => navigate('/CatalogView')} sx={{height:'30px', margin: "5px 10px", width: 120}}>カタログ</Button>
                 <Button variant="outlined" onClick={() => navigate('/process_chack')} sx={{height:'30px', margin: "5px 10px", width: 120}}>印刷関係</Button>
                 <Button variant="outlined" onClick={() => navigate('/ProductListUpdata')} sx={{height:'30px', margin: "5px 10px", width: 120}}>商品設定</Button>
                 <Button variant="outlined" onClick={() => navigate('/zaikosetting')} sx={{height:'30px', margin: "5px 10px", width: 120}}>在庫設定</Button>
-                <Button variant="outlined" onClick={() => navigate('/InventoryAmount')} sx={{height:'30px', margin: "5px 10px", width: 120}}>在庫金額</Button>                
+                <Button variant="outlined" onClick={() => navigate('/InventoryAmount')} sx={{height:'30px', margin: "5px 10px", width: 120}}>在庫金額</Button>
+                
               </div>
             )}
             {data.id == 'helloWork' && (

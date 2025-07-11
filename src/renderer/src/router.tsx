@@ -27,6 +27,7 @@ import InventoryAmount, { loader as InventoryAmountLoader } from './router/Inven
 import GoogleWindow from './router/GoogleLogin'
 import LauncherPage from './router/launcher'
 import Uriage from './router/Uriage'
+import FCInventory, { loader as FCLoader } from './router/FCInventory'
 
 
 
@@ -139,5 +140,10 @@ export const router = createHashRouter([
   {
     path: '/Uriage',
     element: <Uriage/>
+  },
+  {
+    path: '/FCInventory',
+    element: <FCInventory/>,
+    loader: FCLoader
   }
 ])
