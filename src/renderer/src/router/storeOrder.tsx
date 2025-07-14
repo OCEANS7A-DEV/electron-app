@@ -564,6 +564,15 @@ export default function StoreOrderPage() {
                     onKeyDown={(e) => handleEnterFocusNext(e)}
                   />
                   <input
+                    {...register(`rows.${index}.price`, {
+                      validate: (value) => isHalfWidth(value) || '半角数字で入力してください'
+                    })}
+                    className="price"
+                    placeholder="単価"
+                    onKeyDown={(e) => handleEnterFocusNext(e)}
+                    type="text"
+                  />
+                  <input
                     {...register(`rows.${index}.person`)}
                     className="personal"
                     placeholder='個人購入'

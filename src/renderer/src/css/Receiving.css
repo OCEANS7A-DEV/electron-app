@@ -34,7 +34,6 @@
 .insert_area_store {
   white-space: nowrap;
   display: flex;
-  /* justify-content:center; */
   margin-left: 20px;
   margin-right: 20px;
   margin-bottom: 10px; /* 各行の間にスペースを追加 */
@@ -42,7 +41,14 @@
 
 .insert_area_store input {
   height: 32px;
+  font-size: 18px;
 }
+
+.insert_area_store input::placeholder {
+  height: 32px;
+  font-size: 14px;
+}
+
 
 .in-area{
   overflow-x: visible;
@@ -118,6 +124,7 @@
 .insert_Select,
 .insert_price,
 .personal,
+.price,
 .remarks {
   margin-right: 10px; /* フィールド間のスペースを調整 */
 }
@@ -171,6 +178,11 @@
 
 .remarks {
   width: 200px;
+}
+
+.price{
+  width: 100px;
+  text-align: right;
 }
 
 .insertDate{

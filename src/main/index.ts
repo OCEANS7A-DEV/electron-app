@@ -75,6 +75,11 @@ async function updateOrPromptToken(launcherWindow: BrowserWindow): Promise<strin
   return token;
 }
 
+// const SQL = {
+//   user: 'electronUser',
+//   password: 'electronUser',
+// }
+
 
 
 const PUPPETEER_ARGS = [
