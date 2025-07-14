@@ -80,6 +80,12 @@ export const loader = async () => {
     ranges: 'A2:C'
   });
 
+  const datas = await window.myInventoryAPI.ListGet({
+    sheetName: '在庫履歴',
+    action: 'FCInventoryGet',
+    ranges: 'A2:D'
+  });
+
   const storenames: SelectOption[] = stores
     .filter(row => row[2] !== "" && row[2] == 'FC')
     .map(item => ({
@@ -101,12 +107,12 @@ export const loader = async () => {
     monthList.push({ value: i + 1, label: `${i + 1}月`})
   }
 
-  return { storenames, yearList, monthList }
+  return { storenames, yearList, monthList, datas }
 }
 
 
 export default function FCInventory() {
-  const { storenames, yearList, monthList } = useLoaderData<typeof loader>()
+  const { storenames, yearList, monthList, datas } = useLoaderData<typeof loader>()
   //console.log(storenames)
 
   const [marginNum, setMarginNum] = useState(100)
@@ -114,6 +120,41 @@ export default function FCInventory() {
   const [storeSelect, setStoreSelect] = React.useState('');
   const [Year, setYear] = useState<number>(new Date().getFullYear())
   const [Month, setMonth] = useState<number>(new Date().getMonth() + 1)
+  const [DeleteRowNum, setDeleteRowNum] = useState<number>(0)
+  
+
+  useEffect(() => {
+    DataSet()
+  }, [storeSelect, Year, Month])
+
+
+  const DataSet = async() => {
+    reset({
+      rows: defaultSet()
+    })
+    const List = await window.myInventoryAPI.ListData()
+    const storeId = storenames.find((item) => item.value == storeSelect)
+    const filter = datas.filter((item) => item[1] == storeId?.id)
+    setDeleteRowNum(filter.length)
+    let count = 0
+    if (filter.length == 0){
+      return
+    }
+    for (let i = 0; i < filter.length; i++) {
+      append(defaultRowData, { shouldFocus: false })
+    }
+    filter.forEach(async (item) => {
+      const code = item[2]
+      const productData = List.find((item) => item.code == code)
+      if (productData) {
+        const name = productData.name
+        setValue(`rows.${count}.name`, name)
+      }
+      setValue(`rows.${count}.code`, code)
+      setValue(`rows.${count}.quantity`, item[3])
+      count++
+    })
+  }
 
 
   useEffect(() => {
@@ -122,7 +163,7 @@ export default function FCInventory() {
     }else{
       setMarginNum(80)
     }
-  },[DisplayStatus])
+  }, [DisplayStatus])
 
   const { control, register, handleSubmit, getValues, setValue, reset } =
     useForm<FormValues>({
@@ -208,8 +249,13 @@ export default function FCInventory() {
     })
   }
 
-  const RowInsert = async (index) => {
-    insert(index, defaultRowData, { shouldFocus: false })
+  // const RowInsert = async (index) => {
+  //   insert(index, defaultRowData, { shouldFocus: false })
+  // }
+
+  const RowRemove = async (index) => {
+    remove(index)
+    append(defaultRowData, { shouldFocus: false })
   }
 
   const addNewForm = () => {
@@ -228,10 +274,11 @@ export default function FCInventory() {
       })
       return
     }
+
     let Selectdate = new Date(Year, Month - 1, 1)
-    Selectdate.setMonth(Selectdate.getMonth()+1, 0)
+    Selectdate.setMonth(Selectdate.getMonth() + 1, 0)
     const inputDate = Selectdate.toLocaleDateString()
-    const storeId = storenames.find(item => item.value == storeSelect)
+    const storeId = storenames.find((item) => item.value == storeSelect)
     const filterData = getValues().rows.filter((row) => row.code !== '')
     const formData = filterData.map((item) => {
       const result = [
@@ -242,17 +289,15 @@ export default function FCInventory() {
       ]
       return result
     })
-    console.log(formData)
-    // return
-    // if (formData.length >= 1) {
-    //   await window.myInventoryAPI.DataInsert({
-    //     sheetName: '在庫履歴',
-    //     action: 'FCInventory',
-    //     sub_action: 'insert',
-    //     data: formData,
-    //     deleteNum: DeleteRowNum
-    //   })
-    // }
+    if (formData.length >= 1) {
+      await window.myInventoryAPI.DataInsert({
+        sheetName: '在庫履歴',
+        action: 'FCInventory',
+        sub_action: 'insert',
+        data: formData,
+        deleteNum: DeleteRowNum
+      })
+    }
     toast.success('送信しました')
   }
 
