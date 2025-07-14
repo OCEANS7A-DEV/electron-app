@@ -44,7 +44,7 @@ export default function Uriage() {
 
   const [SalseData, setSalesData] = useState([])
 
-  const [SalseDataF, setSalesDataF] = useState([])
+  const [SalseDataF, setSalesDataF] = useState<any[][]>([])
 
   const [headers, setHeaders] = useState([])
 
@@ -77,7 +77,7 @@ export default function Uriage() {
       )
     )
     const yearsset: SelectOption[] = uniqueYears.map(year => ({
-      value: year,
+      value: Number(year),
       label: `${year}年`
     }))
     const yearssetReversed = [...yearsset].reverse()
