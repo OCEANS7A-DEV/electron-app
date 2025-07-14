@@ -243,6 +243,13 @@ export default function StoreOrderPage() {
     setDate(date)
   }, [])
 
+
+  useEffect(() => {
+    const date = dateValue?.toDate()
+    const Setdate = getNearestMonday(date)
+    setDate(Setdate)
+  }, [dateValue])
+
   const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
