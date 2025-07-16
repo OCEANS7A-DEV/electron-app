@@ -343,7 +343,9 @@ export default function ProductDetailChangePage() {
     };
     updateHeight();
     window.addEventListener('resize', updateHeight);
+    //dialogOpen(0)
     return () => window.removeEventListener('resize', updateHeight);
+    
   }, [])
 
   useEffect(() => {
@@ -540,9 +542,10 @@ export default function ProductDetailChangePage() {
   }
 
 
-  const DialogClosed = async () => {
-    //console.log('閉じる')
-    setModalOpen(false)
+  const DialogClosed = async (e) => {
+    if (e.target === e.currentTarget){
+      setModalOpen(false)
+    }
   }
 
 

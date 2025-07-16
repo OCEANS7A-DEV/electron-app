@@ -28,6 +28,7 @@ import GoogleWindow from './router/GoogleLogin'
 import LauncherPage from './router/launcher'
 import Uriage from './router/Uriage'
 import FCInventory, { loader as FCLoader } from './router/FCInventory'
+import HQdata, { loader as HQLoader } from './router/HQdata'
 
 
 
@@ -145,5 +146,10 @@ export const router = createHashRouter([
     path: '/FCInventory',
     element: <FCInventory/>,
     loader: FCLoader
+  },
+  {
+    path: '/HQdata',
+    element: <HQdata/>,
+    loader: HQLoader,
   }
 ])

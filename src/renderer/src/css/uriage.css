@@ -37,5 +37,161 @@ table {
 
 .all-total {
   font-size: 20px;
-
 }
+
+/* HQdata */
+
+.HQdata-window {
+  color: white;
+  padding-top: 80px;
+  display: flex;
+  flex-flow: column;
+}
+
+.HQdata-table {
+  flex: 1;
+}
+
+.HQdata-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.HQdata-table-area {
+  margin-top: 20px;
+  padding: 0px 10px;
+  display: flex;
+}
+
+
+.HQdata-table-title {
+  min-width: 200px;
+  max-width: 200px;
+}
+
+.HQdata-table-remarks {
+  min-width: 500px;
+}
+
+.HQdata-table-operation {
+  min-width: 130px;
+  max-width: 130px;
+}
+
+.HQdata-table-operation-td {
+  display: flex;
+  justify-content: space-between;
+}
+
+.HQdata-table th, .HQdata-table td {
+  border: 1px white solid;
+  padding: 8px 12px;
+}
+
+
+/* detail */
+
+
+.modalOverlaydetail {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modalOverlaydetail.open {
+  display: flex;
+}
+
+.modaldetailContent {
+  font-size: 16px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 400px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+
+.modal-dialog-HQdetail {
+  font-size: 16px;
+  background: white;
+  border-radius: 8px;
+  min-width: 400px;
+}
+
+
+.HQdetail-top {
+  display: flex;
+  justify-content: center;
+  min-width: 750px;
+  height: 60px;
+}
+
+.HQdetail-window ul {
+  width: 100%;
+  padding-left: 0;
+}
+
+
+
+.HQdetail-list div {
+  min-height: 40px;
+}
+
+
+.modal-dialog-HQdetail {
+  display: flex;
+  justify-content: center;
+}
+
+.HQdetail-list {
+  width: 100%;
+  justify-content: space-between;
+  padding-bottom: 0px;
+  border-bottom: 1px gray solid;
+}
+
+.HQdetail-list-title {
+  width: 100%;
+}
+
+.HQdetail-list-content {
+  margin-top: 20px;
+  width: 50%;
+}
+.HQdetail-window {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+
+.HQdetail-window-title {
+  flex: 1;
+  text-align: center;
+  margin-bottom: 4px;
+  font-size: 25px;
+}
+
+.HQdetail-window .p-4 {
+  overflow-y: auto;
+  height: calc(100vh - 300px);
+}
+
+.HQdetail-window .p-4::-webkit-scrollbar {
+  display: none;
+}
+
+.HQdetail-button-area {
+  display: flex;
+  justify-content: space-around;
+}
+
+
