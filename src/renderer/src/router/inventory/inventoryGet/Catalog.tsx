@@ -1,7 +1,7 @@
 
 import { Select, MenuItem, TextField, Button } from '@mui/material';
 import React, { useEffect, useState, useRef } from 'react';
-import LinkBaner from '../comp/Linkbanar'
+import LinkBaner from '../../../comp/Linkbanar'
 
 export default function CatalogView() {
   //const [files, setFiles] = useState<string[]>([]);

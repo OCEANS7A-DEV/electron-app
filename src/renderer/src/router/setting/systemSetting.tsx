@@ -1,7 +1,7 @@
 import React from 'react'
 
-import LinkBaner from '../comp/Linkbanar'
-import '../css/setting.css'
+import LinkBaner from '../../comp/Linkbanar'
+import '../../css/setting.css'
 
 
 

@@ -1,6 +1,6 @@
 import { useLoaderData } from "react-router-dom"
-import '../css/stocks.css'
-import LinkBaner from '../comp/Linkbanar'
+import '../../../css/stocks.css'
+import LinkBaner from '../../../comp/Linkbanar'
 import React, { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
 import { Button } from '@mui/material'

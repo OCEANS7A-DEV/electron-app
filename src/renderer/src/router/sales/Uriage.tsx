@@ -1,5 +1,5 @@
-import LinkBaner from '../comp/Linkbanar'
-import '../css/uriage.css'
+import LinkBaner from '../../comp/Linkbanar'
+import '../../css/uriage.css'
 import { Button } from '@mui/material'
 // import { 
 //   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 

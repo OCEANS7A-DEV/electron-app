@@ -1,5 +1,5 @@
-import LinkBaner from '../comp/Linkbanar'
-import '../css/uriage.css'
+import LinkBaner from '../../comp/Linkbanar'
+import '../../css/uriage.css'
 import { Button } from '@mui/material'
 // import { 
 //   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
@@ -14,7 +14,7 @@ import { useLoaderData } from 'react-router-dom'
 import { TextField } from '@mui/material'
 import SweetAlert2 from 'react-sweetalert2'
 import { useForm, useFieldArray } from 'react-hook-form'
-import HQDialogTable from '../comp/HQdetail'
+import HQDialogTable from '../../comp/HQdetail'
 
 
 

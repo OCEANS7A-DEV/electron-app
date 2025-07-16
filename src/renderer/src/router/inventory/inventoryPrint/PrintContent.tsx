@@ -1,8 +1,8 @@
 // PrintContent.tsx
 import React, { useEffect } from 'react'
 //import { useLocation } from 'react-router-dom';
-import '../css/PrintContent.css'
-import '../css/orderPrint.css'
+import '../../../css/PrintContent.css'
+import '../../../css/orderPrint.css'
 import { useLoaderData } from "react-router-dom";
 
 

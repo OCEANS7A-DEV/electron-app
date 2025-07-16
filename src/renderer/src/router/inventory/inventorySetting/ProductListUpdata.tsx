@@ -3,20 +3,20 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { useLoaderData } from "react-router-dom"
-import LinkBaner from '../comp/Linkbanar'
+import LinkBaner from '../../../comp/Linkbanar'
 
 import { Select, MenuItem, Tooltip, Box } from '@mui/material'
 
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
 
-import '../css/ProductsEdit.css'
+import '../../../css/ProductsEdit.css'
 import { Button } from '@mui/material'
 import Switch from '@mui/material/Switch'
 import { LinearProgress } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import toast, { Toaster } from 'react-hot-toast';
 
-import AddProductDialogTable from '../comp/NewProduct';
+import AddProductDialogTable from '../../../comp/NewProduct';
 import SweetAlert2 from 'react-sweetalert2';
 
 

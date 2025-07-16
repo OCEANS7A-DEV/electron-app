@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/taiyoPrint.css';
+import '../../../css/taiyoPrint.css';
 import { useLoaderData } from "react-router-dom";
 
 

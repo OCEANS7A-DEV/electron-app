@@ -1,8 +1,8 @@
 import { useLoaderData } from "react-router-dom";
 // import { ListGet } from '../backend/Server_end';
-import LinkBaner from '../comp/Linkbanar';
+import LinkBaner from '../../../comp/Linkbanar';
 // import { TableRow } from "@mui/material";
-import '../css/netOrder.css';
+import '../../../css/netOrder.css';
 import React, { useState, useEffect } from 'react'
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 

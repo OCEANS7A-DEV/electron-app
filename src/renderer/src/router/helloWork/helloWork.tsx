@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
-import LinkBaner from '../comp/Linkbanar'
-import '../css/HelloWork.css'
+import LinkBaner from '../../comp/Linkbanar'
+import '../../css/HelloWork.css'
 import { useLoaderData } from "react-router-dom"
 //import puppeteer from "puppeteer"
 import { Button } from '@mui/material'

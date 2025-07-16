@@ -2,15 +2,15 @@
 import React, { useState, ChangeEvent, useEffect } from 'react'
 import Select from 'react-select'
 //import { useLoaderData } from 'react-router-dom'
-import WordSearch from '../comp/ProductSearchWord'
-import '../css/Receiving.css'
+import WordSearch from '../../../comp/ProductSearchWord'
+import '../../../css/Receiving.css'
 import { Button } from '@mui/material'
-import LinkBaner from '../comp/Linkbanar'
+import LinkBaner from '../../../comp/Linkbanar'
 import SendIcon from '@mui/icons-material/Send'
 ////import DeleteIcon from '@mui/icons-material/Delete'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import SweetAlert2 from 'react-sweetalert2';
-import ConfirmDialogTable from '../comp/DialogTable'
+import ConfirmDialogTable from '../../../comp/DialogTable'
 import toast, { Toaster } from 'react-hot-toast';
 
 

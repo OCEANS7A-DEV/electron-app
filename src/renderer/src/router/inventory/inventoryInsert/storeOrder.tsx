@@ -1,15 +1,15 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react'
-import WordSearch from '../comp/ProductSearchWord'
-import '../css/Receiving.css'
+import WordSearch from '../../../comp/ProductSearchWord'
+import '../../../css/Receiving.css'
 import { Button } from '@mui/material'
 import { Autocomplete, TextField } from '@mui/material';
-import LinkBaner from '../comp/Linkbanar'
+import LinkBaner from '../../../comp/Linkbanar'
 import SendIcon from '@mui/icons-material/Send'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import SweetAlert2 from 'react-sweetalert2';
 import Swal from 'sweetalert2'
-import StoreDialogTable from '../comp/StoreDialogTable'
+import StoreDialogTable from '../../../comp/StoreDialogTable'
 import toast, { Toaster } from 'react-hot-toast';
 import { SubmitHandler } from 'react-hook-form'
 import { MenuItem } from '@mui/material'

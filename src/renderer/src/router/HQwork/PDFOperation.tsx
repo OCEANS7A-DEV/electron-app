@@ -1,6 +1,6 @@
 import React from 'react'
-import LinkBaner from '../comp/Linkbanar'
-import '../css/HelloWork.css'
+import LinkBaner from '../../comp/Linkbanar'
+import '../../css/HelloWork.css'
 import { Button } from '@mui/material'
 
 

@@ -1,7 +1,7 @@
 import { useLoaderData } from "react-router-dom"
-import LinkBaner from '../comp/Linkbanar'
+import LinkBaner from '../../../comp/Linkbanar'
 import React, { useState, useEffect } from 'react'
-import '../css/InventoryAmount.css'
+import '../../../css/InventoryAmount.css'
 
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import InputLabel from '@mui/material/InputLabel'
@@ -12,7 +12,7 @@ import TextField from '@mui/material/TextField'
 import { Button } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
 
-import '../css/Receiving.css'
+import '../../../css/Receiving.css'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form'
 

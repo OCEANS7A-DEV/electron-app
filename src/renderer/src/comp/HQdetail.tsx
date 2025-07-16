@@ -7,7 +7,7 @@ import '../css/uriage.css'
 
 
 type RowsType = {
-  mainid: number
+  mainID: number
   id: number
   detailTitle: string
   content: string
@@ -19,9 +19,7 @@ type FormValues = {
 }
 
 
-
-
-type RowdataValues = {
+type RowDataValues = {
   id: number;
   title: string;
   remarks: string;
@@ -29,20 +27,9 @@ type RowdataValues = {
 }
 
 interface Props {
-  data: RowdataValues;
+  data: RowDataValues;
   update: () => void;
 }
-
-const defaultRowData = {
-  mainid: null,
-  id: null,
-  detailTitle: '',
-  content: '',
-  remarks: ''
-}
-
-
-
 
 
 const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
@@ -55,12 +42,12 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
     setTitle(data.title)
     setTitleRemarks(data.remarks)
     setOldData(details)
-    lastidSet()
+    lastIDSet()
   }, [])
 
   const details = () => {
     return data.details.filter((row) => row[5] == 0).map((row) => ({
-      mainid: row[0],
+      mainID: row[0],
       id: row[1],
       detailTitle: row[2],
       content: row[3],
@@ -68,7 +55,7 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
     }))
   }
 
-  const { control, register, getValues, reset, handleSubmit } =
+  const { control, register, getValues, reset } =
     useForm<FormValues>({
       defaultValues: {
         rows: details()
@@ -112,26 +99,25 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
   }
 
   const deleteRow = (index) => {
-    lastidSet()
+    lastIDSet()
     remove(index)
   }
 
-  const lastidSet = () => {
+  const lastIDSet = () => {
     const newDetailData = getValues().rows
     const lastData = newDetailData[newDetailData.length - 1]
-    console.log(lastData.id)
     setLastID(lastData.id)
   }
 
   const detailNewdata = () => {
     append({
-      mainid: data.id,
+      mainID: data.id,
       id: lastID + 1,
       detailTitle: '',
       content: '',
       remarks: ''
     })
-    lastidSet()
+    lastIDSet()
   }
 
   useImperativeHandle(ref, () => ({
@@ -143,11 +129,6 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
     })
   }))
 
-
-  const onSubmit = (data: FormValues) => {
-    console.log('送信データ:', data.rows)
-    // ここでAPIに送信など処理を書く
-  }
 
   return (
     <div className="modal-dialog-HQdetail">
@@ -171,7 +152,7 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
             fullWidth
           />
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4">
+        <form className="p-4">
           <ul>
             {fields.map((field, index) => (
               <li key={field.id} className="insert_area">

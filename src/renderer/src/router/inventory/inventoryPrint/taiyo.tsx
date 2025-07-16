@@ -1,6 +1,6 @@
 import React,{ useEffect } from 'react';
 //import { kaigisituOrder, taiyoOrder, shortageGet, stockList } from '../backend/Server_end';
-import '../css/taiyoPrint.css';
+import '../../../css/taiyoPrint.css';
 import { useLoaderData } from "react-router-dom";
 import { Button } from '@mui/material'
 //import LinkBaner from '../comp/Linkbanar'

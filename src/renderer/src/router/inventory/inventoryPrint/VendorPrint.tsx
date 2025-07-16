@@ -2,8 +2,8 @@ import React from 'react';
 import { useLoaderData } from "react-router-dom"
 //import { getMonthString } from '../backend/utils'
 //import { shortageGet, ListGet, orderGet } from '../backend/Server_end';
-import '../css/kinbatoPrint.css';
-import '../css/taiyoPrint.css';
+import '../../../css/kinbatoPrint.css';
+import '../../../css/taiyoPrint.css';
 //import { useLoaderData, useNavigate, useSearchParams, json } from "@remix-run/react";
 //import { Print } from '../backend/utils';
 import jaconv from 'jaconv';

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { Button, FormControl, InputLabel } from '@mui/material'
-import WordSearch from '../comp/ProductSearchWord'
-import LinkBaner from '../comp/Linkbanar'
+import WordSearch from '../../../comp/ProductSearchWord'
+import LinkBaner from '../../../comp/Linkbanar'
 import toast, { Toaster } from 'react-hot-toast';
-import '../css/Receiving.css'
+import '../../../css/Receiving.css'
 import SendIcon from '@mui/icons-material/Send'
 import { SubmitHandler } from 'react-hook-form'
 import { MenuItem } from '@mui/material'
