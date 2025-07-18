@@ -76,17 +76,20 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
         const result = newDetailData.find(item => item.id == row.id)
         if (!result){
           return row.id
+        } else {
+          return null
         }
-      }).filter((row) => row !== undefined)
+      }).filter((row) => row !== null)
+      const addData: RowsType[] = []
       const updata: RowsType[] = []
-      const addData = newDetailData.map((row) => {
+      newDetailData.forEach((row) => {
         const result = oldData.find(item => item.id == row.id)
         if (!result){
-          return row
+          addData.push(row)
         } else {
           updata.push(result)
         }
-      }).filter((row) => row !== undefined)
+      })
       const updateData = {
         uuid: data.id,
         title: Title,
