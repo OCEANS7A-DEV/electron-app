@@ -175,6 +175,7 @@ const createUpdaterWindow = async() => {
       sandbox: false
     }
   })
+  initAutoUpdater(updaterWindow!);
   const token = await keytar.getPassword(SERVICE, ACCOUNT)
   if (!token){
     await getOrPromptToken(updaterWindow)
@@ -211,7 +212,7 @@ const createUpdaterWindow = async() => {
         }
 
         StartUpSet()
-        initAutoUpdater(updaterWindow!);
+        
         hasGoogleLoginCookie().then(isLoggedIn => {
           if (!isLoggedIn) {
             createGoogleLoginWindow()
@@ -225,12 +226,10 @@ const createUpdaterWindow = async() => {
         if (!is.dev) {
           isFirstRunUpdate = true
           setupAutoUpdater()
-          autoUpdater.checkForUpdates()
           setInterval(() => {
             if (launcherWindow) {
               isFirstRunUpdate = false
               log.info('定期アップデート確認中...')
-              autoUpdater.checkForUpdates()
             }
           }, 30 * 1000)
         } else {
@@ -936,6 +935,7 @@ const setupAutoUpdater = () => {
 const initAutoUpdater = async (win: BrowserWindow) => {
   const token = await getOrPromptToken(win);
   process.env.GH_TOKEN = token;
+
   autoUpdater.setFeedURL({
     provider: "github",
     owner: "OCEANS7A-DEV",
@@ -943,8 +943,23 @@ const initAutoUpdater = async (win: BrowserWindow) => {
     private: true,
     token
   });
-  autoUpdater.requestHeaders = { Authorization: `token ${token}` };
-  autoUpdater.checkForUpdatesAndNotify();
+
+  autoUpdater.requestHeaders = {
+    Authorization: `token ${token}`
+  };
+
+  setupAutoUpdater(); // イベント登録はここで
+
+  if (!is.dev) {
+    autoUpdater.checkForUpdates(); // 1回だけ
+    setInterval(() => {
+      isFirstRunUpdate = false;
+      log.info("定期アップデート確認中...");
+      autoUpdater.checkForUpdates();
+    }, 30 * 1000);
+  } else {
+    isFirstRunUpdate = true;
+  }
 }
 
 app.whenReady().then(async () => {
