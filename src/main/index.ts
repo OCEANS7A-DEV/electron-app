@@ -226,6 +226,7 @@ const createUpdaterWindow = async() => {
         if (!is.dev) {
           isFirstRunUpdate = true
           setupAutoUpdater()
+          autoUpdater.checkForUpdates()
           setInterval(() => {
             if (launcherWindow) {
               isFirstRunUpdate = false
