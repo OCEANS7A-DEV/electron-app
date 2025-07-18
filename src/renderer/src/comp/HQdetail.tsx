@@ -7,7 +7,7 @@ import toast, { Toaster } from 'react-hot-toast'
 
 type RowsType = {
   mainID: string
-  id: number
+  id: string
   detailTitle: string
   content: string
   remarks: string
@@ -22,7 +22,7 @@ type RowDataValues = {
   id: string;
   title: string;
   remarks: string;
-  details: [string, string, string, string, string][];
+  details: [string, string, string, string, string, string][];
 }
 
 interface Props {
@@ -47,7 +47,7 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
 
 
   const details = () => {
-    return data.details.filter((row) => row[5] == 0).map((row) => ({
+    return data.details.filter((row) => Number(row[5]) == 0).map((row) => ({
       mainID: row[0],
       id: row[1],
       detailTitle: row[2],
@@ -131,13 +131,13 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
   const lastIDSet = () => {
     const newDetailData = getValues().rows
     const lastData = newDetailData[newDetailData.length - 1]
-    setLastID(lastData.id)
+    setLastID(Number(lastData.id))
   }
 
   const detailNewdata = () => {
     append({
       mainID: data.id,
-      id: lastID + 1,
+      id: String(lastID + 1),
       detailTitle: '',
       content: '',
       remarks: ''

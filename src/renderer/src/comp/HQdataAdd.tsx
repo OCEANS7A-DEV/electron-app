@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react'
+import React, { useState, useImperativeHandle, forwardRef } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import '../css/orderDialog.css'
-import Select from '@mui/material/Select'
-import { MenuItem, TextField, Button } from '@mui/material'
+import { TextField, Button } from '@mui/material'
 import '../css/uriage.css'
 
 
@@ -18,25 +17,11 @@ type FormValues = {
   rows: RowsType[]
 }
 
-
-type RowDataValues = {
-  id: number;
-  title: string;
-  remarks: string;
-  details: [string, string, string, string, string][];
-}
-
 interface Props {
   Insert: () => void;
 }
 
 
-const defaultRowData = {
-  id: '',
-  title: '',
-  remarks: '',
-  details: []
-}
 
 const defaultRowDetail = {
   mainID: '',
