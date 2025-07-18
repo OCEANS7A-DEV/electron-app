@@ -935,12 +935,15 @@ const initAutoUpdater = async (win: BrowserWindow) => {
   await setupAutoUpdater();
 
   if (!is.dev) {
-    //autoUpdater.checkForUpdates();
+    setTimeout(() => {
+      log.info("初回アップデート確認中...");
+      autoUpdater.checkForUpdates();
+    }, 3000);
     setInterval(() => {
       isFirstRunUpdate = false;
       log.info("定期アップデート確認中...");
       autoUpdater.checkForUpdates();
-    }, 30 * 1000);
+    }, 300 * 1000);
   } else {
     isFirstRunUpdate = true;
   }
