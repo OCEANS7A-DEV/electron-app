@@ -22,6 +22,10 @@ import prompt from "electron-prompt"
 const gotTheLock = app.requestSingleInstanceLock();
 const windowManager = new Map()
 
+// electron-logをautoUpdaterに接続
+autoUpdater.logger = log
+// ログレベルを設定（'debug'にするとさらに詳細になります）
+autoUpdater.logger.transports.file.level = 'info'
 
 
 
