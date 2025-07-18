@@ -77,10 +77,7 @@ async function updateOrPromptToken(launcherWindow: BrowserWindow): Promise<strin
   return token;
 }
 
-// const SQL = {
-//   user: 'electronUser',
-//   password: 'electronUser',
-// }
+
 
 
 
@@ -139,20 +136,9 @@ const TokenCheck = async (token: string) => {
 
 const store = new Store() as any
 
-// const URL_STRING =
-//   'https://script.google.com/macros/s/AKfycbznkMazxV3wlmS66uEHcOSRkI_SBQkdfT_MfMzJnvueFkSwDxGFiLlmFtq-MfMM6ldL/exec'
-// const Get_URL =
-//   'https://script.google.com/macros/s/AKfycbwdZ3lhe2QH2BChceXrTsxzGAkUd9EgZ2AZ7pWXWlMJvwtOtOcjXDTOXUmdBRJgCs25/exec'
+
 // const Img_URL =
 //   'https://script.google.com/macros/s/AKfycbzCrMJDEFvfTTTCjb2b-8SwVgc2ySlsKwpf7c49H08DS6P4-ZulaS4zcNtiioytK0i6/exec'
-
-
-// const GetAPI_URL =
-//   'https://script.google.com/macros/s/AKfycbwCAqk6CMJl2obU-0edITVdKHEcXLwVhiD81ilwv2xuRWPSSr537A1cfaUSs5FvYn8D-g/exec'
-// const InsertAPI_URL =
-//   'https://script.google.com/macros/s/AKfycbylyaUttaEI9jYGJM_CQWOWyWAd3C9Q-ikbkNAMCUIPDYIWqtUHgrw9GHNgmgkWKE-M/exec'
-//const Archive_URL = ''
-//const Claim_URL = ''
 
 
 const GetAPI_URL = 'https://script.google.com/macros/s/AKfycbyu7GnlZ-yGcLn1j02ER3hiyKWeUcugopVAh4niSmM9j2_nIA9DhsXFu87PgKr4eBUBhA/exec'
@@ -286,10 +272,6 @@ const createGoogleLoginWindow = async() => {
     }
   });
 }
-
-
-//let mainWindow: BrowserWindow
-
 
 
 
