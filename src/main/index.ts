@@ -920,23 +920,22 @@ const setupAutoUpdater = () => {
 const initAutoUpdater = async (win: BrowserWindow) => {
   const token = await getOrPromptToken(win);
   process.env.GH_TOKEN = token;
-
   autoUpdater.setFeedURL({
     provider: "github",
     owner: "OCEANS7A-DEV",
     repo: "electron-app",
     private: true,
-    token
+    token: token
   });
 
   autoUpdater.requestHeaders = {
     Authorization: `token ${token}`
   };
 
-  setupAutoUpdater(); // イベント登録はここで
+  await setupAutoUpdater();
 
   if (!is.dev) {
-    autoUpdater.checkForUpdates(); // 1回だけ
+    //autoUpdater.checkForUpdates();
     setInterval(() => {
       isFirstRunUpdate = false;
       log.info("定期アップデート確認中...");
