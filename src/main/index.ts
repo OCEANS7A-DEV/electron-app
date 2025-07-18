@@ -185,8 +185,6 @@ const createUpdaterWindow = async() => {
       await updateOrPromptToken(updaterWindow)
       return
     } else {
-      console.log('start')
-
       if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         updaterWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/#updater`)
       } else {
@@ -198,7 +196,7 @@ const createUpdaterWindow = async() => {
           if (updaterWindow && !updaterWindow.isDestroyed() && is.dev) {
             updaterWindow.webContents.openDevTools({ mode: 'detach' });
           }
-        }, 300);
+        }, 300)
         if (is.dev) {
           if (updaterWindow && !updaterWindow.isDestroyed()) {
             updaterWindow.webContents.send('check', { status: 'dev', value: true });
