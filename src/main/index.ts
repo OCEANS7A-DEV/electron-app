@@ -223,20 +223,20 @@ const createUpdaterWindow = async() => {
           }
         });
 
-        if (!is.dev) {
-          isFirstRunUpdate = true
-          setupAutoUpdater()
-          autoUpdater.checkForUpdates()
-          setInterval(() => {
-            if (launcherWindow) {
-              isFirstRunUpdate = false
-              log.info('定期アップデート確認中...')
-            }
-          }, 30 * 1000)
-        } else {
-          isFirstRunUpdate = true
-          setupAutoUpdater()
-        }
+        // if (!is.dev) {
+        //   isFirstRunUpdate = true
+        //   setupAutoUpdater()
+        //   autoUpdater.checkForUpdates()
+        //   setInterval(() => {
+        //     if (launcherWindow) {
+        //       isFirstRunUpdate = false
+        //       log.info('定期アップデート確認中...')
+        //     }
+        //   }, 30 * 1000)
+        // } else {
+        //   isFirstRunUpdate = true
+        //   setupAutoUpdater()
+        // }
       })
     }
   }
