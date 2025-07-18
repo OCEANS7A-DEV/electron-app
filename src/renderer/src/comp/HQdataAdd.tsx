@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import '../css/orderDialog.css'
-import { TextField, Button } from '@mui/material'
+import Select from '@mui/material/Select'
+import { MenuItem, TextField, Button } from '@mui/material'
 import '../css/uriage.css'
-import toast, { Toaster } from 'react-hot-toast'
+
 
 type RowsType = {
   mainID: string
@@ -19,41 +20,42 @@ type FormValues = {
 
 
 type RowDataValues = {
-  id: string;
+  id: number;
   title: string;
   remarks: string;
   details: [string, string, string, string, string][];
 }
 
 interface Props {
-  data: RowDataValues;
-  update: () => void;
+  Insert: () => void;
 }
 
 
-const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
+const defaultRowData = {
+  id: '',
+  title: '',
+  remarks: '',
+  details: []
+}
+
+const defaultRowDetail = {
+  mainID: '',
+  id: 0,
+  detailTitle: '',
+  content: '',
+  remarks: ''
+}
+
+const HQAddDialogTable = forwardRef(({ Insert }: Props, ref) => {
   const [Title, setTitle] = useState('')
   const [TitleRemarks, setTitleRemarks] = useState('')
-  const [oldData, setOldData] = useState<any[]>([])
   const [lastID, setLastID] = useState(0)
-
-  useEffect(() => {
-    setTitle(data.title)
-    setTitleRemarks(data.remarks)
-    setOldData(details)
-    const defaultLast = data.details[data.details.length - 1][1]
-    setLastID(Number(defaultLast))
-  }, [])
 
 
   const details = () => {
-    return data.details.filter((row) => row[5] == 0).map((row) => ({
-      mainID: row[0],
-      id: row[1],
-      detailTitle: row[2],
-      content: row[3],
-      remarks: row[4]
-    }))
+    const newData = defaultRowDetail
+    newData.id = lastID + 1
+    return [newData]
   }
 
   const { control, register, getValues, reset } =
@@ -63,59 +65,10 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
       }
     })
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, } = useFieldArray({
     control,
     name: 'rows'
   })
-
-
-  const updateSend = async() => {
-    const dataUpdate = async () => {
-      const newDetailData = getValues().rows
-      const deleteID = oldData.map((row) => {
-        const result = newDetailData.find(item => item.id == row.id)
-        if (!result){
-          return row.id
-        }
-      }).filter((row) => row !== undefined)
-      const updata: RowsType[] = []
-      const addData = newDetailData.map((row) => {
-        const result = oldData.find(item => item.id == row.id)
-        if (!result){
-          return row
-        } else {
-          updata.push(result)
-        }
-      }).filter((row) => row !== undefined)
-      const updateData = {
-        uuid: data.id,
-        title: Title,
-        remarks: TitleRemarks,
-        deleteID: deleteID,
-        addData: addData,
-        updata: updata
-      }
-      await window.myInventoryAPI.DataInsert({
-        action: 'HQdataUpdate',
-        sub_action: 'insert',
-        data: updateData
-      })
-    }
-
-    toast.promise(
-      dataUpdate(),
-      {
-        loading: 'データ変更中...',
-        success: () => {
-          return '変更完了'
-        },
-        error: () => {
-          return 'エラーが発生しました'
-        },
-      },
-    )
-    update()
-  }
 
   const detailReset = () => {
     reset({
@@ -136,7 +89,7 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
 
   const detailNewdata = () => {
     append({
-      mainID: data.id,
+      mainID: '',
       id: lastID + 1,
       detailTitle: '',
       content: '',
@@ -147,7 +100,7 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
 
   useImperativeHandle(ref, () => ({
     getFormData: () => ({
-      id: data.id,
+      id: '',
       title: Title,
       remarks: TitleRemarks,
       detail: getValues().rows
@@ -159,7 +112,6 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
     <div className="modal-dialog-HQdetail">
       <div className="HQdetail-window">
         <div className="HQdetail-window-title">
-          <Toaster/>
           <div>詳細</div>
         </div>
         <div className="HQdetail-top">
@@ -216,13 +168,13 @@ const HQDialogTable = forwardRef(({ data, update }: Props, ref) => {
           </ul>
         </form>
         <div className="HQdetail-button-area">
-          <Button variant="outlined" onClick={detailNewdata}>追加</Button>
+          <Button variant="outlined" onClick={detailNewdata}>詳細追加</Button>
           <Button variant="outlined" onClick={detailReset}>状態リセット</Button>
-          <Button variant="outlined" onClick={updateSend}>更新</Button>
+          <Button variant="outlined" onClick={Insert}>データを追加</Button>
         </div>
       </div>
     </div>
   )
 })
 
-export default HQDialogTable;
+export default HQAddDialogTable;

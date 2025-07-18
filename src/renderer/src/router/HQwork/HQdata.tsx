@@ -4,7 +4,7 @@ import { Button } from '@mui/material'
 // import { 
 //   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 // } from 'recharts';
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 // import Select, { SelectChangeEvent } from '@mui/material/Select'
 // import InputLabel from '@mui/material/InputLabel'
 // import MenuItem from '@mui/material/MenuItem'
@@ -12,10 +12,10 @@ import React, { useState, useEffect, useRef } from 'react'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useLoaderData } from 'react-router-dom'
 import { TextField } from '@mui/material'
-import SweetAlert2 from 'react-sweetalert2'
 import { useForm, useFieldArray } from 'react-hook-form'
 import HQDialogTable from '../../comp/HQdetail'
-
+import HQAddDialogTable from '../../comp/HQdataAdd'
+import toast, { Toaster } from 'react-hot-toast'
 
 
 
@@ -45,14 +45,6 @@ type FormValues = {
 }
 
 
-const defaultRowData = {
-  id: '',
-  title: '',
-  remarks: '',
-  details: []
-}
-
-
 export const loader = async () => {
   const data = await window.myInventoryAPI.ListGet({
     action: 'HQdataGet',
@@ -69,10 +61,10 @@ export const loader = async () => {
 export default function HQdata() {
   const { data } = useLoaderData<typeof loader>()
   const [searchString, setSearchString] = useState('')
-  const [swalProps, setSwalProps] = useState({})
   const [modalOpen, setModalOpen] = useState(false)
-  const [selectRow, setSelectRow] = useState(0)
+  const [modalOpenAdd, setModalOpenAdd] = useState(false)
   const addDialogRef = useRef<any>(null)
+  const addDataDialogRef = useRef<any>(null)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
 
   const DefaultSet = (defData) => {
@@ -84,22 +76,42 @@ export default function HQdata() {
     }))
   }
 
-  const { control, register, getValues, reset } =
+  const DataRefresh = async () => {
+    const refresh = async () => {
+      const data = await window.myInventoryAPI.ListGet({
+        action: 'HQdataGet',
+        ranges: 'A2:C'
+      })
+      reset({
+        rows: DefaultSet(data.main)
+      })
+    }
+    toast.promise(
+      refresh(),
+      {
+        loading: '取得中...',
+        success: () => {
+          return '取得完了'
+        },
+        error: () => {
+          return 'エラーが発生しました'
+        },
+      },
+    )
+  }
+
+  const { control, getValues, reset } =
     useForm<FormValues>({
       defaultValues: {
         rows: DefaultSet(data.main),
       }
     })
 
-  const { fields, append, remove, insert, move } = useFieldArray({
+  const { fields } = useFieldArray({
     control,
     name: 'rows'
   })
 
-
-  useEffect(() => {
-    console.log(getValues())
-  }, [])
 
   const search = () => {
     const mainData = data.main.filter((item) => 
@@ -128,12 +140,30 @@ export default function HQdata() {
   const dialogOpen = (index) => {
     setSelectedRowIndex(index)
     setModalOpen(true)
-    //setAddRowIndex(index)
   }
 
   const HQDataDelete = async (index) => {
     const deleteId = getValues(`rows.${index}.id`)
-    console.log(deleteId)
+    const deletePost = async() => {
+      await window.myInventoryAPI.DataInsert({
+        action: 'HQmaindataDelete',
+        sub_action: 'insert',
+        data: deleteId
+      })
+    } 
+    toast.promise(
+      deletePost(),
+      {
+        loading: '実行中...',
+        success: () => {
+          DataRefresh()
+          return '実行完了'
+        },
+        error: () => {
+          return 'エラーが発生しました'
+        },
+      },
+    )
   }
 
 
@@ -142,17 +172,49 @@ export default function HQdata() {
       setModalOpen(false)
     }
   }
+  const DialogClosedAdd = async (e) => {
+    if (e.target === e.currentTarget){
+      setModalOpenAdd(false)
+    }
+  }
 
   const update = () => {
-    console.log(selectedRowIndex)
-    console.log(addDialogRef)
+    DataRefresh()
+    setModalOpen(false)
   }
+
+  const Insert = async() => {
+    setModalOpenAdd(false)
+
+    const DataInsert = async() => {
+      const insertData = addDataDialogRef.current.getFormData()
+      await window.myInventoryAPI.DataInsert({
+        action: 'HQdataInsert',
+        sub_action: 'insert',
+        data: insertData
+      })
+    }
+    toast.promise(
+      DataInsert(),
+      {
+        loading: '新規データ追加中...',
+        success: () => {
+          return '追加完了'
+        },
+        error: () => {
+          return 'エラーが発生しました'
+        },
+      },
+    )
+  }
+
 
 
   return (
     <div>
       <div className="banner">
         <LinkBaner id="OfficeWork"/>
+        <Toaster/>
       </div>
       <div className="HQdata-window">
         <div>
@@ -170,7 +232,12 @@ export default function HQdata() {
                 </Button>
               </div>
               <div>
-                <Button variant="outlined" onClick={search}>
+                <Button variant="outlined" onClick={DataRefresh}>
+                  データ更新
+                </Button>
+              </div>
+              <div>
+                <Button variant="outlined" onClick={() => setModalOpenAdd(true)}>
                   新規追加
                 </Button>
               </div>
@@ -211,9 +278,19 @@ export default function HQdata() {
         {selectedRowIndex !== null && (
           <div className="modaldetailContent">
             <HQDialogTable
-              data={getValues().rows[selectRow]}
+              data={getValues().rows[selectedRowIndex]}
               ref={addDialogRef}
               update={update}
+            />
+          </div>
+        )}
+      </div>
+      <div className={`modalOverlaydetail ${modalOpenAdd ? 'open' : ''}`} onClick={DialogClosedAdd}>
+        {modalOpenAdd !== false && (
+          <div className="modaldetailContent">
+            <HQAddDialogTable
+              ref={addDataDialogRef}
+              Insert={Insert}
             />
           </div>
         )}
