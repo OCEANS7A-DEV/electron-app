@@ -40,7 +40,8 @@
         "provider": "github",
         "owner": "OCEANS7A-DEV",
         "repo": "electron-app",
-        "private": true
+        "private": true,
+        "token": "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"
       }
     ]
   },
