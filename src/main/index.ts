@@ -920,17 +920,17 @@ const setupAutoUpdater = () => {
 const initAutoUpdater = async (win: BrowserWindow) => {
   const token = await getOrPromptToken(win);
   process.env.GH_TOKEN = token;
-  autoUpdater.setFeedURL({
-    provider: "github",
-    owner: "OCEANS7A-DEV",
-    repo: "electron-app",
-    private: true,
-    token: token
-  });
+  // autoUpdater.setFeedURL({
+  //   provider: "github",
+  //   owner: "OCEANS7A-DEV",
+  //   repo: "electron-app",
+  //   private: true,
+  //   token: token
+  // });
 
-  autoUpdater.requestHeaders = {
-    Authorization: `token ${token}`
-  };
+  // autoUpdater.requestHeaders = {
+  //   Authorization: `token ${token}`
+  // };
 
   await setupAutoUpdater();
 
