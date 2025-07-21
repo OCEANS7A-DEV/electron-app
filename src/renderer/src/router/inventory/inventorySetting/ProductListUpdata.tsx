@@ -247,6 +247,7 @@ export default function ProductDetailChangePage() {
   const [InsertDate, setDate] = useState<string>('')
 
   const [height, setHeight] = useState<number>(0);
+  console.log(height)
 
   const [swalProps, setSwalProps] = useState({})
 
