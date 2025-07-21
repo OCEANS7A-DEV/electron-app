@@ -33,6 +33,7 @@ import LauncherPage from './router/launcher'
 import Uriage from './router/sales/Uriage'
 import FCInventory, { loader as FCLoader } from './router/inventory/inventoryGet/FCInventory'
 import HQdata, { loader as HQLoader } from './router/HQwork/HQdata'
+import HQmemo, { loader as HQMemoLoader } from './router/HQwork/HQmemo'
 
 export const router = createHashRouter([
   {
@@ -152,5 +153,10 @@ export const router = createHashRouter([
     path: '/HQdata',
     element: <HQdata />,
     loader: HQLoader
+  },
+  {
+    path: '/HQmemo',
+    element: <HQmemo />,
+    loader: HQMemoLoader
   }
 ])

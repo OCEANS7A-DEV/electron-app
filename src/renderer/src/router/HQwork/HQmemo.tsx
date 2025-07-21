@@ -5,6 +5,7 @@ import { Button } from '@mui/material'
 //   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 // } from 'recharts';
 import React, { useState, useRef } from 'react'
+import type { JSX } from 'react'
 // import Select, { SelectChangeEvent } from '@mui/material/Select'
 // import InputLabel from '@mui/material/InputLabel'
 // import MenuItem from '@mui/material/MenuItem'
@@ -36,6 +37,7 @@ const darkTheme = createTheme({
 type FormValues = {
   rows: {
     id: string
+    date: string
     title: string
     remarks: string
     details: [] | []
@@ -45,14 +47,13 @@ type FormValues = {
 export const loader = async () => {
   const data = await window.myInventoryAPI.ListGet({
     action: 'HQdataGet',
-    ranges: 'A2:C',
-    sheetid: '1AoUAanqfe1hAUcxJRLEDqs0174FXtBpAaoCJEmiv2yQ'
+    sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0'
   })
 
   return { data }
 }
 
-export default function HQdata() {
+export default function HQmemo(): JSX.Element {
   const { data } = useLoaderData<typeof loader>()
   const [searchString, setSearchString] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
@@ -66,6 +67,7 @@ export default function HQdata() {
       .filter((row) => row[3] == 0)
       .map((item) => ({
         id: item[0],
+        date: item[4],
         title: item[1],
         remarks: item[2],
         details: data.detail.filter((row) => row[0] == item[0])
@@ -76,7 +78,8 @@ export default function HQdata() {
     const refresh = async () => {
       const data = await window.myInventoryAPI.ListGet({
         action: 'HQdataGet',
-        ranges: 'A2:C'
+        ranges: 'A2:C',
+        sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0'
       })
       reset({
         rows: DefaultSet(data.main)
@@ -139,8 +142,7 @@ export default function HQdata() {
       await window.myInventoryAPI.DataInsert({
         action: 'HQmaindataDelete',
         sub_action: 'insert',
-        data: deleteId,
-        sheetid: '1AoUAanqfe1hAUcxJRLEDqs0174FXtBpAaoCJEmiv2yQ'
+        data: deleteId
       })
     }
     toast.promise(deletePost(), {
@@ -181,7 +183,7 @@ export default function HQdata() {
         action: 'HQdataInsert',
         sub_action: 'insert',
         data: insertData,
-        sheetid: '1AoUAanqfe1hAUcxJRLEDqs0174FXtBpAaoCJEmiv2yQ'
+        sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0'
       })
     }
     toast.promise(DataInsert(), {
@@ -229,6 +231,7 @@ export default function HQdata() {
             <table className="HQdata-table">
               <thead>
                 <tr>
+                  <th className="HQdata-table-date">日時</th>
                   <th className="HQdata-table-title">タイトル</th>
                   <th className="HQdata-table-remarks">備考</th>
                   <th className="HQdata-table-operation">操作</th>
@@ -237,6 +240,7 @@ export default function HQdata() {
               <tbody>
                 {fields.map((field, index) => (
                   <tr key={field.id}>
+                    <td>{getValues(`rows.${index}.date`)}</td>
                     <td>{getValues(`rows.${index}.title`)}</td>
                     <td>{getValues(`rows.${index}.remarks`)}</td>
                     <td>
@@ -274,18 +278,6 @@ export default function HQdata() {
           </div>
         )}
       </div>
-      {/* <SweetAlert2
-        {...swalProps}
-        didClose={() => {
-          console.log('ダイアログが閉じられました');
-          setSwalProps({ show: false })
-        }}
-      >
-        <HQDialogTable
-          data={getValues().rows[selectRow]}
-          ref={addDialogRef}
-        />
-      </SweetAlert2> */}
     </div>
   )
 }

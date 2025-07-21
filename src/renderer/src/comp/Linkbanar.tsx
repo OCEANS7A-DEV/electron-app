@@ -145,6 +145,7 @@ const LinkBaner = (data) => {
                 <Button variant="outlined" onClick={() => navigate('/PDFOperation')} sx={{height:'30px', margin: "5px 10px", width: 120}}>PDF操作</Button>
                 <Button variant="outlined" onClick={() => navigate('/Uriage')} sx={{height:'30px', margin: "5px 10px", width: 120}}>売上</Button>
                 <Button variant="outlined" onClick={() => navigate('/HQdata')} sx={{height:'30px', margin: "5px 10px", width: 120}}>本部データ</Button>
+                <Button variant="outlined" onClick={() => navigate('/HQmemo')} sx={{height:'30px', margin: "5px 10px", width: 120}}>本部メモ</Button>
               </div>
             )}
             {data.id == 'Setting' && (
