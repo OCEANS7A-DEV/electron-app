@@ -67,7 +67,7 @@ export default function HQmemo(): JSX.Element {
       .filter((row) => row[3] == 0)
       .map((item) => ({
         id: item[0],
-        date: item[4],
+        date: new Date(item[4]).toLocaleDateString(),
         title: item[1],
         remarks: item[2],
         details: data.detail.filter((row) => row[0] == item[0])
