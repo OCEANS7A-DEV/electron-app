@@ -27,16 +27,20 @@ export default function SystemSettingPage() {
       <div>
         <LinkBaner id='Setting' />
       </div>
-      <div style={{color: 'white', paddingTop: 60, paddingLeft: 20}}>
+      <div style={{ color: 'white', paddingTop: 60, paddingLeft: 20 }}>
         <div>
           設定ページ
           <div style={{ display: 'flex' }} className="system-setting-area">
             <div className="Token">
-              <Button variant="outlined" onClick={handleTokenChange}>トークン変更</Button>
+              <Button variant="outlined" onClick={handleTokenChange}>
+                トークン変更
+              </Button>
             </div>
             <div className="Google">
               <div>Google関係</div>
-              <Button variant="outlined" onClick={handleGoogleLogout}>ログアウト</Button>
+              <Button variant="outlined" onClick={handleGoogleLogout}>
+                ログアウト
+              </Button>
             </div>
           </div>
           

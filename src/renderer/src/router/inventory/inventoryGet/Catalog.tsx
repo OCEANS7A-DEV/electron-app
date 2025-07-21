@@ -32,10 +32,9 @@ export default function CatalogView() {
 
   useEffect(() => {
     FilePath()
-  },[selectFileName])
+  }, [selectFileName])
 
   
-  // 🔍 検索系の関数
   const handleFind = () => {
     if (webviewRef.current && searchText) {
       webviewRef.current.findInPage(searchText);

@@ -52,7 +52,7 @@ export default function SettingPage() {
   return (
     <>
       <div>
-        <LinkBaner />
+        <LinkBaner id="zaiko" />
       </div>
       <div style={{color: 'white', paddingTop: 60, paddingLeft: 20}}>
         <div>

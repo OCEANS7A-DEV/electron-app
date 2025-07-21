@@ -8,7 +8,7 @@ import { MenuItem } from '@mui/material'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import LinkBaner from '../../../comp/Linkbanar'
 import toast, { Toaster } from 'react-hot-toast'
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData } from 'react-router-dom'
 import '../../../css/FCInventory.css'
 import { TextField } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'

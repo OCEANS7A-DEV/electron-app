@@ -47,7 +47,12 @@ const AddProductDialogTable = forwardRef(({ addRowNumber }: Props, ref) => {
     orderNum: ''
   };
 
+  const [data, setData] = useState<any[]>([])
+
   const [types, setTypes] = useState<Option[]>([])
+
+  const [codeColor, setCodeColor] = useState('black')
+  const [codeError, setCodeError] = useState('')
 
   //const [Lists, setLists] = useState([])
 
@@ -70,19 +75,31 @@ const AddProductDialogTable = forwardRef(({ addRowNumber }: Props, ref) => {
     getFormData: () => getValues()
   }))
 
+  const dataSet = async () => {
+    const data = await window.myInventoryAPI.ListData()
+    //console.log(data)
+    setData(data)
+
+  }
+
   useEffect(() => {
     typesGet()
+    dataSet()
     //Products()
   }, [])
 
-  const { register, getValues, control } = useForm<FormValues>({ defaultValues });
+  const productReSearch = async(codeS) => {
+    const result = data.find((item) => item.code == Number(codeS))
+    if (result){
+      setCodeColor('red')
+      setCodeError('このコードは使用できません')
+    } else {
+      setCodeColor('black')
+      setCodeError('使用できます')
+    }
+  }
 
-  // const Add = () => {
-  //   console.log(getValues());
-  //   console.log(addRowNumber);
-  //   //console.log(Lists)
-  //   //const check = Lists.filter(item => item.)
-  // };
+  const { register, getValues, control } = useForm<FormValues>({ defaultValues });
 
   return (
     <div className="modal-dialog-newProduct">
@@ -95,7 +112,12 @@ const AddProductDialogTable = forwardRef(({ addRowNumber }: Props, ref) => {
 
         <div className="newProductInsert">
           <div className="newProductLabel">商品コード:</div>
-          <input style={{ height: 32 }} {...register('code')} />
+          <input
+            style={{ height: 32, color: codeColor }}
+            {...register('code')}
+            onChange={(e) => productReSearch(e.target.value)}
+            title={codeError}
+          />
         </div>
 
         <div className="newProductInsert">

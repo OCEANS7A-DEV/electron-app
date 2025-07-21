@@ -286,7 +286,7 @@ export default function ProductDetailChangePage() {
 
 
   const ProductNewDataInsert = async (data) => {
-    console.log(data)
+
     const now = InsertDate.replace(/-/g, '/')
     const insertResult = ['商品コード']
     Object.keys(data).forEach(async (item) => {
@@ -324,7 +324,6 @@ export default function ProductDetailChangePage() {
         //console.log('キャンセル')
         return
       }
-      insertResult.push(sheet)
       await window.myInventoryAPI.DataInsert({
         sheetName: sheet,
         action: 'DataHistory',
@@ -333,8 +332,6 @@ export default function ProductDetailChangePage() {
     })
     toast.success(`${insertResult}の登録が完了しました`)
   }
-  console.log(height)
-
 
   useEffect(() => {
     const updateHeight = () => {
@@ -491,7 +488,6 @@ export default function ProductDetailChangePage() {
 
   const update = async (index) => {
     const data = getValues().rows[index]
-    console.log(data)
     const search = defaultRows.current.find(item => item.code == data.code)
     if (search) {
       const original = defaultRows.current[index]
@@ -503,7 +499,6 @@ export default function ProductDetailChangePage() {
       }
       const now = new Date().toLocaleString()
       diffKeys.forEach(async (item) => {
-        console.log(item)
         let sheet
         let insertData
         if (item == 'name'){
@@ -528,13 +523,11 @@ export default function ProductDetailChangePage() {
           insertData = [data.code, data.service, now]
           sheet = 'サービス数'
         }
-        console.log(sheet)
-        console.log(insertData)
-        // await window.myInventoryAPI.DataInsert({
-        //   sheetName: sheet,
-        //   action: 'DataHistory',
-        //   updataValue: insertData,
-        // })
+        await window.myInventoryAPI.DataInsert({
+          sheetName: sheet,
+          action: 'DataHistory',
+          updataValue: insertData,
+        })
       })
       setModalOpen(false)
     }
@@ -585,8 +578,6 @@ export default function ProductDetailChangePage() {
             collisionDetection={closestCenter}
             modifiers={[restrictToVerticalAxis]}
             onDragEnd={({ active, over }) => {
-              console.log("active.id:", active.id)
-              console.log("over?.id:", over?.id)
               if (active.id !== over?.id) {
                 const oldIndex = fields.findIndex(f => f.id === active.id);
                 const newIndex = fields.findIndex(f => f.id === over?.id);
