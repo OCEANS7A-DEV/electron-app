@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react'
+import type { JSX } from 'react'
 import '../css/updater.css'
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from '@mui/material/CircularProgress'
 
-
-
-export default function UpdateWindow() {
-  const [number, setNumber] = useState(0)
-  const [message, setMessage] = useState('')
-  const [status, setStatus] = useState('')
-  const [updateCheck, setUpdateCheck] = useState(false)
-  const [DevCheck, setDevCheck] = useState(false)
-
-  const [Startup, setStartup] = useState(false)
-  const [Google, setGoogle] = useState(false)
+const UpdateWindow = (): JSX.Element => {
+  const [number, setNumber] = useState<number>(0)
+  const [message, setMessage] = useState<string>('')
+  const [status, setStatus] = useState<string>('')
+  const [updateCheck, setUpdateCheck] = useState<boolean>(false)
+  const [DevCheck, setDevCheck] = useState<boolean>(false)
+  const [Startup, setStartup] = useState<boolean>(false)
+  const [Google, setGoogle] = useState<boolean>(false)
 
   useEffect(() => {
     window.myInventoryAPI.onProgressUpdate((value) => {
@@ -24,17 +22,17 @@ export default function UpdateWindow() {
 
   useEffect(() => {
     window.myInventoryAPI.onCheckedUpdate((value) => {
-      if (value.status == 'dev'){
+      if (value.status == 'dev') {
         setDevCheck(true)
-      } else if (value.status == 'updateCheck'){
+      } else if (value.status == 'updateCheck') {
         setUpdateCheck(true)
-      } else if (value.status == 'bootCheck'){
+      } else if (value.status == 'bootCheck') {
         window.myInventoryAPI.UpdaterClose()
-      } else if (value.status == 'startup'){
+      } else if (value.status == 'startup') {
         setStartup(true)
-      } else if (value.status == 'google'){
+      } else if (value.status == 'google') {
         setGoogle(true)
-      } else if (value.status == 'text'){
+      } else if (value.status == 'text') {
         setMessage('アップデートの確認中...')
       }
     })
@@ -45,8 +43,6 @@ export default function UpdateWindow() {
       window.myInventoryAPI.MainBoot()
     }
   }, [updateCheck, Startup, Google, DevCheck])
-
-
 
   return (
     <>
@@ -62,10 +58,10 @@ export default function UpdateWindow() {
             </div>
           ) : null}
         </div>
-        <div className="update-message">
-          {message}
-        </div>
+        <div className="update-message">{message}</div>
       </div>
     </>
   )
 }
+
+export default UpdateWindow

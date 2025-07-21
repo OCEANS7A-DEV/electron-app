@@ -1,4 +1,14 @@
-import { app, shell, BrowserWindow, ipcMain, net, Notification, IpcMainInvokeEvent, dialog, session } from 'electron'
+import {
+  app,
+  shell,
+  BrowserWindow,
+  ipcMain,
+  net,
+  Notification,
+  IpcMainInvokeEvent,
+  dialog,
+  session
+} from 'electron'
 import { join } from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -15,119 +25,118 @@ import path from 'path'
 
 import { execFile } from 'child_process'
 
-import keytar from "keytar"
+import keytar from 'keytar'
 
-import prompt from "electron-prompt"
+import prompt from 'electron-prompt'
 
-const gotTheLock = app.requestSingleInstanceLock();
+const gotTheLock = app.requestSingleInstanceLock()
 const windowManager = new Map()
 
-log.transports.file.level = 'info';
+log.transports.file.level = 'info'
 autoUpdater.logger = log
 
-
-
-const SERVICE = "electron-app"
-const ACCOUNT = "OCEANS7A-DEV"
+const SERVICE = 'electron-app'
+const ACCOUNT = 'OCEANS7A-DEV'
 
 async function getOrPromptToken(launcherWindow: BrowserWindow): Promise<string> {
   let token = await keytar.getPassword(SERVICE, ACCOUNT)
   //console.log(token)
   if (!token) {
-    token = await prompt({
-      title: "GitHub トークンの入力",
-      label: "Personal Access Token:",
-      inputAttrs: {
-        type: "password",
+    token = (await prompt(
+      {
+        title: 'GitHub トークンの入力',
+        label: 'Personal Access Token:',
+        inputAttrs: {
+          type: 'password'
+        },
+        width: 400,
+        height: 200,
+        alwaysOnTop: true
       },
-      width: 400,
-      height: 200,
-      alwaysOnTop: true,
-    }, launcherWindow.webContents) as string | null;
+      launcherWindow.webContents
+    )) as string | null
     if (!token) {
       app.quit()
-      log.error("GitHub トークンが入力されませんでした")
-      throw new Error("GitHub トークンが入力されませんでした");
+      log.error('GitHub トークンが入力されませんでした')
+      throw new Error('GitHub トークンが入力されませんでした')
     }
-    await keytar.setPassword(SERVICE, ACCOUNT, token);
-    if (token){
-      if (!is.dev){
+    await keytar.setPassword(SERVICE, ACCOUNT, token)
+    if (token) {
+      if (!is.dev) {
         restartApp()
       } else {
         app.quit()
       }
     }
   }
-  return token;
+  return token
 }
 
 async function updateOrPromptToken(launcherWindow: BrowserWindow): Promise<string> {
   let token = await keytar.getPassword(SERVICE, ACCOUNT)
-  token = await prompt({
-    title: "GitHub トークンの入力",
-    label: "Personal Access Token:",
-    inputAttrs: {
-      type: "password",
+  token = (await prompt(
+    {
+      title: 'GitHub トークンの入力',
+      label: 'Personal Access Token:',
+      inputAttrs: {
+        type: 'password'
+      },
+      width: 400,
+      height: 200,
+      alwaysOnTop: true
     },
-    width: 400,
-    height: 200,
-    alwaysOnTop: true,
-  }, launcherWindow.webContents) as string;
-  await keytar.setPassword(SERVICE, ACCOUNT, token);
-  return token;
+    launcherWindow.webContents
+  )) as string
+  await keytar.setPassword(SERVICE, ACCOUNT, token)
+  return token
 }
-
-
-
-
 
 const PUPPETEER_ARGS = [
   '--no-sandbox',
   '--disable-setuid-sandbox',
   '--disable-cache',
   '--disable-application-cache',
-  '--disk-cache-size=0',
+  '--disk-cache-size=0'
 ]
-
 
 function getPuppeteerOptions(): LaunchOptions {
   if (is.dev) {
     return {
       headless: false,
       channel: 'chrome',
-      args: PUPPETEER_ARGS,
+      args: PUPPETEER_ARGS
     }
   } else {
     return {
       headless: true,
       channel: 'chrome',
-      args: PUPPETEER_ARGS,
+      args: PUPPETEER_ARGS
     }
   }
 }
 
 const TokenCheck = async (token: string) => {
   let result = false
-  const TEST_URL = "https://api.github.com/repos/OCEANS7A-DEV/electron-app/releases/latest";
-  
+  const TEST_URL = 'https://api.github.com/repos/OCEANS7A-DEV/electron-app/releases/latest'
+
   try {
     const res = await net.fetch(TEST_URL, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "User-Agent": "electron",
-        "Authorization": `token ${token}`
+        'User-Agent': 'electron',
+        Authorization: `token ${token}`
       }
-    });
+    })
     //log.info("🔍 TEST statusCode:", res.status);
     if (res.status === 200) {
       //console.log(res)
       result = true
     } else {
-      const text = await res.text();
-      log.warn("🔍 接続テスト body:", text);
+      const text = await res.text()
+      log.warn('🔍 接続テスト body:', text)
     }
   } catch (err: any) {
-    log.error("🔍 :", err.message);
+    log.error('🔍 :', err.message)
     result = false
   }
   //console.log(result)
@@ -136,19 +145,17 @@ const TokenCheck = async (token: string) => {
 
 const store = new Store() as any
 
-
 // const Img_URL =
 //   'https://script.google.com/macros/s/AKfycbzCrMJDEFvfTTTCjb2b-8SwVgc2ySlsKwpf7c49H08DS6P4-ZulaS4zcNtiioytK0i6/exec'
 
-
-const GetAPI_URL = 'https://script.google.com/macros/s/AKfycbyu7GnlZ-yGcLn1j02ER3hiyKWeUcugopVAh4niSmM9j2_nIA9DhsXFu87PgKr4eBUBhA/exec'
-
+const GetAPI_URL =
+  'https://script.google.com/macros/s/AKfycbyu7GnlZ-yGcLn1j02ER3hiyKWeUcugopVAh4niSmM9j2_nIA9DhsXFu87PgKr4eBUBhA/exec'
 
 const InsertAPI_URL = GetAPI_URL
 let isFirstRunUpdate = true
 let updaterWindow: BrowserWindow | null = null
 
-const createUpdaterWindow = async() => {
+const createUpdaterWindow = async () => {
   updaterWindow = new BrowserWindow({
     width: 300,
     height: 500,
@@ -163,14 +170,14 @@ const createUpdaterWindow = async() => {
       sandbox: false
     }
   })
-  initAutoUpdater(updaterWindow!);
+  initAutoUpdater(updaterWindow!)
   const token = await keytar.getPassword(SERVICE, ACCOUNT)
-  if (!token){
+  if (!token) {
     await getOrPromptToken(updaterWindow)
     return
   } else {
     const result = await TokenCheck(token)
-    if (!result){
+    if (!result) {
       await updateOrPromptToken(updaterWindow)
       return
     } else {
@@ -183,12 +190,12 @@ const createUpdaterWindow = async() => {
         updaterWindow?.show()
         setTimeout(() => {
           if (updaterWindow && !updaterWindow.isDestroyed() && is.dev) {
-            updaterWindow.webContents.openDevTools({ mode: 'detach' });
+            updaterWindow.webContents.openDevTools({ mode: 'detach' })
           }
         }, 300)
         if (is.dev) {
           if (updaterWindow && !updaterWindow.isDestroyed()) {
-            updaterWindow.webContents.send('check', { status: 'dev', value: true });
+            updaterWindow.webContents.send('check', { status: 'dev', value: true })
           }
         }
         if (updaterWindow && !updaterWindow.isDestroyed()) {
@@ -196,35 +203,19 @@ const createUpdaterWindow = async() => {
             percent: 0,
             message: '起動中...',
             status: 'start'
-          });
+          })
         }
 
         StartUpSet()
-        
-        hasGoogleLoginCookie().then(isLoggedIn => {
+        hasGoogleLoginCookie().then((isLoggedIn) => {
           if (!isLoggedIn) {
             createGoogleLoginWindow()
           } else {
             if (updaterWindow && !updaterWindow.isDestroyed()) {
-              updaterWindow.webContents.send('check', { status: 'google', value: true });
+              updaterWindow.webContents.send('check', { status: 'google', value: true })
             }
           }
-        });
-
-        // if (!is.dev) {
-        //   isFirstRunUpdate = true
-        //   setupAutoUpdater()
-        //   autoUpdater.checkForUpdates()
-        //   setInterval(() => {
-        //     if (launcherWindow) {
-        //       isFirstRunUpdate = false
-        //       log.info('定期アップデート確認中...')
-        //     }
-        //   }, 30 * 1000)
-        // } else {
-        //   isFirstRunUpdate = true
-        //   setupAutoUpdater()
-        // }
+        })
       })
     }
   }
@@ -232,7 +223,7 @@ const createUpdaterWindow = async() => {
 
 let GoogleLoginWindow: BrowserWindow
 
-const createGoogleLoginWindow = async() => {
+const createGoogleLoginWindow = async () => {
   GoogleLoginWindow = new BrowserWindow({
     width: 600,
     height: 400,
@@ -246,12 +237,12 @@ const createGoogleLoginWindow = async() => {
         : join(app.getAppPath(), 'out/preload/index.mjs'),
       sandbox: false,
       webSecurity: false,
-      webviewTag: true,
+      webviewTag: true
     }
   })
 
   GoogleLoginWindow.loadURL(GetAPI_URL)
-  
+
   GoogleLoginWindow.on('ready-to-show', () => {
     GoogleLoginWindow.show()
     if (is.dev) {
@@ -264,26 +255,23 @@ const createGoogleLoginWindow = async() => {
     return { action: 'deny' }
   })
   GoogleLoginWindow.webContents.on('did-navigate', async (_evt, url) => {
-    if (!url.startsWith(GetAPI_URL)) return;
-    const cookies = await GoogleLoginWindow.webContents.session.cookies.get({ url: 'https://script.google.com' });
-    const hasAuth = cookies.some(c => ['SID','HSID','SSID','SAPISID'].includes(c.name));
-    if (hasAuth){
+    if (!url.startsWith(GetAPI_URL)) return
+    const cookies = await GoogleLoginWindow.webContents.session.cookies.get({
+      url: 'https://script.google.com'
+    })
+    const hasAuth = cookies.some((c) => ['SID', 'HSID', 'SSID', 'SAPISID'].includes(c.name))
+    if (hasAuth) {
       //
     }
-  });
+  })
 }
-
-
 
 let zaikoWindow: BrowserWindow
 
-
-
 function createZaikoWindow(): void {
-
-  if (windowManager.has("zaiko")){
-    const win = windowManager.get("zaiko")
-    if (win) win.focus();
+  if (windowManager.has('zaiko')) {
+    const win = windowManager.get('zaiko')
+    if (win) win.focus()
     return
   }
 
@@ -300,10 +288,10 @@ function createZaikoWindow(): void {
         : join(app.getAppPath(), 'out/preload/index.mjs'),
       sandbox: false,
       webSecurity: false,
-      webviewTag: true,
+      webviewTag: true
     }
   })
-  windowManager.set("zaiko", zaikoWindow)
+  windowManager.set('zaiko', zaikoWindow)
 
   //このときに指定のIDをつけたい
 
@@ -330,18 +318,16 @@ function createZaikoWindow(): void {
   NotificationEXE('アプリが起動しました')
 
   zaikoWindow.on('closed', () => {
-    windowManager.delete("zaiko")
+    windowManager.delete('zaiko')
   })
 }
-
-
 
 let launcherWindow: BrowserWindow
 
 const createLauncherWindow = (): void => {
-  if (windowManager.has("Launcher")){
-    const win = windowManager.get("Launcher")
-    if (win) win.focus();
+  if (windowManager.has('Launcher')) {
+    const win = windowManager.get('Launcher')
+    if (win) win.focus()
     return
   }
 
@@ -358,11 +344,11 @@ const createLauncherWindow = (): void => {
         : join(app.getAppPath(), 'out/preload/index.mjs'),
       sandbox: false,
       webSecurity: false,
-      webviewTag: true,
+      webviewTag: true
     }
   })
 
-  windowManager.set("Launcher", launcherWindow)
+  windowManager.set('Launcher', launcherWindow)
 
   launcherWindow.on('ready-to-show', () => {
     launcherWindow.show()
@@ -385,17 +371,16 @@ const createLauncherWindow = (): void => {
     launcherWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'launcher' })
   }
   launcherWindow.on('closed', () => {
-    windowManager.delete("Launcher")
+    windowManager.delete('Launcher')
   })
 }
-
 
 let HelloWorkWindow: BrowserWindow
 
 const createHelloWorkWindow = (): void => {
-  if (windowManager.has("HelloWork")){
-    const win = windowManager.get("HelloWork")
-    if (win) win.focus();
+  if (windowManager.has('HelloWork')) {
+    const win = windowManager.get('HelloWork')
+    if (win) win.focus()
     return
   }
 
@@ -412,11 +397,11 @@ const createHelloWorkWindow = (): void => {
         : join(app.getAppPath(), 'out/preload/index.mjs'),
       sandbox: false,
       webSecurity: false,
-      webviewTag: true,
+      webviewTag: true
     }
   })
 
-  windowManager.set("HelloWork", HelloWorkWindow)
+  windowManager.set('HelloWork', HelloWorkWindow)
 
   HelloWorkWindow.on('ready-to-show', () => {
     HelloWorkWindow.show()
@@ -439,17 +424,16 @@ const createHelloWorkWindow = (): void => {
     HelloWorkWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'HelloWork' })
   }
   HelloWorkWindow.on('closed', () => {
-    windowManager.delete("HelloWork")
+    windowManager.delete('HelloWork')
   })
 }
-
 
 let OfficeWorkWindow: BrowserWindow
 
 const createOfficeWorkWindow = (): void => {
-  if (windowManager.has("OfficeWork")){
-    const win = windowManager.get("OfficeWork")
-    if (win) win.focus();
+  if (windowManager.has('OfficeWork')) {
+    const win = windowManager.get('OfficeWork')
+    if (win) win.focus()
     return
   }
 
@@ -466,11 +450,11 @@ const createOfficeWorkWindow = (): void => {
         : join(app.getAppPath(), 'out/preload/index.mjs'),
       sandbox: false,
       webSecurity: false,
-      webviewTag: true,
+      webviewTag: true
     }
   })
 
-  windowManager.set("OfficeWork", OfficeWorkWindow)
+  windowManager.set('OfficeWork', OfficeWorkWindow)
 
   OfficeWorkWindow.on('ready-to-show', () => {
     OfficeWorkWindow.show()
@@ -493,17 +477,16 @@ const createOfficeWorkWindow = (): void => {
     OfficeWorkWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: '#PDFOperation' })
   }
   OfficeWorkWindow.on('closed', () => {
-    windowManager.delete("OfficeWork")
+    windowManager.delete('OfficeWork')
   })
 }
-
 
 let SettingWindow: BrowserWindow
 
 const createSettingWindow = (): void => {
-  if (windowManager.has("Setting")){
-    const win = windowManager.get("Setting")
-    if (win) win.focus();
+  if (windowManager.has('Setting')) {
+    const win = windowManager.get('Setting')
+    if (win) win.focus()
     return
   }
 
@@ -520,11 +503,11 @@ const createSettingWindow = (): void => {
         : join(app.getAppPath(), 'out/preload/index.mjs'),
       sandbox: false,
       webSecurity: false,
-      webviewTag: true,
+      webviewTag: true
     }
   })
 
-  windowManager.set("Setting", SettingWindow)
+  windowManager.set('Setting', SettingWindow)
 
   SettingWindow.on('ready-to-show', () => {
     SettingWindow.show()
@@ -547,47 +530,34 @@ const createSettingWindow = (): void => {
     SettingWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: '#systemSetting' })
   }
   SettingWindow.on('closed', () => {
-    windowManager.delete("Setting")
+    windowManager.delete('Setting')
   })
 }
 
+let printWindow: BrowserWindow | null = null
 
+const hasGoogleLoginCookie = async (): Promise<boolean> => {
+  const domains = ['https://accounts.google.com', 'https://www.google.com']
+  const authCookieNames = ['SID', 'HSID', 'SSID', 'SAPISID']
 
-
-
-
-
-
-
-
-let printWindow: BrowserWindow | null = null;
-
-const hasGoogleLoginCookie = async(): Promise<boolean> => {
-  const domains = [
-    'https://accounts.google.com',
-    'https://www.google.com',
-  ];
-  const authCookieNames = ['SID', 'HSID', 'SSID', 'SAPISID'];
-
-  let allCookies = [] as Electron.Cookie[];
+  let allCookies = [] as Electron.Cookie[]
 
   for (const url of domains) {
-    const cookies = await session.defaultSession.cookies.get({ url });
-    allCookies = allCookies.concat(cookies);
+    const cookies = await session.defaultSession.cookies.get({ url })
+    allCookies = allCookies.concat(cookies)
   }
 
-  return allCookies.some(c => authCookieNames.includes(c.name));
+  return allCookies.some((c) => authCookieNames.includes(c.name))
 }
-
-
-
 
 export const productGet = async () => {
   try {
-    const cookies1 = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
-    const allCookies = [...cookies1, ...cookies2];
-    const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
 
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
@@ -607,11 +577,13 @@ export const productGet = async () => {
 
 export const productTypesGet = async () => {
   try {
-    const cookies1 = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
-    const allCookies = [...cookies1, ...cookies2];
-    const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
-    
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
@@ -628,14 +600,15 @@ export const productTypesGet = async () => {
   }
 }
 
-
 export const vendorGet = async () => {
   try {
-    const cookies1 = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
-    const allCookies = [...cookies1, ...cookies2];
-    const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
-    
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
@@ -652,14 +625,15 @@ export const vendorGet = async () => {
   }
 }
 
-
 export const addressGet = async () => {
   try {
-    const cookies1 = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
-    const allCookies = [...cookies1, ...cookies2];
-    const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
-    
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
@@ -678,10 +652,12 @@ export const addressGet = async () => {
 
 export const ArchiveGet = async () => {
   try {
-    const cookies1 = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
-    const allCookies = [...cookies1, ...cookies2];
-    const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
 
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
@@ -707,13 +683,14 @@ export const ArchiveGet = async () => {
   }
 }
 
-
 export const shortageGet = async () => {
   try {
-    const cookies1 = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
-    const allCookies = [...cookies1, ...cookies2];
-    const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
 
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
@@ -729,15 +706,17 @@ export const shortageGet = async () => {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     return errorMessage
   }
-};
+}
 
 export const ProductDetails = async () => {
   try {
-    const cookies1 = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
-    const allCookies = [...cookies1, ...cookies2];
-    const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
-    
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
@@ -794,8 +773,6 @@ export const StartUpSet = async () => {
 
   store.set('details', productDetails)
 
-
-
   if (updaterWindow && !updaterWindow.isDestroyed()) {
     updaterWindow.webContents.send('check', {
       status: 'startup',
@@ -829,13 +806,11 @@ export const DetailsGet = async () => {
   }
 }
 
-
 const setupAutoUpdater = () => {
-
   autoUpdater.on('checking-for-update', () => {
     log.info('アップデートを確認中...')
     if (updaterWindow && !updaterWindow.isDestroyed()) {
-      updaterWindow.webContents.send('check', { status: 'text', value: true });
+      updaterWindow.webContents.send('check', { status: 'text', value: true })
     }
   })
 
@@ -849,12 +824,11 @@ const setupAutoUpdater = () => {
     // }catch{
     //   // エラー時は何もしない
     // }
-    
   })
 
   autoUpdater.on('download-progress', (progressObj) => {
     const percent = Math.floor(progressObj.percent)
-    try{
+    try {
       if (updaterWindow && !updaterWindow.isDestroyed()) {
         updaterWindow?.webContents.send('progress', {
           percent: percent,
@@ -863,7 +837,7 @@ const setupAutoUpdater = () => {
         })
       }
     } catch {
-      if (!launcherWindow){
+      if (!launcherWindow) {
         createLauncherWindow()
       }
     }
@@ -872,16 +846,16 @@ const setupAutoUpdater = () => {
   autoUpdater.on('update-not-available', () => {
     log.info('アップデートはありません。')
     if (isFirstRunUpdate) {
-      if (!launcherWindow){
+      if (!launcherWindow) {
         createLauncherWindow()
       }
     }
-    try{
+    try {
       if (launcherWindow) {
         launcherWindow.webContents.send('update-available', false)
       }
     } catch {
-      if (!launcherWindow){
+      if (!launcherWindow) {
         createLauncherWindow()
       }
     }
@@ -889,7 +863,7 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('error', (error) => {
     log.error('アップデートエラー:', error)
-    if (!launcherWindow){
+    if (!launcherWindow) {
       createLauncherWindow()
     }
   })
@@ -903,12 +877,12 @@ const setupAutoUpdater = () => {
     } else {
       log.info('定期チェックのアップデートは即時インストールしません')
       NotificationEXE('アップデートが利用可能です。')
-      try{
+      try {
         if (launcherWindow) {
           launcherWindow.webContents.send('update-available', false)
         }
       } catch {
-        if (!launcherWindow){
+        if (!launcherWindow) {
           createLauncherWindow()
         }
       }
@@ -916,10 +890,9 @@ const setupAutoUpdater = () => {
   })
 }
 
-
 const initAutoUpdater = async (win: BrowserWindow) => {
-  const token = await getOrPromptToken(win);
-  process.env.GH_TOKEN = token;
+  const token = await getOrPromptToken(win)
+  process.env.GH_TOKEN = token
   // autoUpdater.setFeedURL({
   //   provider: "github",
   //   owner: "OCEANS7A-DEV",
@@ -932,26 +905,27 @@ const initAutoUpdater = async (win: BrowserWindow) => {
   //   Authorization: `token ${token}`
   // };
 
-  await setupAutoUpdater();
+  await setupAutoUpdater()
 
   if (!is.dev) {
     setTimeout(() => {
-      log.info("初回アップデート確認中...");
-      autoUpdater.checkForUpdates();
-    }, 3000);
+      log.info('初回アップデート確認中...')
+      autoUpdater.checkForUpdates()
+    }, 3000)
     setInterval(() => {
-      isFirstRunUpdate = false;
-      log.info("定期アップデート確認中...");
-      autoUpdater.checkForUpdates();
-    }, 300 * 1000);
+      isFirstRunUpdate = false
+      log.info('定期アップデート確認中...')
+      autoUpdater.checkForUpdates()
+    }, 300 * 1000)
   } else {
-    isFirstRunUpdate = true;
+    isFirstRunUpdate = true
   }
 }
 
 app.whenReady().then(async () => {
-  if(!gotTheLock){//多重起動しないように
-    app.quit();
+  if (!gotTheLock) {
+    //多重起動しないように
+    app.quit()
     return
   }
   electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
@@ -960,9 +934,6 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
 })
-
-
-
 
 ipcMain.handle('product-list', async () => {
   const data = await store.get('data')
@@ -994,21 +965,23 @@ ipcMain.handle('storeSet', async (_event, key, value) => {
 })
 
 ipcMain.handle('storeGet', async (_event, payload: { gettitle: string }) => {
-  return store.get(payload.gettitle);
-});
+  return store.get(payload.gettitle)
+})
 
 ipcMain.handle('list-get', async (_event, payload: any) => {
   try {
-    const cookies1 = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
-    const allCookies = [...cookies1, ...cookies2];
-    const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
-    
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': cookieHeader
+        Cookie: cookieHeader
       },
       body: JSON.stringify(payload)
     })
@@ -1022,21 +995,23 @@ ipcMain.handle('list-get', async (_event, payload: any) => {
 
 ipcMain.handle('data-insert', async (_event, payload: any) => {
   try {
-    const cookies1 = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
-    const allCookies = [...cookies1, ...cookies2];
-    const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
-    
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+
     const response = await net.fetch(InsertAPI_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': cookieHeader
+        Cookie: cookieHeader
       },
       body: JSON.stringify(payload)
     })
     const result = await response.json()
-    return result;
+    return result
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     return errorMessage
@@ -1062,9 +1037,10 @@ ipcMain.handle('orderPrint', (_event, payload) => {
   printWindow.on('ready-to-show', () => {
     printWindow?.show()
   })
-  const url = is.dev && process.env['ELECTRON_RENDERER_URL']
-    ? `${process.env['ELECTRON_RENDERER_URL']}#/${payload}`
-    : `file://${join(app.getAppPath(), 'out/renderer/index.html')}#/${payload}`
+  const url =
+    is.dev && process.env['ELECTRON_RENDERER_URL']
+      ? `${process.env['ELECTRON_RENDERER_URL']}#/${payload}`
+      : `file://${join(app.getAppPath(), 'out/renderer/index.html')}#/${payload}`
   printWindow.loadURL(url)
 })
 
@@ -1076,9 +1052,6 @@ ipcMain.on('Main-boot', () => {
   createLauncherWindow()
   launcherWindow.show()
 })
-
-
-
 
 ipcMain.on('WindowZaiko', () => {
   createZaikoWindow()
@@ -1100,14 +1073,13 @@ ipcMain.on('SettingWindow', () => {
   launcherWindow.minimize()
 })
 
-
 ipcMain.on('startUpClose', () => {
-  try{
+  try {
     if (updaterWindow && !updaterWindow.isDestroyed()) {
       updaterWindow.close()
       updaterWindow = null
     }
-  }catch{
+  } catch {
     // エラー時は何もしない
   }
 })
@@ -1140,61 +1112,53 @@ ipcMain.handle('productEditWindow', (_eventt, payload) => {
   } else {
     printWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
-
 })
 
-
 ipcMain.handle('Print-Ready', () => {
-
   printWindow?.webContents.print({ silent: false, printBackground: false }, () => {
     //printWindow.close()
   })
 })
 
-
-
 ipcMain.handle('now-DateGet', () => {
   const id = 'OCEAN_HQ'
-  const now = new Date();
+  const now = new Date()
   const DateTime = new Intl.DateTimeFormat('ja-JP', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit',
-  }).format(now);
+    second: '2-digit'
+  }).format(now)
 
   return [id, DateTime]
 })
 
-
-
 ipcMain.handle('printStatus', async (_event, payload: any) => {
   try {
-    const cookies1 = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' });
-    const allCookies = [...cookies1, ...cookies2];
-    const cookieHeader = allCookies.map(c => `${c.name}=${c.value}`).join('; ');
-    
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+
     const response = await net.fetch(InsertAPI_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': cookieHeader
+        Cookie: cookieHeader
       },
       body: JSON.stringify(payload)
     })
     const result = await response.json()
-    return result;
+    return result
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     return errorMessage
   }
 })
-
-
-
 
 ipcMain.handle('hellowork-get', async () => {
   try {
@@ -1203,342 +1167,328 @@ ipcMain.handle('hellowork-get', async () => {
       // ② ブラウザ起動
       const browser = await puppeteer.launch(opts)
 
-      const page = await browser.newPage();
+      const page = await browser.newPage()
 
       // 検索画面を開いて検索条件を入力
       await page.goto(
         'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
         { waitUntil: 'networkidle2' }
-      );
-      await page.type('input[name="mail"]', 'oceans7a@gmail.com');
-      await page.type('input[name="password"]', 'ocean@1115');
+      )
+      await page.type('input[name="mail"]', 'oceans7a@gmail.com')
+      await page.type('input[name="password"]', 'ocean@1115')
 
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
-        page.click('button[name="loginBtn"]'),
-      ]);
+        page.click('button[name="loginBtn"]')
+      ])
 
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
         page.evaluate(() => {
-          const btn = document.getElementById('ID_yukoKyujinBtn') as HTMLAnchorElement;
-          if (!btn) throw new Error('ボタンが見つかりません');
-          btn.click();
+          const btn = document.getElementById('ID_yukoKyujinBtn') as HTMLAnchorElement
+          if (!btn) throw new Error('ボタンが見つかりません')
+          btn.click()
         })
-      ]);
+      ])
 
-      const allJobs: any[] = [];
-      let pageIndex = 1;
+      const allJobs: any[] = []
+      let pageIndex = 1
 
       while (true) {
         const jobsOnPage = await page.evaluate(() => {
-          const jobs: any[] = [];
+          const jobs: any[] = []
 
-          const tables = document.querySelectorAll('table.kyujin');
-          tables.forEach(table => {
-            const job: any = {};
+          const tables = document.querySelectorAll('table.kyujin')
+          tables.forEach((table) => {
+            const job: any = {}
 
             // 職種
-            job.職種 = table
-              .querySelector('.kyujin_head strong')
-              ?.parentElement?.nextElementSibling?.textContent?.trim() ?? '';
+            job.職種 =
+              table
+                .querySelector('.kyujin_head strong')
+                ?.parentElement?.nextElementSibling?.textContent?.trim() ?? ''
 
-
-            job.status = table
-              .querySelector('.nes_label.nes')
-              ?.textContent
-              ?.trim() ?? '';
-
+            job.status = table.querySelector('.nes_label.nes')?.textContent?.trim() ?? ''
 
             // 受付年月日・紹介期限日
-            const dateRow = Array.from(table.querySelectorAll('tr')).find(tr =>
+            const dateRow = Array.from(table.querySelectorAll('tr')).find((tr) =>
               tr.textContent?.includes('受付年月日')
-            );
-            const dateDivs = dateRow?.querySelectorAll('div') ?? [];
-            job.受付年月日 = dateDivs[1]?.textContent?.trim() ?? '';
-            job.紹介期限日 = dateDivs[2]?.textContent?.trim() ?? '';
+            )
+            const dateDivs = dateRow?.querySelectorAll('div') ?? []
+            job.受付年月日 = dateDivs[1]?.textContent?.trim() ?? ''
+            job.紹介期限日 = dateDivs[2]?.textContent?.trim() ?? ''
 
-            const leftTds = table.querySelectorAll('.left-side table tr');
-            leftTds.forEach(tr => {
-              const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
-              const td = tr.querySelector('td:nth-child(2)');
-              const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
-              if (label) job[label] = value;
-            });
+            const leftTds = table.querySelectorAll('.left-side table tr')
+            leftTds.forEach((tr) => {
+              const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim()
+              const td = tr.querySelector('td:nth-child(2)')
+              const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim()
+              if (label) job[label] = value
+            })
             // 右テーブル項目（同上）
-            const rightTds = table.querySelectorAll('.right-side table tr');
-            rightTds.forEach(tr => {
-              const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim();
-              const td = tr.querySelector('td:nth-child(2)');
-              const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim();
-              if (label) job[label] = value;
-            });
+            const rightTds = table.querySelectorAll('.right-side table tr')
+            rightTds.forEach((tr) => {
+              const label = tr.querySelector('td:nth-child(1)')?.textContent?.trim()
+              const td = tr.querySelector('td:nth-child(2)')
+              const value = (td as HTMLElement)?.innerText?.replace(/\s+/g, ' ').trim()
+              if (label) job[label] = value
+            })
 
             // こだわり条件
             job.こだわり条件 = Array.from(
               table.querySelectorAll('.kodawari span.nes_label.any')
-            ).map(span => span.textContent?.trim());
+            ).map((span) => span.textContent?.trim())
 
             // 求人票URL
-            job.求人票URL =
-              table.querySelector('#ID_kyujinhyoBtn')?.getAttribute('href') ?? '';
+            job.求人票URL = table.querySelector('#ID_kyujinhyoBtn')?.getAttribute('href') ?? ''
 
             // 求人数
             job.求人数 =
               table
                 .querySelector('tr:last-of-type')
                 ?.textContent?.match(/求人数：(.+?)名/)?.[1]
-                ?.trim() ?? '';
-            
-            job.detailUrl = table.querySelector('#ID_dispDetailBtn')?.getAttribute('href') ?? '';
-            
-            jobs.push(job);
-          });
-          return jobs;
-        });
+                ?.trim() ?? ''
 
-        allJobs.push(...jobsOnPage);
-        const nextButton = await page.$('input[name="fwListNaviBtnNext"]');
+            job.detailUrl = table.querySelector('#ID_dispDetailBtn')?.getAttribute('href') ?? ''
+
+            jobs.push(job)
+          })
+          return jobs
+        })
+
+        allJobs.push(...jobsOnPage)
+        const nextButton = await page.$('input[name="fwListNaviBtnNext"]')
         if (!nextButton) {
-          break;
+          break
         }
-        const isDisabled = await nextButton.evaluate((btn: HTMLInputElement) => btn.disabled);
+        const isDisabled = await nextButton.evaluate((btn: HTMLInputElement) => btn.disabled)
         if (isDisabled) {
-          break;
+          break
         }
-        pageIndex++;
+        pageIndex++
         await Promise.all([
           page.waitForNavigation({ waitUntil: 'networkidle2' }),
-          nextButton.click(),
-        ]);
-      
+          nextButton.click()
+        ])
       }
-      const filterd = allJobs.filter(item => item.status !== '非公開')
+      const filterd = allJobs.filter((item) => item.status !== '非公開')
 
-
-      const jushos: string[] = [];
+      const jushos: string[] = []
 
       for (const item of filterd) {
         // detailUrl は e.g. "./GEAB100020.do?…” のような相対パス
-        const url = new URL(item.detailUrl, page.url()).toString();
+        const url = new URL(item.detailUrl, page.url()).toString()
 
         try {
           // 詳細ページへ移動
-          await page.goto(url, { waitUntil: 'networkidle2' });
+          await page.goto(url, { waitUntil: 'networkidle2' })
         } catch (err) {
           //console.warn(`詳細ページへ移動失敗: ${url}`, err);
-          jushos.push('');
-          continue;
+          jushos.push('')
+          continue
         }
 
-        let address = '';
+        let address = ''
         try {
           // 要素取得。見つからなければ null が返る
-          const cell = await page.$('div[name="shgBsJusho"]');
-          const cellSub = await page.$('div[name="gsShgBsJusho"]');
+          const cell = await page.$('div[name="shgBsJusho"]')
+          const cellSub = await page.$('div[name="gsShgBsJusho"]')
           if (cell && !cellSub) {
-            address = (await page.evaluate(el => el.textContent, cell))?.trim() ?? '';
-          } else if (cellSub && !cell){
-            address = (await page.evaluate(el => el.textContent, cellSub))?.trim() ?? '';
+            address = (await page.evaluate((el) => el.textContent, cell))?.trim() ?? ''
+          } else if (cellSub && !cell) {
+            address = (await page.evaluate((el) => el.textContent, cellSub))?.trim() ?? ''
           } else {
             //console.info(`住所セルなし: ${url}`);
-            address = '';
+            address = ''
           }
         } catch (err) {
           //console.error(`住所取得中にエラー: ${url}`, err);
-          address = '';
+          address = ''
         }
         const pushdata = item
         pushdata.address = address
 
-        jushos.push(pushdata);
+        jushos.push(pushdata)
 
         // 一覧ページに戻る
         try {
-          await page.goBack({ waitUntil: 'networkidle2' });
+          await page.goBack({ waitUntil: 'networkidle2' })
         } catch (err) {
-          console.warn('一覧ページに戻れませんでした:', err);
+          console.warn('一覧ページに戻れませんでした:', err)
           // 必要なら再度一覧URLへ飛ばすか break する
         }
       }
 
-      return [filterd, jushos];
+      return [filterd, jushos]
     }
     try {
-      const result = await scrapeHelloWork();
-      return result;
+      const result = await scrapeHelloWork()
+      return result
     } catch (err) {
-      console.error(err);
-      throw err;
-    }    
-  } catch (e){
+      console.error(err)
+      throw err
+    }
+  } catch (e) {
     log.error('ハロワ取得エラー:', e)
-    throw e;
+    throw e
   }
-});
-
-
-
+})
 
 interface Works {
-  'こだわり条件': any[];
-  '事業所名': string;
-  '仕事の内容': string;
-  '休日': string;
-  '公開範囲': string;
-  '受付年月日': string;
-  '就業場所': string;
-  '就業時間': string;
-  '年齢': string;
-  '求人区分': string;
-  '求人番号': string;
-  '求人票URL': string;
-  '紹介期限日': string;
-  '職種': string;
-  '賃金（手当等を含む）': string;
-  '雇用形態': string;
-  'status': string;
-  'address': string;
+  こだわり条件: any[]
+  事業所名: string
+  仕事の内容: string
+  休日: string
+  公開範囲: string
+  受付年月日: string
+  就業場所: string
+  就業時間: string
+  年齢: string
+  求人区分: string
+  求人番号: string
+  求人票URL: string
+  紹介期限日: string
+  職種: string
+  '賃金（手当等を含む）': string
+  雇用形態: string
+  status: string
+  address: string
 }
 
+ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[]) => {
+  try {
+    const total = lists.length
+    let count = 0
 
-
-ipcMain.handle(
-  'hellowork-PDF',
-  async (_event: IpcMainInvokeEvent, lists: Works[]) => {
-    try{
-      const total = lists.length
-      let count = 0
-
-      const date = new Date()
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, '0');
-      const d = String(date.getDate()).padStart(2, '0');
-      const today = `${y}.${m}.${d}`
-      const downloadDir = path.join(os.homedir(), 'Downloads', `ハロワPDFs${today}`);
-      // フォルダがなければ作成する
-      if (!fs.existsSync(downloadDir)) {
-        fs.mkdirSync(downloadDir, { recursive: true });
-      }
-
-      let browser: Browser | null = null;
-      let page: Page | null = null;
-
-      const opts = getPuppeteerOptions()
-      // ② ブラウザ起動
-      browser = await puppeteer.launch(opts)
-
-      page = await browser.newPage();
-      await page.goto(
-        'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
-        { waitUntil: 'networkidle2' }
-      );
-      await page.type('input[name="mail"]', 'oceans7a@gmail.com');
-      await page.type('input[name="password"]', 'ocean@1115');
-
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle2' }),
-        page.click('button[name="loginBtn"]'),
-      ]);
-      
-
-      for (const item of lists) {
-        const afterNewline = item.address
-          .split(/\r?\n/)
-          .filter(line => line.trim() !== '')
-          .pop()!
-          .trim();
-        const filename = `${afterNewline}_${item.求人区分}_${item.職種}`;
-        try{
-          count = count + 1
-          //const downloadDir = path.join(os.homedir(), 'Downloads');
-          const finalFilename = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
-          const downloadsPath = path.join(downloadDir, finalFilename);
-          const jobUrl = `https://kyujin.hellowork.mhlw.go.jp/kyujin/${item.求人票URL}`
-
-          
-
-          try {
-            // 1) Puppeteer でページにアクセスし、クッキーを取得
-            await page.goto(jobUrl, { waitUntil: 'networkidle2', timeout: 60000 });
-
-            // 2) セッション維持用の Cookie を抜き出す
-            const cookies = await page.cookies();
-            const cookieHeader = cookies.map(c => `${c.name}=${c.value}`).join('; ');
-
-            // 3) Puppeteer は閉じてもOK
-            //await browser.close();
-            browser = null;
-
-            const res = await fetch(jobUrl, {
-              headers: { Cookie: cookieHeader },
-            });
-            if (!res.ok) {
-              throw new Error(`HTTP エラー ${res.status} ${res.statusText}`);
-            }
-            // arrayBuffer→Buffer に変換
-            const arrayBuffer = await res.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
-
-            if (buffer.length < 10000) {
-              throw new Error(`取得データが小さすぎます (${buffer.length} bytes)`);
-            }
-
-            fs.writeFileSync(downloadsPath, buffer);
-            HelloWorkWindow.webContents.send('helloWork-progress', { count: count, total: total, success: item.求人番号, url: jobUrl });
-
-          } catch (err: any) {
-            console.error('❌ PDFダウンロード失敗:', err);
-            HelloWorkWindow.webContents.send('helloWork-progress', { count: count, total: total, error: item.求人番号, url: filename });
-          } finally {
-            //mainWindow.webContents.send('helloWork-progress', { count: count, total: total });
-            if (browser) await browser.close();
-          }
-        } catch (e) {
-          //
-        }
-      }
-      PDFfileMarge()
-      NotificationEXE('すべてのPDFのダウンロード完了')
-    } catch (e) {
-      log.error('ハロワ取得エラー:', e)
+    const date = new Date()
+    const y = date.getFullYear()
+    const m = String(date.getMonth() + 1).padStart(2, '0')
+    const d = String(date.getDate()).padStart(2, '0')
+    const today = `${y}.${m}.${d}`
+    const downloadDir = path.join(os.homedir(), 'Downloads', `ハロワPDFs${today}`)
+    // フォルダがなければ作成する
+    if (!fs.existsSync(downloadDir)) {
+      fs.mkdirSync(downloadDir, { recursive: true })
     }
+
+    let browser: Browser | null = null
+    let page: Page | null = null
+
+    const opts = getPuppeteerOptions()
+    // ② ブラウザ起動
+    browser = await puppeteer.launch(opts)
+
+    page = await browser.newPage()
+    await page.goto(
+      'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
+      { waitUntil: 'networkidle2' }
+    )
+    await page.type('input[name="mail"]', 'oceans7a@gmail.com')
+    await page.type('input[name="password"]', 'ocean@1115')
+
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle2' }),
+      page.click('button[name="loginBtn"]')
+    ])
+
+    for (const item of lists) {
+      const afterNewline = item.address
+        .split(/\r?\n/)
+        .filter((line) => line.trim() !== '')
+        .pop()!
+        .trim()
+      const filename = `${afterNewline}_${item.求人区分}_${item.職種}`
+      try {
+        count = count + 1
+        //const downloadDir = path.join(os.homedir(), 'Downloads');
+        const finalFilename = filename.endsWith('.pdf') ? filename : `${filename}.pdf`
+        const downloadsPath = path.join(downloadDir, finalFilename)
+        const jobUrl = `https://kyujin.hellowork.mhlw.go.jp/kyujin/${item.求人票URL}`
+
+        try {
+          // 1) Puppeteer でページにアクセスし、クッキーを取得
+          await page.goto(jobUrl, { waitUntil: 'networkidle2', timeout: 60000 })
+
+          // 2) セッション維持用の Cookie を抜き出す
+          const cookies = await page.cookies()
+          const cookieHeader = cookies.map((c) => `${c.name}=${c.value}`).join('; ')
+
+          // 3) Puppeteer は閉じてもOK
+          //await browser.close();
+          browser = null
+
+          const res = await fetch(jobUrl, {
+            headers: { Cookie: cookieHeader }
+          })
+          if (!res.ok) {
+            throw new Error(`HTTP エラー ${res.status} ${res.statusText}`)
+          }
+          // arrayBuffer→Buffer に変換
+          const arrayBuffer = await res.arrayBuffer()
+          const buffer = Buffer.from(arrayBuffer)
+
+          if (buffer.length < 10000) {
+            throw new Error(`取得データが小さすぎます (${buffer.length} bytes)`)
+          }
+
+          fs.writeFileSync(downloadsPath, buffer)
+          HelloWorkWindow.webContents.send('helloWork-progress', {
+            count: count,
+            total: total,
+            success: item.求人番号,
+            url: jobUrl
+          })
+        } catch (err: any) {
+          console.error('❌ PDFダウンロード失敗:', err)
+          HelloWorkWindow.webContents.send('helloWork-progress', {
+            count: count,
+            total: total,
+            error: item.求人番号,
+            url: filename
+          })
+        } finally {
+          //mainWindow.webContents.send('helloWork-progress', { count: count, total: total });
+          if (browser) await browser.close()
+        }
+      } catch (e) {
+        //
+      }
+    }
+    PDFfileMarge()
+    NotificationEXE('すべてのPDFのダウンロード完了')
+  } catch (e) {
+    log.error('ハロワ取得エラー:', e)
   }
-);
-
-
-
+})
 
 ipcMain.on('PDF-Marge', () => {
   PDFfileMarge()
 })
 
-
-
 const PDFfileMarge = async (): Promise<{
-  canceled: boolean;
-  output?: string;
-  error?: string;
+  canceled: boolean
+  output?: string
+  error?: string
 }> => {
   // 1) フォルダ選択
   const { filePaths, canceled } = await dialog.showOpenDialog({
     title: 'PDF を結合するフォルダを選択',
     properties: ['openDirectory']
-  });
+  })
   if (canceled || filePaths.length === 0) {
-    return { canceled: true };
+    return { canceled: true }
   }
-  const folder = filePaths[0];
+  const folder = filePaths[0]
 
   // 2) フォルダ内の PDF リスト取得
   const pdfFiles = (await fs.promises.readdir(folder))
-    .filter(f => f.toLowerCase().endsWith('.pdf'))
-    .map(f => path.join(folder, f))
-    .sort();
+    .filter((f) => f.toLowerCase().endsWith('.pdf'))
+    .map((f) => path.join(folder, f))
+    .sort()
 
   if (pdfFiles.length < 2) {
     // canceled を必ず含める
-    return { canceled: true, error: 'PDF が 2 つ以上必要です。' };
+    return { canceled: true, error: 'PDF が 2 つ以上必要です。' }
   }
 
   // 3) 保存先ダイアログ
@@ -1546,72 +1496,70 @@ const PDFfileMarge = async (): Promise<{
     title: '結合後の PDF を保存',
     defaultPath: path.join(folder, 'merged.pdf'),
     filters: [{ name: 'PDF', extensions: ['pdf'] }]
-  });
+  })
   if (saveCanceled || !outPath) {
-    return { canceled: true };
+    return { canceled: true }
   }
 
   // ４）QPDF バイナリのパスを組み立て
-  let qpdfDir: string;
+  let qpdfDir: string
   if (app.isPackaged) {
     // リソースフォルダ配下の qpdf ディレクトリを指す
-    qpdfDir = path.join(process.resourcesPath, 'qpdf');
+    qpdfDir = path.join(process.resourcesPath, 'qpdf')
   } else {
     // 開発時はプロジェクト直下の vendor/qpdf
-    qpdfDir = path.resolve(__dirname, '../../vendor/qpdf');
+    qpdfDir = path.resolve(__dirname, '../../vendor/qpdf')
   }
 
-  const qpdfBinary = path.join(
-    qpdfDir,
-    'bin',
-    process.platform === 'win32' ? 'qpdf.exe' : 'qpdf'
-  );
+  const qpdfBinary = path.join(qpdfDir, 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf')
 
-  console.log('▶️ QPDF バイナリ:', qpdfBinary);
+  console.log('▶️ QPDF バイナリ:', qpdfBinary)
 
   if (!fs.existsSync(qpdfBinary)) {
-    return { canceled: true, error: `qpdf が見つかりません: ${qpdfBinary}` };
+    return { canceled: true, error: `qpdf が見つかりません: ${qpdfBinary}` }
   }
 
-  const args = ['--empty', '--pages', ...pdfFiles, '--', outPath];
+  const args = ['--empty', '--pages', ...pdfFiles, '--', outPath]
 
   // Promise でラップして非同期実行
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     execFile(qpdfBinary, args, (err, stdout, stderr) => {
       if (err) {
-        console.error('execFile エラー:', err);
-        return resolve({ canceled: true, error: err.message });
+        console.error('execFile エラー:', err)
+        return resolve({ canceled: true, error: err.message })
       }
-      console.log('qpdf stdout:', stdout);
-      console.warn('qpdf stderr:', stderr);
-      resolve({ canceled: false, output: outPath });
-    });
-  });
-};
+      console.log('qpdf stdout:', stdout)
+      console.warn('qpdf stderr:', stderr)
+      resolve({ canceled: false, output: outPath })
+    })
+  })
+}
 
 ipcMain.on('change-github-token', async () => {
   const token = await updateOrPromptToken(launcherWindow)
-  if (!token){
+  if (!token) {
     return
   }
   await clearStoredToken()
   process.env.GH_TOKEN = token
 })
 
-
-ipcMain.on('google-logout', async() => {
+ipcMain.on('google-logout', async () => {
   // 1) accounts.google.com のクッキーを削除
-  const accountCookies = await session.defaultSession.cookies.get({ url: 'https://accounts.google.com' });
+  const accountCookies = await session.defaultSession.cookies.get({
+    url: 'https://accounts.google.com'
+  })
   for (const c of accountCookies) {
-    await session.defaultSession.cookies.remove('https://' + c.domain + c.path, c.name);
+    await session.defaultSession.cookies.remove('https://' + c.domain + c.path, c.name)
   }
 
   // 2) script.google.com（GAS） のクッキーも消したいなら同様に
-  const scriptCookies = await session.defaultSession.cookies.get({ url: 'https://script.google.com' });
+  const scriptCookies = await session.defaultSession.cookies.get({
+    url: 'https://script.google.com'
+  })
   for (const c of scriptCookies) {
-    await session.defaultSession.cookies.remove('https://' + c.domain + c.path, c.name);
+    await session.defaultSession.cookies.remove('https://' + c.domain + c.path, c.name)
   }
-  
 })
 
 ipcMain.on('google-login', async () => {
@@ -1620,26 +1568,21 @@ ipcMain.on('google-login', async () => {
 
 ipcMain.on('google-login-confirmation', async () => {
   if (updaterWindow && !updaterWindow.isDestroyed()) {
-    updaterWindow.webContents.send('check', { status: 'google', value: true });
+    updaterWindow.webContents.send('check', { status: 'google', value: true })
   }
 })
 
-
-
-ipcMain.handle('windowInfo', async() => {
-  const Focuswin = BrowserWindow.getFocusedWindow();
-  if (!Focuswin) return null;
+ipcMain.handle('windowInfo', async () => {
+  const Focuswin = BrowserWindow.getFocusedWindow()
+  if (!Focuswin) return null
 
   return {
     id: Focuswin.id,
     title: Focuswin.getTitle(),
     bounds: Focuswin.getBounds(),
     url: Focuswin.webContents.getURL()
-  };
+  }
 })
-
-
-
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -1647,33 +1590,30 @@ app.on('window-all-closed', () => {
   }
 })
 
-
-
 const NotificationEXE = (bodyString) => {
   new Notification({
     title: '通知',
     body: bodyString
   }).show()
 }
-const userDataDir = path.join(app.getPath('userData'), 'files');
+const userDataDir = path.join(app.getPath('userData'), 'files')
 
 ipcMain.handle('get-file-list', async () => {
-  if (!fs.existsSync(userDataDir)) return [];
-  const files = fs.readdirSync(userDataDir);
-  return files;
-});
+  if (!fs.existsSync(userDataDir)) return []
+  const files = fs.readdirSync(userDataDir)
+  return files
+})
 
-ipcMain.handle('get-file-path', async ( _event, filename ) => {
-  const fullPath = path.join(app.getPath('userData'), 'files', filename);
-  return fullPath;
-});
-
+ipcMain.handle('get-file-path', async (_event, filename) => {
+  const fullPath = path.join(app.getPath('userData'), 'files', filename)
+  return fullPath
+})
 
 const restartApp = () => {
-  app.relaunch();
-  app.exit(0);
+  app.relaunch()
+  app.exit(0)
 }
 
-const clearStoredToken = async(): Promise<void> => {
+const clearStoredToken = async (): Promise<void> => {
   await keytar.deletePassword(SERVICE, ACCOUNT)
 }

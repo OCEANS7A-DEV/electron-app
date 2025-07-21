@@ -1,15 +1,16 @@
 // router.ts
-import React from 'react';
+import React from 'react'
 import { createHashRouter } from 'react-router-dom'
-
-import ReceivingPage from './router/inventory/inventoryInsert/Receiving_stock';
+import ReceivingPage from './router/inventory/inventoryInsert/Receiving_stock'
 import StoreOrderPage from './router/inventory/inventoryInsert/storeOrder'
-import ProductDetailChangePage, { loader as productsLoader } from './router/inventory/inventorySetting/ProductListUpdata'
+import ProductDetailChangePage, {
+  loader as productsLoader
+} from './router/inventory/inventorySetting/ProductListUpdata'
 import NETOrder, { loader as netOrderLoader } from './router/inventory/inventoryGet/netOrder'
 import NetEtcPrint, { loader as NetEtcLoader } from './router/inventory/inventoryPrint/etcPrint'
 import NotListed, { loader as NotListedLoader } from './router/inventory/inventoryGet/NotListed'
 import HQStocks, { loader as HQStocksLoader } from './router/inventory/inventoryGet/HQ_stocks'
-import HQPage from './router/inventory/inventoryGet/process_chack'
+import HQPage from './router/inventory/inventoryGet/processCheck'
 import PrintContent, { loader as PrintLoader } from './router/inventory/inventoryPrint/PrintContent'
 import TaiyoPrint, { loader as TaiyoLoader } from './router/inventory/inventoryPrint/taiyo'
 import EtcPrint, { loader as EtcLoader } from './router/inventory/inventoryPrint/VendorPrint'
@@ -19,27 +20,28 @@ import DetailContent from './router/inventory/inventorySetting/productDetailEdit
 import UpdateWindow from './router/updater'
 import InventoryMoving from './router/inventory/inventoryInsert/Moving'
 import CatalogView from './router/inventory/inventoryGet/Catalog'
-import NetDetailsPrint, { loader as NetDetailsLoader } from './router/inventory/inventoryInsert/OrderDetails'
+import NetDetailsPrint, {
+  loader as NetDetailsLoader
+} from './router/inventory/inventoryInsert/OrderDetails'
 import PDFOperationPage from './router/HQwork/PDFOperation'
 import SystemSettingPage from './router/setting/systemSetting'
-import InventoryAmount, { loader as InventoryAmountLoader } from './router/inventory/inventoryGet/InventoryAmount'
+import InventoryAmount, {
+  loader as InventoryAmountLoader
+} from './router/inventory/inventoryGet/InventoryAmount'
 import GoogleWindow from './router/setting/GoogleLogin'
 import LauncherPage from './router/launcher'
 import Uriage from './router/sales/Uriage'
 import FCInventory, { loader as FCLoader } from './router/inventory/inventoryGet/FCInventory'
 import HQdata, { loader as HQLoader } from './router/HQwork/HQdata'
 
-
-
-
 export const router = createHashRouter([
   {
     path: '/',
-    element: <ReceivingPage />,
+    element: <ReceivingPage />
   },
   {
     path: '/StoreOrder',
-    element: <StoreOrderPage />,
+    element: <StoreOrderPage />
   },
   {
     path: '/NETOrder',
@@ -48,12 +50,12 @@ export const router = createHashRouter([
   },
   {
     path: '/NetEtcPrint',
-    element: <NetEtcPrint/>,
+    element: <NetEtcPrint />,
     loader: NetEtcLoader
   },
   {
     path: '/NotListed',
-    element: <NotListed/>,
+    element: <NotListed />,
     loader: NotListedLoader
   },
   {
@@ -63,7 +65,7 @@ export const router = createHashRouter([
   },
   {
     path: '/PDFOperation',
-    element: <PDFOperationPage/>
+    element: <PDFOperationPage />
   },
   {
     path: '/HQ_stocks',
@@ -101,7 +103,7 @@ export const router = createHashRouter([
   {
     path: '/ProductListUpdata',
     element: <ProductDetailChangePage />,
-    loader: productsLoader,
+    loader: productsLoader
   },
   {
     path: '/productDetailEdit',
@@ -109,15 +111,15 @@ export const router = createHashRouter([
   },
   {
     path: '/updater',
-    element: <UpdateWindow/>
+    element: <UpdateWindow />
   },
   {
     path: '/Google',
-    element: <GoogleWindow/>
+    element: <GoogleWindow />
   },
   {
     path: '/Moving',
-    element: <InventoryMoving />,
+    element: <InventoryMoving />
   },
   {
     path: '/CatalogView',
@@ -125,30 +127,30 @@ export const router = createHashRouter([
   },
   {
     path: '/HelloWork',
-    element: <HelloWork/>,
+    element: <HelloWork />,
     loader: HelloWorkLoader
   },
   {
     path: '/InventoryAmount',
-    element: <InventoryAmount/>,
+    element: <InventoryAmount />,
     loader: InventoryAmountLoader
   },
   {
     path: '/launcher',
-    element: <LauncherPage/>
+    element: <LauncherPage />
   },
   {
     path: '/Uriage',
-    element: <Uriage/>
+    element: <Uriage />
   },
   {
     path: '/FCInventory',
-    element: <FCInventory/>,
+    element: <FCInventory />,
     loader: FCLoader
   },
   {
     path: '/HQdata',
-    element: <HQdata/>,
-    loader: HQLoader,
+    element: <HQdata />,
+    loader: HQLoader
   }
 ])

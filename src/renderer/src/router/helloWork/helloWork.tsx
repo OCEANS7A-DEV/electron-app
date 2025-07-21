@@ -1,52 +1,48 @@
 import React, { useEffect, useState, useRef } from 'react'
+import type { JSX } from 'react'
 import LinkBaner from '../../comp/Linkbanar'
 import '../../css/HelloWork.css'
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData } from 'react-router-dom'
 //import puppeteer from "puppeteer"
 import { Button } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import toast, { Toaster } from 'react-hot-toast'
 
-
 interface Works {
-  'こだわり条件': any[];
-  '事業所名': string;
-  '仕事の内容': string;
-  '休日': string;
-  '公開範囲': string;
-  '受付年月日': string;
-  '就業場所': string;
-  '就業時間': string;
-  '年齢': string;
-  '求人区分': string;
-  '求人番号': string;
-  '求人票URL': string;
-  '紹介期限日': string;
-  '職種': string;
-  '賃金（手当等を含む）': string;
-  '雇用形態': string;
-  'status': string;
-  'address': string;
+  こだわり条件: string[]
+  事業所名: string
+  仕事の内容: string
+  休日: string
+  公開範囲: string
+  受付年月日: string
+  就業場所: string
+  就業時間: string
+  年齢: string
+  求人区分: string
+  求人番号: string
+  求人票URL: string
+  紹介期限日: string
+  職種: string
+  '賃金（手当等を含む）': string
+  雇用形態: string
+  status: string
+  address: string
 }
 
-
-
-
-export const loader = async() => {
-  //const works = await window.myInventoryAPI.WorkGet()
+export const loader = async () => {
   const works = []
   return { works }
-};
+}
 
-export default function HelloWork() {
+export default function HelloWork(): JSX.Element {
   const { works } = useLoaderData<typeof loader>()
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false)
   const [allPDFNum, setAllPDFNum] = useState(0)
   const allPDFNumRef = useRef(allPDFNum)
   const [DLnums, setDLnums] = useState(0)
   const [jobList, setJobList] = useState<Works[]>([])
 
-  const start = () => {
+  const start = (): void => {
     const PDFnums = works.length
     setAllPDFNum(PDFnums)
     setJobList(works)
@@ -56,26 +52,29 @@ export default function HelloWork() {
     allPDFNumRef.current = allPDFNum
   }, [allPDFNum])
 
-  const PDFGet = async() => {
+  const PDFGet = async (): Promise<void> => {
     setLoading(true)
     setDLnums(0)
-    await window.myInventoryAPI.HelloWorkPDFGet(jobList);
+    await window.myInventoryAPI.HelloWorkPDFGet(jobList)
   }
-
 
   useEffect(() => {
     setAllPDFNum(jobList.length)
-    //console.log(jobList)
     toast.success(`取得した求人数:${jobList.length}`)
   }, [jobList])
-
 
   useEffect(() => {
     start()
   }, [])
 
   useEffect(() => {
-    const progressHandler = (data: { count: number; total: number; error?: string; success?: string; url?: string }) => {
+    const progressHandler = (data: {
+      count: number
+      total: number
+      error?: string
+      success?: string
+      url?: string
+    }): void => {
       if (data.success) {
         toast.success(`進捗: ${data.count}/${data.total}`)
       } else {
@@ -83,7 +82,7 @@ export default function HelloWork() {
       }
       setDLnums(data.count)
       setAllPDFNum(data.total)
-      if (!loading){
+      if (!loading) {
         setLoading(true)
       }
       if (data.count === data.total) {
@@ -97,64 +96,62 @@ export default function HelloWork() {
     }
   }, [])
 
-
-  const Research = async () => {
+  const Research = async (): Promise<void> => {
     const result = await window.myInventoryAPI.WorkGet()
     setJobList(result[1])
-    //console.log(result[0])
-    //console.log(result[1])
   }
 
-  const workResearch = () => {
+  const workResearch = (): void => {
     setLoading(true)
-    toast.promise(
-      Research(),
-      {
-        loading: '読み込み中…',
-        success: () => {
-          setLoading(false)
-          return '読み込み完了'
-        },
-        error: () => {
-          setLoading(false)
-          return 'エラーが発生しました'
-        },
+    toast.promise(Research(), {
+      loading: '読み込み中…',
+      success: () => {
+        setLoading(false)
+        return '読み込み完了'
       },
-    )
-    
+      error: () => {
+        setLoading(false)
+        return 'エラーが発生しました'
+      }
+    })
   }
 
-  const storeName = (name: string) => {
+  const storeName = (name: string): string => {
     const afterNewline = name
       .split(/\r?\n/)
-      .filter(line => line.trim() !== '')
+      .filter((line) => line.trim() !== '')
       .pop()!
-      .trim();
+      .trim()
     return afterNewline
   }
 
-  const handlePDFMarge = async() => {
+  const handlePDFMarge = async (): Promise<void> => {
     await window.myInventoryAPI.PDFMarge()
   }
 
-  
-
-
-  return(
+  return (
     <div className="HelloWorkWindow">
       <div className="banner">
-        <LinkBaner id="helloWork"/>
+        <LinkBaner id="helloWork" />
         <Toaster />
       </div>
       <div className="HelloWorkMainArea">
         <div className="ButtonArea">
-          <Button variant="outlined" onClick={workResearch} loading={loading}>再取得</Button>
+          <Button variant="outlined" onClick={workResearch} loading={loading}>
+            再取得
+          </Button>
           {jobList.length !== 0 ? (
-            <Button variant="outlined" onClick={PDFGet} loading={loading}>PDFGet</Button>
+            <Button variant="outlined" onClick={PDFGet} loading={loading}>
+              PDFGet
+            </Button>
           ) : (
-            <Button variant="outlined" onClick={PDFGet} loading={loading} disabled>PDFGet</Button>
+            <Button variant="outlined" onClick={PDFGet} loading={loading} disabled>
+              PDFGet
+            </Button>
           )}
-          <Button variant="outlined" onClick={handlePDFMarge}>PDF結合</Button>
+          <Button variant="outlined" onClick={handlePDFMarge}>
+            PDF結合
+          </Button>
         </div>
         <div className="HelloWorkProgress">
           {loading && (
@@ -175,17 +172,19 @@ export default function HelloWork() {
               </tr>
             </thead>
             <tbody>
-              {jobList.filter(item => item.求人区分 == 'フルタイム').map((row,index) => (
-                <tr key={index}>
-                  <td className="HelloType">{row.職種}</td>
-                  <td className="HelloWhere">{storeName(row.address)}</td>
-                  <td className="HelloLimit">{row.紹介期限日}</td>
-                  <td>{row.status}</td>
-                </tr>
-              ))}
+              {jobList
+                .filter((item) => item.求人区分 == 'フルタイム')
+                .map((row, index) => (
+                  <tr key={index}>
+                    <td className="HelloType">{row.職種}</td>
+                    <td className="HelloWhere">{storeName(row.address)}</td>
+                    <td className="HelloLimit">{row.紹介期限日}</td>
+                    <td>{row.status}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
-          <div style={{marginTop: 20}}>パート</div>
+          <div style={{ marginTop: 20 }}>パート</div>
           <table className="fullTime">
             <thead>
               <tr>
@@ -196,17 +195,19 @@ export default function HelloWork() {
               </tr>
             </thead>
             <tbody>
-              {jobList.filter(item => item.求人区分 == 'パート').map((row,index) => (
-                <tr key={index}>
-                  <td className="HelloType">{row.職種}</td>
-                  <td className="HelloWhere">{storeName(row.address)}</td>
-                  <td className="HelloLimit">{row.紹介期限日}</td>
-                  <td>{row.status}</td>
-                </tr>
-              ))}
+              {jobList
+                .filter((item) => item.求人区分 == 'パート')
+                .map((row, index) => (
+                  <tr key={index}>
+                    <td className="HelloType">{row.職種}</td>
+                    <td className="HelloWhere">{storeName(row.address)}</td>
+                    <td className="HelloLimit">{row.紹介期限日}</td>
+                    <td>{row.status}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
-          <div style={{marginTop: 20}}>その他</div>
+          <div style={{ marginTop: 20 }}>その他</div>
           <table className="fullTime">
             <thead>
               <tr>
@@ -218,15 +219,17 @@ export default function HelloWork() {
               </tr>
             </thead>
             <tbody>
-              {jobList.filter(item => item.求人区分 !== 'パート' && item.求人区分 !== 'フルタイム').map((row,index) => (
-                <tr key={index}>
-                  <td className="HelloType">{row.職種}</td>
-                  <td className="HelloWhere">{storeName(row.address)}</td>
-                  <td className="HelloLimit">{row.紹介期限日}</td>
-                  <td>{row.status}</td>
-                  <td>{row.求人区分}</td>
-                </tr>
-              ))}
+              {jobList
+                .filter((item) => item.求人区分 !== 'パート' && item.求人区分 !== 'フルタイム')
+                .map((row, index) => (
+                  <tr key={index}>
+                    <td className="HelloType">{row.職種}</td>
+                    <td className="HelloWhere">{storeName(row.address)}</td>
+                    <td className="HelloLimit">{row.紹介期限日}</td>
+                    <td>{row.status}</td>
+                    <td>{row.求人区分}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -234,6 +237,3 @@ export default function HelloWork() {
     </div>
   )
 }
-
-
-

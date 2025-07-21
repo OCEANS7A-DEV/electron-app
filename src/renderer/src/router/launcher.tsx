@@ -1,64 +1,46 @@
-
 import React from 'react'
+import type { JSX } from 'react'
 import { Button } from '@mui/material'
 import '../css/launcher.css'
 
+const styles = { height: '30px', margin: '5px 10px', width: 120 }
 
-export default function LauncherPage() {
-  
-  const InventoryApp = async() => {
+const LauncherPage = (): JSX.Element => {
+  const InventoryApp = async (): Promise<void> => {
     await window.myInventoryAPI.WindowZaiko()
-    console.log('在庫管理')
   }
 
-  const HelloWorkApp = async() => {
+  const HelloWorkApp = async (): Promise<void> => {
     await window.myInventoryAPI.HelloWorkWindow()
-    console.log('ハローワーク')
   }
 
-  const SettingApp = async() => {
+  const SettingApp = async (): Promise<void> => {
     await window.myInventoryAPI.SettingWindow()
-    console.log('設定')
   }
 
-  const OfficeWork = async() => {
+  const OfficeWork = async (): Promise<void> => {
     await window.myInventoryAPI.OfficeWorkWindow()
-    console.log('本部事務')
   }
 
-  return(
+  return (
     <div className="app-select-area">
       <div className="app-select-title">アプリを選択してください</div>
       <div>
-        <Button
-          variant="outlined"
-          onClick={InventoryApp}
-          sx={{height:'30px', margin: "5px 10px", width: 120}}
-        >
+        <Button variant="outlined" onClick={InventoryApp} sx={styles}>
           在庫管理
         </Button>
-        <Button
-          variant="outlined"
-          onClick={HelloWorkApp}
-          sx={{height:'30px', margin: "5px 10px", width: 120}}
-        >
+        <Button variant="outlined" onClick={HelloWorkApp} sx={styles}>
           ハロワ
         </Button>
-        <Button
-          variant="outlined"
-          onClick={OfficeWork}
-          sx={{height:'30px', margin: "5px 10px", width: 120}}
-        >
+        <Button variant="outlined" onClick={OfficeWork} sx={styles}>
           その他事務
         </Button>
-        <Button
-          variant="outlined"
-          onClick={SettingApp}
-          sx={{height:'30px', margin: "5px 10px", width: 120}}
-        >
+        <Button variant="outlined" onClick={SettingApp} sx={styles}>
           設定
         </Button>
       </div>
     </div>
   )
 }
+
+export default LauncherPage
