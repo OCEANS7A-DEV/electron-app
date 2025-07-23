@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
+import type { JSX } from 'react'
 import { Button, IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -13,13 +14,14 @@ import Tooltip from '@mui/material/Tooltip';
 
 import '../css/banner.css';
 
+const ButtonStyle = { height:'30px', margin: "5px 10px", width: 120 }
 
-const LinkBaner = (data) => {
-  const navigate = useNavigate();
-  const [open, setopen] = useState(false);
-  const navigation = useNavigation();
-  const [loading, setLoading] = useState(navigation.state === 'loading');
-  const [updateIconColor, setUpdateIconColor] = useState<SvgIconProps['color']>('disabled');
+const LinkBaner = (data): JSX.Element => {
+  const navigate = useNavigate()
+  const [open, setopen] = useState(false)
+  const navigation = useNavigation()
+  const [loading, setLoading] = useState(navigation.state === 'loading')
+  const [updateIconColor, setUpdateIconColor] = useState<SvgIconProps['color']>('disabled')
 
   useEffect(() => {
     if (navigation.state === "loading") {
@@ -41,23 +43,23 @@ const LinkBaner = (data) => {
     })
   }, [])
 
-  const handleUpdateClick = () => {
+  const handleUpdateClick = (): void => {
     window.myInventoryAPI.upGrade()
-    //window.myInventoryAPI.MainBoot()
   }
 
-  const LauncherOpen = () => {
+  const LauncherOpen = (): void => {
     window.myInventoryAPI.MainBoot()
   }
 
 
-  const handleDrawerOpen = () => {
+  const handleDrawerOpen = (): void => {
     if(open){
       setopen(false);
     }else{
       setopen(true);
     }
-  };
+  }
+
   return(
     <div>
       {loading && (
@@ -121,36 +123,36 @@ const LinkBaner = (data) => {
           <div className="Link-button">
             {data.id == 'zaiko' && (
               <div className="Link-button" style={{ marginTop: "40px" }}>
-                <Button variant="outlined" onClick={() => navigate('/')} sx={{height:'30px', margin: "5px 10px", width: 120}}>入庫</Button>
-                <Button variant='outlined' onClick={() => navigate('/StoreOrder')} sx={{height:'30px', margin: "5px 10px", width: 120}}>店舗注文</Button>
-                <Button variant='outlined' onClick={() => navigate('/Moving')} sx={{height:'30px', margin: "5px 10px", width: 120}}>店舗間移動</Button>
-                <Button variant="outlined" onClick={() => navigate('/HQ_Stocks')} sx={{height:'30px', margin: "5px 10px", width: 120}}>在庫数</Button>
-                <Button variant="outlined" onClick={() => navigate('/FCInventory')} sx={{height:'30px', margin: "5px 10px", width: 120}}>FC在庫数</Button>
-                <Button variant="outlined" onClick={() => navigate('/netOrder')} sx={{height:'30px', margin: "5px 10px", width: 120}}>発注サイト</Button>
-                <Button variant="outlined" onClick={() => navigate('/CatalogView')} sx={{height:'30px', margin: "5px 10px", width: 120}}>カタログ</Button>
-                <Button variant="outlined" onClick={() => navigate('/process_chack')} sx={{height:'30px', margin: "5px 10px", width: 120}}>印刷関係</Button>
-                <Button variant="outlined" onClick={() => navigate('/ProductListUpdata')} sx={{height:'30px', margin: "5px 10px", width: 120}}>商品設定</Button>
-                <Button variant="outlined" onClick={() => navigate('/zaikosetting')} sx={{height:'30px', margin: "5px 10px", width: 120}}>在庫設定</Button>
-                <Button variant="outlined" onClick={() => navigate('/InventoryAmount')} sx={{height:'30px', margin: "5px 10px", width: 120}}>在庫金額</Button>
+                <Button variant="outlined" onClick={() => navigate('/')} sx={ButtonStyle}>入庫</Button>
+                <Button variant='outlined' onClick={() => navigate('/StoreOrder')} sx={ButtonStyle}>店舗注文</Button>
+                <Button variant='outlined' onClick={() => navigate('/Moving')} sx={ButtonStyle}>店舗間移動</Button>
+                <Button variant="outlined" onClick={() => navigate('/HQ_Stocks')} sx={ButtonStyle}>在庫数</Button>
+                <Button variant="outlined" onClick={() => navigate('/FCInventory')} sx={ButtonStyle}>FC在庫数</Button>
+                <Button variant="outlined" onClick={() => navigate('/netOrder')} sx={ButtonStyle}>発注サイト</Button>
+                <Button variant="outlined" onClick={() => navigate('/CatalogView')} sx={ButtonStyle}>カタログ</Button>
+                <Button variant="outlined" onClick={() => navigate('/process_chack')} sx={ButtonStyle}>印刷関係</Button>
+                <Button variant="outlined" onClick={() => navigate('/ProductListUpdata')} sx={ButtonStyle}>商品設定</Button>
+                <Button variant="outlined" onClick={() => navigate('/zaikosetting')} sx={ButtonStyle}>在庫設定</Button>
+                <Button variant="outlined" onClick={() => navigate('/InventoryAmount')} sx={ButtonStyle}>在庫金額</Button>
                 
               </div>
             )}
             {data.id == 'helloWork' && (
               <div className="Link-button" style={{ marginTop: "40px" }}>
-                <Button variant="outlined" onClick={() => navigate('/HelloWork')} sx={{height:'30px', margin: "5px 10px", width: 120}}>ハロワ</Button>
+                <Button variant="outlined" onClick={() => navigate('/HelloWork')} sx={ButtonStyle}>ハロワ</Button>
               </div>
             )}
             {data.id == 'OfficeWork' && (
               <div className="Link-button" style={{ marginTop: "40px" }}>
-                <Button variant="outlined" onClick={() => navigate('/PDFOperation')} sx={{height:'30px', margin: "5px 10px", width: 120}}>PDF操作</Button>
-                <Button variant="outlined" onClick={() => navigate('/Uriage')} sx={{height:'30px', margin: "5px 10px", width: 120}}>売上</Button>
-                <Button variant="outlined" onClick={() => navigate('/HQdata')} sx={{height:'30px', margin: "5px 10px", width: 120}}>本部データ</Button>
-                <Button variant="outlined" onClick={() => navigate('/HQmemo')} sx={{height:'30px', margin: "5px 10px", width: 120}}>本部メモ</Button>
+                <Button variant="outlined" onClick={() => navigate('/PDFOperation')} sx={ButtonStyle}>PDF操作</Button>
+                <Button variant="outlined" onClick={() => navigate('/Uriage')} sx={ButtonStyle}>売上</Button>
+                <Button variant="outlined" onClick={() => navigate('/HQdata')} sx={ButtonStyle}>本部データ</Button>
+                <Button variant="outlined" onClick={() => navigate('/HQmemo')} sx={ButtonStyle}>本部メモ</Button>
               </div>
             )}
             {data.id == 'Setting' && (
               <div className="Link-button" style={{ marginTop: "40px" }}>
-                <Button variant="outlined" onClick={() => navigate('/systemSetting')} sx={{height:'30px', margin: "5px 10px", width: 120}}>システム設定</Button>
+                <Button variant="outlined" onClick={() => navigate('/systemSetting')} sx={ButtonStyle}>システム設定</Button>
               </div>
             )}
             {/* <Link className="link" to="/service">サービス品入庫</Link>

@@ -1,6 +1,7 @@
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData } from 'react-router-dom'
 import LinkBaner from '../../../comp/Linkbanar'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import type { JSX } from 'react'
 import '../../../css/InventoryAmount.css'
 
 import Select, { SelectChangeEvent } from '@mui/material/Select'
@@ -18,7 +19,6 @@ import { SubmitHandler } from 'react-hook-form'
 
 import Swal from 'sweetalert2'
 
-
 interface SelectOption {
   value: number
   label: string
@@ -30,27 +30,21 @@ interface SelectStoreOption {
   type: string
 }
 
-
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
     background: {
       default: '#2a2a30',
-      paper: '#333',
+      paper: '#333'
     },
     primary: {
-      main: '#90caf9',
+      main: '#90caf9'
     },
     text: {
-      primary: '#ffffff',
-    },
-  },
+      primary: '#ffffff'
+    }
+  }
 })
-
-
-
-
-
 
 type FormValues = {
   rows: {
@@ -61,39 +55,36 @@ type FormValues = {
   }[]
 }
 
-const defaultSet = (stores): FormValues["rows"] => {
-  const result: FormValues["rows"] = []
-  stores.forEach(item => {
-    result.push(
-      {  
-        store: item[0],
-        stocking: '',
-        used: '',
-        inventoryamount: ''
-      }
-    )
+
+const defaultSet = (stores): FormValues['rows'] => {
+  const result: FormValues['rows'] = []
+  stores.forEach((item) => {
+    result.push({
+      store: item[0],
+      stocking: '',
+      used: '',
+      inventoryamount: ''
+    })
   })
   return result
 }
 
-
-
-
-
-
-
 export const loader = async () => {
-  const loaderData = await window.myInventoryAPI.ListGet({sheetName: '店舗在庫金額', action: 'InputDataGet', ranges: 'A3:F'})
+  const loaderData = await window.myInventoryAPI.ListGet({
+    sheetName: '店舗在庫金額',
+    action: 'InputDataGet',
+    ranges: 'A3:F'
+  })
   const now = new Date()
   const year = now.getFullYear()
   const yearList: SelectOption[] = [
-    { value: year + 1, label: `${year + 1}年`},
-    { value: year, label: `${year}年`},
-    { value: year - 1, label: `${year - 1}年`}
+    { value: year + 1, label: `${year + 1}年` },
+    { value: year, label: `${year}年` },
+    { value: year - 1, label: `${year - 1}年` }
   ]
   const monthList: SelectOption[] = []
-  for (let i = 0; i < 12; i++){
-    monthList.push({ value: i + 1, label: `${i + 1}月`})
+  for (let i = 0; i < 12; i++) {
+    monthList.push({ value: i + 1, label: `${i + 1}月` })
   }
 
   const stores = await window.myInventoryAPI.ListGet({
@@ -101,74 +92,74 @@ export const loader = async () => {
     action: 'ListGet',
     ranges: 'A2:B'
   })
-  const storenames: SelectStoreOption[] = stores.filter(row => row[0] !== "" && row[1] == "DM" && row[0] !== "会議室")
+  const storenames: SelectStoreOption[] = stores.filter(
+    (row) => row[0] !== '' && row[1] == 'DM' && row[0] !== '会議室'
+  )
 
   return { loaderData, yearList, monthList, storenames }
 }
 
-
-
-export default function InventoryAmount () {
+export default function InventoryAmount(): JSX.Element {
   const { loaderData, yearList, monthList, storenames } = useLoaderData<typeof loader>()
   const [Year, setYear] = useState<number>(new Date().getFullYear())
   const [Month, setMonth] = useState<number>(new Date().getMonth() + 1)
-  const [insertStatus, setInsertStatus] = useState('')
+  const insertActionRef = useRef<string>('')
   const [DATA, setDATA] = useState(loaderData)
 
-
-  const dataGet = async() => {
-    const getData = await window.myInventoryAPI.ListGet({sheetName: '店舗在庫金額', action: 'InputDataGet', ranges: 'A3:F'})
+  const dataGet = async (): Promise<[string, string, number, number, number, string]> => {
+    const getData = await window.myInventoryAPI.ListGet({
+      sheetName: '店舗在庫金額',
+      action: 'InputDataGet',
+      ranges: 'A3:F'
+    })
     return getData
   }
 
-
-  const handleYearChange = (e: SelectChangeEvent<number>) => {
+  const handleYearChange = (e: SelectChangeEvent<number>): void => {
     setYear(e.target.value)
   }
 
-  const handleMonthChange = (e: SelectChangeEvent<number>) => {
+  const handleMonthChange = (e: SelectChangeEvent<number>): void => {
     setMonth(e.target.value)
   }
 
-  const formatDate = (date) => {
+  const formatDate = (date): string => {
     const dt = new Date(date)
     const result = `${dt.getFullYear()}/${dt.getMonth() + 1}`
     return result
   }
 
-  const dataSet = (data) => {
+  const dataSet = (data): void => {
     const fData = watch().rows
-    data.forEach(item => {
+    data.forEach((item) => {
       //console.log(item)
-      const indexNum = fData.findIndex(row => row.store == item[1])
+      const indexNum = fData.findIndex((row) => row.store == item[1])
       setValue(`rows.${indexNum}.stocking`, item[2])
       setValue(`rows.${indexNum}.used`, item[3])
       setValue(`rows.${indexNum}.inventoryamount`, item[4])
     })
   }
 
-
-
   useEffect(() => {
     const selectDate = `${Year}/${Month}`
-    const filter = DATA.filter(item => formatDate(item[0]) == selectDate)
-    if (filter.length == 0){
-      setInsertStatus('insert')
+    const filter = DATA.filter((item) => formatDate(item[0]) == selectDate)
+    if (filter.length == 0) {
+      insertActionRef.current = 'insert'
       reset({
         rows: defaultSet(storenames)
       })
     } else {
-      setInsertStatus('InventoryAmountUpdate')
+      insertActionRef.current = 'InventoryAmountUpdate'
       dataSet(filter)
     }
   }, [Year, Month, DATA])
 
   const { control, register, handleSubmit, getValues, setValue, watch, reset } =
-  useForm<FormValues>({
-    defaultValues: {
-      rows: defaultSet(storenames)
-    }
-  })
+    useForm<FormValues>({
+      defaultValues: {
+        rows: defaultSet(storenames)
+      }
+    })
 
   const { fields } = useFieldArray({
     control,
@@ -179,11 +170,11 @@ export default function InventoryAmount () {
     console.log(data)
   }
 
-  const handleSend = async() => {
+  const handleSend = async (): Promise<void> => {
     const selectDate = `${Year}/${Month}`
-    if (insertStatus == 'insert'){
+    if (insertActionRef.current == 'insert') {
       const getData = await dataGet()
-      const result = getData.find(item => formatDate(item[0]) == selectDate)
+      const result = getData.find((item) => formatDate(item[0]) == selectDate)
       if (result) {
         SwalOpen(getData)
         return
@@ -192,78 +183,75 @@ export default function InventoryAmount () {
     DataSend()
   }
 
-  const DataSend = async() => {
+  const DataSend = async (): Promise<void> => {
     const selectDate = `${Year}/${Month}`
     const fData = watch().rows
-    const formData = fData.map(item => {
-      return [
-        selectDate,
-        item.store,
-        null,
-        item.used,
-        null
-      ]
+    const formData = fData.map((item) => {
+      return [selectDate, item.store, null, item.used, null]
     })
+
+    const actionstring = insertActionRef.current
+
     if (formData.length >= 1) {
       await window.myInventoryAPI.DataInsert({
         sheetName: '店舗在庫金額',
-        action: insertStatus,
+        sub_action: 'insert',
+        action: actionstring,
         data: formData,
         date: selectDate
       })
     }
   }
 
-  const SwalOpen = (newData) => {
+  const SwalOpen = (newData): void => {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
-        confirmButton: "btn btn-success",
-        cancelButton: "btn btn-danger"
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
       },
       buttonsStyling: true
-    });
+    })
     swalWithBootstrapButtons
       .fire({
-        title: "確認",
-        text: "すでに入力されたデータがあります。上書きしますか？",
-        icon: "warning",
+        title: '確認',
+        text: 'すでに入力されたデータがあります。上書きしますか？',
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: "データを上書きする",
-        cancelButtonText: "入力されたデータを取得する",
+        confirmButtonText: 'データを上書きする',
+        cancelButtonText: '入力されたデータを取得する',
         reverseButtons: true
-      }).then((result) => {
+      })
+      .then((result) => {
         if (result.isConfirmed) {
-          setInsertStatus('InventoryAmountUpdate')
+          insertActionRef.current = 'InventoryAmountUpdate'
           DataSend()
           swalWithBootstrapButtons.fire({
-            title: "complete!",
-            text: "データが上書きされました",
-            icon: "success"
-          });
-        } else if (
-          result.dismiss === Swal.DismissReason.cancel
-        ) {
+            title: 'complete!',
+            text: 'データが上書きされました',
+            icon: 'success'
+          })
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire({
-            title: "Cancelled",
-            text: "上書きを中止し、データを取得します",
-            icon: "error"
-          });
+            title: 'Cancelled',
+            text: '上書きを中止し、データを取得します',
+            icon: 'error'
+          })
           setDATA(newData)
         }
-      });
+      })
   }
 
-  const Reget = async() => {
+  const Reget = async (): Promise<void> => {
     const getData = await dataGet()
     setDATA(getData)
   }
 
-  const isHalfWidth = (value: string) => /^[\x20-\x7E]*$/.test(value)
+  const isHalfWidth = (value: string): boolean => /^[\x20-\x7E]*$/.test(value)
 
   return (
     <div>
       <div>
-        <LinkBaner id="zaiko"/>
+        <LinkBaner id="zaiko" />
       </div>
       <div className="Inventory_Amount_area">
         <ThemeProvider theme={darkTheme}>

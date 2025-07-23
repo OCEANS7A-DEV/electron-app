@@ -132,7 +132,8 @@ table {
   display: flex;
   justify-content: center;
   min-width: 750px;
-  height: 60px;
+  box-shadow: 0px 10px 10px 0px gray;
+  z-index: 2;
 }
 
 .HQdetail-window ul {
@@ -159,13 +160,27 @@ table {
   border-bottom: 1px gray solid;
 }
 
+.HQdetail-list-Memo {
+  width: 100%;
+  justify-content: space-between;
+  padding-bottom: 0px;
+}
+
+.HQMemoinsert_div{
+  display: flex;
+  width: 100%;
+  border-bottom: 1px gray solid;
+  padding: 20px 0px;
+}
+
 .HQdetail-list-title {
   width: 100%;
 }
 
 .HQdetail-list-content {
+  display: flex;
   margin-top: 20px;
-  width: 50%;
+  width: 100%;
 }
 .HQdetail-window {
   display: flex;
@@ -192,6 +207,12 @@ table {
 .HQdetail-button-area {
   display: flex;
   justify-content: space-around;
+}
+
+.HQMemoinsert_area {
+  display: flex;
+  width: 100%;
+  padding-right: 10px;
 }
 
 

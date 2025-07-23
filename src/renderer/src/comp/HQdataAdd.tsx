@@ -4,7 +4,6 @@ import '../css/orderDialog.css'
 import { TextField, Button } from '@mui/material'
 import '../css/uriage.css'
 
-
 type RowsType = {
   mainID: string
   id: number
@@ -18,10 +17,8 @@ type FormValues = {
 }
 
 interface Props {
-  Insert: () => void;
+  Insert: () => void
 }
-
-
 
 const defaultRowDetail = {
   mainID: '',
@@ -36,21 +33,19 @@ const HQAddDialogTable = forwardRef(({ Insert }: Props, ref) => {
   const [TitleRemarks, setTitleRemarks] = useState('')
   const [lastID, setLastID] = useState(0)
 
-
   const details = () => {
     const newData = defaultRowDetail
     newData.id = lastID + 1
     return [newData]
   }
 
-  const { control, register, getValues, reset } =
-    useForm<FormValues>({
-      defaultValues: {
-        rows: details()
-      }
-    })
+  const { control, register, getValues, reset } = useForm<FormValues>({
+    defaultValues: {
+      rows: details()
+    }
+  })
 
-  const { fields, append, remove, } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'rows'
   })
@@ -91,7 +86,6 @@ const HQAddDialogTable = forwardRef(({ Insert }: Props, ref) => {
       detail: getValues().rows
     })
   }))
-
 
   return (
     <div className="modal-dialog-HQdetail">
@@ -145,7 +139,9 @@ const HQAddDialogTable = forwardRef(({ Insert }: Props, ref) => {
                     />
                   </div>
                   <div style={{ marginTop: 10 }}>
-                    <Button variant="outlined" onClick={() => deleteRow(index)} size="small">削除</Button>
+                    <Button variant="outlined" onClick={() => deleteRow(index)} size="small">
+                      削除
+                    </Button>
                   </div>
                 </div>
               </li>
@@ -153,13 +149,19 @@ const HQAddDialogTable = forwardRef(({ Insert }: Props, ref) => {
           </ul>
         </form>
         <div className="HQdetail-button-area">
-          <Button variant="outlined" onClick={detailNewdata}>詳細追加</Button>
-          <Button variant="outlined" onClick={detailReset}>状態リセット</Button>
-          <Button variant="outlined" onClick={Insert}>データを追加</Button>
+          <Button variant="outlined" onClick={detailNewdata}>
+            詳細追加
+          </Button>
+          <Button variant="outlined" onClick={detailReset}>
+            状態リセット
+          </Button>
+          <Button variant="outlined" onClick={Insert}>
+            データを追加
+          </Button>
         </div>
       </div>
     </div>
   )
 })
 
-export default HQAddDialogTable;
+export default HQAddDialogTable

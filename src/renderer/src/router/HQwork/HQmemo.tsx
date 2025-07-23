@@ -1,20 +1,13 @@
 import LinkBaner from '../../comp/Linkbanar'
 import '../../css/uriage.css'
 import { Button } from '@mui/material'
-// import {
-//   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
-// } from 'recharts';
 import React, { useState, useRef } from 'react'
 import type { JSX } from 'react'
-// import Select, { SelectChangeEvent } from '@mui/material/Select'
-// import InputLabel from '@mui/material/InputLabel'
-// import MenuItem from '@mui/material/MenuItem'
-// import FormControl from '@mui/material/FormControl'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useLoaderData } from 'react-router-dom'
 import { TextField } from '@mui/material'
 import { useForm, useFieldArray } from 'react-hook-form'
-import HQDialogTable from '../../comp/HQdetail'
+import HQMemoDialogTable from '../../comp/HQMemoDetail'
 import HQAddDialogTable from '../../comp/HQdataAdd'
 import toast, { Toaster } from 'react-hot-toast'
 
@@ -44,17 +37,16 @@ type FormValues = {
   }[]
 }
 
-export const loader = async () => {
+export const loader = async (): Promise<FormValues['rows']> => {
   const data = await window.myInventoryAPI.ListGet({
     action: 'HQdataGet',
     sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0'
   })
-
-  return { data }
+  return data
 }
 
 export default function HQmemo(): JSX.Element {
-  const { data } = useLoaderData<typeof loader>()
+  const data = useLoaderData<typeof loader>()
   const [searchString, setSearchString] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenAdd, setModalOpenAdd] = useState(false)
@@ -62,27 +54,28 @@ export default function HQmemo(): JSX.Element {
   const addDataDialogRef = useRef<any>(null)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
 
-  const DefaultSet = (defData) => {
+
+  const DefaultSet = (defData): FormValues['rows'] => {
     return defData
-      .filter((row) => row[3] == 0)
+      .filter((row) => row[5] == 0)
       .map((item) => ({
-        id: item[0],
-        date: new Date(item[4]).toLocaleDateString(),
+        id: String(item[0]),
+        date: new Date(item[3]).toLocaleDateString(),
         title: item[1],
         remarks: item[2],
         details: data.detail.filter((row) => row[0] == item[0])
       }))
   }
 
-  const DataRefresh = async () => {
-    const refresh = async () => {
-      const data = await window.myInventoryAPI.ListGet({
+  const DataRefresh = async (): Promise<void> => {
+    const refresh = async (): Promise<void> => {
+      const getdata = await window.myInventoryAPI.ListGet({
         action: 'HQdataGet',
         ranges: 'A2:C',
         sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0'
       })
       reset({
-        rows: DefaultSet(data.main)
+        rows: DefaultSet(getdata.main)
       })
     }
     toast.promise(refresh(), {
@@ -107,7 +100,7 @@ export default function HQmemo(): JSX.Element {
     name: 'rows'
   })
 
-  const search = () => {
+  const search = (): void => {
     const mainData = data.main.filter(
       (item) => item[1].includes(searchString) || item[2].includes(searchString)
     )
@@ -131,17 +124,18 @@ export default function HQmemo(): JSX.Element {
     })
   }
 
-  const dialogOpen = (index) => {
+  const dialogOpen = (index): void => {
     setSelectedRowIndex(index)
     setModalOpen(true)
   }
 
-  const HQDataDelete = async (index) => {
+  const HQDataDelete = async (index): Promise<void> => {
     const deleteId = getValues(`rows.${index}.id`)
-    const deletePost = async () => {
+    const deletePost = async (): Promise<void> => {
       await window.myInventoryAPI.DataInsert({
         action: 'HQmaindataDelete',
         sub_action: 'insert',
+        sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0',
         data: deleteId
       })
     }
@@ -157,32 +151,32 @@ export default function HQmemo(): JSX.Element {
     })
   }
 
-  const DialogClosed = async (e) => {
+  const DialogClosed = async (e): Promise<void> => {
     if (e.target === e.currentTarget) {
       setModalOpen(false)
     }
   }
 
-  const DialogClosedAdd = async (e) => {
+  const DialogClosedAdd = async (e): Promise<void> => {
     if (e.target === e.currentTarget) {
       setModalOpenAdd(false)
     }
   }
 
-  const update = () => {
+  const update = (): void => {
     DataRefresh()
     setModalOpen(false)
   }
 
-  const Insert = async () => {
+  const Insert = async (): Promise<void> => {
     setModalOpenAdd(false)
-
-    const DataInsert = async () => {
+    const DataInsert = async (): Promise<void> => {
       const insertData = addDataDialogRef.current.getFormData()
       await window.myInventoryAPI.DataInsert({
         action: 'HQdataInsert',
         sub_action: 'insert',
         data: insertData,
+        type: 'memo',
         sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0'
       })
     }
@@ -263,7 +257,7 @@ export default function HQmemo(): JSX.Element {
       <div className={`modalOverlaydetail ${modalOpen ? 'open' : ''}`} onClick={DialogClosed}>
         {selectedRowIndex !== null && (
           <div className="modaldetailContent">
-            <HQDialogTable
+            <HQMemoDialogTable
               data={getValues().rows[selectedRowIndex]}
               ref={addDialogRef}
               update={update}

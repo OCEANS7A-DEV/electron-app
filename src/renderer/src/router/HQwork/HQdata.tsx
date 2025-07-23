@@ -5,6 +5,7 @@ import { Button } from '@mui/material'
 //   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 // } from 'recharts';
 import React, { useState, useRef } from 'react'
+import type { JSX } from 'react'
 // import Select, { SelectChangeEvent } from '@mui/material/Select'
 // import InputLabel from '@mui/material/InputLabel'
 // import MenuItem from '@mui/material/MenuItem'
@@ -52,7 +53,7 @@ export const loader = async () => {
   return { data }
 }
 
-export default function HQdata() {
+export default function HQdata(): JSX.Element {
   const { data } = useLoaderData<typeof loader>()
   const [searchString, setSearchString] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
@@ -60,6 +61,7 @@ export default function HQdata() {
   const addDialogRef = useRef<any>(null)
   const addDataDialogRef = useRef<any>(null)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
+
 
   const DefaultSet = (defData) => {
     return defData
