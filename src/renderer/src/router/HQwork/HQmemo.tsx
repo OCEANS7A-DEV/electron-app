@@ -37,7 +37,14 @@ type FormValues = {
   }[]
 }
 
-export const loader = async (): Promise<FormValues['rows']> => {
+type DataType = {
+  main: string[][]
+  detail: string[][]
+}
+
+
+
+export const loader = async (): Promise<DataType> => {
   const data = await window.myInventoryAPI.ListGet({
     action: 'HQdataGet',
     sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0'
@@ -47,13 +54,13 @@ export const loader = async (): Promise<FormValues['rows']> => {
 
 export default function HQmemo(): JSX.Element {
   const data = useLoaderData<typeof loader>()
+  console.log(data)
   const [searchString, setSearchString] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenAdd, setModalOpenAdd] = useState(false)
   const addDialogRef = useRef<any>(null)
   const addDataDialogRef = useRef<any>(null)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
-
 
   const DefaultSet = (defData): FormValues['rows'] => {
     return defData
