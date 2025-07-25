@@ -28,7 +28,7 @@ const isoToJstYMD = (isoString) => {
 
 
 export const loader =  async ({ request }: { request: Request }) => {
-  const productData = await window.myInventoryAPI.ListGet({sheetName: '在庫一覧', action: 'TotallingGet', ranges: 'A2:O'})
+  const productData = await window.myInventoryAPI.ListGet({sheetName: '在庫一覧', action: 'TotallingGet', ranges: 'B2:O'})
   const orderData = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:O'})
   const url = new URL(request.url);
   const date = url.searchParams.get("date") ?? '2025-03-24';
@@ -54,7 +54,7 @@ export const loader =  async ({ request }: { request: Request }) => {
       if(fitem[11] !== ''){
         let shortage = fitem[12];
         let orderNum = 0
-        let ordernumCount = Number(fitem[11])
+        let ordernumCount = Number(fitem[7])
         if(shortage < 0){
           while (shortage < 0){
             shortage += ordernumCount

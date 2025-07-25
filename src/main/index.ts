@@ -698,7 +698,7 @@ export const shortageGet = async () => {
         'Content-Type': 'application/x-www-form-urlencoded',
         Cookie: cookieHeader
       },
-      body: JSON.stringify({ sheetName: '在庫一覧', action: 'TotallingGet', ranges: 'A2:N' })
+      body: JSON.stringify({ sheetName: '在庫一覧テスト', action: 'TotallingGet', ranges: 'B2:O' })
     })
     const result = await response.json()
     return result

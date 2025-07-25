@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import React, { useState, useEffect, useRef } from 'react'
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useForm, useFieldArray, Controller, Control } from 'react-hook-form'
 import { useLoaderData } from "react-router-dom"
 import LinkBaner from '../../../comp/Linkbanar'
 
@@ -81,14 +81,20 @@ type RowData = {
   type: { value: string; label: string } | null
 }
 
+type RowItemData = {
+  rows: RowData[];
+  control: Control<FormValues>;
+  dialogOpen: (index: number) => void;
+  NewRowInsert: (index: number) => void;
+  remove: (index: number) => void;
+};
+
 function Row({
   index,
   style,
-  data: { rows, control, dialogOpen, NewRowInsert, remove },
-}: ListChildComponentProps<{
-  rows: RowData[]
-  moveFn: (oldIndex: number, newIndex: number) => void
-}>) {
+  data: { rows, control, dialogOpen, NewRowInsert, remove }
+}: ListChildComponentProps<RowItemData>)
+{
   const item = rows[index]
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: item.id })
@@ -103,7 +109,7 @@ function Row({
   }
 
   return (
-    <div ref={setNodeRef} style={combinedStyle} {...attributes} {...listeners}>
+    <div key={item.id} ref={setNodeRef} style={combinedStyle} {...attributes} {...listeners}>
       <div className="virtual-table-row">
         <div
           style={{
@@ -159,7 +165,15 @@ function Row({
           </div>
         </div>
         <div className="virtual-table-cell cell-dialog">
-          <Button variant="outlined" onClick={() => dialogOpen(index)}>編集</Button>
+          <Button
+            variant="outlined"
+            onClick={(e) => {
+              e.stopPropagation()
+              dialogOpen(index)
+            }}
+          >
+            編集
+          </Button>
         </div>
         <div className="virtual-table-cell cell-actions">
           <div style={{ whiteSpace: 'nowrap' }}>
@@ -247,7 +261,7 @@ export default function ProductDetailChangePage() {
   const [InsertDate, setDate] = useState<string>('')
 
   const [height, setHeight] = useState<number>(0);
-  console.log(height)
+  //console.log(height)
 
   const [swalProps, setSwalProps] = useState({})
 
@@ -379,24 +393,29 @@ export default function ProductDetailChangePage() {
       }
     })
 
-  const { fields, append, remove, insert, move } = useFieldArray({
+  const { fields, append, remove, insert, move, watch } = useFieldArray({
     control,
     name: 'rows'
   })
 
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 3,
+      },
+    })
+  );
 
   const NewRowInsert = (row) => {
-    insert(row, 
-      defaultRowData
-    )
+    insert(row, defaultRowData)
   }
 
-  const dialogOpen = (index) => {
+  const dialogOpen = useCallback((index) => {
+    console.log(index)
     setSelectedRowIndex(index)
     setModalOpen(true)
     setAddRowIndex(index)
-  }
+  }, []);
 
   const ListReacquisition = async() => {
     setLoading(true)
@@ -486,10 +505,26 @@ export default function ProductDetailChangePage() {
     });
   }
 
+  const movingRow = (active, over): void => {
+    if (active.id !== over?.id && over) {
+      const oldIndex = fields.findIndex((f) => f.id === active.id)
+      const newIndex = fields.findIndex((f) => f.id === over?.id)
+      move(oldIndex, newIndex);
+    }
+    const listdata = getValues()
+      .rows.map((item) => [item.code])
+      .filter((item) => item[0] !== '')
+    console.log(listdata)
+    window.myInventoryAPI.DataInsert({
+      action: 'codeOrder',
+      sub_action: 'insert',
+      data: listdata,
+    })
+  }
 
-  const update = async (index) => {
+  const update = async (index): Promise<void> => {
     const data = getValues().rows[index]
-    const search = defaultRows.current.find(item => item.code == data.code)
+    const search = defaultRows.current.find((item) => item.code == data.code)
     if (search) {
       const original = defaultRows.current[index]
       const diffKeys = getDiffKeys(data, original)
@@ -524,15 +559,16 @@ export default function ProductDetailChangePage() {
           insertData = [data.code, data.service, now]
           sheet = 'サービス数'
         }
+
         await window.myInventoryAPI.DataInsert({
           sheetName: sheet,
           action: 'DataHistory',
+          sub_action: 'insert',
           updataValue: insertData,
         })
       })
       setModalOpen(false)
     }
-    
   }
 
 
@@ -579,11 +615,7 @@ export default function ProductDetailChangePage() {
             collisionDetection={closestCenter}
             modifiers={[restrictToVerticalAxis]}
             onDragEnd={({ active, over }) => {
-              if (active.id !== over?.id) {
-                const oldIndex = fields.findIndex(f => f.id === active.id);
-                const newIndex = fields.findIndex(f => f.id === over?.id);
-                move(oldIndex, newIndex);
-              }
+              movingRow(active, over)
             }}
           >
             <SortableContext items={fields.map(f => f.id)} strategy={verticalListSortingStrategy}>
@@ -770,6 +802,7 @@ export default function ProductDetailChangePage() {
         </div>
         <div>
           <Button variant="outlined" onClick={swalWindow}>新規商品追加</Button>
+          <Button variant='outlined' onClick={() => console.log(getValues().rows)}>テスト</Button>
           {/* <Button variant='outlined' onClick={() => ProductDataUpdata()}>
             データ送信
           </Button> */}

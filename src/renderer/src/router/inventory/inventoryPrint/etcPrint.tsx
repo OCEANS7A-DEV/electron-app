@@ -1,16 +1,17 @@
-import React,{ useEffect } from 'react';
-import '../../../css/taiyoPrint.css';
-import { useLoaderData } from "react-router-dom";
+import React, { useEffect } from 'react'
+import '../../../css/taiyoPrint.css'
+import { useLoaderData } from 'react-router-dom'
+import type { JSX } from 'react'
 
 
 export const loader = async () => {
   const data = await window.myInventoryAPI.shortageGet()
-  const shortage = data.filter(item => item[12] < 0 && item[0] !== 'タムラ' && item[0] !== '三久')
+  const shortage = data.filter((item) => item[12] < 0 && item[0] !== 'タムラ' && item[0] !== '三久')
   return shortage
 }
 
 
-export default function NetEtcPrint() {
+export default function NetEtcPrint(): JSX.Element {
   const loaderData = useLoaderData<typeof loader>()
   useEffect(() => {
     window.myInventoryAPI.PrintReady()

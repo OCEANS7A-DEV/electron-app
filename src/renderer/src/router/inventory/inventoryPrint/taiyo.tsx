@@ -1,4 +1,5 @@
-import React,{ useEffect } from 'react';
+import React, { useEffect } from 'react'
+import type { JSX } from 'react'
 //import { kaigisituOrder, taiyoOrder, shortageGet, stockList } from '../backend/Server_end';
 import '../../../css/taiyoPrint.css';
 import { useLoaderData } from "react-router-dom";
@@ -37,14 +38,14 @@ export const loader = async ({ request }: { request: Request }) => {
   const vendor = url.searchParams.get("vendor");
   const address = url.searchParams.get("address");
   let orderData = []
-  if(address !== '会議室'){
-    const resultData = await window.myInventoryAPI.ListGet({sheetName: '在庫一覧', action: 'TotallingGet', ranges: 'A2:M'})
+  if (address !== '会議室'){
+    const resultData = await window.myInventoryAPI.ListGet({sheetName: '在庫一覧テスト', action: 'TotallingGet', ranges: 'B2:N'})
     const codeList = resultData.map(item => item[1])
     const filterd = resultData.filter((row) => row[0] === vendor && row[12] < 0)
     const orderResult = filterd.map(item => {
-      let shortageNum = Number(item[12]);
+      let shortageNum = Number(item[7]);
       let num = 0;
-      if (item[11] !== "" && Number(item[11]) > 0) {
+      if (item[7] !== "" && Number(item[7]) > 0) {
         let up = Number(item[11])
         if(item[1] == 2002){
           up = up * 2
@@ -64,11 +65,11 @@ export const loader = async ({ request }: { request: Request }) => {
     const filter = Order.filter(item => isoToJstYMD(item[0]) == date)
     const Notlisted = filter.filter(item => item[2].includes('大洋') && !codeList.includes(item[3]))
     Notlisted.forEach(item => {
-      const result = [item[3], item[4], item[6], '', item[11], '']
+      const result = [item[3], item[4], item[6], '', item[7], '']
       taiyoData.push(result)
     })
     orderData = Notlisted
-  }else{
+  } else {
     const data = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:L'})
     const filtered = data.filter(item => isoToJstYMD(item[0]) == date && item[1] == address && item[2].includes('大洋'))
     const Inlist = filtered.map(item => {
@@ -80,30 +81,22 @@ export const loader = async ({ request }: { request: Request }) => {
   }
   
   const calcD = 16 - taiyoData.length
-  for (let i = 0; i < calcD; i ++){
-    taiyoData.push(['','','','','',''])
+  for (let i = 0; i < calcD; i++){
+    taiyoData.push(['', '', '', '', '', ''])
   }
-  return {taiyoData, addressData, address, orderData};
+  return { taiyoData, addressData, address, orderData }
 };
 
 
-export default function TaiyoPrint() {
-  const {taiyoData, addressData, address, orderData} = useLoaderData<typeof loader>();
-  console.log(addressData)
-  //const [searchParams] = useSearchParams();
-  //const address = searchParams.get("address") || "";
-  const ShippingAddress = addressData.address.find(item => item[0] === address);
-  const VendorData = addressData.address.find(item => item[0] === '大洋商会');
-  //const navigate = useNavigate();
-  console.log(address)
-  console.log(taiyoData)
-  console.log(addressData)
-  console.log(VendorData)
+export default function TaiyoPrint(): JSX.Element {
+  const { taiyoData, addressData, address, orderData } = useLoaderData<typeof loader>()
+  const ShippingAddress = addressData.address.find((item) => item[0] === address)
+  const VendorData = addressData.address.find((item) => item[0] === '大洋商会')
   console.log(orderData)
 
   useEffect(() => {
     window.myInventoryAPI.PrintReady()
-  },[])
+  }, [])
   
 
 
@@ -116,7 +109,7 @@ export default function TaiyoPrint() {
     <div className="taiyobackGround">
       {/* <LinkBaner /> */}
       <div className="PrintButton">
-        <Button variant='outlined' onClick={()=> console.log('印刷')}>印刷</Button>
+        <Button variant="outlined" onClick={() => console.log('印刷')}>印刷</Button>
       </div>
       <div className="taiyotop">
         <h1 className="taiyoH1">FAX注文書</h1>
@@ -124,7 +117,7 @@ export default function TaiyoPrint() {
       <div className="sub_top">
         <div className="sub_top2">
           <h2 className="taiyo-Data">　</h2>
-          <h2 className="taiyo-Data-name">㈱大洋商会　御中</h2>
+          <h2 className="taiyo-Data-name">㈱大洋商会  御中</h2>
         </div>
         <div className="sub_top2">
           <h2 className="taiyo-Data-number">FAX{VendorData[2]}</h2>
