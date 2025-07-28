@@ -148,6 +148,7 @@ const LinkBaner = (data): JSX.Element => {
                 <Button variant="outlined" onClick={() => navigate('/Uriage')} sx={ButtonStyle}>売上</Button>
                 <Button variant="outlined" onClick={() => navigate('/HQdata')} sx={ButtonStyle}>本部データ</Button>
                 <Button variant="outlined" onClick={() => navigate('/HQmemo')} sx={ButtonStyle}>本部メモ</Button>
+                <Button variant="outlined" onClick={() => navigate('/HQPrivatememo')} sx={ButtonStyle}>個人メモ</Button>
               </div>
             )}
             {data.id == 'Setting' && (

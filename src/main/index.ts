@@ -29,6 +29,60 @@ import keytar from 'keytar'
 
 import prompt from 'electron-prompt'
 
+import Database from 'better-sqlite3'
+
+import crypto from 'crypto'
+
+
+
+const userDataPath = app.getPath('userData')
+
+const dbDirectory = path.join(userDataPath, 'database')
+
+if (!fs.existsSync(dbDirectory)) {
+  fs.mkdirSync(dbDirectory, { recursive: true });
+}
+
+const dbPath = path.join(dbDirectory, 'my-data.sqlite3')
+
+let DB
+try {
+  DB = new Database(dbPath);
+  console.log(`データベースを ${dbPath} に接続しました。`);
+} catch (error) {
+  console.error('データベースの接続に失敗しました:', error);
+}
+
+const createMemoMainTable = DB.prepare(
+  `CREATE TABLE IF NOT EXISTS MemoMain (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sub_id TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL,
+    remarks TEXT,
+    create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+    update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+    delete_Flg INTEGER DEFAULT 0
+  )`
+)
+createMemoMainTable.run()
+
+const createMemoDetailTable = DB.prepare(
+  `CREATE TABLE IF NOT EXISTS MemoDetail (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id INTEGER NOT NULL,
+    sub_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT,
+    remarks TEXT,
+    check_Flg INTEGER DEFAULT 0,
+    create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+    update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+    delete_Flg INTEGER DEFAULT 0
+  )`
+)
+
+createMemoDetailTable.run()
+
 const gotTheLock = app.requestSingleInstanceLock()
 const windowManager = new Map()
 
@@ -922,6 +976,7 @@ const initAutoUpdater = async (win: BrowserWindow) => {
   }
 }
 
+
 app.whenReady().then(async () => {
   if (!gotTheLock) {
     //多重起動しないように
@@ -992,6 +1047,43 @@ ipcMain.handle('list-get', async (_event, payload: any) => {
     return errorMessage
   }
 })
+
+ipcMain.handle('PrivateMemo-Get', () => {
+  const selectMainStmt = DB.prepare('SELECT * FROM MemoMain')
+  const selectDetailStmt = DB.prepare('SELECT * FROM MemoDetail')
+  const mainData = selectMainStmt.all()
+  const detailData = selectDetailStmt.all()
+  return { main: mainData, detail: detailData }
+})
+
+ipcMain.on('PrivateMemo-Insert', async (_event, payload: any) => {
+  console.log(payload.detail)
+
+  const Uuid = crypto.randomUUID()
+  const insertMainStmt = DB.prepare(`
+    INSERT INTO MemoMain (sub_id, title, remarks) VALUES (?, ?, ?)
+    ON CONFLICT(sub_id) DO UPDATE SET
+    title = excluded.title,
+    remarks = excluded.remarks
+  `)
+
+  insertMainStmt.run(Uuid, payload.main.title, payload.main.remarks)
+
+
+
+  payload.detail.forEach((item) => {
+    if (item.mainID === '') {
+      console.log('新規追加')
+      const insertDetailStmt = DB.prepare(`
+        INSERT INTO MemoDetail (sub_id, order_id, title, content, remarks) VALUES (?, ?, ?, ?, ?)
+      `)
+      insertDetailStmt.run(Uuid, item.id, item.detailTitle, item.content, item.remarks)
+    }
+  })
+
+})
+
+
 
 ipcMain.handle('data-insert', async (_event, payload: any) => {
   try {

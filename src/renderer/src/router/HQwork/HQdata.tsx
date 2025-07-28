@@ -1,15 +1,8 @@
 import LinkBaner from '../../comp/Linkbanar'
 import '../../css/uriage.css'
 import { Button } from '@mui/material'
-// import {
-//   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
-// } from 'recharts';
 import React, { useState, useRef } from 'react'
 import type { JSX } from 'react'
-// import Select, { SelectChangeEvent } from '@mui/material/Select'
-// import InputLabel from '@mui/material/InputLabel'
-// import MenuItem from '@mui/material/MenuItem'
-// import FormControl from '@mui/material/FormControl'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useLoaderData } from 'react-router-dom'
 import { TextField } from '@mui/material'
@@ -78,7 +71,8 @@ export default function HQdata(): JSX.Element {
     const refresh = async () => {
       const data = await window.myInventoryAPI.ListGet({
         action: 'HQdataGet',
-        ranges: 'A2:C'
+        ranges: 'A2:C',
+        sheetid: '1AoUAanqfe1hAUcxJRLEDqs0174FXtBpAaoCJEmiv2yQ'
       })
       reset({
         rows: DefaultSet(data.main)
@@ -189,6 +183,7 @@ export default function HQdata(): JSX.Element {
     toast.promise(DataInsert(), {
       loading: '新規データ追加中...',
       success: () => {
+        DataRefresh()
         return '追加完了'
       },
       error: () => {

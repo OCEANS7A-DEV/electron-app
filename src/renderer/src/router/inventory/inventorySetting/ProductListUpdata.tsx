@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useForm, useFieldArray, Controller, Control } from 'react-hook-form'
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData } from 'react-router-dom'
 import LinkBaner from '../../../comp/Linkbanar'
 
 import { Select, MenuItem, Tooltip, Box } from '@mui/material'
@@ -27,12 +27,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import {
-  SortableContext,
-  //arrayMove,
-  verticalListSortingStrategy,
-  useSortable,
-} from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 
@@ -239,14 +234,16 @@ export const loader = async () => {
     ranges: 'A2:B'
   })
 
-  const vendorSelect = vendorData.filter(row => row[0] !== "").map(item => {
-    const result = { value: item[1], label: item[1], id: item[0] }
-    return result
-  })
+  const vendorSelect = vendorData
+    .filter((row) => row[0] !== '')
+    .map((item) => {
+      const result = { value: item[1], label: item[1], id: item[0] }
+      return result
+    })
 
   const types = typeList
-  .filter(item => item[0] && item[0] !== "")
-  .map(item => ({ value: item[1], label: item[1], id: item[0] }));
+    .filter((item) => item[0] && item[0] !== '')
+    .map((item) => ({ value: item[1], label: item[1], id: item[0] }))
   return { vendorSelect, Lists, types }
 }
 
@@ -259,9 +256,6 @@ export default function ProductDetailChangePage() {
   const [loading, setLoading] = useState(false)
 
   const [InsertDate, setDate] = useState<string>('')
-
-  const [height, setHeight] = useState<number>(0);
-  //console.log(height)
 
   const [swalProps, setSwalProps] = useState({})
 
@@ -300,8 +294,7 @@ export default function ProductDetailChangePage() {
   }
 
 
-  const ProductNewDataInsert = async (data) => {
-
+  const ProductNewDataInsert = async (data): Promise<void> => {
     const now = InsertDate.replace(/-/g, '/')
     const insertResult = ['商品コード']
     Object.keys(data).forEach(async (item) => {
@@ -351,7 +344,6 @@ export default function ProductDetailChangePage() {
   useEffect(() => {
     const updateHeight = () => {
       const vh = window.innerHeight;
-      setHeight(vh - 160);
     };
     updateHeight();
     window.addEventListener('resize', updateHeight);
@@ -369,14 +361,14 @@ export default function ProductDetailChangePage() {
   }, [])
 
   const StoreDataDefaultSet = () => {
-    return Lists.map(item => ({
-      vendor: vendorSelect.find(row => row.id == item[0]) ?? null,
+    return Lists.map((item) => ({
+      vendor: vendorSelect.find((row) => row.id == item[0]) ?? null,
       code: item[1],
       name: item[2],
       newPrice: String(item[3]),
       VCPrice: String(item[4]),
       valuePrice: String(item[5]),
-      type: types.find(row => row.id == item[6]) ?? null,
+      type: types.find((row) => row.id == item[6]) ?? null,
       remarks: item[7],
       possibility: item[8] === false ? false : true,
       service: item[9],
@@ -386,14 +378,13 @@ export default function ProductDetailChangePage() {
 
   const defaultRows = useRef(StoreDataDefaultSet())
 
-  const { control, register, getValues, reset } =
-    useForm<FormValues>({
-      defaultValues: {
-        rows: defaultRows.current,
-      }
-    })
+  const { control, register, getValues, reset } = useForm<FormValues>({
+    defaultValues: {
+      rows: defaultRows.current,
+    }
+  })
 
-  const { fields, append, remove, insert, move, watch } = useFieldArray({
+  const { fields, append, remove, insert, move } = useFieldArray({
     control,
     name: 'rows'
   })
@@ -424,16 +415,22 @@ export default function ProductDetailChangePage() {
       action: 'ListGet',
       ranges: 'A2:L'
     })
-    const result = Lists.map(item => {
+    const result = Lists.map((item) => {
       const resultdata = {
-        vendor: {value: item[0], label: item[0]},
+        vendor: {
+          value: item[0],
+          label: item[0]
+        },
         code: item[1],
         name: item[2],
         defPrice: item[3],
         newPrice: item[4],
         VCPrice: item[5],
         valuePrice: item[6],
-        type: {value: item[7], label: item[7]},
+        type: {
+          value: item[7],
+          label: item[7]
+        },
         remarks: item[8],
         possibility: item[9] === false ? false : true,
         service: item[10],
@@ -498,11 +495,11 @@ export default function ProductDetailChangePage() {
         'value' in a &&
         'value' in b
       ) {
-        return a.value !== b.value;
+        return a.value !== b.value
       }
 
-      return a !== b;
-    });
+      return a !== b
+    })
   }
 
   const movingRow = (active, over): void => {

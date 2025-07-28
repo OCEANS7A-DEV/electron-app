@@ -44,11 +44,9 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   getFileList: () => ipcRenderer.invoke('get-file-list'),
   getFilePath: (filename: string) => ipcRenderer.invoke('get-file-path', filename),
   onHelloWorkProgress: (callback) => {
-    // callback(data) の形にラップして登録
     ipcRenderer.on('helloWork-progress', (_event, data) => callback(data))
   },
   removeHelloWorkProgress: () => {
-    // チャンネル全解除
     ipcRenderer.removeAllListeners('helloWork-progress')
   },
   PDFMarge: () => ipcRenderer.send('PDF-Marge'),
@@ -60,7 +58,9 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   WindowZaiko: () => ipcRenderer.send('WindowZaiko'),
   HelloWorkWindow: () => ipcRenderer.send('HelloWorkWindow'),
   OfficeWorkWindow: () => ipcRenderer.send('OfficeWorkWindow'),
-  SettingWindow: () => ipcRenderer.send('SettingWindow')
+  SettingWindow: () => ipcRenderer.send('SettingWindow'),
+  PrivateMemoGet: () => ipcRenderer.invoke('PrivateMemo-Get'),
+  PrivateMemoInsert: (payload) => ipcRenderer.send('PrivateMemo-Insert', payload),
 })
 
 if (process.contextIsolated) {

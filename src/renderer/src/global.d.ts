@@ -5,6 +5,7 @@ export {}
 declare global {
   interface Window {
     myInventoryAPI: {
+      PrivateMemoGet(): Promise<any>;
       OfficeWorkWindow(): unknown;
       SettingWindow(): unknown;
       HelloWorkWindow(): unknown;
@@ -31,7 +32,8 @@ declare global {
       postDataGet: () => Promise<any>;
       filePost: (endpoint: string, payload: any) => Promise<any>;
       ListGet: (payload:any) => Promise<any>;
-      DataInsert: (payload:any) => Promise<any>;
+      DataInsert: (payload: any) => Promise<any>;
+      PrivateMemoInsert: (payload: any) => Promise<any>;
       DetailsData: () => Promise<any>;
       ListData: () => Promise<any>;
       VendorData: () => Promise<any>;

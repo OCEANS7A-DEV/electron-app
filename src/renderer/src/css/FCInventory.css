@@ -15,6 +15,11 @@
   width: 80px;
 }
 
+.FCInventoryText-price {
+  padding: 0px 8px;
+  width: 120px;
+}
+
 .FCInventoryButton {
   padding: 0px 8px;
 }

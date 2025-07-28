@@ -34,6 +34,7 @@ import Uriage from './router/sales/Uriage'
 import FCInventory, { loader as FCLoader } from './router/inventory/inventoryGet/FCInventory'
 import HQdata, { loader as HQLoader } from './router/HQwork/HQdata'
 import HQmemo, { loader as HQMemoLoader } from './router/HQwork/HQmemo'
+import HQPrivatememo, { loader as HQPrivatememoLoader } from './router/HQwork/PersonMemo'
 
 export const router = createHashRouter([
   {
@@ -158,5 +159,10 @@ export const router = createHashRouter([
     path: '/HQmemo',
     element: <HQmemo />,
     loader: HQMemoLoader
+  },
+  {
+    path: '/HQPrivatememo',
+    element: <HQPrivatememo />,
+    loader: HQPrivatememoLoader
   }
 ])

@@ -36,13 +36,15 @@ type FormValues = {
     code: string
     name: string
     quantity: string
+    price: string
   }[]
 }
 
 const defaultRowData = {
   code: '',
   name: '',
-  quantity: ''
+  quantity: '',
+  price: ''
 }
 
 
@@ -87,8 +89,8 @@ export const loader = async () => {
   });
 
   const storenames: SelectOption[] = stores
-    .filter(row => row[2] !== "" && row[2] == 'FC')
-    .map(item => ({
+    .filter((row) => row[2] !== "" && row[2] == 'FC')
+    .map((item) => ({
       id: item[0],
       value: item[1],
       label: item[1],
@@ -165,12 +167,11 @@ export default function FCInventory() {
     }
   }, [DisplayStatus])
 
-  const { control, register, handleSubmit, getValues, setValue, reset } =
-    useForm<FormValues>({
-      defaultValues: {
-        rows: defaultSet()
-      }
-    })
+  const { control, register, handleSubmit, getValues, setValue, reset } = useForm<FormValues>({
+    defaultValues: {
+      rows: defaultSet()
+    }
+  })
 
 
   const { fields, append, remove, insert } = useFieldArray<FormValues>({
@@ -206,6 +207,7 @@ export default function FCInventory() {
     if (productData) {
       const name = productData.name
       setValue(`rows.${index}.name`, name)
+      setValue(`rows.${index}.price`, productData.VC)
     }
   }
 
@@ -245,7 +247,8 @@ export default function FCInventory() {
     insert(filterData.length, {
       code: data.code,
       name: data.name,
-      quantity: ''
+      quantity: '',
+      price: ''
     })
   }
 
@@ -265,7 +268,7 @@ export default function FCInventory() {
   }
 
   const insertPost = async () => {
-    if(storeSelect == ''){
+    if (storeSelect == ''){
       await Swal.fire({
         icon: 'warning',
         title: '店舗が未選択です',
@@ -275,7 +278,7 @@ export default function FCInventory() {
       return
     }
 
-    let Selectdate = new Date(Year, Month - 1, 1)
+    const Selectdate = new Date(Year, Month - 1, 1)
     Selectdate.setMonth(Selectdate.getMonth() + 1, 0)
     const inputDate = Selectdate.toLocaleDateString()
     const storeId = storenames.find((item) => item.value == storeSelect)
@@ -286,6 +289,7 @@ export default function FCInventory() {
         storeId?.id,
         item.code,
         item.quantity,
+        item.price
       ]
       return result
     })
@@ -421,6 +425,20 @@ export default function FCInventory() {
                           validate: (value) => isHalfWidth(value) || '半角数字で入力してください'
                         })}
                         placeholder="数量"
+                        className="insert_quantity"
+                        type="text"
+                        onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                        inputProps={{ style: { textAlign: 'right', fontSize: 16 } }}
+                        size="small"
+                      />
+                    </div>
+                    <div className="FCInventoryText-price">
+                      <TextField
+                        fullWidth
+                        {...register(`rows.${index}.price`, {
+                          validate: (value) => isHalfWidth(value) || '半角数字で入力してください'
+                        })}
+                        placeholder="単価"
                         className="insert_quantity"
                         type="text"
                         onKeyDown={(e) => handleEnterFocusNext(e, index)}

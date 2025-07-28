@@ -1,13 +1,13 @@
 import LinkBaner from '../../comp/Linkbanar'
 import '../../css/uriage.css'
 import { Button } from '@mui/material'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import type { JSX } from 'react'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useLoaderData } from 'react-router-dom'
 import { TextField } from '@mui/material'
 import { useForm, useFieldArray } from 'react-hook-form'
-import HQMemoDialogTable from '../../comp/HQMemoDetail'
+import PersonMemoDialogTable from '../../comp/PersonMemoDetail'
 import HQAddDialogTable from '../../comp/HQdataAdd'
 import toast, { Toaster } from 'react-hot-toast'
 
@@ -30,6 +30,7 @@ const darkTheme = createTheme({
 type FormValues = {
   rows: {
     id: string
+    sub_id: string
     date: string
     title: string
     remarks: string
@@ -45,14 +46,11 @@ type DataType = {
 
 
 export const loader = async (): Promise<DataType> => {
-  const data = await window.myInventoryAPI.ListGet({
-    action: 'HQdataGet',
-    sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0'
-  })
+  const data = await window.myInventoryAPI.PrivateMemoGet()
   return data
 }
 
-export default function HQmemo(): JSX.Element {
+export default function HQPrivatememo(): JSX.Element {
   const data = useLoaderData<typeof loader>()
   console.log(data)
   const [searchString, setSearchString] = useState('')
@@ -63,24 +61,22 @@ export default function HQmemo(): JSX.Element {
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
 
   const DefaultSet = (defData): FormValues['rows'] => {
-    return defData
-      .filter((row) => row[5] == 0)
+    console.log(defData)
+    return defData.main
+      .filter((row) => row.delete_Flg == 0)
       .map((item) => ({
-        id: String(item[0]),
-        date: new Date(item[3]).toLocaleDateString(),
-        title: item[1],
-        remarks: item[2],
-        details: data.detail.filter((row) => row[0] == item[0])
+        id: item.id,
+        uuid: item.sub_id,
+        date: new Date(item.create_at).toLocaleDateString(),
+        title: item.title,
+        remarks: item.remarks,
+        details: defData.detail.filter((row) => row.sub_id == item.sub_id)
       }))
   }
 
   const DataRefresh = async (): Promise<void> => {
     const refresh = async (): Promise<void> => {
-      const getdata = await window.myInventoryAPI.ListGet({
-        action: 'HQdataGet',
-        ranges: 'A2:C',
-        sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0'
-      })
+      const getdata = await window.myInventoryAPI.PrivateMemoGet()
       reset({
         rows: DefaultSet(getdata.main)
       })
@@ -98,7 +94,7 @@ export default function HQmemo(): JSX.Element {
 
   const { control, getValues, reset } = useForm<FormValues>({
     defaultValues: {
-      rows: DefaultSet(data.main)
+      rows: DefaultSet(data)
     }
   })
 
@@ -177,6 +173,17 @@ export default function HQmemo(): JSX.Element {
 
   const Insert = async (): Promise<void> => {
     setModalOpenAdd(false)
+    const insertData = addDataDialogRef.current.getFormData()
+    const maindata = {
+      title: insertData.title,
+      remarks: insertData.remarks
+    }
+    const allData = {
+      main: maindata,
+      detail: insertData.detail
+    }
+    window.myInventoryAPI.PrivateMemoInsert(allData)
+    return
     const DataInsert = async (): Promise<void> => {
       const insertData = addDataDialogRef.current.getFormData()
       await window.myInventoryAPI.DataInsert({
@@ -187,6 +194,7 @@ export default function HQmemo(): JSX.Element {
         sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0'
       })
     }
+
     toast.promise(DataInsert(), {
       loading: '新規データ追加中...',
       success: () => {
@@ -198,15 +206,6 @@ export default function HQmemo(): JSX.Element {
       }
     })
   }
-
-  const test = async () => {
-    const data = await window.myInventoryAPI.PrivateMemoGet()
-    console.log(data)
-  }
-
-  useEffect(() => {
-    test()
-  }, [])
 
 
 
@@ -276,10 +275,11 @@ export default function HQmemo(): JSX.Element {
       <div className={`modalOverlaydetail ${modalOpen ? 'open' : ''}`} onClick={DialogClosed}>
         {selectedRowIndex !== null && (
           <div className="modaldetailContent">
-            <HQMemoDialogTable
+            <PersonMemoDialogTable
               data={getValues().rows[selectedRowIndex]}
               ref={addDialogRef}
               update={update}
+              Insert={Insert}
             />
           </div>
         )}
