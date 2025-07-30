@@ -1057,8 +1057,6 @@ ipcMain.handle('PrivateMemo-Get', () => {
 })
 
 ipcMain.on('PrivateMemo-Insert', async (_event, payload: any) => {
-  console.log(payload.detail)
-
   const Uuid = crypto.randomUUID()
   const insertMainStmt = DB.prepare(`
     INSERT INTO MemoMain (sub_id, title, remarks) VALUES (?, ?, ?)
@@ -1066,24 +1064,45 @@ ipcMain.on('PrivateMemo-Insert', async (_event, payload: any) => {
     title = excluded.title,
     remarks = excluded.remarks
   `)
-
-  insertMainStmt.run(Uuid, payload.main.title, payload.main.remarks)
-
-
-
+  insertMainStmt.run(payload.main.uuid ?? Uuid, payload.main.title, payload.main.remarks)
   payload.detail.forEach((item) => {
     if (item.mainID === '') {
-      console.log('新規追加')
       const insertDetailStmt = DB.prepare(`
         INSERT INTO MemoDetail (sub_id, order_id, title, content, remarks) VALUES (?, ?, ?, ?, ?)
       `)
-      insertDetailStmt.run(Uuid, item.id, item.detailTitle, item.content, item.remarks)
+      insertDetailStmt.run(
+        payload.main.uuid ?? Uuid,
+        item.id,
+        item.detailTitle,
+        item.content,
+        item.remarks
+      )
+    } else {
+      let check = 0
+      if (item.check_Flg) {
+        check++
+      }
+      const updateDetailStmt = DB.prepare(`
+        UPDATE MemoDetail SET
+        title = ?,
+        content = ?,
+        remarks = ?,
+        check_Flg = ?
+        WHERE id = ?
+      `)
+      updateDetailStmt.run(item.title, item.content, item.remarks, check, item.AI_id)
     }
   })
-
 })
 
-
+ipcMain.on('PrivateMemo-Delete', (_event, payload: any) => {
+  const updateDetailStmt = DB.prepare(`
+    UPDATE MemoMain SET
+    delete_Flg = 1
+    WHERE id = ?
+  `)
+  updateDetailStmt.run(payload.id)
+})
 
 ipcMain.handle('data-insert', async (_event, payload: any) => {
   try {
@@ -1177,7 +1196,6 @@ ipcMain.on('startUpClose', () => {
 })
 
 ipcMain.handle('productEditWindow', (_eventt, payload) => {
-  //console.log(payload)
   printWindow = new BrowserWindow({
     width: 950,
     height: 670,
@@ -1688,6 +1706,7 @@ const NotificationEXE = (bodyString) => {
     body: bodyString
   }).show()
 }
+
 const userDataDir = path.join(app.getPath('userData'), 'files')
 
 ipcMain.handle('get-file-list', async () => {

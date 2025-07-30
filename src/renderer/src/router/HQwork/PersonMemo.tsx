@@ -61,7 +61,6 @@ export default function HQPrivatememo(): JSX.Element {
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
 
   const DefaultSet = (defData): FormValues['rows'] => {
-    console.log(defData)
     return defData.main
       .filter((row) => row.delete_Flg == 0)
       .map((item) => ({
@@ -78,7 +77,7 @@ export default function HQPrivatememo(): JSX.Element {
     const refresh = async (): Promise<void> => {
       const getdata = await window.myInventoryAPI.PrivateMemoGet()
       reset({
-        rows: DefaultSet(getdata.main)
+        rows: DefaultSet(getdata)
       })
     }
     toast.promise(refresh(), {
@@ -135,12 +134,7 @@ export default function HQPrivatememo(): JSX.Element {
   const HQDataDelete = async (index): Promise<void> => {
     const deleteId = getValues(`rows.${index}.id`)
     const deletePost = async (): Promise<void> => {
-      await window.myInventoryAPI.DataInsert({
-        action: 'HQmaindataDelete',
-        sub_action: 'insert',
-        sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0',
-        data: deleteId
-      })
+      window.myInventoryAPI.PrivateMemoDelete({ id: deleteId })
     }
     toast.promise(deletePost(), {
       loading: '実行中...',
@@ -157,6 +151,7 @@ export default function HQPrivatememo(): JSX.Element {
   const DialogClosed = async (e): Promise<void> => {
     if (e.target === e.currentTarget) {
       setModalOpen(false)
+      setSelectedRowIndex(null)
     }
   }
 
@@ -166,42 +161,35 @@ export default function HQPrivatememo(): JSX.Element {
     }
   }
 
-  const update = (): void => {
-    DataRefresh()
-    setModalOpen(false)
-  }
-
   const Insert = async (): Promise<void> => {
     setModalOpenAdd(false)
-    const insertData = addDataDialogRef.current.getFormData()
-    const maindata = {
-      title: insertData.title,
-      remarks: insertData.remarks
-    }
-    const allData = {
-      main: maindata,
-      detail: insertData.detail
-    }
-    window.myInventoryAPI.PrivateMemoInsert(allData)
-    return
     const DataInsert = async (): Promise<void> => {
-      const insertData = addDataDialogRef.current.getFormData()
-      await window.myInventoryAPI.DataInsert({
-        action: 'HQdataInsert',
-        sub_action: 'insert',
-        data: insertData,
-        type: 'memo',
-        sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0'
-      })
+      let insertData
+      if (addDialogRef.current) {
+        insertData = addDialogRef.current.getFormData()
+      } else {
+        insertData = addDataDialogRef.current.getFormData()
+      }
+      const maindata = {
+        uuid: insertData.uuid,
+        title: insertData.title,
+        remarks: insertData.remarks
+      }
+      const allData = {
+        main: maindata,
+        detail: insertData.detail
+      }
+      window.myInventoryAPI.PrivateMemoInsert(allData)
     }
-
     toast.promise(DataInsert(), {
       loading: '新規データ追加中...',
       success: () => {
         DataRefresh()
+        setModalOpen(false)
         return '追加完了'
       },
       error: () => {
+        setModalOpen(false)
         return 'エラーが発生しました'
       }
     })
@@ -278,7 +266,6 @@ export default function HQPrivatememo(): JSX.Element {
             <PersonMemoDialogTable
               data={getValues().rows[selectedRowIndex]}
               ref={addDialogRef}
-              update={update}
               Insert={Insert}
             />
           </div>

@@ -13,7 +13,7 @@ type RowsType = {
   title: string
   content: string
   remarks: string
-  check_Flg: number
+  check_Flg: number | boolean
   delete_Flg: number
   create_at: string
   update_at: string
@@ -25,6 +25,7 @@ type FormValues = {
 
 type RowDataValues = {
   id: string
+  uuid: string
   title: string
   remarks: string
   details: RowsType[]
@@ -32,27 +33,23 @@ type RowDataValues = {
 
 interface Props {
   data: RowDataValues
-  update: () => void
   Insert: () => void
 }
 
-const PersonMemoDialogTable = forwardRef(({ data, update, Insert }: Props, ref) => {
+const PersonMemoDialogTable = forwardRef(({ data, Insert }: Props, ref) => {
   console.log(data)
   const [Title, setTitle] = useState('')
   const [TitleRemarks, setTitleRemarks] = useState('')
-  const [oldData, setOldData] = useState<any[]>([])
   const [lastID, setLastID] = useState(0)
 
   useEffect(() => {
     setTitle(data.title)
     setTitleRemarks(data.remarks)
-    setOldData(details)
     const defaultLast = data.details[data.details.length - 1][1]
     setLastID(Number(defaultLast))
   }, [])
 
   const details = () => {
-    console.log(data.details)
     return data.details
       .filter((row) => row.delete_Flg == 0)
       .map((row) => ({
@@ -62,7 +59,7 @@ const PersonMemoDialogTable = forwardRef(({ data, update, Insert }: Props, ref) 
         title: row.title,
         content: row.content,
         remarks: row.remarks,
-        check: row.check_Flg === 1,
+        check_Flg: row.check_Flg == 1,
         create_at: row.create_at
       }))
   }
@@ -78,59 +75,6 @@ const PersonMemoDialogTable = forwardRef(({ data, update, Insert }: Props, ref) 
     name: 'rows'
   })
 
-  const updateSend = async () => {
-    const dataUpdate = async () => {
-      const newDetailData = getValues().rows
-      const deleteID = oldData
-        .map((row) => {
-          const result = newDetailData.find((item) => item.id == row.id)
-          if (!result) {
-            return row.id
-          } else {
-            return null
-          }
-        })
-        .filter((row) => row !== null)
-      const addData: RowsType[] = []
-      const updata: RowsType[] = []
-      newDetailData.forEach((row) => {
-        const result = oldData.find((item) => item.id == row.id)
-        if (!result) {
-          addData.push(row)
-        } else {
-          if (row !== result) {
-            updata.push(row)
-          }
-        }
-      })
-      const updateData = {
-        uuid: data.id,
-        title: Title,
-        remarks: TitleRemarks,
-        deleteID: deleteID,
-        addData: addData,
-        updata: updata
-      }
-      await window.myInventoryAPI.DataInsert({
-        action: 'HQdataUpdate',
-        sub_action: 'insert',
-        type: 'memo',
-        sheetid: '1qccINd8CGGFW3R63ewjJSu8pmDVDPnn384m4UBj1Cp0',
-        data: updateData
-      })
-    }
-
-    await toast.promise(dataUpdate(), {
-      loading: 'データ変更中...',
-      success: () => {
-        return '変更完了'
-      },
-      error: () => {
-        return 'エラーが発生しました'
-      }
-    })
-    update()
-  }
 
   const detailReset = () => {
     reset({
@@ -157,7 +101,7 @@ const PersonMemoDialogTable = forwardRef(({ data, update, Insert }: Props, ref) 
       title: '',
       content: '',
       remarks: '',
-      check_Flg: 0,
+      check_Flg: false,
       delete_Flg: 0,
       create_at: '',
       update_at: ''
@@ -167,6 +111,7 @@ const PersonMemoDialogTable = forwardRef(({ data, update, Insert }: Props, ref) 
 
   useImperativeHandle(ref, () => ({
     getFormData: () => ({
+      uuid: data.uuid,
       id: data.id,
       title: Title,
       remarks: TitleRemarks,
@@ -175,7 +120,7 @@ const PersonMemoDialogTable = forwardRef(({ data, update, Insert }: Props, ref) 
   }))
 
   const backGroundColor = (data): string => {
-    if (data == 1) {
+    if (data) {
       return 'lightgreen'
     } else {
       return 'white'
@@ -214,7 +159,7 @@ const PersonMemoDialogTable = forwardRef(({ data, update, Insert }: Props, ref) 
                 <li key={field.id} className="HQMemoinsert_area">
                   <div>
                     <Controller
-                      name={`rows.${index}.check`}
+                      name={`rows.${index}.check_Flg`}
                       control={control}
                       render={({ field }) => <Checkbox {...field} checked={field.value} />}
                     />

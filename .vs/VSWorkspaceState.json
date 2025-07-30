@@ -2,15 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\preload",
     "\\src\\renderer",
     "\\src\\renderer\\src",
+    "\\src\\renderer\\src\\comp",
     "\\src\\renderer\\src\\css",
     "\\src\\renderer\\src\\router",
     "\\src\\renderer\\src\\router\\HQwork",
     "\\src\\renderer\\src\\router\\inventory",
     "\\src\\renderer\\src\\router\\inventory\\inventorySetting"
   ],
-  "SelectedNode": "\\src\\preload\\index.ts",
+  "SelectedNode": "\\src\\renderer\\src\\comp\\PersonMemoDetail.tsx",
   "PreviewInSolutionExplorer": false
 }
