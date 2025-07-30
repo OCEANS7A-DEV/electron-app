@@ -12,7 +12,7 @@ type RowsType = {
   title: string
   content: string
   remarks: string
-  check_Flg: number | boolean | undefined
+  check_Flg: boolean
   delete_Flg: number
   create_at: string
   update_at: string
