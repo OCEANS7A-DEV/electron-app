@@ -12,7 +12,7 @@ type RowsType = {
   title: string
   content: string
   remarks: string
-  check_Flg: boolean | number
+  check_Flg: boolean
   delete_Flg: number
   create_at: string
   update_at: string
@@ -58,7 +58,7 @@ const PersonMemoDialogTable = forwardRef(({ data, Insert }: Props, ref) => {
         title: row.title,
         content: row.content,
         remarks: row.remarks,
-        check_Flg: row.check_Flg == 1,
+        check_Flg: Boolean(row.check_Flg),
         create_at: row.create_at
       }))
   }
