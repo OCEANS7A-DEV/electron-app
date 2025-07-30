@@ -30,7 +30,7 @@ const darkTheme = createTheme({
 type FormValues = {
   rows: {
     id: string
-    sub_id: string
+    uuid: string
     date: string
     title: string
     remarks: string
@@ -117,7 +117,7 @@ export default function HQPrivatememo(): JSX.Element {
     })
     if (finddata) {
       finddata.forEach((row) => {
-        mainData.push(row)
+        mainData.push(row!)
       })
     }
     const resultdata = [...new Set(mainData)]

@@ -111,18 +111,21 @@ export default function HQmemo(): JSX.Element {
     const mainData = data.main.filter(
       (item) => item[1].includes(searchString) || item[2].includes(searchString)
     )
+
     const detailData = data.detail.filter(
       (item) =>
         item[2].includes(searchString) ||
         item[3].includes(searchString) ||
         item[4].includes(searchString)
     )
+
     const finddata = detailData.map((item) => {
       return data.main.find((row) => row[0] == item[0])
     })
+
     if (finddata) {
       finddata.forEach((row) => {
-        mainData.push(row)
+        mainData.push(row!)
       })
     }
     const resultdata = [...new Set(mainData)]

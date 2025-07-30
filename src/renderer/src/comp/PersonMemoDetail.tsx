@@ -4,7 +4,6 @@ import '../css/orderDialog.css'
 import { TextField, Button } from '@mui/material'
 import Checkbox from '@mui/material/Checkbox'
 import '../css/uriage.css'
-import toast from 'react-hot-toast'
 
 type RowsType = {
   id: number
@@ -13,7 +12,7 @@ type RowsType = {
   title: string
   content: string
   remarks: string
-  check_Flg: number | boolean
+  check_Flg: number | boolean | undefined
   delete_Flg: number
   create_at: string
   update_at: string

@@ -261,6 +261,8 @@ export default function ProductDetailChangePage() {
 
   const addDialogRef = useRef<any>(null)
 
+  const [Height, setHeight] = useState<number>(window.innerHeight - 160)
+
   const swalWindow = async () => {
     setSwalProps({
       show: true,
@@ -344,12 +346,12 @@ export default function ProductDetailChangePage() {
   useEffect(() => {
     const updateHeight = () => {
       const vh = window.innerHeight;
-    };
-    updateHeight();
+      setHeight(vh - 160)
+      return vh - 160
+    }
     window.addEventListener('resize', updateHeight);
     //dialogOpen(0)
     return () => window.removeEventListener('resize', updateHeight);
-    
   }, [])
 
   useEffect(() => {
@@ -618,7 +620,7 @@ export default function ProductDetailChangePage() {
             <SortableContext items={fields.map(f => f.id)} strategy={verticalListSortingStrategy}>
               <List
                 className="no-scrollbar"
-                height={window.innerHeight - 160}
+                height={Height}
                 width="100%"
                 itemCount={fields.length}
                 itemSize={48}

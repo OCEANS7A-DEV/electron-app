@@ -115,7 +115,7 @@ export default function HQdata(): JSX.Element {
     })
     if (finddata) {
       finddata.forEach((row) => {
-        mainData.push(row)
+        mainData.push(row!)
       })
     }
     const resultdata = [...new Set(mainData)]
