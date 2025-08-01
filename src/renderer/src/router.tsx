@@ -35,6 +35,7 @@ import FCInventory, { loader as FCLoader } from './router/inventory/inventoryGet
 import HQdata, { loader as HQLoader } from './router/HQwork/HQdata'
 import HQmemo, { loader as HQMemoLoader } from './router/HQwork/HQmemo'
 import HQPrivatememo, { loader as HQPrivatememoLoader } from './router/HQwork/PersonMemo'
+import StaffData, { loader as StaffDataLoader } from './router/HQwork/StaffData'
 
 export const router = createHashRouter([
   {
@@ -164,5 +165,10 @@ export const router = createHashRouter([
     path: '/HQPrivatememo',
     element: <HQPrivatememo />,
     loader: HQPrivatememoLoader
+  },
+  {
+    path: '/StaffData',
+    element: <StaffData />,
+    loader: StaffDataLoader
   }
 ])

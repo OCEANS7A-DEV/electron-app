@@ -35,6 +35,7 @@ declare global {
       DataInsert: (payload: any) => Promise<any>;
       PrivateMemoInsert: (payload: any) => Promise<any>;
       PrivateMemoDelete: (payload: any) => Promise<any>;
+      UuidGet: (payload: any) => Promise<any>;
       DetailsData: () => Promise<any>;
       ListData: () => Promise<any>;
       VendorData: () => Promise<any>;

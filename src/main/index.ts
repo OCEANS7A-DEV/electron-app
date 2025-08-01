@@ -1048,6 +1048,16 @@ ipcMain.handle('list-get', async (_event, payload: any) => {
   }
 })
 
+ipcMain.handle('uuid-get', async (_event, payload: any) => {
+  let Uuid;
+  let isDuplicate = false;
+  do {
+    Uuid = crypto.randomUUID()
+    isDuplicate = payload.includes(Uuid);
+  } while (isDuplicate);
+  return Uuid
+})
+
 ipcMain.handle('PrivateMemo-Get', () => {
   const selectMainStmt = DB.prepare('SELECT * FROM MemoMain')
   const selectDetailStmt = DB.prepare('SELECT * FROM MemoDetail')

@@ -62,6 +62,7 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   PrivateMemoGet: () => ipcRenderer.invoke('PrivateMemo-Get'),
   PrivateMemoInsert: (payload) => ipcRenderer.send('PrivateMemo-Insert', payload),
   PrivateMemoDelete: (payload) => ipcRenderer.send('PrivateMemo-Delete', payload),
+  UuidGet: (payload) => ipcRenderer.invoke('uuid-get', payload),
 })
 
 if (process.contextIsolated) {

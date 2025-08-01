@@ -1,0 +1,21 @@
+.newStaff-Name-area {
+  display: flex;
+  justify-content: space-around;
+}
+
+
+.newStaff-Store-area {
+  padding-top: 10px;
+}
+
+.newStaff-Input-area {
+  padding: 10px 0px;
+}
+
+.newStaff-postNumber-area {
+  padding: 10px 0px;
+}
+
+.newStaff-Input{
+  padding-top: 5px;
+}

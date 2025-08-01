@@ -90,9 +90,37 @@ table {
 }
 
 
+
+
+
+.Staff-table {
+  flex: 1;
+}
+
+
+.Staff-table th, .Staff-table td {
+  border: 1px white solid;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.Staff-table-post{
+  min-width: 200px;
+}
+
+.Staff-table-operation {
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
+}
+
+
+.Staff-table-operation-td {
+  display: flex;
+  justify-content: space-between;
+}
+
 /* detail */
-
-
 .modalOverlaydetail {
   display: none;
   position: fixed;
