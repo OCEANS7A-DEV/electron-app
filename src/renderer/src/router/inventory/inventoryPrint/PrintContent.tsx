@@ -3,6 +3,7 @@ import type { JSX } from 'react'
 import '../../../css/PrintContent.css'
 import '../../../css/orderPrint.css'
 import { useLoaderData } from 'react-router-dom'
+import { Button } from '@mui/material'
 
 type Row = (string | number)[]
 
@@ -165,13 +166,22 @@ const PrintContent = (): JSX.Element => {
     }
   }
 
+  const PrintExecution = async () => {
+    await window.myInventoryAPI.PrintReady()
+  }
+
   useEffect(() => {
-    window.myInventoryAPI.PrintReady()
+    //window.myInventoryAPI.PrintReady()
   }, [])
 
   return (
     <div className="print-area">
       <div className="printData">
+        <div className="printButton">
+          <Button variant="outlined" onClick={PrintExecution}>
+            印刷
+          </Button>
+        </div>
         {stores.map((storerow, storeindex) => (
           <table className="printData" key={storeindex}>
             <thead>

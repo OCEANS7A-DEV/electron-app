@@ -43,16 +43,16 @@ export const loader = async ({ request }: { request: Request }) => {
     const codeList = resultData.map(item => item[1])
     const filterd = resultData.filter((row) => row[0] === vendor && row[12] < 0)
     const orderResult = filterd.map(item => {
-      let shortageNum = Number(item[7]);
+      let shortageNum = Number(item[12]);
       let num = 0;
       if (item[7] !== "" && Number(item[7]) > 0) {
-        let up = Number(item[11])
-        if(item[1] == 2002){
+        let up = Number(item[7])
+        if (item[1] == 2002){
           up = up * 2
         }
         while (shortageNum < 0) {
-          shortageNum += up
-          num += up
+          shortageNum = shortageNum + up
+          num = num + up
         }
         return ['', item[2], num, '', '', '']
       } else {
@@ -95,8 +95,12 @@ export default function TaiyoPrint(): JSX.Element {
   console.log(orderData)
 
   useEffect(() => {
-    window.myInventoryAPI.PrintReady()
+    //window.myInventoryAPI.PrintReady()
   }, [])
+
+  const Print = () => {
+    window.myInventoryAPI.PrintReady()
+  }
   
 
 
@@ -109,7 +113,7 @@ export default function TaiyoPrint(): JSX.Element {
     <div className="taiyobackGround">
       {/* <LinkBaner /> */}
       <div className="PrintButton">
-        <Button variant="outlined" onClick={() => console.log('印刷')}>印刷</Button>
+        <Button variant="outlined" onClick={Print}>印刷</Button>
       </div>
       <div className="taiyotop">
         <h1 className="taiyoH1">FAX注文書</h1>

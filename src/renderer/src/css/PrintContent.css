@@ -5,3 +5,17 @@
   flex-flow: column;
   justify-content: center;
 }
+
+
+.printButton {
+  position: fixed;
+  top: 10px;
+  left: 700px;
+  z-index: 1000;
+}
+
+@media print {
+  .printButton {
+    display: none;
+  }
+}

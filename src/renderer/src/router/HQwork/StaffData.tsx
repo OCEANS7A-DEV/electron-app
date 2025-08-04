@@ -7,7 +7,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useLoaderData } from 'react-router-dom'
 import { TextField } from '@mui/material'
 import { useForm, useFieldArray } from 'react-hook-form'
-import PersonMemoDialogTable from '../../comp/PersonMemoDetail'
+import StaffDialogTable from '../../comp/staffDialog'
 import NewStaffDialogTable from '../../comp/newStaffDialog'
 import toast, { Toaster } from 'react-hot-toast'
 
@@ -35,8 +35,8 @@ type FormValues = {
     storeid: string
     store: string
     postNumber: string
-    post: string
-    Afterpost: string
+    address: string
+    afterAddress: string
     rank: string
     joined: Date | string
     status: string
@@ -44,13 +44,28 @@ type FormValues = {
 }
 
 type DataType = {
-  main: string[][]
-  detail: string[][]
+  data: string[][]
+  stores: string[][]
+  dist: string[][]
 }
+type ValidKey = "id" | "topName" | "endName" | "storeid" | "store" | "postNumber" | "address" | "afterAddress" | "rank" | "joined" | "status";
+
 
 type sendDataType = [string, string, string]
 
+function createObjectsFromArray<T extends string>(
+  keys: readonly T[],
+  values: unknown[][]
+): Record<T, unknown>[] {
+  return values.map(row => {
+    const obj = {} as Record<T, unknown>;
+    keys.forEach((key, index) => {
+      obj[key] = row[index];
+    });
 
+    return obj;
+  });
+}
 
 export const loader = async (): Promise<DataType> => {
   const data = await window.myInventoryAPI.ListGet({
@@ -65,20 +80,35 @@ export const loader = async (): Promise<DataType> => {
     sheetid: '125Hz6aVG9UaCKtyUZmrL-FsdHBykj0wFbBpBUKrHp0U'
   })
 
-  const stores = storesData.filter((item) => item[0] !== '' && item[2] == 'DM')
+  const stores = storesData.filter((item) => (item[0] !== '' && item[2] == 'DM') || item[1] == '本部')
     .map((item) => {
     return {
       id: item[0],
       label: item[1],
       value: item[1]
     }
+    })
+
+  const dist = await window.myInventoryAPI.ListGet({
+    sheetName: 'カラム',
+    action: 'StaffGet',
+    sheetid: '125Hz6aVG9UaCKtyUZmrL-FsdHBykj0wFbBpBUKrHp0U'
   })
-  return { data, stores }
+  return { data, stores, dist }
 }
 
+// 1. 一つの「行」オブジェクトの型を定義
+type Row = FormValues['rows'][number];
+
+// 2. 「行」オブジェクトのキーの型を定義
+type RowKey = keyof Row;
+
 export default function StaffData(): JSX.Element {
-  const { data, stores } = useLoaderData<typeof loader>()
-  //console.log(data)
+  const { data, stores, dist } = useLoaderData<typeof loader>()
+  console.log(dist)
+  const columns = data[0]
+  const products = createObjectsFromArray(columns, data.slice(1))
+  console.log(products)
   const [searchString, setSearchString] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenAdd, setModalOpenAdd] = useState(false)
@@ -86,22 +116,10 @@ export default function StaffData(): JSX.Element {
   const addDataDialogRef = useRef<any>(null)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
 
-  const DefaultSet = (defData): FormValues['rows'] => {
-    return defData
-      .filter((row) => row[0] !== '')
-      .map((item) => ({
-        id: item[0],
-        topName: item[1],
-        endName: item[2],
-        storeid: item[3],
-        store: item[4],
-        postNumber: item[5],
-        post: item[6],
-        Afterpost: item[7],
-        rank: item[8],
-        joined: new Date(item[9]),
-        status: item[10],
-      }))
+  const DefaultSet = (defData) => {
+    const dataRows = defData.slice(1).filter((row) => row[0] !== '')
+    const result = createObjectsFromArray(columns, dataRows)
+    return result
   }
 
   const DataRefresh = async (): Promise<void> => {
@@ -238,6 +256,61 @@ export default function StaffData(): JSX.Element {
     })
   }
 
+  const Columns = (data) => {
+    console.log(data)
+    const value = dist.find((item) => item[0] === data)
+    console.log(value)
+    if (!value) {
+      return null
+    } else {
+      return (
+        <th className={`Staff-table-${value[1]}`}>{value[1]}</th>
+      )
+      
+    }
+    
+  }
+
+  const Rows = (data: ValidKey, index: number) => {
+    try {
+      const nulllist = [
+        'id',
+        'endName',
+        'storeid',
+        'afterAddress'
+      ]
+      if (nulllist.includes(data) || !data) {
+        return null
+      } else if (data == 'topName') {
+        return (
+          <td>
+            {getValues(`rows.${index}.topName`)}{getValues(`rows.${index}.endName`)}
+          </td>
+        )
+      } else if (data == 'address') {
+        return (
+          <td>
+            {getValues(`rows.${index}.address`)}{getValues(`rows.${index}.afterAddress`)}
+          </td>
+        )
+      } else if (data == 'joined') {
+        return (
+          <td>
+            {new Date(getValues(`rows.${index}.joined`)).toLocaleDateString()}
+          </td>
+        )
+      } else {
+        const value = getValues(`rows.${index}.${data}`)
+        return (
+          <td>
+            {value ?? ''}
+          </td>
+        );
+      }
+    } catch {
+      return null
+    }
+  }
 
 
   return (
@@ -274,30 +347,36 @@ export default function StaffData(): JSX.Element {
             <table className="Staff-table">
               <thead>
                 <tr>
-                  <th className="Staff-table-name">名前</th>
-                  <th className="Staff-table-store">店舗</th>
-                  <th className="Staff-table-rank">等級</th>
-                  <th className="Staff-table-postnumber">郵便番号</th>
-                  <th className="Staff-table-post">住所</th>
-                  <th className="Staff-table-joined">入社日</th>
-                  <th className="Staff-table-status">status</th>
+                  {columns.map((column) => (
+                    Columns(column)
+                  ))}
+                  {/*<th className="Staff-table-name">名前</th>*/}
+                  {/*<th className="Staff-table-store">店舗</th>*/}
+                  {/*<th className="Staff-table-rank">等級</th>*/}
+                  {/*<th className="Staff-table-postnumber">郵便番号</th>*/}
+                  {/*<th className="Staff-table-post">住所</th>*/}
+                  {/*<th className="Staff-table-joined">入社日</th>*/}
+                  {/*<th className="Staff-table-status">status</th>*/}
                   <th className="Staff-table-operation">操作</th>
                 </tr>
               </thead>
               <tbody>
                 {fields.map((field, index) => (
                   <tr key={field.id}>
-                    <td>
-                      {getValues(`rows.${index}.topName`)}{getValues(`rows.${index}.endName`)}
-                    </td>
-                    <td>{getValues(`rows.${index}.store`)}</td>
-                    <td>{getValues(`rows.${index}.rank`)}</td>
-                    <td>{getValues(`rows.${index}.postNumber`)}</td>
-                    <td>
-                      {getValues(`rows.${index}.post`)}{getValues(`rows.${index}.Afterpost`)}
-                    </td>
-                    <td>{getValues(`rows.${index}.joined`).toLocaleDateString()}</td>
-                    <td>{getValues(`rows.${index}.status`)}</td>
+                    {columns.map((column) => (
+                      Rows(column, index)
+                    ))}
+                    {/*<td>*/}
+                    {/*  {getValues(`rows.${index}.topName`)}{getValues(`rows.${index}.endName`)}*/}
+                    {/*</td>*/}
+                    {/*<td>{getValues(`rows.${index}.store`)}</td>*/}
+                    {/*<td>{getValues(`rows.${index}.rank`)}</td>*/}
+                    {/*<td>{getValues(`rows.${index}.postNumber`)}</td>*/}
+                    {/*<td>*/}
+                    {/*  {getValues(`rows.${index}.address`)}{getValues(`rows.${index}.afterAddress`)}*/}
+                    {/*</td>*/}
+                    {/*<td>{new Date(getValues(`rows.${index}.joined`)).toLocaleDateString()}</td>*/}
+                    {/*<td>{getValues(`rows.${index}.status`)}</td>*/}
                     <td>
                       <div className="Staff-table-operation-td">
                         <Button variant="outlined" onClick={() => dialogOpen(index)}>
@@ -318,9 +397,9 @@ export default function StaffData(): JSX.Element {
       <div className={`modalOverlaydetail ${modalOpen ? 'open' : ''}`} onClick={DialogClosed}>
         {selectedRowIndex !== null && (
           <div className="modaldetailContent">
-            <PersonMemoDialogTable
+            <StaffDialogTable
               data={getValues().rows[selectedRowIndex]}
-              
+              stores={stores}
               ref={addDialogRef}
               Insert={Insert}
             />

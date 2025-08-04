@@ -6,16 +6,24 @@
 
 .newStaff-Store-area {
   padding-top: 10px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .newStaff-Input-area {
   padding: 10px 0px;
+  margin-top: 10px;
 }
 
 .newStaff-postNumber-area {
   padding: 10px 0px;
+  margin-top: 10px;
 }
 
-.newStaff-Input{
-  padding-top: 5px;
+.newStaff-Input {
+  padding-top: 10px;
+  margin-top: 10px;
+
 }

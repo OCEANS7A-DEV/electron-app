@@ -1157,6 +1157,9 @@ ipcMain.handle('orderPrint', (_event, payload) => {
 
   printWindow.on('ready-to-show', () => {
     printWindow?.show()
+    if (is.dev) {
+      printWindow?.webContents.openDevTools()
+    }
   })
   const url =
     is.dev && process.env['ELECTRON_RENDERER_URL']
@@ -1235,10 +1238,70 @@ ipcMain.handle('productEditWindow', (_eventt, payload) => {
 })
 
 ipcMain.handle('Print-Ready', () => {
-  printWindow?.webContents.print({ silent: false, printBackground: false }, () => {
-    //printWindow.close()
+  //printWindow?.webContents.print({ silent: false, printBackground: false }, () => {
+  //  //printWindow.close()
+  //})
+  let result
+  printWindow?.webContents.print({}, (success, failureReason) => {
+    console.log(success)
+    console.log(failureReason)
+    if (success) {
+      console.log('print');
+      // 印刷成功後の処理をここに記述
+      PrintSatusUpdate()
+      result = '印刷実行'
+    } else {
+      console.log('ユーザーは印刷をキャンセルしました。');
+      if (failureReason === 'cancelled') {
+        console.log('cancelled');
+        result = '印刷キャンセル'
+      } else {
+        console.log(`印刷に失敗しました: ${failureReason}`);
+        result = '印刷失敗'
+      }
+    }
   })
+  return result
 })
+
+const PrintSatusUpdate = async () => {
+  try {
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+
+    const printDataObj = await store.get('printData')
+    const printDate = printDataObj.printDate
+    const ordersGet = JSON.parse(printDataObj.printData)
+    const stores = [...new Set(ordersGet.map((item) => item[1] as string))]
+
+    const response = await net.fetch(InsertAPI_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Cookie: cookieHeader
+      },
+      body: JSON.stringify({
+        sheetName: '店舗へ',
+        action: 'PrintcellUpdate',
+        sub_action: 'insert',
+        searchData: stores,
+        searchColumn: 2,
+        updataColumnNumber: 13,
+        updataValue: '印刷済',
+        updataDate: printDate
+      })
+    })
+    const result = await response.json()
+    return result
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+    return errorMessage
+  }
+}
 
 ipcMain.handle('now-DateGet', () => {
   const id = 'OCEAN_HQ'

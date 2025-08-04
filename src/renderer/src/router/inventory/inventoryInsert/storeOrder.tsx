@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react'
+import type { JSX } from 'react'
 import WordSearch from '../../../comp/ProductSearchWord'
 import '../../../css/Receiving.css'
 import { Button } from '@mui/material'
@@ -65,7 +66,7 @@ const defaultSet = (): FormValues["rows"] => {
 }
 
 
-const getNearestMonday = (D) => {
+const getNearestMonday = (D): string => {
   const date = new Date(D);
   const dayOfWeek = date.getDay();
   const diffToMonday = dayOfWeek <= 3 ? 1 - dayOfWeek : 8 - dayOfWeek;
@@ -80,7 +81,7 @@ const getNearestMonday = (D) => {
 
 
 
-export default function StoreOrderPage() {
+export default function StoreOrderPage(): JSX.Element {
 
   const [DisplayStatus, setDisplayStatus] = useState(false)
 
@@ -104,7 +105,7 @@ export default function StoreOrderPage() {
 
 
 
-  const swalWindow = async () => {
+  const swalWindow = async (): Promise<void> => {
     setSwalProps({
       show: true,
       title: storeSelect,
@@ -146,53 +147,64 @@ export default function StoreOrderPage() {
   }
 
   const insertPost = async () => {
-    if(storeSelect == ''){
-      await Swal.fire({
-        icon: 'warning',
-        title: '店舗が未選択です',
-        text: '店舗を選んでから送信してください',
-        confirmButtonText: 'OK'
+    const insertExecution = async () => {
+      if(storeSelect == ''){
+        await Swal.fire({
+          icon: 'warning',
+          title: '店舗が未選択です',
+          text: '店舗を選んでから送信してください',
+          confirmButtonText: 'OK'
+        })
+        return
+      }
+      const Now = await window.myInventoryAPI.NowGet()
+      const filterData = getValues().rows.filter((row) => row.code !== '')
+      const formData = filterData.map((item) => {
+        const result = [
+          InsertDate,
+          storeSelect,
+          item.vendor,
+          item.code,
+          item.name,
+          item.detail?.value,
+          item.quantity,
+          '',
+          item.price,
+          null,
+          item.person,
+          item.remarks,
+          '未印刷',
+          Now[0],
+          Now[1]
+        ]
+        return result
       })
-      return
+      if (formData.length >= 1) {
+        await window.myInventoryAPI.DataInsert({
+          sheetName: '店舗へ',
+          action: 'Orderinsert',
+          sub_action: 'insert',
+          data: formData,
+          formulaConfig: {
+            targetCol: 10,
+            formula: '=RC[-3]*RC[-1]'
+          },
+          deleteNum: DeleteRowNum
+        })
+      }
     }
-    const Now = await window.myInventoryAPI.NowGet()
-    const filterData = getValues().rows.filter((row) => row.code !== '')
-    const formData = filterData.map((item) => {
-      const result = [
-        InsertDate,
-        storeSelect,
-        item.vendor,
-        item.code,
-        item.name,
-        item.detail?.value,
-        item.quantity,
-        '',
-        item.price,
-        null,
-        item.person,
-        item.remarks,
-        '未印刷',
-        Now[0],
-        Now[1]
-      ]
-      return result
-    })
-    // console.log(formData)
-    // return
-    if (formData.length >= 1) {
-      await window.myInventoryAPI.DataInsert({
-        sheetName: '店舗へ',
-        action: 'Orderinsert',
-        sub_action: 'insert',
-        data: formData,
-        formulaConfig: {
-          targetCol: 10,
-          formula: '=RC[-3]*RC[-1]'
+    toast.promise(
+      insertExecution(),
+      {
+        loading: '注文データ送信中…',
+        success: () => {
+          return `${storeSelect}店の注文データを送信しました`
         },
-        deleteNum: DeleteRowNum
-      })
-    }
-    toast.success('送信しました')
+        error: () => {
+          return '注文データの送信に失敗しました'
+        }
+      }
+    )
   }
 
   const handleOpenDialog = () => {
@@ -219,6 +231,7 @@ export default function StoreOrderPage() {
 
   const DetailsSet = async () => {
     const list = await window.myInventoryAPI.DetailsData()
+    console.log(list)
     const filtered = list.filter(row => row[1] !== '')
     setProductdetailsList(filtered)
   }
@@ -364,12 +377,14 @@ export default function StoreOrderPage() {
   
 
   const search = async (index) => {
-    //console.log(SelectType)
     const List = await window.myInventoryAPI.ListData()
     const values = getValues()
-    const code = values.rows[index].code
+    let code = values.rows[index].code
+    if (index >= 1 && code == '') {
+      code = values.rows[index - 1].code
+      setValue(`rows.${index}.code`, code)
+    }
     const productData = List.find((item) => item.code === Number(code))
-    //console.log(productData)
     if (productData) {
       const vendordata = productData.vendor
       const name = productData.name
@@ -385,10 +400,6 @@ export default function StoreOrderPage() {
         setValue(`rows.${index}.price`, productData.newPrice)
       } else {
         setValue(`rows.${index}.price`, productData.VC)
-      }
-      
-      if(detailfilter.length !== 0){
-        console.log('詳細あり')
       }
     }
   }
@@ -512,7 +523,6 @@ export default function StoreOrderPage() {
                     className="insert_vendor"
                     placeholder="業者名"
                     onKeyDown={(e) => handleEnterFocusNext(e)}
-                    onBlur={() => search(index)}
                   />
                   <input
                     {...register(`rows.${index}.code`, {

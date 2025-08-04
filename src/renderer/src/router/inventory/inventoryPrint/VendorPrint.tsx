@@ -28,7 +28,8 @@ const isoToJstYMD = (isoString) => {
 
 
 export const loader =  async ({ request }: { request: Request }) => {
-  const productData = await window.myInventoryAPI.ListGet({sheetName: '在庫一覧', action: 'TotallingGet', ranges: 'B2:O'})
+  const productData = await window.myInventoryAPI.ListGet({ sheetName: '在庫一覧', action: 'TotallingGet', ranges: 'A2:O' })
+
   const orderData = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:O'})
   const url = new URL(request.url);
   const date = url.searchParams.get("date") ?? '2025-03-24';
@@ -38,11 +39,7 @@ export const loader =  async ({ request }: { request: Request }) => {
   const ShippingAddress = Addressdata.address.find(row => row[0] === address)
 
 
-
-
-  //console.log(productData)
-  const shortage = productData.filter(row => (Number(row[12]) < 0 || (Number(row[14]) >= 1 && Number(row[12]) <= Number(row[14]))) && (!row[2].includes('eco') && !row[2].includes('ﾙﾍﾞﾙ') && row[1] !== 100001 && !(Number(row[1]) >= 300100 && Number(row[1]) <= 300500)))
-  //console.log(shortage)
+  const shortage = productData.filter((row) => (Number(row[12]) < 0 || (Number(row[14]) >= 1 && Number(row[12]) <= Number(row[14]))) && (!row[2].includes('eco') && !row[2].includes('ﾙﾍﾞﾙ') && row[1] !== 100001 && !(Number(row[1]) >= 300100 && Number(row[1]) <= 300500)))
 
   let subData = []
   let subdata: any[] = [];
@@ -51,10 +48,10 @@ export const loader =  async ({ request }: { request: Request }) => {
     const swKH = jaconv.toHan(item);
     const vendorfilter = shortage.filter(row => row[0] == item || row[0] == swKH)
     const mapData = vendorfilter.map(fitem => {
-      if(fitem[11] !== ''){
+      if (fitem[11] !== ''){
         let shortage = fitem[12];
         let orderNum = 0
-        let ordernumCount = Number(fitem[7])
+        let ordernumCount = Number(fitem[11])
         if(shortage < 0){
           while (shortage < 0){
             shortage += ordernumCount
@@ -114,12 +111,6 @@ export default function EtcPrint() {
   const { date, ShippingAddress, subData, subdata, vendors, Addressdata, resultdata } = useLoaderData<typeof loader>();
 
   console.log(date)
-
-  
-
-
-
-
 
   // useLayoutEffect(() => {
   //   const timer = setTimeout(() => {
