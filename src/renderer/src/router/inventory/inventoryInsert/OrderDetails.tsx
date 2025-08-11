@@ -1,4 +1,4 @@
-import React,{ useEffect } from 'react'
+import React, { useEffect } from 'react'
 import '../../../css/taiyoPrint.css'
 import { useLoaderData } from "react-router-dom"
 

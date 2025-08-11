@@ -115,11 +115,11 @@ export const loader = async () => {
 
 export default function FCInventory() {
   const { storenames, yearList, monthList, datas } = useLoaderData<typeof loader>()
-  //console.log(storenames)
+  console.log(datas)
 
   const [marginNum, setMarginNum] = useState(100)
   const [DisplayStatus, setDisplayStatus] = useState(false)
-  const [storeSelect, setStoreSelect] = React.useState('');
+  const [storeSelect, setStoreSelect] = React.useState('')
   const [Year, setYear] = useState<number>(new Date().getFullYear())
   const [Month, setMonth] = useState<number>(new Date().getMonth() + 1)
   const [DeleteRowNum, setDeleteRowNum] = useState<number>(0)
@@ -204,10 +204,11 @@ export default function FCInventory() {
     const values = getValues()
     const code = values.rows[index].code
     const productData = List.find((item) => item.code === Number(code))
+    console.log(productData)
     if (productData) {
       const name = productData.name
       setValue(`rows.${index}.name`, name)
-      setValue(`rows.${index}.price`, productData.VC)
+      setValue(`rows.${index}.price`, productData.newPrice)
     }
   }
 

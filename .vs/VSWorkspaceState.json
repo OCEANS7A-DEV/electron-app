@@ -2,14 +2,14 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\preload",
     "\\src\\renderer",
     "\\src\\renderer\\src",
-    "\\src\\renderer\\src\\comp",
     "\\src\\renderer\\src\\router",
-    "\\src\\renderer\\src\\router\\HQwork",
     "\\src\\renderer\\src\\router\\inventory",
+    "\\src\\renderer\\src\\router\\inventory\\inventoryInsert",
+    "\\src\\renderer\\src\\router\\inventory\\inventoryPrint",
     "\\src\\renderer\\src\\router\\inventory\\inventorySetting"
   ],
+  "SelectedNode": "\\src\\renderer\\src\\router\\inventory\\inventoryInsert\\Receiving_stock.tsx",
   "PreviewInSolutionExplorer": false
 }

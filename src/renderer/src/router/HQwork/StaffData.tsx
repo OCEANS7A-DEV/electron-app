@@ -48,10 +48,8 @@ type DataType = {
   stores: string[][]
   dist: string[][]
 }
-type ValidKey = "id" | "topName" | "endName" | "storeid" | "store" | "postNumber" | "address" | "afterAddress" | "rank" | "joined" | "status";
 
-
-type sendDataType = [string, string, string]
+type sendDataType = string[]
 
 function createObjectsFromArray<T extends string>(
   keys: readonly T[],
@@ -97,16 +95,13 @@ export const loader = async (): Promise<DataType> => {
   return { data, stores, dist }
 }
 
-// 1. 一つの「行」オブジェクトの型を定義
-type Row = FormValues['rows'][number];
 
-// 2. 「行」オブジェクトのキーの型を定義
-type RowKey = keyof Row;
+type RowKey = keyof FormValues['rows'][0]
 
 export default function StaffData(): JSX.Element {
   const { data, stores, dist } = useLoaderData<typeof loader>()
   console.log(dist)
-  const columns = data[0]
+  const columns = data[0] as RowKey[]
   const products = createObjectsFromArray(columns, data.slice(1))
   console.log(products)
   const [searchString, setSearchString] = useState('')
@@ -118,7 +113,7 @@ export default function StaffData(): JSX.Element {
 
   const DefaultSet = (defData) => {
     const dataRows = defData.slice(1).filter((row) => row[0] !== '')
-    const result = createObjectsFromArray(columns, dataRows)
+    const result = createObjectsFromArray(columns, dataRows) as FormValues['rows']
     return result
   }
 
@@ -222,17 +217,18 @@ export default function StaffData(): JSX.Element {
       if (addDialogRef.current) {
         insertData = addDialogRef.current.getFormData()
       } else {
+        const nullData = ['status', 'store', 'id']
         insertData = addDataDialogRef.current.getFormData()
         const ids = getValues('rows').map((row) => row.id)
         const uuid = await window.myInventoryAPI.UuidGet(ids)
         const now = new Date().toLocaleDateString()
         Object.keys(insertData).forEach((key) => {
           if (key == 'joined') {
-            sendData.push([new Date(insertData[key]).toLocaleDateString(), uuid, 'in'])
-          } else if (key == 'status') {
+            sendData.push([new Date(insertData[key]).toLocaleDateString(), uuid, key, 'in'])
+          } else if (nullData.includes(key)) {
             return
           } else {
-            sendData.push([now, uuid, insertData[key]])
+            sendData.push([now, uuid, key, insertData[key]])
           }
         })
       }
@@ -257,29 +253,24 @@ export default function StaffData(): JSX.Element {
   }
 
   const Columns = (data) => {
-    console.log(data)
     const value = dist.find((item) => item[0] === data)
-    console.log(value)
     if (!value) {
       return null
     } else {
       return (
         <th className={`Staff-table-${value[1]}`}>{value[1]}</th>
       )
-      
     }
-    
   }
 
-  const Rows = (data: ValidKey, index: number) => {
+  const Rows = (data: RowKey, index: number) => {
     try {
       const nulllist = [
-        'id',
         'endName',
-        'storeid',
         'afterAddress'
       ]
-      if (nulllist.includes(data) || !data) {
+
+      if (nulllist.includes(data) || data.includes('id')) {
         return null
       } else if (data == 'topName') {
         return (
@@ -294,18 +285,19 @@ export default function StaffData(): JSX.Element {
           </td>
         )
       } else if (data == 'joined') {
+        const value = new Date(getValues(`rows.${index}.joined`)).toLocaleDateString()
         return (
           <td>
-            {new Date(getValues(`rows.${index}.joined`)).toLocaleDateString()}
+            {value}
           </td>
         )
       } else {
-        const value = getValues(`rows.${index}.${data}`)
+        const value = getValues(`rows.${index}.${data}` as const)
         return (
           <td>
             {value ?? ''}
           </td>
-        );
+        )
       }
     } catch {
       return null
@@ -350,13 +342,6 @@ export default function StaffData(): JSX.Element {
                   {columns.map((column) => (
                     Columns(column)
                   ))}
-                  {/*<th className="Staff-table-name">名前</th>*/}
-                  {/*<th className="Staff-table-store">店舗</th>*/}
-                  {/*<th className="Staff-table-rank">等級</th>*/}
-                  {/*<th className="Staff-table-postnumber">郵便番号</th>*/}
-                  {/*<th className="Staff-table-post">住所</th>*/}
-                  {/*<th className="Staff-table-joined">入社日</th>*/}
-                  {/*<th className="Staff-table-status">status</th>*/}
                   <th className="Staff-table-operation">操作</th>
                 </tr>
               </thead>
@@ -366,17 +351,6 @@ export default function StaffData(): JSX.Element {
                     {columns.map((column) => (
                       Rows(column, index)
                     ))}
-                    {/*<td>*/}
-                    {/*  {getValues(`rows.${index}.topName`)}{getValues(`rows.${index}.endName`)}*/}
-                    {/*</td>*/}
-                    {/*<td>{getValues(`rows.${index}.store`)}</td>*/}
-                    {/*<td>{getValues(`rows.${index}.rank`)}</td>*/}
-                    {/*<td>{getValues(`rows.${index}.postNumber`)}</td>*/}
-                    {/*<td>*/}
-                    {/*  {getValues(`rows.${index}.address`)}{getValues(`rows.${index}.afterAddress`)}*/}
-                    {/*</td>*/}
-                    {/*<td>{new Date(getValues(`rows.${index}.joined`)).toLocaleDateString()}</td>*/}
-                    {/*<td>{getValues(`rows.${index}.status`)}</td>*/}
                     <td>
                       <div className="Staff-table-operation-td">
                         <Button variant="outlined" onClick={() => dialogOpen(index)}>

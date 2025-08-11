@@ -25,8 +25,8 @@ type FormValues = {
   storeid: string
   store: string
   postNumber: string
-  post: string
-  Afterpost: string
+  address: string
+  afterAddress: string
   rank: string
   joined: string | Date
   status: string
@@ -57,8 +57,8 @@ const StaffDialogTable = forwardRef(({ data, Insert, stores = [] }: Props, ref) 
     storeid: data.storeid,
     store: data.store,
     postNumber: data.postNumber,
-    post: data.post,
-    Afterpost: data.Afterpost,
+    address: data.address,
+    afterAddress: data.afterAddress,
     rank: data.rank,
     joined: data.joined,
     status: data.status,
@@ -77,7 +77,7 @@ const StaffDialogTable = forwardRef(({ data, Insert, stores = [] }: Props, ref) 
       return
     }
     const addressData = await getAddress(number)
-    setValue('post', `${addressData?.pref}${addressData?.city}${addressData?.area}`)
+    setValue('address', `${addressData?.pref}${addressData?.city}${addressData?.area}`)
   }
 
   useEffect(() => {
@@ -166,7 +166,6 @@ const StaffDialogTable = forwardRef(({ data, Insert, stores = [] }: Props, ref) 
                         label="性別"
                         {...field}
                         displayEmpty
-
                       >
                         {gender.map((option) => (
                           <MenuItem key={option.id} value={option.id}>
@@ -191,22 +190,20 @@ const StaffDialogTable = forwardRef(({ data, Insert, stores = [] }: Props, ref) 
               <TextField
                 type="text"
                 label="住所"
-                {...register('post')}
+                {...register('address')}
                 multiline
                 className="newStaff-Post-input"
                 fullWidth
-                rows={2}
               />
             </div>
             <div className="newStaff-Input">
               <TextField
                 type="text"
                 label="住所(建物名等)"
-                {...register('Afterpost')}
+                {...register('afterAddress')}
                 multiline
                 className="newStaff-Post-input"
                 fullWidth
-                rows={2}
               />
             </div>
           </div>

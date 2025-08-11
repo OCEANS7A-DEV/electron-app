@@ -25,11 +25,12 @@ type FormValues = {
   storeid: string
   store: string
   postNumber: string
-  post: string
-  Afterpost: string
+  address: string
+  afterAddress: string
   rank: string
   joined: string | Date
   status: string
+  gender: string | number
 }
 
 type storeType = {
@@ -50,25 +51,30 @@ const defaultValues: FormValues = {
   storeid: '',
   store: '',
   postNumber: '',
-  post: '',
-  Afterpost: '',
+  address: '',
+  afterAddress: '',
   rank: '',
   joined: new Date(),
-  status: ''
+  status: '',
+  gender: ''
 }
 
 const NewStaffDialogTable = forwardRef(({ Insert, stores = [] }: Props, ref) => {
   const [dateValue, setDateValue] = useState<Dayjs | null>(null);
-
+  const gender = [
+    { id: 1, label: '男性', value: '男性' },
+    { id: 2, label: '女性', value: '女性' }
+  ]
   const { control, register, getValues, watch, setValue } = useForm<FormValues>({ defaultValues })
 
   const watchedpostNumber = watch('postNumber')
+
   const AddressSearch = async (number) => {
     if(!number || number.length < 7) {
       return
     }
     const addressData = await getAddress(number)
-    setValue('post', `${addressData?.pref}${addressData?.city}${addressData?.area}`)
+    setValue('address', `${addressData?.pref}${addressData?.city}${addressData?.area}`)
   }
 
   useEffect(() => {
@@ -80,7 +86,8 @@ const NewStaffDialogTable = forwardRef(({ Insert, stores = [] }: Props, ref) => 
   }))
 
   useEffect(() => {
-    setValue('joined', dateValue?.toDate()?.toLocaleDateString())
+    const initialDate = dateValue?.toDate()?.toLocaleDateString()
+    setValue('joined', initialDate ?? '')
   }, [dateValue])
 
   return (
@@ -127,27 +134,47 @@ const NewStaffDialogTable = forwardRef(({ Insert, stores = [] }: Props, ref) => 
                   </FormControl>
                 )}
               />
-              <div className="newStaff-Input">
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ja">
-                  <DatePicker
-                    slotProps={{
-                      textField: {
-                        size: 'small',
-                        fullWidth: true,
-                        sx: {
-                          fontSize: '1rem',
-                          '& input': {
-                            height: '1.5em',
-                          },
-                          width: '150px',
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ja">
+                <DatePicker
+                  label="入社日"
+                  slotProps={{
+                    textField: {
+                      size: 'small',
+                      fullWidth: true,
+                      sx: {
+                        fontSize: '1rem',
+                        '& input': {
+                          height: '1.5em',
                         },
+                        width: '150px',
                       },
-                    }}
-                    value={dateValue}
-                    onChange={(e) => setDateValue(e)}
-                  />
-                </LocalizationProvider>
-              </div>
+                    },
+                  }}
+                  value={dateValue}
+                  onChange={(e) => setDateValue(e)}
+                />
+                <Controller
+                  name="gender"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl size="small" style={{ width: 120, backgroundColor: 'white' }}>
+                      <InputLabel id="gender-select-label">性別</InputLabel>
+                      <Select
+                        labelId="gender-select-label"
+                        label="性別"
+                        {...field}
+                        displayEmpty
+                      >
+                        {gender.map((option) => (
+                          <MenuItem key={option.id} value={option.id}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+              </LocalizationProvider>
             </div>
             <div className="newStaff-Input">
               <TextField
@@ -161,7 +188,7 @@ const NewStaffDialogTable = forwardRef(({ Insert, stores = [] }: Props, ref) => 
               <TextField
                 type="text"
                 label="住所"
-                {...register('post')}
+                {...register('address')}
                 multiline
                 className="newStaff-Post-input"
                 fullWidth
@@ -172,7 +199,7 @@ const NewStaffDialogTable = forwardRef(({ Insert, stores = [] }: Props, ref) => 
               <TextField
                 type="text"
                 label="住所(建物名等)"
-                {...register('Afterpost')}
+                {...register('afterAddress')}
                 multiline
                 className="newStaff-Post-input"
                 fullWidth

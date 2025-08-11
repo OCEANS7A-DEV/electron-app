@@ -3,12 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\router\\HQwork\\StaffData.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\renderer\\src\\router\\HQwork\\StaffData.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\router\\inventory\\inventoryInsert\\Receiving_stock.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\renderer\\src\\router\\inventory\\inventoryInsert\\Receiving_stock.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\comp\\staffDialog.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\renderer\\src\\comp\\staffDialog.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\comp\\newStaffDialog.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\renderer\\src\\comp\\newStaffDialog.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\router\\HQwork\\StaffData.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\renderer\\src\\router\\HQwork\\StaffData.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\css\\newStaff.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\renderer\\src\\css\\newStaff.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\main\\index.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
@@ -26,7 +38,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 14,
+          "SelectedChildIndex": 12,
           "Children": [
             {
               "$type": "Bookmark",
@@ -78,19 +90,70 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Receiving_stock.tsx",
+              "DocumentMoniker": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\router\\inventory\\inventoryInsert\\Receiving_stock.tsx",
+              "RelativeDocumentMoniker": "src\\renderer\\src\\router\\inventory\\inventoryInsert\\Receiving_stock.tsx",
+              "ToolTip": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\router\\inventory\\inventoryInsert\\Receiving_stock.tsx",
+              "RelativeToolTip": "src\\renderer\\src\\router\\inventory\\inventoryInsert\\Receiving_stock.tsx",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-08-07T23:40:32.252Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "newStaff.css",
+              "DocumentMoniker": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\css\\newStaff.css",
+              "RelativeDocumentMoniker": "src\\renderer\\src\\css\\newStaff.css",
+              "ToolTip": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\css\\newStaff.css",
+              "RelativeToolTip": "src\\renderer\\src\\css\\newStaff.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-08-04T06:26:40.715Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "staffDialog.tsx",
+              "DocumentMoniker": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\comp\\staffDialog.tsx",
+              "RelativeDocumentMoniker": "src\\renderer\\src\\comp\\staffDialog.tsx",
+              "ToolTip": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\comp\\staffDialog.tsx",
+              "RelativeToolTip": "src\\renderer\\src\\comp\\staffDialog.tsx",
+              "ViewState": "AgIAAGgAAAAAAAAAAAAmwKcAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-08-04T05:55:10.142Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "newStaffDialog.tsx",
               "DocumentMoniker": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\comp\\newStaffDialog.tsx",
               "RelativeDocumentMoniker": "src\\renderer\\src\\comp\\newStaffDialog.tsx",
               "ToolTip": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\comp\\newStaffDialog.tsx",
               "RelativeToolTip": "src\\renderer\\src\\comp\\newStaffDialog.tsx",
-              "ViewState": "AgIAADsAAAAAAAAAAAAmwAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAMMAAAAAAAAAAAAAAEkAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-08-01T08:08:22.018Z"
+              "WhenOpened": "2025-08-01T08:08:22.018Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "StaffData.tsx",
+              "DocumentMoniker": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\router\\HQwork\\StaffData.tsx",
+              "RelativeDocumentMoniker": "src\\renderer\\src\\router\\HQwork\\StaffData.tsx",
+              "ToolTip": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\router\\HQwork\\StaffData.tsx",
+              "RelativeToolTip": "src\\renderer\\src\\router\\HQwork\\StaffData.tsx",
+              "ViewState": "AgIAAGQAAAAAAAAAAIBBwN8AAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-30T07:07:18.604Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "Linkbanar.tsx",
               "DocumentMoniker": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\comp\\Linkbanar.tsx",
               "RelativeDocumentMoniker": "src\\renderer\\src\\comp\\Linkbanar.tsx",
@@ -102,26 +165,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "StaffData.tsx",
-              "DocumentMoniker": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\router\\HQwork\\StaffData.tsx",
-              "RelativeDocumentMoniker": "src\\renderer\\src\\router\\HQwork\\StaffData.tsx",
-              "ToolTip": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\renderer\\src\\router\\HQwork\\StaffData.tsx",
-              "RelativeToolTip": "src\\renderer\\src\\router\\HQwork\\StaffData.tsx",
-              "ViewState": "AgIAALUAAAAAAAAAAAAuwLgAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-07-30T07:07:18.604Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "index.ts",
               "DocumentMoniker": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\main\\index.ts",
               "RelativeDocumentMoniker": "src\\main\\index.ts",
               "ToolTip": "C:\\Users\\user-1\\Desktop\\VSCode\\electron-app\\src\\main\\index.ts",
               "RelativeToolTip": "src\\main\\index.ts",
-              "ViewState": "AgIAABoEAAAAAAAAAAA2wIkEAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAGEEAAAAAAAAAAAxwNkEAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
               "WhenOpened": "2025-07-25T00:06:02.971Z"
             }
