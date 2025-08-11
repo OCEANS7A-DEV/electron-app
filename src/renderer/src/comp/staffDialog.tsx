@@ -40,7 +40,7 @@ type storeType = {
 }
 
 interface Props {
-  dara: FormValues
+  data: FormValues
   stores?: storeType[]
   Insert: () => void
 }
@@ -89,7 +89,7 @@ const StaffDialogTable = forwardRef(({ data, Insert, stores = [] }: Props, ref) 
   }))
 
   useEffect(() => {
-    setValue('joined', dateValue?.toDate()?.toLocaleDateString())
+    setValue('joined', dateValue?.toDate()?.toLocaleDateString() || '')
   }, [dateValue])
 
   return (

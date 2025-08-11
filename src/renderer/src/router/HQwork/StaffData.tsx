@@ -44,8 +44,14 @@ type FormValues = {
 }
 
 type DataType = {
-  data: string[][]
-  stores: string[][]
+  data: {
+    [key: string]: string | number | boolean | null
+  }[]
+  stores: {
+    id: string
+    label: string
+    value: string
+  }[]
   dist: string[][]
 }
 
@@ -92,6 +98,7 @@ export const loader = async (): Promise<DataType> => {
     action: 'StaffGet',
     sheetid: '125Hz6aVG9UaCKtyUZmrL-FsdHBykj0wFbBpBUKrHp0U'
   })
+  
   return { data, stores, dist }
 }
 
@@ -100,10 +107,16 @@ type RowKey = keyof FormValues['rows'][0]
 
 export default function StaffData(): JSX.Element {
   const { data, stores, dist } = useLoaderData<typeof loader>()
+
+  console.log(stores)
   console.log(dist)
+  console.log(data)
+
   const columns = data[0] as RowKey[]
   const products = createObjectsFromArray(columns, data.slice(1))
+
   console.log(products)
+
   const [searchString, setSearchString] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenAdd, setModalOpenAdd] = useState(false)
@@ -151,27 +164,28 @@ export default function StaffData(): JSX.Element {
   })
 
   const search = (): void => {
-    const mainData = data.main.filter(
-      (item) => item[1].includes(searchString) || item[2].includes(searchString)
-    )
-    const detailData = data.detail.filter(
-      (item) =>
-        item[2].includes(searchString) ||
-        item[3].includes(searchString) ||
-        item[4].includes(searchString)
-    )
-    const finddata = detailData.map((item) => {
-      return data.main.find((row) => row[0] == item[0])
-    })
-    if (finddata) {
-      finddata.forEach((row) => {
-        mainData.push(row!)
-      })
-    }
-    const resultdata = [...new Set(mainData)]
-    reset({
-      rows: DefaultSet(resultdata)
-    })
+    //console.log(data)
+    //const mainData = data.main.filter(
+    //  (item) => item[1].includes(searchString) || item[2].includes(searchString)
+    //)
+    //const detailData = data.detail.filter(
+    //  (item) =>
+    //    item[2].includes(searchString) ||
+    //    item[3].includes(searchString) ||
+    //    item[4].includes(searchString)
+    //)
+    //const finddata = detailData.map((item) => {
+    //  return data.main.find((row) => row[0] == item[0])
+    //})
+    //if (finddata) {
+    //  finddata.forEach((row) => {
+    //    mainData.push(row!)
+    //  })
+    //}
+    //const resultdata = [...new Set(mainData)]
+    //reset({
+    //  rows: DefaultSet(resultdata)
+    //})
   }
 
   const dialogOpen = (index): void => {
