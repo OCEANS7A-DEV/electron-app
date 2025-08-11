@@ -40,13 +40,12 @@ type FormValues = {
     rank: string
     joined: Date | string
     status: string
+    gender: string | number
   }[]
 }
 
 type DataType = {
-  data: {
-    [key: string]: string | number | boolean | null
-  }[]
+  data: string[][]
   stores: {
     id: string
     label: string
