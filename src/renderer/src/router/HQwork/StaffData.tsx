@@ -299,9 +299,15 @@ export default function StaffData(): JSX.Element {
         )
       } else if (data == 'joined') {
         const value = new Date(getValues(`rows.${index}.joined`)).toLocaleDateString()
+        return (<td>{value}</td>)
+      } else if (data == 'postNumber') {
+        const code = String(getValues(`rows.${index}.postNumber`))
+        const startCode = code.substr(0, 3)
+        const endCode = code.substr(3)
+        const postCode = startCode + '-' + endCode
         return (
           <td>
-            {value}
+            {postCode}
           </td>
         )
       } else {
@@ -317,6 +323,7 @@ export default function StaffData(): JSX.Element {
     }
   }
 
+  
 
   return (
     <div>

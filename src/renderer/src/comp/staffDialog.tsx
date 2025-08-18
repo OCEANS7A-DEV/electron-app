@@ -7,8 +7,6 @@ import '../css/newStaff.css'
 import Select from '@mui/material/Select'
 import InputLabel from '@mui/material/InputLabel'
 import { getAddress } from 'jposta'
-
-
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
@@ -62,7 +60,7 @@ const StaffDialogTable = forwardRef(({ data, Insert, stores = [] }: Props, ref) 
     rank: data.rank,
     joined: data.joined,
     status: data.status,
-    gender: ''
+    gender: data.gender
   }
   const [dateValue, setDateValue] = useState<Dayjs | null>(dayjs(new Date(data.joined)));
 
