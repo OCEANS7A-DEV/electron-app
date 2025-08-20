@@ -1370,16 +1370,14 @@ ipcMain.handle('hellowork-get', async () => {
           resolve(otpValue)
         })
       })
-      console.log(otp)
 
-      // 3. 受け取ったOTPを使ってログイン処理を続行
       if (!otp) {
-        throw new Error('OTPが入力されませんでした。');
+        throw new Error('OTPが入力されませんでした。')
       }
       const otpInputSelector = 'input[name="txtOtp"]';
       const submitOtpButtonSelector = 'button[name="sendBtn"]'; // 仮のセレクタ
 
-      await page.type(otpInputSelector, otp)
+      await page.type(otpInputSelector, String(otp))
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
         page.click(submitOtpButtonSelector)
@@ -1613,7 +1611,7 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
     const otpInputSelector = 'input[name="txtOtp"]'
     const submitOtpButtonSelector = 'button[name="sendBtn"]'
 
-    await page.type(otpInputSelector, otp)
+    await page.type(otpInputSelector, String(otp))
     await Promise.all([
       page.waitForNavigation({ waitUntil: 'networkidle2' }),
       page.click(submitOtpButtonSelector)

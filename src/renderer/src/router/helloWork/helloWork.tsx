@@ -98,14 +98,11 @@ export default function HelloWork(): JSX.Element {
   }, [])
 
   useEffect(() => {
-    // メインプロセスからOTP入力UIの表示依頼を受け取るリスナー
     const showOtpPromptHandler = (): void => {
       console.log('メインプロセスからOTP入力の指示を受け取りました。')
-      setOtpModalVisible(true) // モーダルを表示する
+      setOtpModalVisible(true)
     }
     window.myInventoryAPI.onShowOtpPrompt(showOtpPromptHandler)
-
-    // コンポーネントがアンマウントされる時にリスナーを削除
     return () => {
       window.myInventoryAPI.removeShowOtpPromptListener()
     }
