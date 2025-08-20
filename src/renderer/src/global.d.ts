@@ -47,6 +47,9 @@ declare global {
       orderPrint: (payload: string) => Promise<void>;
       storeSet: (settitle: string, setData: any) => Promise<void>;
       storeGet: (gettitle: string) => Promise<any>;
+      onShowOtpPrompt: (callback: () => void) => void;
+      removeShowOtpPromptListener: () => void;
+      sendOtp: (otp: string) => void;
     }
   }
 }

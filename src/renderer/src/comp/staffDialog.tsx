@@ -15,7 +15,6 @@ import 'dayjs/locale/ja'
 
 dayjs.locale('ja')
 
-
 type FormValues = {
   id: string
   topName: string
@@ -46,8 +45,6 @@ interface Props {
 
 
 const StaffDialogTable = forwardRef(({ data, Insert, stores = [] }: Props, ref) => {
-  console.log(stores)
-  console.log(data)
   const defaultValues: FormValues = {
     id: data.id,
     topName: data.topName,

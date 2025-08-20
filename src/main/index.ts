@@ -19,18 +19,12 @@ const { autoUpdater } = updater
 import puppeteer, { LaunchOptions } from 'puppeteer-core'
 import { Browser, Page } from 'puppeteer-core'
 import os from 'os'
-
 import fs from 'fs'
 import path from 'path'
-
 import { execFile } from 'child_process'
-
 import keytar from 'keytar'
-
 import prompt from 'electron-prompt'
-
 import Database from 'better-sqlite3'
-
 import crypto from 'crypto'
 
 
@@ -40,7 +34,7 @@ const userDataPath = app.getPath('userData')
 const dbDirectory = path.join(userDataPath, 'database')
 
 if (!fs.existsSync(dbDirectory)) {
-  fs.mkdirSync(dbDirectory, { recursive: true });
+  fs.mkdirSync(dbDirectory, { recursive: true })
 }
 
 const dbPath = path.join(dbDirectory, 'my-data.sqlite3')
@@ -48,9 +42,9 @@ const dbPath = path.join(dbDirectory, 'my-data.sqlite3')
 let DB
 try {
   DB = new Database(dbPath);
-  console.log(`データベースを ${dbPath} に接続しました。`);
+  console.log(`データベースを ${dbPath} に接続しました。`)
 } catch (error) {
-  console.error('データベースの接続に失敗しました:', error);
+  console.error('データベースの接続に失敗しました:', error)
 }
 
 const createMemoMainTable = DB.prepare(
@@ -1360,10 +1354,38 @@ ipcMain.handle('hellowork-get', async () => {
       await page.type('input[name="mail"]', 'oceans7a@gmail.com')
       await page.type('input[name="password"]', 'ocean@1115')
 
+      
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
         page.click('button[name="loginBtn"]')
       ])
+
+      //const win = BrowserWindow.fromWebContents(event.sender)
+      HelloWorkWindow.webContents.send('show-otp-prompt')
+
+      // 2. UIからOTPが送られてくるまでPromiseで待機する
+      const otp = await new Promise(resolve => {
+        ipcMain.once('otp-submitted', (_event, otpValue) => {
+          console.log('UIからOTPを受け取りました。');
+          resolve(otpValue)
+        })
+      })
+      console.log(otp)
+
+      // 3. 受け取ったOTPを使ってログイン処理を続行
+      if (!otp) {
+        throw new Error('OTPが入力されませんでした。');
+      }
+      const otpInputSelector = 'input[name="txtOtp"]';
+      const submitOtpButtonSelector = 'button[name="sendBtn"]'; // 仮のセレクタ
+
+      await page.type(otpInputSelector, otp)
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'networkidle2' }),
+        page.click(submitOtpButtonSelector)
+      ]);
+
+      console.log('OTP認証を突破し、ログインしました。');
 
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
@@ -1573,6 +1595,29 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
       page.waitForNavigation({ waitUntil: 'networkidle2' }),
       page.click('button[name="loginBtn"]')
     ])
+
+    HelloWorkWindow.webContents.send('show-otp-prompt')
+
+    // 2. UIからOTPが送られてくるまでPromiseで待機する
+    const otp = await new Promise(resolve => {
+      ipcMain.once('otp-submitted', (_event, otpValue) => {
+        console.log('UIからOTPを受け取りました。');
+        resolve(otpValue)
+      })
+    })
+
+    if (!otp || '') {
+      return
+    }
+
+    const otpInputSelector = 'input[name="txtOtp"]'
+    const submitOtpButtonSelector = 'button[name="sendBtn"]'
+
+    await page.type(otpInputSelector, otp)
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle2' }),
+      page.click(submitOtpButtonSelector)
+    ]);
 
     for (const item of lists) {
       const afterNewline = item.address

@@ -3,8 +3,7 @@ import type { JSX } from 'react'
 import LinkBaner from '../../comp/Linkbanar'
 import '../../css/HelloWork.css'
 import { useLoaderData } from 'react-router-dom'
-//import puppeteer from "puppeteer"
-import { Button } from '@mui/material'
+import { Button, TextField } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import toast, { Toaster } from 'react-hot-toast'
 
@@ -41,6 +40,8 @@ export default function HelloWork(): JSX.Element {
   const allPDFNumRef = useRef(allPDFNum)
   const [DLnums, setDLnums] = useState(0)
   const [jobList, setJobList] = useState<Works[]>([])
+  const [isOtpModalVisible, setOtpModalVisible] = useState(false)
+  const [otpValue, setOtpValue] = useState('')
 
   const start = (): void => {
     const PDFnums = works.length
@@ -96,6 +97,26 @@ export default function HelloWork(): JSX.Element {
     }
   }, [])
 
+  useEffect(() => {
+    // メインプロセスからOTP入力UIの表示依頼を受け取るリスナー
+    const showOtpPromptHandler = (): void => {
+      console.log('メインプロセスからOTP入力の指示を受け取りました。')
+      setOtpModalVisible(true) // モーダルを表示する
+    }
+    window.myInventoryAPI.onShowOtpPrompt(showOtpPromptHandler)
+
+    // コンポーネントがアンマウントされる時にリスナーを削除
+    return () => {
+      window.myInventoryAPI.removeShowOtpPromptListener()
+    }
+  }, [])
+
+  const handleOtpSubmit = (): void => {
+    window.myInventoryAPI.sendOtp(otpValue)
+    setOtpValue('')
+    setOtpModalVisible(false)
+  }
+
   const Research = async (): Promise<void> => {
     const result = await window.myInventoryAPI.WorkGet()
     setJobList(result[1])
@@ -135,6 +156,28 @@ export default function HelloWork(): JSX.Element {
         <LinkBaner id="helloWork" />
         <Toaster />
       </div>
+      {isOtpModalVisible && (
+        <div className="otp-modal-overlay" style={{ display: 'flex', zIndex: 10 }}>
+          <div className="otp-modal-content">
+            <p>ハローワークから届いたワンタイムパスワードを入力してください。</p>
+            <div className="otp-input-area">
+              <TextField
+                label="ワンタイムパスワード"
+                value={otpValue}
+                onChange={(e) => setOtpValue(e.target.value)}
+                className="otp-input"
+              />
+              <Button
+                variant="contained"
+                onClick={handleOtpSubmit}
+                className="otp-submit-btn"
+              >
+                送信
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="HelloWorkMainArea">
         <div className="ButtonArea">
           <Button variant="outlined" onClick={workResearch} loading={loading}>

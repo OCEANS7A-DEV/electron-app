@@ -63,6 +63,8 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   PrivateMemoInsert: (payload) => ipcRenderer.send('PrivateMemo-Insert', payload),
   PrivateMemoDelete: (payload) => ipcRenderer.send('PrivateMemo-Delete', payload),
   UuidGet: (payload) => ipcRenderer.invoke('uuid-get', payload),
+  onShowOtpPrompt: (callback) => ipcRenderer.on('show-otp-prompt', callback),
+  sendOtp: (otp) => ipcRenderer.send('otp-submitted', otp)
 })
 
 if (process.contextIsolated) {

@@ -85,11 +85,11 @@ export const loader = async (): Promise<DataType> => {
 
   const stores = storesData.filter((item) => (item[0] !== '' && item[2] == 'DM') || item[1] == '本部')
     .map((item) => {
-    return {
-      id: item[0],
-      label: item[1],
-      value: item[1]
-    }
+      return {
+        id: item[0],
+        label: item[1],
+        value: item[1]
+      }
     })
 
   const dist = await window.myInventoryAPI.ListGet({
@@ -106,16 +106,7 @@ type RowKey = keyof FormValues['rows'][0]
 
 export default function StaffData(): JSX.Element {
   const { data, stores, dist } = useLoaderData<typeof loader>()
-
-  console.log(stores)
-  console.log(dist)
-  console.log(data)
-
   const columns = data[0] as RowKey[]
-  const products = createObjectsFromArray(columns, data.slice(1))
-
-  console.log(products)
-
   const [searchString, setSearchString] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenAdd, setModalOpenAdd] = useState(false)
@@ -163,28 +154,12 @@ export default function StaffData(): JSX.Element {
   })
 
   const search = (): void => {
-    //console.log(data)
-    //const mainData = data.main.filter(
-    //  (item) => item[1].includes(searchString) || item[2].includes(searchString)
-    //)
-    //const detailData = data.detail.filter(
-    //  (item) =>
-    //    item[2].includes(searchString) ||
-    //    item[3].includes(searchString) ||
-    //    item[4].includes(searchString)
-    //)
-    //const finddata = detailData.map((item) => {
-    //  return data.main.find((row) => row[0] == item[0])
-    //})
-    //if (finddata) {
-    //  finddata.forEach((row) => {
-    //    mainData.push(row!)
-    //  })
-    //}
-    //const resultdata = [...new Set(mainData)]
-    //reset({
-    //  rows: DefaultSet(resultdata)
-    //})
+    const searchData = data.filter(
+      (row) => row[1].includes(searchString) || row[2].includes(searchString)
+    )
+    reset({
+      rows: DefaultSet(searchData)
+    })
   }
 
   const dialogOpen = (index): void => {
