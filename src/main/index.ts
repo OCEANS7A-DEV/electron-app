@@ -1569,7 +1569,7 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
     const d = String(date.getDate()).padStart(2, '0')
     const today = `${y}.${m}.${d}`
     const downloadDir = path.join(os.homedir(), 'Downloads', `ハロワPDFs${today}`)
-    // フォルダがなければ作成する
+
     if (!fs.existsSync(downloadDir)) {
       fs.mkdirSync(downloadDir, { recursive: true })
     }
@@ -1578,7 +1578,7 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
     let page: Page | null = null
 
     const opts = getPuppeteerOptions()
-    // ② ブラウザ起動
+
     browser = await puppeteer.launch(opts)
 
     page = await browser.newPage()
@@ -1596,8 +1596,7 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
 
     HelloWorkWindow.webContents.send('show-otp-prompt')
 
-    // 2. UIからOTPが送られてくるまでPromiseで待機する
-    const otp = await new Promise(resolve => {
+    const otp = await new Promise((resolve) => {
       ipcMain.once('otp-submitted', (_event, otpValue) => {
         console.log('UIからOTPを受け取りました。');
         resolve(otpValue)
@@ -1706,18 +1705,15 @@ const PDFfileMarge = async (): Promise<{
   }
   const folder = filePaths[0]
 
-  // 2) フォルダ内の PDF リスト取得
   const pdfFiles = (await fs.promises.readdir(folder))
     .filter((f) => f.toLowerCase().endsWith('.pdf'))
     .map((f) => path.join(folder, f))
     .sort()
 
   if (pdfFiles.length < 2) {
-    // canceled を必ず含める
     return { canceled: true, error: 'PDF が 2 つ以上必要です。' }
   }
 
-  // 3) 保存先ダイアログ
   const { filePath: outPath, canceled: saveCanceled } = await dialog.showSaveDialog({
     title: '結合後の PDF を保存',
     defaultPath: path.join(folder, 'merged.pdf'),
@@ -1727,19 +1723,14 @@ const PDFfileMarge = async (): Promise<{
     return { canceled: true }
   }
 
-  // ４）QPDF バイナリのパスを組み立て
   let qpdfDir: string
   if (app.isPackaged) {
-    // リソースフォルダ配下の qpdf ディレクトリを指す
     qpdfDir = path.join(process.resourcesPath, 'qpdf')
   } else {
-    // 開発時はプロジェクト直下の vendor/qpdf
     qpdfDir = path.resolve(__dirname, '../../vendor/qpdf')
   }
 
   const qpdfBinary = path.join(qpdfDir, 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf')
-
-  console.log('▶️ QPDF バイナリ:', qpdfBinary)
 
   if (!fs.existsSync(qpdfBinary)) {
     return { canceled: true, error: `qpdf が見つかりません: ${qpdfBinary}` }
@@ -1747,7 +1738,6 @@ const PDFfileMarge = async (): Promise<{
 
   const args = ['--empty', '--pages', ...pdfFiles, '--', outPath]
 
-  // Promise でラップして非同期実行
   return new Promise((resolve) => {
     execFile(qpdfBinary, args, (err, stdout, stderr) => {
       if (err) {

@@ -18,7 +18,6 @@ const isoToJstYMD = (isoString): string => {
 
 
 
-
 export const loader = async ({ request }: { request: Request }) => {
   const productData = await window.myInventoryAPI.ListGet(
     {
@@ -46,7 +45,7 @@ export const loader = async ({ request }: { request: Request }) => {
   const shortage = productData.filter((row) => (Number(row[12]) < 0 || (Number(row[14]) >= 1 && Number(row[12]) <= Number(row[14]))) && (!row[2].includes('eco') && !row[2].includes('ﾙﾍﾞﾙ') && row[1] !== 100001 && !(Number(row[1]) >= 300100 && Number(row[1]) <= 300500)))
 
   let subData = []
-  let subdata: string[] = []
+  let subdata: any[] = []
 
   const resultdata = vendors.map((item) => {
     const swKH = jaconv.toHan(item);
