@@ -119,29 +119,24 @@ export default function HelloWork(): JSX.Element {
   }
 
   const JOBupdateStatus = (dateString) => {
-    // 1. 入力値が空やnullの場合は、安全に処理を終了する
-    if (!dateString) {
+    if (!dateString || dateString == '') {
       return '更新不要'
     }
 
     const formattedString = dateString.replace(/年|月/g, '-').replace(/日/g, '')
     const limitDate = new Date(formattedString)
 
-    // 2. 文字列から有効な日付が生成できなかった場合は、処理を終了する
     if (isNaN(limitDate.getTime())) {
-      return '更新不要' // 無効な日付の場合は更新不要とする
+      return '更新不要'
     }
 
-    // 10日前の日付を計算
     limitDate.setDate(limitDate.getDate() - 10)
 
-    // 3. 今日の日付の「時刻」をリセットして、純粋な日付で比較する
     const today = new Date()
-    today.setHours(0, 0, 0, 0) // 時、分、秒、ミリ秒を0に設定
+    today.setHours(0, 0, 0, 0)
 
-    // 比較して結果を返す
     return today >= limitDate ? '更新可能' : '更新不要'
-  };
+  }
 
   const workResearch = (): void => {
     setLoading(true)
