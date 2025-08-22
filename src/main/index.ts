@@ -17,7 +17,7 @@ import log from 'electron-log'
 import updater from 'electron-updater'
 const { autoUpdater } = updater
 import puppeteer, { LaunchOptions } from 'puppeteer-core'
-import { Browser, Page } from 'puppeteer-core'
+import { Browser } from 'puppeteer-core'
 import os from 'os'
 import fs from 'fs'
 import path from 'path'
