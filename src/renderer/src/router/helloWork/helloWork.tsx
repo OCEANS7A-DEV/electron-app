@@ -122,19 +122,14 @@ export default function HelloWork(): JSX.Element {
     if (!dateString || dateString == '') {
       return '更新不要'
     }
-
     const formattedString = dateString.replace(/年|月/g, '-').replace(/日/g, '')
     const limitDate = new Date(formattedString)
-
     if (isNaN(limitDate.getTime())) {
       return '更新不要'
     }
-
     limitDate.setDate(limitDate.getDate() - 10)
-
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-
     return today >= limitDate ? '更新可能' : '更新不要'
   }
 

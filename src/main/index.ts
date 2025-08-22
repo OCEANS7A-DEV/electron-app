@@ -1291,9 +1291,8 @@ const PrintSatusUpdate = async (): Promise<void> => {
     })
     const result = await response.json()
     return result
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-    return errorMessage
+  } catch {
+    return 
   }
 }
 
