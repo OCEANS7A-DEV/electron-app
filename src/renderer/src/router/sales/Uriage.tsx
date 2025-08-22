@@ -61,22 +61,38 @@ export default function Uriage() {
 
 
   const SalesGet = async () => {
-    const result = await window.myInventoryAPI.ListGet({
-      action: 'SalesDataGet',
-      ranges: 'A1:AH'
-    })
+    const storeData = await window.myInventoryAPI.storeGet('')
+    const salesData = JSON.parse(storeData.salesData || '[]')
+    const today = new Date().toLocaleDateString()
+    let result = []
+    if (salesData && salesData.date == today) {
+      const resultData = JSON.parse(salesData.data || '[]')
+      result = resultData
+    } else {
+      const resultData = await window.myInventoryAPI.ListGet({
+        action: 'SalesDataGet',
+        ranges: 'A1:AH'
+      })
+      result = resultData
+      const insertData = {
+        date: new Date().toLocaleDateString(),
+        data: JSON.stringify(resultData)
+      }
+      await window.myInventoryAPI.storeSet('salesData', JSON.stringify(insertData))
+    }
+
     setHeaders(result[0])
-    const data = result.filter(item => item[0] !== '日')
+    const data = result.filter((item) => item[0] !== '日')
     dataFilter(data)
     const uniqueYears = Array.from(
       new Set(
-        data.map(item => {
+        data.map((item) => {
           const date = new Date(item[0])
           return date.getFullYear()
         })
       )
     )
-    const yearsset: SelectOption[] = uniqueYears.map(year => ({
+    const yearsset: SelectOption[] = uniqueYears.map((year) => ({
       value: Number(year),
       label: `${year}年`
     }))
@@ -137,7 +153,7 @@ export default function Uriage() {
   return (
     <div>
       <div className="banner">
-        <LinkBaner id='OfficeWork'/>
+        <LinkBaner id="OfficeWork"/>
       </div>
       <div className="uriage-main">
         <div className="uriage-top">
@@ -179,7 +195,9 @@ export default function Uriage() {
                   </Select>
                 </FormControl>
               </div>
-              <Button variant="outlined" onClick={SalesGet}>売上取得</Button>
+              <Button variant="outlined" onClick={SalesGet}>
+                売上取得
+              </Button>
               <div className="all-total">
                 <div>当月売上</div>
                 <div>{allTotal.toLocaleString()}</div>

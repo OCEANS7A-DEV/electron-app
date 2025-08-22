@@ -973,7 +973,6 @@ const initAutoUpdater = async (win: BrowserWindow) => {
   }
 }
 
-
 app.whenReady().then(async () => {
   if (!gotTheLock) {
     //多重起動しないように
@@ -1347,7 +1346,6 @@ const opts = getPuppeteerOptions()
 browser = await puppeteer.launch(opts)
 
 const page = await browser.newPage()
-
 
 ipcMain.handle('hellowork-init', async () => {
   try {
