@@ -55,7 +55,6 @@ export default function HQdata(): JSX.Element {
   const addDataDialogRef = useRef<any>(null)
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
 
-
   const DefaultSet = (defData) => {
     return defData
       .filter((row) => row[3] == 0)
@@ -67,8 +66,8 @@ export default function HQdata(): JSX.Element {
       }))
   }
 
-  const DataRefresh = async () => {
-    const refresh = async () => {
+  const DataRefresh = async (): Promise<void> => {
+    const refresh = async (): Promise<void> => {
       const data = await window.myInventoryAPI.ListGet({
         action: 'HQdataGet',
         ranges: 'A2:C',
@@ -100,7 +99,7 @@ export default function HQdata(): JSX.Element {
     name: 'rows'
   })
 
-  const search = () => {
+  const search = (): void => {
     const mainData = data.main.filter(
       (item) => item[1].includes(searchString) || item[2].includes(searchString)
     )
@@ -124,14 +123,14 @@ export default function HQdata(): JSX.Element {
     })
   }
 
-  const dialogOpen = (index) => {
+  const dialogOpen = (index): void => {
     setSelectedRowIndex(index)
     setModalOpen(true)
   }
 
-  const HQDataDelete = async (index) => {
+  const HQDataDelete = async (index): Promise<void> => {
     const deleteId = getValues(`rows.${index}.id`)
-    const deletePost = async () => {
+    const deletePost = async (): Promise<void> => {
       await window.myInventoryAPI.DataInsert({
         action: 'HQmaindataDelete',
         sub_action: 'insert',
@@ -151,27 +150,27 @@ export default function HQdata(): JSX.Element {
     })
   }
 
-  const DialogClosed = async (e) => {
+  const DialogClosed = async (e): Promise<void> => {
     if (e.target === e.currentTarget) {
       setModalOpen(false)
     }
   }
 
-  const DialogClosedAdd = async (e) => {
+  const DialogClosedAdd = async (e): Promise<void> => {
     if (e.target === e.currentTarget) {
       setModalOpenAdd(false)
     }
   }
 
-  const update = () => {
+  const update = (): void => {
     DataRefresh()
     setModalOpen(false)
   }
 
-  const Insert = async () => {
+  const Insert = async (): Promise<void> => {
     setModalOpenAdd(false)
 
-    const DataInsert = async () => {
+    const DataInsert = async (): Promise<void> => {
       const insertData = addDataDialogRef.current.getFormData()
       await window.myInventoryAPI.DataInsert({
         action: 'HQdataInsert',

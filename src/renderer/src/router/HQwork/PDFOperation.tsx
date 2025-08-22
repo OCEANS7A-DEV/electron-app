@@ -4,10 +4,6 @@ import '../../css/HelloWork.css'
 import { Button } from '@mui/material'
 
 
-
-//PDFMarge
-
-
 export default function PDFOperationPage () {
 
 
@@ -23,7 +19,9 @@ export default function PDFOperationPage () {
       <div className="PDF-page-main">
         <div>PDF</div>
         <div>
-          <Button variant="outlined" onClick={handlePDFMarge}>PDF結合</Button>
+          <Button variant="outlined" onClick={handlePDFMarge}>
+            PDF結合
+          </Button>
         </div>
       </div>
     </div>

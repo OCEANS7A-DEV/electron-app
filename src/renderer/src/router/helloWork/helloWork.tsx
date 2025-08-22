@@ -99,7 +99,6 @@ export default function HelloWork(): JSX.Element {
 
   useEffect(() => {
     const showOtpPromptHandler = (): void => {
-      console.log('メインプロセスからOTP入力の指示を受け取りました。')
       setOtpModalVisible(true)
     }
     window.myInventoryAPI.onShowOtpPrompt(showOtpPromptHandler)
@@ -117,6 +116,18 @@ export default function HelloWork(): JSX.Element {
   const Research = async (): Promise<void> => {
     const result = await window.myInventoryAPI.WorkGet()
     setJobList(result[1])
+  }
+
+  const JOBupdateStatus = (data): string => {
+    const formattedString = data.replace(/年|月/g, '-').replace(/日/g, '')
+    const today = new Date()
+    const limitDate = new Date(formattedString)
+    limitDate.setDate(limitDate.getDate() - 10)
+    if (today >= limitDate) {
+      return '更新可能'
+    } else {
+      return '更新不要'
+    }
   }
 
   const workResearch = (): void => {
@@ -156,7 +167,7 @@ export default function HelloWork(): JSX.Element {
       {isOtpModalVisible && (
         <div className="otp-modal-overlay" style={{ display: 'flex', zIndex: 10 }}>
           <div className="otp-modal-content">
-            <p>ハローワークから届いたワンタイムパスワードを入力してください。</p>
+            <p>ハローワークからGメールへ届いたワンタイムパスワードを入力してください。</p>
             <div className="otp-input-area">
               <TextField
                 label="ワンタイムパスワード"
@@ -220,6 +231,7 @@ export default function HelloWork(): JSX.Element {
                     <td className="HelloWhere">{storeName(row.address)}</td>
                     <td className="HelloLimit">{row.紹介期限日}</td>
                     <td>{row.status}</td>
+                    <td>{JOBupdateStatus(row.紹介期限日)}</td>
                   </tr>
                 ))}
             </tbody>
@@ -243,6 +255,7 @@ export default function HelloWork(): JSX.Element {
                     <td className="HelloWhere">{storeName(row.address)}</td>
                     <td className="HelloLimit">{row.紹介期限日}</td>
                     <td>{row.status}</td>
+                    <td>{JOBupdateStatus(row.紹介期限日)}</td>
                   </tr>
                 ))}
             </tbody>
@@ -268,6 +281,7 @@ export default function HelloWork(): JSX.Element {
                     <td className="HelloLimit">{row.紹介期限日}</td>
                     <td>{row.status}</td>
                     <td>{row.求人区分}</td>
+                    <td>{JOBupdateStatus(row.紹介期限日)}</td>
                   </tr>
                 ))}
             </tbody>

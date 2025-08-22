@@ -137,11 +137,11 @@
 }
 
 .insert_vendor {
-  width: 100px;
+  width: 80px;
 }
 
 .insert_code {
-  width: 100px;
+  width: 80px;
 }
 .insert_person{
   width: 100px;
@@ -157,7 +157,7 @@
   width: 60px;
 }
 .insert_price{
-  width: 100px;
+  width: 80px;
 }
 
 .insert_Select {
@@ -181,7 +181,7 @@
 }
 
 .price{
-  width: 100px;
+  width: 80px;
   text-align: right;
 }
 

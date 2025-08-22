@@ -253,10 +253,6 @@ export default function FCInventory() {
     })
   }
 
-  // const RowInsert = async (index) => {
-  //   insert(index, defaultRowData, { shouldFocus: false })
-  // }
-
   const RowRemove = async (index) => {
     remove(index)
     append(defaultRowData, { shouldFocus: false })
@@ -306,9 +302,9 @@ export default function FCInventory() {
     toast.success('送信しました')
   }
 
-  const handleStoreChange = (event: SelectChangeEvent) => {
+  const handleStoreChange = (event: SelectChangeEvent): void => {
     const select = event.target.value as string
-    setStoreSelect(select);
+    setStoreSelect(select)
   };
 
 

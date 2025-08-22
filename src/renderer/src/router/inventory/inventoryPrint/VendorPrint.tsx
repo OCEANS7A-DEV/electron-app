@@ -126,11 +126,17 @@ export default function EtcPrint(): JSX.Element {
             <h1 className="H1">注文書</h1>
             <div className="address-area">
               <div className="kinbato-left">
-                <h2 className="taiyo-Data-name">株式会社　{data}　御中</h2>
+                <h2 className="taiyo-Data-name">株式会社 {data} 御中</h2>
                 {/* <div className="taiyo-Data-name"><div className="kinbato-date">{NowDay}</div></div> */}
                 <div className="taiyo-Data-name">TEL:{AddressFindData(data, 3)}</div>
                 <div className="taiyo-Data-name">FAX:{AddressFindData(data, 2)}</div>
-                <div className="taiyo-Data-name"><h3 className="order-message">お世話になります<br />ご注文宜しくお願いします。</h3></div>
+                <div className="taiyo-Data-name">
+                  <h3 className="order-message">
+                    お世話になります
+                    <br />
+                    ご注文宜しくお願いします。
+                  </h3>
+                </div>
               </div>
               {data == 'タムラ' &&
                 <div className="tamura-manager-area">
@@ -184,16 +190,18 @@ export default function EtcPrint(): JSX.Element {
   return(
     <div>
       <div className="PrintButton">
-        <Button variant='outlined' onClick={()=> window.myInventoryAPI.PrintReady()}>印刷開始</Button>
+        <Button variant="outlined" onClick={() => window.myInventoryAPI.PrintReady()}>
+          印刷開始
+        </Button>
       </div>
-      {vendors.map((item, index) => (
-        OrderSet(item, index)
-      ))}
+      {vendors.map((item, index) => OrderSet(item, index))}
       <div>
         <table className="taiyo-table">
           <thead>
             <tr className="kinbato-header">
-              <th colSpan={2} className="murakami-top-data">プロステップヘアカラー</th>
+              <th colSpan={2} className="murakami-top-data">
+                プロステップヘアカラー
+              </th>
             </tr>
           </thead>
         </table>

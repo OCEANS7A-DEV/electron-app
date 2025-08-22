@@ -224,8 +224,9 @@ export default function StoreOrderPage(): JSX.Element {
         value: item[0],
         label: item[0],
         type: item[1]
-      }));
-    //console.log(storenames)
+      }))
+
+
     setStoreOptions(storenames);
   }
 

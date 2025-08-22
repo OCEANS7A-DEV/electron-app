@@ -4,7 +4,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import LinkBaner from '../../../comp/Linkbanar'
 
 export default function CatalogView() {
-  //const [files, setFiles] = useState<string[]>([]);
   const [fileSelect, setFileSelect] = useState<{ value: string; label: string }[]>([]);
   const [selectFileName, setSelectFileName] = useState('')
   const [Filepath, setFilePath] = useState('')
@@ -24,8 +23,7 @@ export default function CatalogView() {
         value: item,
         label: item,
       }));
-      setFileSelect(mapping);
-      //setFiles(result);
+      setFileSelect(mapping)
     };
     fetchFiles();
   }, []);

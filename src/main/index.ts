@@ -1258,7 +1258,7 @@ ipcMain.handle('Print-Ready', () => {
   return result
 })
 
-const PrintSatusUpdate = async () => {
+const PrintSatusUpdate = async (): Promise<void> => {
   try {
     const cookies1 = await session.defaultSession.cookies.get({
       url: 'https://accounts.google.com'
@@ -1341,32 +1341,26 @@ ipcMain.handle('hellowork-get', async () => {
   try {
     async function scrapeHelloWork() {
       const opts = getPuppeteerOptions()
-      // ② ブラウザ起動
-      const browser = await puppeteer.launch(opts)
 
+      const browser = await puppeteer.launch(opts)
       const page = await browser.newPage()
 
-      // 検索画面を開いて検索条件を入力
       await page.goto(
         'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
         { waitUntil: 'networkidle2' }
       )
       await page.type('input[name="mail"]', 'oceans7a@gmail.com')
       await page.type('input[name="password"]', 'ocean@1115')
-
-      
+ 
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
         page.click('button[name="loginBtn"]')
       ])
 
-      //const win = BrowserWindow.fromWebContents(event.sender)
       HelloWorkWindow.webContents.send('show-otp-prompt')
 
-      // 2. UIからOTPが送られてくるまでPromiseで待機する
-      const otp = await new Promise(resolve => {
+      const otp = await new Promise((resolve) => {
         ipcMain.once('otp-submitted', (_event, otpValue) => {
-          console.log('UIからOTPを受け取りました。');
           resolve(otpValue)
         })
       })
@@ -1374,16 +1368,14 @@ ipcMain.handle('hellowork-get', async () => {
       if (!otp) {
         throw new Error('OTPが入力されませんでした。')
       }
-      const otpInputSelector = 'input[name="txtOtp"]';
-      const submitOtpButtonSelector = 'button[name="sendBtn"]'; // 仮のセレクタ
+      const otpInputSelector = 'input[name="txtOtp"]'
+      const submitOtpButtonSelector = 'button[name="sendBtn"]'
 
       await page.type(otpInputSelector, String(otp))
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
         page.click(submitOtpButtonSelector)
       ]);
-
-      console.log('OTP認証を突破し、ログインしました。');
 
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
@@ -1806,7 +1798,7 @@ app.on('window-all-closed', () => {
   }
 })
 
-const NotificationEXE = (bodyString) => {
+const NotificationEXE = (bodyString): void => {
   new Notification({
     title: '通知',
     body: bodyString
@@ -1826,7 +1818,7 @@ ipcMain.handle('get-file-path', async (_event, filename) => {
   return fullPath
 })
 
-const restartApp = () => {
+const restartApp = (): void => {
   app.relaunch()
   app.exit(0)
 }
