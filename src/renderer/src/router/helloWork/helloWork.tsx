@@ -118,7 +118,7 @@ export default function HelloWork(): JSX.Element {
     setJobList(result[1])
   }
 
-  const JOBupdateStatus = (data): string => {
+  const JOBupdateStatus = (data) => {
     const formattedString = data.replace(/年|月/g, '-').replace(/日/g, '')
     const today = new Date()
     const limitDate = new Date(formattedString)
