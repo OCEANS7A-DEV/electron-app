@@ -1,12 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
-// Custom APIs for renderer
 const api = {}
 
-// Use `contextBridge` APIs to expose Electron APIs to
-// renderer only if context isolation is enabled, otherwise
-// just add to the DOM global.
 contextBridge.exposeInMainWorld('myInventoryAPI', {
   isDev: process.env.NODE_ENV === 'development',
   fetchData: () => ipcRenderer.invoke('fetch-data'),
@@ -64,7 +60,8 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   PrivateMemoDelete: (payload) => ipcRenderer.send('PrivateMemo-Delete', payload),
   UuidGet: (payload) => ipcRenderer.invoke('uuid-get', payload),
   onShowOtpPrompt: (callback) => ipcRenderer.on('show-otp-prompt', callback),
-  sendOtp: (otp) => ipcRenderer.send('otp-submitted', otp)
+  sendOtp: (otp) => ipcRenderer.send('otp-submitted', otp),
+  helloworkInit: () => ipcRenderer.invoke('hellowork-init'),
 })
 
 if (process.contextIsolated) {

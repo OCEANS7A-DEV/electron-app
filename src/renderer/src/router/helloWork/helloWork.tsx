@@ -43,6 +43,7 @@ export default function HelloWork(): JSX.Element {
   const [isOtpModalVisible, setOtpModalVisible] = useState(false)
   const [otpValue, setOtpValue] = useState('')
 
+
   const start = (): void => {
     const PDFnums = works.length
     setAllPDFNum(PDFnums)
@@ -105,6 +106,12 @@ export default function HelloWork(): JSX.Element {
     return () => {
       window.myInventoryAPI.removeShowOtpPromptListener()
     }
+  }, [])
+  useEffect(() => {
+    const init = async () => {
+      await window.myInventoryAPI.helloworkInit()
+    }
+    init()
   }, [])
 
   const handleOtpSubmit = (): void => {
@@ -234,7 +241,7 @@ export default function HelloWork(): JSX.Element {
                     <td className="HelloWhere">{storeName(row.address)}</td>
                     <td className="HelloLimit">{row.紹介期限日}</td>
                     <td>{row.status}</td>
-                    <td>{JOBupdateStatus(row.紹介期限日)}</td>
+                    <td className="HelloLimitStatus">{JOBupdateStatus(row.紹介期限日)}</td>
                   </tr>
                 ))}
             </tbody>
@@ -258,7 +265,7 @@ export default function HelloWork(): JSX.Element {
                     <td className="HelloWhere">{storeName(row.address)}</td>
                     <td className="HelloLimit">{row.紹介期限日}</td>
                     <td>{row.status}</td>
-                    <td>{JOBupdateStatus(row.紹介期限日)}</td>
+                    <td className="HelloLimitStatus">{JOBupdateStatus(row.紹介期限日)}</td>
                   </tr>
                 ))}
             </tbody>
@@ -284,7 +291,7 @@ export default function HelloWork(): JSX.Element {
                     <td className="HelloLimit">{row.紹介期限日}</td>
                     <td>{row.status}</td>
                     <td>{row.求人区分}</td>
-                    <td>{JOBupdateStatus(row.紹介期限日)}</td>
+                    <td className="HelloLimitStatus">{JOBupdateStatus(row.紹介期限日)}</td>
                   </tr>
                 ))}
             </tbody>

@@ -2,7 +2,7 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\preload",
+    "\\src\\main",
     "\\src\\renderer",
     "\\src\\renderer\\src",
     "\\src\\renderer\\src\\css",
@@ -11,6 +11,6 @@
     "\\src\\renderer\\src\\router\\inventory",
     "\\src\\renderer\\src\\router\\inventory\\inventoryGet"
   ],
-  "SelectedNode": "\\src\\renderer\\src\\router\\helloWork\\helloWork.tsx",
+  "SelectedNode": "\\src\\renderer\\src\\global.d.ts",
   "PreviewInSolutionExplorer": false
 }

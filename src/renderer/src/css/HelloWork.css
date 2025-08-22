@@ -53,6 +53,12 @@
   padding: 8px 12px;
 }
 
+.HelloLimitStatus {
+  text-align: center;
+  min-width: 70px;
+  max-width: 70px;
+}
+
 
 
 

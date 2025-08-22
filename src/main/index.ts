@@ -30,6 +30,7 @@ import crypto from 'crypto'
 
 
 const userDataPath = app.getPath('userData')
+const userDataDirPath = path.resolve('./puppeteer_user_data');
 
 const dbDirectory = path.join(userDataPath, 'database')
 
@@ -152,13 +153,15 @@ function getPuppeteerOptions(): LaunchOptions {
     return {
       headless: false,
       channel: 'chrome',
-      args: PUPPETEER_ARGS
+      args: PUPPETEER_ARGS,
+      userDataDir: userDataDirPath
     }
   } else {
     return {
       headless: true,
       channel: 'chrome',
-      args: PUPPETEER_ARGS
+      args: PUPPETEER_ARGS,
+      userDataDir: userDataDirPath
     }
   }
 }
@@ -1336,25 +1339,43 @@ ipcMain.handle('printStatus', async (_event, payload: any) => {
   }
 })
 
-ipcMain.handle('hellowork-get', async () => {
+
+let browser: Browser | null = null
+
+const opts = getPuppeteerOptions()
+
+browser = await puppeteer.launch(opts)
+
+const page = await browser.newPage()
+
+
+ipcMain.handle('hellowork-init', async () => {
   try {
-    async function scrapeHelloWork() {
-      const opts = getPuppeteerOptions()
+    if(!page) {
+      throw new Error('Puppeteer page is not initialized')
+    }
 
-      const browser = await puppeteer.launch(opts)
-      const page = await browser.newPage()
+    await page.goto(
+      'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
+      { waitUntil: 'networkidle2' }
+    )
 
-      await page.goto(
-        'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
-        { waitUntil: 'networkidle2' }
-      )
-      await page.type('input[name="mail"]', 'oceans7a@gmail.com')
-      await page.type('input[name="password"]', 'ocean@1115')
- 
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle2' }),
-        page.click('button[name="loginBtn"]')
-      ])
+    await page.type('input[name="mail"]', 'oceans7a@gmail.com')
+    await page.type('input[name="password"]', 'ocean@1115')
+
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle2' }),
+      page.click('button[name="loginBtn"]')
+    ])
+
+    const selector = '#ID_ID_container > div.page_title'
+
+    const title = await page.evaluate((selector) => {
+      const element = document.querySelector(selector)
+      return element ? element.textContent : null
+    }, selector)
+
+    if (title == 'ワンタイムパスワード入力') {
 
       HelloWorkWindow.webContents.send('show-otp-prompt')
 
@@ -1364,18 +1385,34 @@ ipcMain.handle('hellowork-get', async () => {
         })
       })
 
-      if (!otp) {
-        throw new Error('OTPが入力されませんでした。')
+      if (!otp || '') {
+        return
       }
+
       const otpInputSelector = 'input[name="txtOtp"]'
       const submitOtpButtonSelector = 'button[name="sendBtn"]'
 
       await page.type(otpInputSelector, String(otp))
+
+      await page.click('input[name="chkOtpSkip"]')
+
+      await page.click(submitOtpButtonSelector)
+
+      await page.waitForSelector('button[name="okBtn"]', { visible: true })
+
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
-        page.click(submitOtpButtonSelector)
-      ]);
+        page.click('button[name="okBtn"]')
+      ])
+    }
+  } catch (err) {
+    console.error('HelloWork page initialization error:', err)
+  }
+})
 
+ipcMain.handle('hellowork-get', async () => {
+  try {
+    const scrapeHelloWork = async (): Promise<any> => {
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
         page.evaluate(() => {
@@ -1564,48 +1601,6 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
     if (!fs.existsSync(downloadDir)) {
       fs.mkdirSync(downloadDir, { recursive: true })
     }
-
-    let browser: Browser | null = null
-    let page: Page | null = null
-
-    const opts = getPuppeteerOptions()
-
-    browser = await puppeteer.launch(opts)
-
-    page = await browser.newPage()
-    await page.goto(
-      'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
-      { waitUntil: 'networkidle2' }
-    )
-    await page.type('input[name="mail"]', 'oceans7a@gmail.com')
-    await page.type('input[name="password"]', 'ocean@1115')
-
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle2' }),
-      page.click('button[name="loginBtn"]')
-    ])
-
-    HelloWorkWindow.webContents.send('show-otp-prompt')
-
-    const otp = await new Promise((resolve) => {
-      ipcMain.once('otp-submitted', (_event, otpValue) => {
-        console.log('UIからOTPを受け取りました。');
-        resolve(otpValue)
-      })
-    })
-
-    if (!otp || '') {
-      return
-    }
-
-    const otpInputSelector = 'input[name="txtOtp"]'
-    const submitOtpButtonSelector = 'button[name="sendBtn"]'
-
-    await page.type(otpInputSelector, String(otp))
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle2' }),
-      page.click(submitOtpButtonSelector)
-    ]);
 
     for (const item of lists) {
       const afterNewline = item.address
