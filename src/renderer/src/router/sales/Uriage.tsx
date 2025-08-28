@@ -132,7 +132,7 @@ export default function Uriage() {
   useEffect(() => {
     ListSet()
     SalesGet()
-  },[])
+  }, [])
 
 
   const Col = (data, ind) => {

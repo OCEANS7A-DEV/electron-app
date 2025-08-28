@@ -27,6 +27,7 @@ type FormValues = {
   rank: string
   joined: string | Date
   status: string
+  genderid: string | number
   gender: string | number
 }
 
@@ -57,6 +58,7 @@ const StaffDialogTable = forwardRef(({ data, Insert, stores = [] }: Props, ref) 
     rank: data.rank,
     joined: data.joined,
     status: data.status,
+    genderid: data.genderid,
     gender: data.gender
   }
   const [dateValue, setDateValue] = useState<Dayjs | null>(dayjs(new Date(data.joined)));
@@ -151,7 +153,7 @@ const StaffDialogTable = forwardRef(({ data, Insert, stores = [] }: Props, ref) 
                   onChange={(e) => setDateValue(e)}
                 />
                 <Controller
-                  name="gender"
+                  name="genderid"
                   control={control}
                   render={({ field }) => (
                     <FormControl size="small" style={{ width: 120, backgroundColor: 'white' }}>

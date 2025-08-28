@@ -95,7 +95,7 @@ export const loader = async () => {
       value: item[1],
       label: item[1],
       type: item[2]
-    }));
+    }))
 
   const now = new Date()
   const year = now.getFullYear()
@@ -115,7 +115,7 @@ export const loader = async () => {
 
 export default function FCInventory() {
   const { storenames, yearList, monthList, datas } = useLoaderData<typeof loader>()
-  console.log(datas)
+  // console.log(datas)
 
   const [marginNum, setMarginNum] = useState(100)
   const [DisplayStatus, setDisplayStatus] = useState(false)
@@ -129,14 +129,19 @@ export default function FCInventory() {
     DataSet()
   }, [storeSelect, Year, Month])
 
-
-  const DataSet = async() => {
+  const DataSet = async () => {
     reset({
       rows: defaultSet()
     })
+    // console.log(storeSelect)
     const List = await window.myInventoryAPI.ListData()
     const storeId = storenames.find((item) => item.value == storeSelect)
-    const filter = datas.filter((item) => item[1] == storeId?.id)
+    const date = new Date(Year, Month, 1)
+    date.setDate(date.getDate() - 1)
+    const filter = datas.filter(
+      (item) => item[1] == storeId?.id &&
+        new Date(item[0]).toLocaleDateString() == date.toLocaleDateString()
+    )
     setDeleteRowNum(filter.length)
     let count = 0
     if (filter.length == 0){
@@ -148,12 +153,14 @@ export default function FCInventory() {
     filter.forEach(async (item) => {
       const code = item[2]
       const productData = List.find((item) => item.code == code)
+      console.log(productData)
       if (productData) {
         const name = productData.name
         setValue(`rows.${count}.name`, name)
       }
       setValue(`rows.${count}.code`, code)
       setValue(`rows.${count}.quantity`, item[3])
+      setValue(`rows.${count}.price`, productData.newPrice)
       count++
     })
   }
@@ -193,7 +200,6 @@ export default function FCInventory() {
 
   const onSubmit = (data: FormValues) => {
     console.log('送信データ:', data.rows)
-    // ここでAPIに送信など処理を書く
   }
 
   const isHalfWidth = (value: string) => /^[\x20-\x7E]*$/.test(value)
@@ -204,7 +210,6 @@ export default function FCInventory() {
     const values = getValues()
     const code = values.rows[index].code
     const productData = List.find((item) => item.code === Number(code))
-    console.log(productData)
     if (productData) {
       const name = productData.name
       setValue(`rows.${index}.name`, name)
@@ -213,7 +218,7 @@ export default function FCInventory() {
   }
 
 
-  const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>, _rowIndex: number) => {
+  const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
       e.preventDefault()
       const form = (e.currentTarget as HTMLElement).closest('.p-4')
@@ -243,7 +248,7 @@ export default function FCInventory() {
     }
   };
 
-  const RegisterData = async(data) => {
+  const RegisterData = async (data) => {
     const filterData = getValues().rows.filter((row) => row.code !== '')
     insert(filterData.length, {
       code: data.code,
@@ -385,7 +390,7 @@ export default function FCInventory() {
               setDisplayStatus={setDisplayStatus}
               RegisterData={RegisterData}
             />
-            <div className="in-area" style={{marginLeft: `${marginNum}px`}}>
+            <div className="in-area" style={{ marginLeft: `${marginNum}px` }}>
               <form onSubmit={handleSubmit(onSubmit)} className="p-4">
                 {fields.map((field, index) => (
                   <div key={field.id} className="insert_area">
@@ -397,7 +402,7 @@ export default function FCInventory() {
                         })}
                         className="insert_code"
                         placeholder="商品コード"
-                        onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                        onKeyDown={(e) => handleEnterFocusNext(e)}
                         onBlur={() => search(index)}
                         inputProps={{ style: { textAlign: 'right', fontSize: 16 } }}
                         size="small"
@@ -410,7 +415,7 @@ export default function FCInventory() {
                         fullWidth
                         placeholder="商品名"
                         className="insert_name"
-                        onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                        onKeyDown={(e) => handleEnterFocusNext(e)}
                         inputProps={{ style: { textAlign: 'left', fontSize: 16 } }}
                         size="small"
                       />
@@ -424,7 +429,7 @@ export default function FCInventory() {
                         placeholder="数量"
                         className="insert_quantity"
                         type="text"
-                        onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                        onKeyDown={(e) => handleEnterFocusNext(e)}
                         inputProps={{ style: { textAlign: 'right', fontSize: 16 } }}
                         size="small"
                       />
@@ -438,7 +443,7 @@ export default function FCInventory() {
                         placeholder="単価"
                         className="insert_quantity"
                         type="text"
-                        onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                        onKeyDown={(e) => handleEnterFocusNext(e)}
                         inputProps={{ style: { textAlign: 'right', fontSize: 16 } }}
                         size="small"
                       />

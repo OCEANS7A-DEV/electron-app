@@ -49,6 +49,7 @@ type FormValues = {
     possibility: boolean
     service: string
     orderNum: string
+    orderLine: string
   }[]
 }
 
@@ -64,7 +65,8 @@ const defaultRowData = {
   remarks: '',
   possibility: false,
   service: '',
-  orderNum: ''
+  orderNum: '',
+  orderLine: '',
 }
 
 type RowData = {
@@ -91,9 +93,7 @@ function Row({
 }: ListChildComponentProps<RowItemData>)
 {
   const item = rows[index]
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: item.id })
-
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id })
   const combinedStyle: React.CSSProperties = {
     ...style,
     transform: CSS.Transform.toString(transform),
@@ -102,7 +102,6 @@ function Row({
     alignItems: 'center',
     boxSizing: 'border-box',
   }
-
   return (
     <div key={item.id} ref={setNodeRef} style={combinedStyle} {...attributes} {...listeners}>
       <div className="virtual-table-row">
@@ -221,11 +220,11 @@ function Row({
 
 export const loader = async () => {
   const vendorData = await window.myInventoryAPI.VendorData() ?? []
-  //console.log(vendorData)
+
   const Lists = await window.myInventoryAPI.ListGet({
-    sheetName: '在庫一覧テスト',
-    action: 'ListGet',
-    ranges: 'B3:L'
+    sheetName: '一覧',
+    action: 'ProductsGet',
+    ranges: 'A2:M'
   })
 
   const typeList = await window.myInventoryAPI.ListGet({
@@ -244,6 +243,7 @@ export const loader = async () => {
   const types = typeList
     .filter((item) => item[0] && item[0] !== '')
     .map((item) => ({ value: item[1], label: item[1], id: item[0] }))
+
   return { vendorSelect, Lists, types }
 }
 
@@ -349,9 +349,8 @@ export default function ProductDetailChangePage() {
       setHeight(vh - 160)
       return vh - 160
     }
-    window.addEventListener('resize', updateHeight);
-    //dialogOpen(0)
-    return () => window.removeEventListener('resize', updateHeight);
+    window.addEventListener('resize', updateHeight)
+    return () => window.removeEventListener('resize', updateHeight)
   }, [])
 
   useEffect(() => {
@@ -365,16 +364,17 @@ export default function ProductDetailChangePage() {
   const StoreDataDefaultSet = () => {
     return Lists.map((item) => ({
       vendor: vendorSelect.find((row) => row.id == item[0]) ?? null,
-      code: item[1],
-      name: item[2],
-      newPrice: String(item[3]),
-      VCPrice: String(item[4]),
-      valuePrice: String(item[5]),
-      type: types.find((row) => row.id == item[6]) ?? null,
+      code: item[2],
+      name: item[3],
+      newPrice: String(item[4]),
+      VCPrice: String(item[5]),
+      valuePrice: String(item[6]),
+      type: types.find((row) => row.value == item[11]) ?? null,
       remarks: item[7],
-      possibility: item[8] === false ? false : true,
+      possibility: item[12] === false ? false : true,
       service: item[9],
-      orderNum: item[10],
+      orderNum: item[8],
+      orderLine: item[10]
     }))
   }
 
@@ -404,11 +404,11 @@ export default function ProductDetailChangePage() {
   }
 
   const dialogOpen = useCallback((index) => {
-    console.log(index)
+    //console.log(index)
     setSelectedRowIndex(index)
     setModalOpen(true)
     setAddRowIndex(index)
-  }, []);
+  }, [])
 
   const ListReacquisition = async() => {
     setLoading(true)
@@ -505,19 +505,32 @@ export default function ProductDetailChangePage() {
   }
 
   const movingRow = (active, over): void => {
+    //console.log(active, over)
+    let start = 0
+    let end = 0
     if (active.id !== over?.id && over) {
       const oldIndex = fields.findIndex((f) => f.id === active.id)
       const newIndex = fields.findIndex((f) => f.id === over?.id)
-      move(oldIndex, newIndex);
+      move(oldIndex, newIndex)
+      start = Math.min(oldIndex, newIndex)
+      end = Math.max(oldIndex, newIndex) + 1
+    } else {
+      return
+    }
+    const codes: number[][] = []
+    for (let i = start; i < end; i++) {
+      const code = Number(getValues(`rows.${i}.code`))
+      codes.push([code])
     }
     const listdata = getValues()
       .rows.map((item) => [item.code])
       .filter((item) => item[0] !== '')
-    console.log(listdata)
+
     window.myInventoryAPI.DataInsert({
       action: 'codeOrder',
       sub_action: 'insert',
       data: listdata,
+      startNum: start + 2,
     })
   }
 
@@ -558,7 +571,6 @@ export default function ProductDetailChangePage() {
           insertData = [data.code, data.service, now]
           sheet = 'サービス数'
         }
-
         await window.myInventoryAPI.DataInsert({
           sheetName: sheet,
           action: 'DataHistory',
@@ -576,7 +588,6 @@ export default function ProductDetailChangePage() {
       setModalOpen(false)
     }
   }
-
 
   return(
     <div>
@@ -600,6 +611,16 @@ export default function ProductDetailChangePage() {
       </div>
       <div style={{ paddingLeft: 20 }}>
         <div className="productRow-header">
+          <div
+            style={{
+              cursor: 'grab',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              userSelect: 'none',
+              width: 16,
+            }}
+          >
+          </div>
           <div className="virtual-table-cell cell-vendor">業者</div>
           <div className="virtual-table-cell cell-code">商品コード</div>
           <div className="virtual-table-cell cell-name">商品名</div>
@@ -707,7 +728,7 @@ export default function ProductDetailChangePage() {
               </div>
               
             </div>
-            <div style={{display: 'flex'}}>
+            <div style={{ display: 'flex' }}>
               <div className="price-div">
                 <label style={{ display: 'flex', alignItems: 'center', padding: '0px 10px' }}>
                   価格
@@ -733,7 +754,13 @@ export default function ProductDetailChangePage() {
               </div>
             </div>
             <div>
-              <label style={{display: 'flex', alignItems: 'center', padding: '0px 10px'}}>備考:</label>
+              <label style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0px 10px'
+              }}>
+                備考:
+              </label>
               <Controller
                 name={`rows.${selectedRowIndex}.remarks`}
                 control={control}

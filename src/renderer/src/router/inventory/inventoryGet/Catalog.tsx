@@ -1,6 +1,5 @@
-
-import { Select, MenuItem, TextField, Button } from '@mui/material';
-import React, { useEffect, useState, useRef } from 'react';
+import { Select, MenuItem, TextField, Button } from '@mui/material'
+import React, { useEffect, useState, useRef } from 'react'
 import LinkBaner from '../../../comp/Linkbanar'
 
 export default function CatalogView() {
@@ -11,7 +10,7 @@ export default function CatalogView() {
   const webviewRef = useRef<any>(null);
   
 
-  const FilePath = async() => {
+  const FilePath = async () => {
     const pathName = await window.myInventoryAPI.getFilePath(selectFileName)
     setFilePath(pathName)
   }
@@ -22,11 +21,11 @@ export default function CatalogView() {
       const mapping = result.map((item: string) => ({
         value: item,
         label: item,
-      }));
+      }))
       setFileSelect(mapping)
-    };
-    fetchFiles();
-  }, []);
+    }
+    fetchFiles()
+  }, [])
 
   useEffect(() => {
     FilePath()
@@ -62,7 +61,7 @@ export default function CatalogView() {
       <div>
         <LinkBaner />
       </div>
-      <div style={{color: 'white'}}>
+      <div style={{ color: 'white' }}>
         <div>{selectFileName}</div>
         <div style={{ paddingTop: 100 }}>
           <Select
@@ -91,10 +90,18 @@ export default function CatalogView() {
             onChange={(e) => setSearchText(e.target.value)}
             style={{ backgroundColor: 'white' }}
           />
-          <Button variant="contained" onClick={handleFind}>検索</Button>
-          <Button variant="outlined" onClick={handleFindNext}>次へ</Button>
-          <Button variant="outlined" onClick={handleFindPrevious}>前へ</Button>
-          <Button variant="text" onClick={handleStopFind}>ハイライト解除</Button>
+          <Button variant="contained" onClick={handleFind}>
+            検索
+          </Button>
+          <Button variant="outlined" onClick={handleFindNext}>
+            次へ
+          </Button>
+          <Button variant="outlined" onClick={handleFindPrevious}>
+            前へ
+          </Button>
+          <Button variant="text" onClick={handleStopFind}>
+            ハイライト解除
+          </Button>
         </div>
         <div style={{ height: 'calc(100% - 60px)' }}>
           <webview

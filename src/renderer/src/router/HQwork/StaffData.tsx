@@ -41,6 +41,7 @@ type FormValues = {
     joined: Date | string
     status: string
     gender: string | number
+    genderid: string | number
   }[]
 }
 
@@ -117,6 +118,16 @@ export default function StaffData(): JSX.Element {
   const DefaultSet = (defData) => {
     const dataRows = defData.slice(1).filter((row) => row[0] !== '')
     const result = createObjectsFromArray(columns, dataRows) as FormValues['rows']
+    return result
+  }
+
+  const gender = [
+    { id: 1, label: '男性', value: '男性' },
+    { id: 2, label: '女性', value: '女性' }
+  ]
+
+  const genderGet = (value) => {
+    const result = gender.find((item) => item.id === value)
     return result
   }
 
@@ -203,7 +214,19 @@ export default function StaffData(): JSX.Element {
       let insertData
       const sendData: sendDataType[] = []
       if (addDialogRef.current) {
+        const now = new Date().toLocaleDateString()
         insertData = addDialogRef.current.getFormData()
+        const oldData = getValues(`rows`)
+        const selectData = oldData.find((row) => row.id === insertData.id) || []
+        Object.keys(insertData).forEach((key) => {
+          const oldvalue = selectData[key]
+          const newvalue = insertData[key]
+          if (oldvalue !== newvalue && key !== 'joined') {
+            sendData.push([now, insertData.id, key, insertData[key]])
+          }
+        })
+
+
       } else {
         const nullData = ['status', 'store', 'id']
         insertData = addDataDialogRef.current.getFormData()
@@ -241,6 +264,7 @@ export default function StaffData(): JSX.Element {
   }
 
   const Columns = (data) => {
+
     const value = dist.find((item) => item[0] === data)
     if (!value) {
       return null
@@ -255,10 +279,12 @@ export default function StaffData(): JSX.Element {
     try {
       const nulllist = [
         'endName',
-        'afterAddress'
+        'afterAddress',
+        'gender',
+        'id',
+        'storeid'
       ]
-
-      if (nulllist.includes(data) || data.includes('id')) {
+      if (nulllist.includes(data)) {
         return null
       } else if (data == 'topName') {
         return (
@@ -274,7 +300,11 @@ export default function StaffData(): JSX.Element {
         )
       } else if (data == 'joined') {
         const value = new Date(getValues(`rows.${index}.joined`)).toLocaleDateString()
-        return (<td>{value}</td>)
+        return (
+          <td>
+            {value}
+          </td>
+        )
       } else if (data == 'postNumber') {
         const code = String(getValues(`rows.${index}.postNumber`))
         const startCode = code.substr(0, 3)
@@ -283,6 +313,14 @@ export default function StaffData(): JSX.Element {
         return (
           <td>
             {postCode}
+          </td>
+        )
+      } else if (data == 'genderid') {
+        const value = getValues(`rows.${index}.${data}`)
+        const genderValue = genderGet(Number(value))
+        return (
+          <td>
+            {genderValue?.label ?? ''}
           </td>
         )
       } else {

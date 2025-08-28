@@ -151,7 +151,7 @@ const PUPPETEER_ARGS = [
 function getPuppeteerOptions(): LaunchOptions {
   if (is.dev) {
     return {
-      headless: false,
+      headless: true,
       channel: 'chrome',
       args: PUPPETEER_ARGS,
       userDataDir: userDataDirPath
@@ -616,7 +616,11 @@ export const productGet = async () => {
         'Content-Type': 'application/x-www-form-urlencoded',
         Cookie: cookieHeader
       },
-      body: JSON.stringify({ sheetName: '在庫一覧', action: 'ListGet', ranges: 'A2:N' })
+      body: JSON.stringify({
+        sheetName: '一覧',
+        action: 'ProductsGet',
+        ranges: 'A2:M'
+      })
     })
     const result = await response.json()
     return result
@@ -789,19 +793,19 @@ export const StartUpSet = async () => {
 
   const ListResult = list.map((item) => {
     const result = {
-      vendor: item[0],
-      code: item[1],
-      name: item[2],
-      defaultPrice: item[3],
+      vendor: item[1],
+      code: item[2],
+      name: item[3],
+      defaultPrice: '',
       newPrice: item[4],
       VC: item[5],
       store: item[6],
-      type: item[7],
-      remarks: item[8],
-      Possibility: item[9],
-      service: item[10],
-      order: item[11],
-      vendorid: item[13]
+      type: item[11],
+      remarks: item[7],
+      Possibility: item[12],
+      service: item[9],
+      order: item[8],
+      vendorid: item[0]
     }
     return result
   })

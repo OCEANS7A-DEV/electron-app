@@ -252,6 +252,7 @@ export default function ReceivingPage() {
 
   const search = async (index) => {
     const List = await window.myInventoryAPI.ListData()
+    console.log(List)
     const values = getValues()
     const code = values.rows[index].code
     const productData = List.find((item) => item.code === Number(code))
