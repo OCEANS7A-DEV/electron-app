@@ -107,12 +107,6 @@
 
 				
 				
-					<div class="home_alert alert danger mb1 width100p mt1">
-						<div>ご登録いただいた求人情報は正確かつ最新の内容になっていますか？</div>
-						<div>求人情報の変更は、「求人情報を編集」ボタンから申請いただく必要があります。</div>
-						<div>なお、変更の反映にはハローワークから内容を確認させていただくことがあります。</div>
-					</div>
-				
 
 				<div class="mt1">
 					
@@ -132,7 +126,7 @@
 							<div class="right_content_box no_border_top fs08 lh1_5 ta_center">
 								<a id="ID_dispMsgLink" href="./GEAB100010.do?screenId=GEAB100010&amp;action=dispMsgLink">
 									<div class="home_fa_color fa-envelope-o"></div>
-									<span class="fs13">新着メッセージ：&#xa0;&#xa0;1件</span>
+									<span class="fs13">新着メッセージ：&#xa0;&#xa0;0件</span>
 
 								</a>
 							</div>
@@ -193,9 +187,9 @@
 									<div class="fb">一般</div>
 								</div>
 								<div class="p1">
-									<div>求人件数：&#xa0;38件</div>
+									<div>求人件数：&#xa0;&#xa0;3件</div>
 
-									<div>採用人数：&#xa0;57名</div>
+									<div>採用人数：&#xa0;&#xa0;4名</div>
 
 								</div>
 								<div class="p1 bg_orange">
@@ -303,211 +297,7 @@
 								<strong>職種</strong>
 							</td>
 							<td class="m13 fs1">
-								<div>理容師／竹原市（竹原店）レギュラー</div>
-
-							</td>
-						</tr>
-
-					</table>
-
-				</div>
-				<div class="flex_item_noshrink m05">
-					
-					
-						<span class="nes_label nes">ハローワーク確認中</span>
-
-					
-					
-					
-				</div>
-			</div>
-		</td>
-	</tr>
-
-
-	
-
-	<tr class="kyujin_body">
-
-		<td>
-			<div class="flex flex_top_sa mb1">
-				<div class="left-side">
-				<table class="noborder">
-
-					<tr class="border_new">
-
-						<td class="fb in_width_6em">求人区分</td>
-						<td>
-							<div>フルタイム</div>
-
-						</td>
-					</tr>
-
-					
-					
-						<tr class="border_new">
-
-							<td class="fb in_width_6em">雇用形態</td>
-							<td>
-								<div>正社員</div>
-
-							</td>
-						</tr>
-
-					
-					
-					
-					<tr class="border_new">
-
-						<td class="fb in_width_6em">提供範囲</td>
-						<td>
-							<div>地方自治体、民間人材ビジネス共に可</div>
-
-						</td>
-					</tr>
-
-					
-				</table>
-
-				</div>
-				<div class="right-side">
-				<table class="noborder">
-
-					
-					
-						<tr class="border_new">
-
-							<td class="fb in_width_6em">公開範囲</td>
-							<td>
-								<div>１．事業所名等を含む求人情報を公開する</div>
-
-							</td>
-						</tr>
-
-					
-					
-						<tr class="border_new">
-
-							<td class="fb in_width_6em">仮登録番号</td>
-							<td>
-								<div>250821-1-977574-01</div>
-
-							</td>
-						</tr>
-
-					
-				</table>
-
-				</div>
-			</div>
-		</td>
-	</tr>
-
-<!-- こだわり条件が全て非表示の場合はテーブルごと非表示にする -->
-
-	<tr>
-
-		<td>
-			<div class="flex kodawari">
-			
-				<span class="nes_label any">経験不問</span>
-			
-			
-				<span class="nes_label any">学歴不問</span>
-			
-			
-			
-			
-			
-			
-				<span class="nes_label any">書類選考なし</span>
-			
-			
-				<span class="nes_label any">通勤手当あり</span>
-			
-			
-			
-				<span class="nes_label any">マイカー通勤可</span>
-			
-			
-			
-			</div>
-		</td>
-	</tr>
-
-
-
-<!-- 求人数、充足数、不採用数、紹介中数が全て非表示の場合はテーブルごと非表示にする -->
-
-	<tr>
-
-		<td>
-			<div class="flex fs13">
-				
-					求人数：<div class="fs13 ml01">2</div>
-名　
-				
-				
-				
-				
-				
-				
-			</div>
-		</td>
-	</tr>
-
-
-
-						<tr class="kyujin_foot">
-
-							<td>
-								<div class="flex jus_end">
-									<a id="ID_oboshaBtn" class="button main  disable">
-										応募者管理へ進む
-									</a>
-									
-										<a id="ID_searchKyushokuBtn" class="button main  disable">
-											求職情報検索
-										</a>
-									
-									<a id="ID_kyujinhyoBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=kyujinhyoBtn&amp;kjNo=&amp;kariTrkNo=250821-1-977574-01&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
-										求人票を表示
-									</a>
-									<a id="ID_dispDetailBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=dispDetailBtn&amp;kjNo=&amp;kariTrkNo=250821-1-977574-01&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
-										詳細を表示
-									</a>
-									<a id="ID_editKyujinBtn" class="button main  disable">
-										求人情報を編集
-									</a>
-								</div>
-							</td>
-						</tr>
-
-					</table>
-
-				
-					
-					
-					<table class="kyujin mt1">
-
-						
-						
-
-
-	<tr class="kyujin_head">
-
-		<td>
-			<div class="flex last_right wrap_reverse">
-				<div class="flex m05 fs1">
-					<table class="noborder">
-
-						<tr>
-
-							<td class="fb">
-								<strong>職種</strong>
-							</td>
-							<td class="m13 fs1">
-								<div>理容師・理容師補助／三次市</div>
+								<div>美容師・美容師補助／府中町（美容室ハッピースタイル）</div>
 
 							</td>
 						</tr>
@@ -594,7 +384,7 @@
 
 							<td class="fb in_width_6em">仮登録番号</td>
 							<td>
-								<div>250821-1-977507-01</div>
+								<div>250828-1-126695-01</div>
 
 							</td>
 						</tr>
@@ -624,8 +414,6 @@
 				<span class="nes_label any">時間外労働なし</span>
 			
 			
-			
-				<span class="nes_label any">転勤なし</span>
 			
 			
 				<span class="nes_label any">書類選考なし</span>
@@ -678,10 +466,216 @@
 											求職情報検索
 										</a>
 									
-									<a id="ID_kyujinhyoBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=kyujinhyoBtn&amp;kjNo=&amp;kariTrkNo=250821-1-977507-01&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
+									<a id="ID_kyujinhyoBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=kyujinhyoBtn&amp;kjNo=&amp;kariTrkNo=250828-1-126695-01&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
 										求人票を表示
 									</a>
-									<a id="ID_dispDetailBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=dispDetailBtn&amp;kjNo=&amp;kariTrkNo=250821-1-977507-01&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
+									<a id="ID_dispDetailBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=dispDetailBtn&amp;kjNo=&amp;kariTrkNo=250828-1-126695-01&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
+										詳細を表示
+									</a>
+									<a id="ID_editKyujinBtn" class="button main  disable">
+										求人情報を編集
+									</a>
+								</div>
+							</td>
+						</tr>
+
+					</table>
+
+				
+					
+					
+					<table class="kyujin mt1">
+
+						
+						
+
+
+	<tr class="kyujin_head">
+
+		<td>
+			<div class="flex last_right wrap_reverse">
+				<div class="flex m05 fs1">
+					<table class="noborder">
+
+						<tr>
+
+							<td class="fb">
+								<strong>職種</strong>
+							</td>
+							<td class="m13 fs1">
+								<div>理容師・理容師補助・美容師／東広島市【ハイサイ店】</div>
+
+							</td>
+						</tr>
+
+					</table>
+
+				</div>
+				<div class="flex_item_noshrink m05">
+					
+					
+						<span class="nes_label nes">ハローワーク確認中</span>
+
+					
+					
+					
+				</div>
+			</div>
+		</td>
+	</tr>
+
+
+	
+
+	<tr class="kyujin_body">
+
+		<td>
+			<div class="flex flex_top_sa mb1">
+				<div class="left-side">
+				<table class="noborder">
+
+					<tr class="border_new">
+
+						<td class="fb in_width_6em">求人区分</td>
+						<td>
+							<div>パート</div>
+
+						</td>
+					</tr>
+
+					
+					
+						<tr class="border_new">
+
+							<td class="fb in_width_6em">雇用形態</td>
+							<td>
+								<div>パート労働者</div>
+
+							</td>
+						</tr>
+
+					
+					
+					
+					<tr class="border_new">
+
+						<td class="fb in_width_6em">提供範囲</td>
+						<td>
+							<div>地方自治体、民間人材ビジネス共に可</div>
+
+						</td>
+					</tr>
+
+					
+				</table>
+
+				</div>
+				<div class="right-side">
+				<table class="noborder">
+
+					
+					
+						<tr class="border_new">
+
+							<td class="fb in_width_6em">公開範囲</td>
+							<td>
+								<div>１．事業所名等を含む求人情報を公開する</div>
+
+							</td>
+						</tr>
+
+					
+					
+						<tr class="border_new">
+
+							<td class="fb in_width_6em">仮登録番号</td>
+							<td>
+								<div>250828-1-126671-01</div>
+
+							</td>
+						</tr>
+
+					
+				</table>
+
+				</div>
+			</div>
+		</td>
+	</tr>
+
+<!-- こだわり条件が全て非表示の場合はテーブルごと非表示にする -->
+
+	<tr>
+
+		<td>
+			<div class="flex kodawari">
+			
+				<span class="nes_label any">経験不問</span>
+			
+			
+				<span class="nes_label any">学歴不問</span>
+			
+			
+			
+				<span class="nes_label any">時間外労働なし</span>
+			
+			
+			
+			
+				<span class="nes_label any">書類選考なし</span>
+			
+			
+				<span class="nes_label any">通勤手当あり</span>
+			
+			
+			
+				<span class="nes_label any">マイカー通勤可</span>
+			
+			
+			
+			</div>
+		</td>
+	</tr>
+
+
+
+<!-- 求人数、充足数、不採用数、紹介中数が全て非表示の場合はテーブルごと非表示にする -->
+
+	<tr>
+
+		<td>
+			<div class="flex fs13">
+				
+					求人数：<div class="fs13 ml01">2</div>
+名　
+				
+				
+				
+				
+				
+				
+			</div>
+		</td>
+	</tr>
+
+
+
+						<tr class="kyujin_foot">
+
+							<td>
+								<div class="flex jus_end">
+									<a id="ID_oboshaBtn" class="button main  disable">
+										応募者管理へ進む
+									</a>
+									
+										<a id="ID_searchKyushokuBtn" class="button main  disable">
+											求職情報検索
+										</a>
+									
+									<a id="ID_kyujinhyoBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=kyujinhyoBtn&amp;kjNo=&amp;kariTrkNo=250828-1-126671-01&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
+										求人票を表示
+									</a>
+									<a id="ID_dispDetailBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=dispDetailBtn&amp;kjNo=&amp;kariTrkNo=250828-1-126671-01&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
 										詳細を表示
 									</a>
 									<a id="ID_editKyujinBtn" class="button main  disable">
@@ -746,241 +740,6 @@
 								<strong>職種</strong>
 							</td>
 							<td class="m13 fs1">
-								<div>理容師補助／安佐南区（オーシャン西山本店）</div>
-
-							</td>
-						</tr>
-
-					</table>
-
-				</div>
-				<div class="flex_item_noshrink m05">
-					
-					
-					
-					
-						<span class="nes_label info">無効</span>
-
-					
-				</div>
-			</div>
-		</td>
-	</tr>
-
-
-	
-		<tr>
-
-			<td>
-				<div class="flex fs13">
-					受付年月日：<div class="fs13 ml01">2025年5月26日</div>
-　
-					紹介期限日：<div class="fs13 ml01">2025年6月12日</div>
-
-				</div>
-			</td>
-		</tr>
-
-	
-
-	<tr class="kyujin_body">
-
-		<td>
-			<div class="flex flex_top_sa mb1">
-				<div class="left-side">
-				<table class="noborder">
-
-					<tr class="border_new">
-
-						<td class="fb in_width_6em">求人区分</td>
-						<td>
-							<div>パート</div>
-
-						</td>
-					</tr>
-
-					
-						<tr class="border_new">
-
-							<td class="fb in_width_6em">就業場所</td>
-							<td>
-								<div>広島県広島市安佐南区<br></div>
-
-							</td>
-						</tr>
-
-					
-					
-						<tr class="border_new">
-
-							<td class="fb in_width_6em">雇用形態</td>
-							<td>
-								<div>パート労働者</div>
-
-							</td>
-						</tr>
-
-					
-					
-					
-					<tr class="border_new">
-
-						<td class="fb in_width_6em">提供範囲</td>
-						<td>
-							<div>地方自治体、民間人材ビジネス共に可</div>
-
-						</td>
-					</tr>
-
-					
-				</table>
-
-				</div>
-				<div class="right-side">
-				<table class="noborder">
-
-					
-						<tr class="border_new">
-
-							<td class="fb in_width_6em">求人番号</td>
-							<td>
-								<div>34010-26839351</div>
-
-							</td>
-						</tr>
-
-					
-					
-						<tr class="border_new">
-
-							<td class="fb in_width_6em">公開範囲</td>
-							<td>
-								<div>１．事業所名等を含む求人情報を公開する</div>
-
-							</td>
-						</tr>
-
-					
-					
-				</table>
-
-				</div>
-			</div>
-		</td>
-	</tr>
-
-<!-- こだわり条件が全て非表示の場合はテーブルごと非表示にする -->
-
-	<tr>
-
-		<td>
-			<div class="flex kodawari">
-			
-				<span class="nes_label any">経験不問</span>
-			
-			
-				<span class="nes_label any">学歴不問</span>
-			
-			
-			
-				<span class="nes_label any">時間外労働なし</span>
-			
-			
-			
-			
-				<span class="nes_label any">書類選考なし</span>
-			
-			
-				<span class="nes_label any">通勤手当あり</span>
-			
-			
-			
-				<span class="nes_label any">マイカー通勤可</span>
-			
-			
-			
-			</div>
-		</td>
-	</tr>
-
-
-
-<!-- 求人数、充足数、不採用数、紹介中数が全て非表示の場合はテーブルごと非表示にする -->
-
-	<tr>
-
-		<td>
-			<div class="flex fs13">
-				
-					求人数：<div class="fs13 ml01">1</div>
-名　
-				
-				
-					充足数：<div class="fs13 ml01">0</div>
-名　
-				
-				
-					不採用数：<div class="fs13 ml01">0</div>
-名　
-				
-				
-					紹介中数：<div class="fs13 ml01">0</div>
-名　
-				
-				
-					自主応募中数：<div class="fs13 ml01">0</div>
-名　
-				
-				
-					リクエスト中数：<div class="fs13 ml01">0</div>
-名　
-				
-			</div>
-		</td>
-	</tr>
-
-
-						<tr class="kyujin_foot">
-
-							<td>
-								<div class="flex jus_end">
-									<a id="ID_oboshaBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=oboshaBtn&amp;kjNo=3401026839351">
-										応募者管理へ進む
-									</a>
-									<a id="ID_kyujinhyoBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=kyujinhyoBtn&amp;kjNo=3401026839351&amp;kariTrkNo=&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
-										求人票を表示
-									</a>
-									<a id="ID_dispMukoDetailBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=dispMukoDetailBtn&amp;kjNo=3401026839351&amp;kariTrkNo=&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
-										詳細を表示
-									</a>
-								</div>
-							</td>
-						</tr>
-
-					</table>
-
-				
-					
-					
-					<table class="kyujin mt1">
-
-						
-						
-
-
-	<tr class="kyujin_head">
-
-		<td>
-			<div class="flex last_right wrap_reverse">
-				<div class="flex m05 fs1">
-					<table class="noborder">
-
-						<tr>
-
-							<td class="fb">
-								<strong>職種</strong>
-							</td>
-							<td class="m13 fs1">
 								<div>理容師・理容師補助／三次市</div>
 
 							</td>
@@ -1008,9 +767,9 @@
 
 			<td>
 				<div class="flex fs13">
-					受付年月日：<div class="fs13 ml01">2025年5月1日</div>
+					受付年月日：<div class="fs13 ml01">2025年6月19日</div>
 　
-					紹介期限日：<div class="fs13 ml01">2025年6月13日</div>
+					紹介期限日：<div class="fs13 ml01">2025年8月31日</div>
 
 				</div>
 			</td>
@@ -1079,7 +838,7 @@
 
 							<td class="fb in_width_6em">求人番号</td>
 							<td>
-								<div>34010-22218251</div>
+								<div>34010-31501251</div>
 
 							</td>
 						</tr>
@@ -1181,13 +940,246 @@
 
 							<td>
 								<div class="flex jus_end">
-									<a id="ID_oboshaBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=oboshaBtn&amp;kjNo=3401022218251">
+									<a id="ID_oboshaBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=oboshaBtn&amp;kjNo=3401031501251">
 										応募者管理へ進む
 									</a>
-									<a id="ID_kyujinhyoBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=kyujinhyoBtn&amp;kjNo=3401022218251&amp;kariTrkNo=&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
+									<a id="ID_kyujinhyoBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=kyujinhyoBtn&amp;kjNo=3401031501251&amp;kariTrkNo=&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
 										求人票を表示
 									</a>
-									<a id="ID_dispMukoDetailBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=dispMukoDetailBtn&amp;kjNo=3401022218251&amp;kariTrkNo=&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
+									<a id="ID_dispMukoDetailBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=dispMukoDetailBtn&amp;kjNo=3401031501251&amp;kariTrkNo=&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
+										詳細を表示
+									</a>
+								</div>
+							</td>
+						</tr>
+
+					</table>
+
+				
+					
+					
+					<table class="kyujin mt1">
+
+						
+						
+
+
+	<tr class="kyujin_head">
+
+		<td>
+			<div class="flex last_right wrap_reverse">
+				<div class="flex m05 fs1">
+					<table class="noborder">
+
+						<tr>
+
+							<td class="fb">
+								<strong>職種</strong>
+							</td>
+							<td class="m13 fs1">
+								<div>理容師／竹原市（竹原店）レギュラー</div>
+
+							</td>
+						</tr>
+
+					</table>
+
+				</div>
+				<div class="flex_item_noshrink m05">
+					
+					
+					
+					
+						<span class="nes_label info">無効</span>
+
+					
+				</div>
+			</div>
+		</td>
+	</tr>
+
+
+	
+		<tr>
+
+			<td>
+				<div class="flex fs13">
+					受付年月日：<div class="fs13 ml01">2025年6月19日</div>
+　
+					紹介期限日：<div class="fs13 ml01">2025年8月31日</div>
+
+				</div>
+			</td>
+		</tr>
+
+	
+
+	<tr class="kyujin_body">
+
+		<td>
+			<div class="flex flex_top_sa mb1">
+				<div class="left-side">
+				<table class="noborder">
+
+					<tr class="border_new">
+
+						<td class="fb in_width_6em">求人区分</td>
+						<td>
+							<div>フルタイム</div>
+
+						</td>
+					</tr>
+
+					
+						<tr class="border_new">
+
+							<td class="fb in_width_6em">就業場所</td>
+							<td>
+								<div>広島県竹原市<br></div>
+
+							</td>
+						</tr>
+
+					
+					
+						<tr class="border_new">
+
+							<td class="fb in_width_6em">雇用形態</td>
+							<td>
+								<div>正社員</div>
+
+							</td>
+						</tr>
+
+					
+					
+					
+					<tr class="border_new">
+
+						<td class="fb in_width_6em">提供範囲</td>
+						<td>
+							<div>地方自治体、民間人材ビジネス共に可</div>
+
+						</td>
+					</tr>
+
+					
+				</table>
+
+				</div>
+				<div class="right-side">
+				<table class="noborder">
+
+					
+						<tr class="border_new">
+
+							<td class="fb in_width_6em">求人番号</td>
+							<td>
+								<div>34010-31502551</div>
+
+							</td>
+						</tr>
+
+					
+					
+						<tr class="border_new">
+
+							<td class="fb in_width_6em">公開範囲</td>
+							<td>
+								<div>１．事業所名等を含む求人情報を公開する</div>
+
+							</td>
+						</tr>
+
+					
+					
+				</table>
+
+				</div>
+			</div>
+		</td>
+	</tr>
+
+<!-- こだわり条件が全て非表示の場合はテーブルごと非表示にする -->
+
+	<tr>
+
+		<td>
+			<div class="flex kodawari">
+			
+				<span class="nes_label any">経験不問</span>
+			
+			
+				<span class="nes_label any">学歴不問</span>
+			
+			
+			
+			
+			
+			
+				<span class="nes_label any">書類選考なし</span>
+			
+			
+				<span class="nes_label any">通勤手当あり</span>
+			
+			
+			
+				<span class="nes_label any">マイカー通勤可</span>
+			
+			
+			
+			</div>
+		</td>
+	</tr>
+
+
+
+<!-- 求人数、充足数、不採用数、紹介中数が全て非表示の場合はテーブルごと非表示にする -->
+
+	<tr>
+
+		<td>
+			<div class="flex fs13">
+				
+					求人数：<div class="fs13 ml01">2</div>
+名　
+				
+				
+					充足数：<div class="fs13 ml01">0</div>
+名　
+				
+				
+					不採用数：<div class="fs13 ml01">0</div>
+名　
+				
+				
+					紹介中数：<div class="fs13 ml01">0</div>
+名　
+				
+				
+					自主応募中数：<div class="fs13 ml01">0</div>
+名　
+				
+				
+					リクエスト中数：<div class="fs13 ml01">0</div>
+名　
+				
+			</div>
+		</td>
+	</tr>
+
+
+						<tr class="kyujin_foot">
+
+							<td>
+								<div class="flex jus_end">
+									<a id="ID_oboshaBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=oboshaBtn&amp;kjNo=3401031502551">
+										応募者管理へ進む
+									</a>
+									<a id="ID_kyujinhyoBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=kyujinhyoBtn&amp;kjNo=3401031502551&amp;kariTrkNo=&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
+										求人票を表示
+									</a>
+									<a id="ID_dispMukoDetailBtn" class="button main" href="./GEAB100010.do?screenId=GEAB100010&amp;action=dispMukoDetailBtn&amp;kjNo=3401031502551&amp;kariTrkNo=&amp;kjKbn1=1&amp;kjKbn1Shsi=+" target="_blank">
 										詳細を表示
 									</a>
 								</div>
@@ -1217,7 +1209,7 @@
 		
 			<div class="right_content_box no_border_top fs09 lh1_5">
 				<a id="ID_dispMsgLink" href="./GEAB100010.do?screenId=GEAB100010&amp;action=dispMsgLink">
-					<span class="fs13">新着メッセージ：&#xa0;&#xa0;1件</span>
+					<span class="fs13">新着メッセージ：&#xa0;&#xa0;0件</span>
 
 				</a>
 			</div>
@@ -1241,9 +1233,9 @@
 					<tr>
 
 						<td class="fb">一般</td>
-						<td><div class="ta_right">&#xa0;38件</div>
+						<td><div class="ta_right">&#xa0;&#xa0;3件</div>
 </td>
-						<td><div class="ta_right">&#xa0;57名</div>
+						<td><div class="ta_right">&#xa0;&#xa0;4名</div>
 </td>
 					</tr>
 

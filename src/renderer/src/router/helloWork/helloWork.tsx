@@ -57,7 +57,8 @@ export default function HelloWork(): JSX.Element {
   const PDFGet = async (): Promise<void> => {
     setLoading(true)
     setDLnums(0)
-    await window.myInventoryAPI.HelloWorkPDFGet(jobList)
+    const filterdata = jobList.filter((item) => item.status !== '公開中')
+    await window.myInventoryAPI.HelloWorkPDFGet(filterdata)
   }
 
   useEffect(() => {
