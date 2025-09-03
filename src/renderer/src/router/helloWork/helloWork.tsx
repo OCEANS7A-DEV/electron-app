@@ -142,7 +142,7 @@ export default function HelloWork(): JSX.Element {
   }
 
   const WorksUpdate = () => {
-    const data = jobList.filter((item) => JOBupdateStatus(item.紹介期限日) == '更新可能')
+    //const data = jobList.filter((item) => JOBupdateStatus(item.紹介期限日) == '更新可能')
     const numberData = jobList.map((item) => item.求人番号)
       .filter((num) => num !== undefined && num !== null && num !== '')
     console.log(numberData)
@@ -223,7 +223,7 @@ export default function HelloWork(): JSX.Element {
           <Button variant="outlined" onClick={handlePDFMarge}>
             PDF結合
           </Button>
-          <Button variant="outlined" onClick={() => WorksUpdate()}>
+          <Button variant="outlined" onClick={WorksUpdate} disabled>
             求人更新
           </Button>
         </div>
