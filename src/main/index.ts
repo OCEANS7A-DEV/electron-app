@@ -1569,7 +1569,7 @@ ipcMain.handle('hellowork-get', async () => {
 
 
 ipcMain.handle('hellowork-update', async (_event, RecruitNumbers) => {
-  //console.log(RecruitNumbers)
+  console.log(RecruitNumbers)
   //try {
   //  const scrapeHelloWork = async (): Promise<any> => {
   //    await Promise.all([
