@@ -151,7 +151,7 @@ const PUPPETEER_ARGS = [
 function getPuppeteerOptions(): LaunchOptions {
   if (is.dev) {
     return {
-      headless: true,
+      headless: false,
       channel: 'chrome',
       args: PUPPETEER_ARGS,
       userDataDir: userDataDirPath
@@ -1567,6 +1567,34 @@ ipcMain.handle('hellowork-get', async () => {
   }
 })
 
+
+ipcMain.handle('hellowork-update', async (_event, RecruitNumbers) => {
+  //console.log(RecruitNumbers)
+  //try {
+  //  const scrapeHelloWork = async (): Promise<any> => {
+  //    await Promise.all([
+  //      page.waitForNavigation({ waitUntil: 'networkidle2' }),
+  //      page.evaluate(() => {
+  //        const btn = document.getElementById('ID_yukoKyujinBtn') as HTMLAnchorElement
+  //        if (!btn) throw new Error('ボタンが見つかりません')
+  //        btn.click()
+  //      })
+  //    ])
+
+  //  }
+  //  try {
+  //    const result = await scrapeHelloWork()
+  //    return result
+  //  } catch (err) {
+  //    console.error(err)
+  //    throw err
+  //  }
+  //} catch (e) {
+  //  log.error('ハロワ取得エラー:', e)
+  //  throw e
+  //}
+})
+
 interface Works {
   こだわり条件: any[]
   事業所名: string
@@ -1622,6 +1650,7 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
           // 1) Puppeteer でページにアクセスし、クッキーを取得
           await page.goto(jobUrl, { waitUntil: 'networkidle2', timeout: 60000 })
 
+
           // 2) セッション維持用の Cookie を抜き出す
           const cookies = await page.cookies()
           const cookieHeader = cookies.map((c) => `${c.name}=${c.value}`).join('; ')
@@ -1636,15 +1665,18 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
           if (!res.ok) {
             throw new Error(`HTTP エラー ${res.status} ${res.statusText}`)
           }
+          console.log('arrayBuffer→Buffer')
           // arrayBuffer→Buffer に変換
           const arrayBuffer = await res.arrayBuffer()
           const buffer = Buffer.from(arrayBuffer)
-
+          console.log('OK')
           if (buffer.length < 10000) {
             throw new Error(`取得データが小さすぎます (${buffer.length} bytes)`)
           }
 
           fs.writeFileSync(downloadsPath, buffer)
+
+
           HelloWorkWindow.webContents.send('helloWork-progress', {
             count: count,
             total: total,

@@ -62,6 +62,7 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   onShowOtpPrompt: (callback) => ipcRenderer.on('show-otp-prompt', callback),
   sendOtp: (otp) => ipcRenderer.send('otp-submitted', otp),
   helloworkInit: () => ipcRenderer.invoke('hellowork-init'),
+  helloworkUpdate: (RecruitNumbers) => ipcRenderer.invoke('hellowork-update', RecruitNumbers),
 })
 
 if (process.contextIsolated) {

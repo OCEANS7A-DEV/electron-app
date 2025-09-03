@@ -6,6 +6,7 @@ declare global {
   interface Window {
     myInventoryAPI: {
       helloworkInit(): Promise<any>;
+      helloworkUpdate(RecruitNumbers: any): Promise<any>;
       PrivateMemoGet(): Promise<any>;
       OfficeWorkWindow(): unknown;
       SettingWindow(): unknown;

@@ -1,0 +1,668 @@
+$(function() {
+	//活性、非活性処理を初期化
+	kBN1RadioBtn()
+	sGSYACKBox();
+	kBN1SHSIRadioBtn();
+	trialKoyoHeiyoCKBox();
+	oNLINTeikyoHukaKikanCKBox();
+	
+	// ============================================
+	// 登録／編集による求人区分の活性非活性の制御
+	// ============================================
+	// 画面IDを取得
+	var screenId = $('[name=screenId]').attr('id');
+	// 求人編集区分フラグを取得する
+	var kjKbnEditFlg = $('[name=kjKbnEditFlg]').val();
+	if(screenId == 'ID_GEAB501050' && kjKbnEditFlg != '1'){
+		// 求人編集の場合
+		// 「区分１ラジオボタン」を非活性状態にする。
+		disabledKBN1RadioBtn();
+		// 「障害者チェックボックス」を非活性状態にする。
+		disabledSGSYACKBox();
+		// 「区分１詳細ラジオボタン」を非活性状態にする。
+		disabledKBN1SHSIRadioBtn();
+		// 「大卒等選択チェックボックス」を非活性状態にする。
+		disabledDSSUSlctCKBox();
+		// 「求人の対象年度ラジオボタン」を非活性状態にする。
+		disabledKJTaishoNendoRadioBtn();
+		// 「区分２ラジオボタン」を非活性状態にする。
+		disabledKBN2RadioBtn();
+		// 全て選択、全て削除ボタンを非活性状態にする。
+		disabledButton();
+	}
+	// ===================
+	// 入力支援ボタン制御
+	// ===================
+	// 「全て選択」ボタン押下時
+	$('#ID_allSlctBtn').on('click',function(e){
+		if ($('#ID_allSlctBtn').prop('disabled') == false) {
+			$('input:checkbox[name="dSSUSlctCKBox"]').prop({"checked":true});
+		}
+	});
+	// 「全て解除」ボタン押下時
+	$('#ID_allKaijoBtn').on('click',function(e){
+		if ($('#ID_allKaijoBtn').prop('disabled') == false) {
+			$('input:checkbox[name="dSSUSlctCKBox"]').prop({"checked":false});
+		}
+	});
+	
+	// =============
+	// 入力時の処理
+	// =============
+	// 区分１
+	$('input[name=kBN1RadioBtn]').change(function(){
+		kBN1RadioBtn()
+	});
+	// 障害者
+	$('#ID_sGSYACKBox').on('click',function(e){
+		sGSYACKBox();
+	});
+	// 区分１詳細
+	$('#ID_kBN1SHSIRadioBtn1').change(function(){
+		kBN1SHSIRadioBtn();
+	});
+	$('#ID_kBN1SHSIRadioBtn2').change(function(){
+		kBN1SHSIRadioBtn();
+	});
+	// トライアル雇用併用の希望
+	$('input[name=trialKoyoHeiyoCKBox]').change(function(){
+		trialKoyoHeiyoCKBox();
+	});
+	// オンライン自主応募の受付
+	$('#ID_oNLineJiSyuOuboRadioBtn1').change(function(){
+		oNLineJiSyuOuboRadioBtn();
+	});
+	$('#ID_oNLineJiSyuOuboRadioBtn0').change(function(){
+		oNLineJiSyuOuboRadioBtn();
+	})
+	// オンライン提供を不可とする機関
+	$('input[name=oNLINTeikyoHukaKikanMinCKBox]').click(function(){
+		oNLINTeikyoHukaKikanCKBox();
+	});
+	$('input[name=oNLINTeikyoHukaKikanChihoCKBox]').click(function(){
+		oNLINTeikyoHukaKikanCKBox();
+	});
+	
+	// ==========
+	// 相関処理
+	// ==========
+	// 区分１
+	function kBN1RadioBtn() {
+		// 一般の場合
+		if ($("input:radio[name='kBN1RadioBtn']:checked").val() == '1') {
+			// 障害者チェックボックスを活性状態にする。
+			activateSGSYACKBox();
+			// 障害者の制御処理を呼び出す。
+			sGSYACKBox();
+			// 区分１詳細を非活性状態にする。
+			disabledKBN1SHSIRadioBtn();
+			// 大卒等詳細を非活性状態にする。
+			disabledDSSUSlctCKBox();
+			// 全て選択、全て削除ボタンを非活性状態にする。
+			disabledButton();
+			// 求人の対象年度ラジオボタンを非活性状態にする。
+			disabledKJTaishoNendoRadioBtn();
+			// 区分２を活性状態にする。
+			activateKBN2RadioBtn();
+			// 就労継続支援Ａ型事業の利用者募集を表示する。
+			showSRKZKSIENAGTJigyoRadioBtn();
+			// トライアル雇用併用を活性状態にする。
+			activateTrialKoyoHeiyoCKBox();
+			// トライアル雇用併用の希望制御処理を呼び出す。
+			trialKoyoHeiyoCKBox();
+			// 公開希望ラジオボタンを活性状態にする。
+			activateKOKIKiboRadioBtn();
+			// オンライン自主応募の受付活性、非活性処理を呼び出す。
+			oNLineJiSyuOuboRadioBtn();
+			// オンライン提供を不可とする機関制御処理を呼び出す。
+			oNLINTeikyoHukaKikanCKBox();
+			// 求人対象年度を非表示する
+			kjnTaishoNendoHide()
+		
+		// 新規学卒者等の場合
+		} else if ($("input:radio[name='kBN1RadioBtn']:checked").val() == '2') {
+			// 障害者チェックボックスを非活性状態にする。
+			disabledSGSYACKBox();
+			// 障害者の制御処理を呼び出す。
+			sGSYACKBox();
+			// 区分１詳細を活性状態にする。
+			activateKBN1SHSIRadioBtn();
+			// 区分１詳細制御処理を呼び出す。
+			kBN1SHSIRadioBtn();
+			// 求人の対象年度ラジオボタンを活性状態にする。
+			activateKJTaishoNendoRadioBtn();
+			// 区分２を非活性状態にする。
+			disabledKBN2RadioBtn();
+			// 就労継続支援Ａ型事業の利用者募集を非表示にする。
+			hideSRKZKSIENAGTJigyoRadioBtn();
+			// トライアル雇用併用を非活性状態にする。
+			disabledTrialKoyoHeiyoCKBox();
+			// トライアル雇用併用の希望制御処理を呼び出す。
+			trialKoyoHeiyoCKBox();
+			// オンライン自主応募の受付活性、非活性処理を呼び出す。
+			oNLineJiSyuOuboRadioBtn();
+			// オンライン提供を不可とする機関制御処理を呼び出す。
+			oNLINTeikyoHukaKikanCKBox();
+			
+		// 季節の場合
+		} else if ($("input:radio[name='kBN1RadioBtn']:checked").val() == '3') {
+			// 障害者チェックボックスを活性状態にする。
+			activateSGSYACKBox();
+			// 障害者の制御処理を呼び出す。
+			sGSYACKBox();
+			// 区分１詳細を非活性状態にする。
+			disabledKBN1SHSIRadioBtn();
+			// 大卒等詳細を非活性状態にする。
+			disabledDSSUSlctCKBox();
+			// 全て選択、全て削除ボタンを非活性状態にする。
+			disabledButton();
+			// 求人の対象年度ラジオボタンを非活性状態にする。
+			disabledKJTaishoNendoRadioBtn();
+			// 区分２を非活性状態にする。
+			disabledKBN2RadioBtn();
+			// 就労継続支援Ａ型事業の利用者募集を表示する。
+			showSRKZKSIENAGTJigyoRadioBtn();
+			//トライアル雇用併用を活性状態にする。
+			activateTrialKoyoHeiyoCKBox();
+			//トライアル雇用併用の希望制御処理を呼び出す。
+			trialKoyoHeiyoCKBox();
+			//公開希望ラジオボタンを活性状態にする。
+			activateKOKIKiboRadioBtn();
+			// オンライン自主応募の受付活性、非活性処理を呼び出す。
+			oNLineJiSyuOuboRadioBtn();
+			// オンライン提供を不可とする機関制御処理を呼び出す。
+			oNLINTeikyoHukaKikanCKBox();
+			//求人対象年度を非表示する
+			kjnTaishoNendoHide()
+			
+		// 出稼ぎの場合
+		} else if ($("input:radio[name='kBN1RadioBtn']:checked").val() == '4') {
+			// 障害者チェックボックスを活性状態にする。
+			activateSGSYACKBox();
+			// 障害者の制御処理を呼び出す。
+			sGSYACKBox();
+			// 区分１詳細を非活性状態にする。
+			disabledKBN1SHSIRadioBtn();
+			// 大卒等詳細を非活性状態にする。
+			disabledDSSUSlctCKBox();
+			// 全て選択、全て削除ボタンを非活性状態にする。
+			disabledButton();
+			// 求人の対象年度ラジオボタンを非活性状態にする。
+			disabledKJTaishoNendoRadioBtn();
+			// 区分２を非活性状態にする。
+			disabledKBN2RadioBtn();
+			// 就労継続支援Ａ型事業の利用者募集を表示する。
+			showSRKZKSIENAGTJigyoRadioBtn();
+			//トライアル雇用併用を非活性状態にする。
+			disabledTrialKoyoHeiyoCKBox();
+			//トライアル雇用併用の希望制御処理を呼び出す。
+			trialKoyoHeiyoCKBox();
+			//公開希望ラジオボタンを活性状態にする。
+			activateKOKIKiboRadioBtn();
+			// オンライン自主応募の受付活性、非活性処理を呼び出す。
+			oNLineJiSyuOuboRadioBtn();
+			// オンライン提供を不可とする機関制御処理を呼び出す。
+			oNLINTeikyoHukaKikanCKBox();
+			//求人対象年度を非表示する
+			kjnTaishoNendoHide()
+		}
+	}
+	// 障害者
+	function sGSYACKBox() {
+		// チェックされている場合
+		if ($('#ID_sGSYACKBox1').is(':checked')){
+			// 就労継続支援Ａ型事業の利用者募集を活性状態にする。
+			activateSRKZKSIENAGTJigyoRadioBtn();
+			// トライアル雇用併用の希望がチェックされている場合
+			if ($('#ID_trialKoyoHeiyoCKBox1').is(':checked')){
+				// 一般 かつ 季節の場合
+				if ($("input:radio[name='kBN1RadioBtn']:checked").val() == '1'
+					|| $("input:radio[name='kBN1RadioBtn']:checked").val() == '3') {
+					// 障害者トライアル雇用求人を活性状態にする。
+					activateLink02shogai();
+					// トライアル雇用助成金（障害者）支給対象事業主要件票のアップロードを活性状態にする。
+					activateShogaiUpload();
+				
+				// 新規学卒者等、出稼ぎの場合
+				} else {
+					// 障害者トライアル雇用求人を非活性状態にする。
+					disabledLink02shogai();
+					// トライアル雇用助成金（障害者）支給対象事業主要件票のアップロードを非活性状態にする。
+					disabledShogaiUpload();
+				}
+			
+			// チェックされていない場合
+			} else {
+				// 障害者トライアル雇用求人を非活性状態にする。
+				disabledLink02shogai();
+				// トライアル雇用助成金（障害者）支給対象事業主要件票のアップロードを非活性状態にする。
+				disabledShogaiUpload();
+			}
+		
+		// チェックされていない場合
+		} else {
+			// 就労継続支援Ａ型事業の利用者募集を非活性状態にする。
+			disabledSRKZKSIENAGTJigyoRadioBtn();
+			// 障害者トライアル雇用求人を非活性状態にする。
+			disabledLink02shogai();
+			// トライアル雇用助成金（障害者）支給対象事業主要件票のアップロードを非活性状態にする。
+			disabledShogaiUpload();
+		}
+	}
+	// 区分１詳細
+	function kBN1SHSIRadioBtn() {
+		// 大卒等の場合
+		if ($('input[name=kBN1SHSIRadioBtn]:eq(0)').prop('checked')){
+			// 公開希望ラジオボタンを活性状態にする。
+			activateKOKIKiboRadioBtn();
+			// 全て選択、全て削除ボタンを活性状態にする。
+			activateButton();
+			// 大卒等詳細を活性状態にする。
+			activateDSSUSlctCKBox();
+			// 求人の対象年度ラジオボタン（大卒等）を表示状態にする。
+			showKJTaishoNendoDaisotsu();
+			// オンライン自主応募の受付活性、非活性処理を呼び出す。
+			oNLineJiSyuOuboRadioBtn();
+			// オンライン提供を不可とする機関制御処理を呼び出す。
+			oNLINTeikyoHukaKikanCKBox();
+			//求人対象年度を表示する
+			kjnTaishNendoShow()
+			
+		// 高卒の場合
+		} else if ($('input[name=kBN1SHSIRadioBtn]:eq(1)').prop('checked')) {
+			// 公開希望ラジオボタンの２と３を非活性状態にする。
+			disabledKOKIKiboRadioBtnKosotsu();
+			// 全て選択、全て削除ボタンを非活性状態にする。
+			disabledButton();
+			// 大卒等詳細を非活性状態にする。
+			disabledDSSUSlctCKBox();
+			// 求人の対象年度ラジオボタン（高卒）を表示状態にする。
+			showKJTaishoNendoKosotsu();
+			// オンライン自主応募の受付活性、非活性処理を呼び出す。
+			oNLineJiSyuOuboRadioBtn();
+			// オンライン提供を不可とする機関制御処理を呼び出す。
+			oNLINTeikyoHukaKikanCKBox();
+			//求人対象年度を表示する
+			kjnTaishNendoShow()
+		
+		// どちらも選択されていない場合
+		} else {
+			// 公開希望ラジオボタンを活性状態にする。
+			activateKOKIKiboRadioBtn();
+			// 全て選択、全て削除ボタンを非活性状態にする。
+			disabledButton();
+			// 大卒等詳細を非活性状態にする。
+			disabledDSSUSlctCKBox();
+			// 求人の対象年度ラジオボタン（大卒等）を表示状態にする。
+			showKJTaishoNendoDaisotsu();
+			// オンライン自主応募の受付活性、非活性処理を呼び出す。
+			oNLineJiSyuOuboRadioBtn();
+			// オンライン提供を不可とする機関制御処理を呼び出す。
+			oNLINTeikyoHukaKikanCKBox();
+			//求人対象年度を非表示する
+			kjnTaishoNendoHide()
+		}
+	}
+	// トライアル雇用併用の希望
+	function trialKoyoHeiyoCKBox() {
+		// チェックされている場合
+		if ($('#ID_trialKoyoHeiyoCKBox1').is(':checked')){
+			// 一般 かつ 季節の場合
+			if ($("input:radio[name='kBN1RadioBtn']:checked").val() == '1' 
+				|| $("input:radio[name='kBN1RadioBtn']:checked").val() == '3') {
+				// 一般トライアル雇用求人を活性状態にする。
+				activateLink02();
+				// トライアル雇用助成金（一般）支給対象事業主要件票のアップロードを活性状態にする。
+				activateIppanUpload();
+				
+				// 障害者の場合
+				if ($('#ID_sGSYACKBox1').is(':checked')){
+					// 障害者トライアル雇用求人を活性状態にする。
+					activateLink02shogai();
+					// トライアル雇用助成金（障害者）支給対象事業主要件票のアップロードを活性状態にする。
+					activateShogaiUpload();
+					
+				// 障害者ではない場合
+				} else {
+					// 障害者トライアル雇用求人を非活性状態にする。
+					disabledLink02shogai();
+					// トライアル雇用助成金（障害者）支給対象事業主要件票のアップロードを非活性状態にする。
+					disabledShogaiUpload();
+				}
+			
+			// 新規学卒者等、出稼ぎの場合
+			} else {
+				// 一般トライアル雇用求人を非活性状態にする。
+				disabledLink02();
+				// トライアル雇用助成金（一般）支給対象事業主要件票のアップロードを非活性状態にする。
+				disabledIppanUpload();
+				// 障害者トライアル雇用求人を非活性状態にする。
+				disabledLink02shogai();
+				// トライアル雇用助成金（障害者）支給対象事業主要件票のアップロードを非活性状態にする。
+				disabledShogaiUpload();
+			}
+		
+		// チェックされていない場合
+		} else {
+			// 一般トライアル雇用求人を非活性状態にする。
+			disabledLink02();
+			// トライアル雇用助成金（一般）支給対象事業主要件票のアップロードを非活性状態にする。
+			disabledIppanUpload();
+			// 障害者トライアル雇用求人を非活性状態にする。
+			disabledLink02shogai();
+			// トライアル雇用助成金（障害者）支給対象事業主要件票のアップロードを非活性状態にする。
+			disabledShogaiUpload();
+		}
+	}
+	// オンライン自主応募の受付
+	function oNLineJiSyuOuboRadioBtn() {
+		// 新規学卒者等の場合
+		if ($("input:radio[name='kBN1RadioBtn']:checked").val() == '2') {
+			// 高卒の場合
+			if ($('input[name=kBN1SHSIRadioBtn]:eq(1)').prop('checked')) {
+				// オンライン自主応募の受付ラジオボタンを非活性状態にする。
+				disabledONLineJiSyuOuboRadioBtn();
+				// オンライン自主応募に関する注意文同意チェックボックスを非活性状態にする。
+				disabledOuboTyuiCKBox();
+
+				// 高卒以外の場合
+			} else {
+				// オンライン自主応募の受付ラジオボタンを活性状態にする。
+				activateONLineJiSyuOuboRadioBtn();
+
+				// オンライン自主応募を受け付けるラジオボタンが選択されている場合
+				if ($("input:radio[name='oNLineJiSyuOuboRadioBtn']:checked").val() =='1') {
+					// オンライン自主応募に関する注意文同意チェックボックスを活性状態にする。
+					activateOuboTyuiCKBox();
+
+					// オンライン自主応募を受け付けない（ハローワーク紹介に限る）ラジオボタンが選択されている場合
+				} else if ($("input:radio[name='oNLineJiSyuOuboRadioBtn']:checked").val() =='0') {
+					// オンライン自主応募に関する注意文同意チェックボックスを非活性状態にする。
+					disabledOuboTyuiCKBox();
+				}
+			}
+
+			// 一般、季節、出稼ぎの場合
+		} else {
+			// オンライン自主応募の受付ラジオボタンを活性状態にする。
+			activateONLineJiSyuOuboRadioBtn();
+
+			// オンライン自主応募を受け付けるラジオボタンが選択されている場合
+			if ($("input:radio[name='oNLineJiSyuOuboRadioBtn']:checked").val() =='1') {
+				// オンライン自主応募に関する注意文同意チェックボックスを活性状態にする。
+				activateOuboTyuiCKBox();
+
+				// オンライン自主応募を受け付けない（ハローワーク紹介に限る）ラジオボタンが選択されている場合
+			} else if ($("input:radio[name='oNLineJiSyuOuboRadioBtn']:checked").val() =='0') {
+				// オンライン自主応募に関する注意文同意チェックボックスを非活性状態にする。
+				disabledOuboTyuiCKBox();
+			}
+		}
+	}
+	// オンライン提供を不可とする機関
+	function oNLINTeikyoHukaKikanCKBox() {
+		// 新規学卒者等の場合
+		if ($("input:radio[name='kBN1RadioBtn']:checked").val() == '2') {
+			// 高卒の場合
+			if ($('input[name=kBN1SHSIRadioBtn]:eq(1)').prop('checked')) {
+				//オンライン提供を不可とする機関チェックボックスを非活性状態にする。
+				disabledONLINTeikyoHukaKikanCKBox();
+				// リーフレットを非活性状態にする。
+				disabledLeafletDoiCKBox();
+				
+				// 高卒以外の場合
+			} else {
+				//オンライン提供を不可とする機関チェックボックスを活性状態にする。
+				activateONLINTeikyoHukaKikanCKBox();
+				
+				// 民間人材ビジネス、地方自治体（地方版ハローワーク）がどちらも選択されている場合
+				if (($('#ID_oNLINTeikyoHukaKikanMinCKBox1').is(':checked')) && ($('#ID_oNLINTeikyoHukaKikanChihoCKBox1').is(':checked'))) {
+					// リーフレットを非活性状態にする。
+					disabledLeafletDoiCKBox();
+					
+					// 民間人材ビジネス、地方自治体（地方版ハローワーク）が１つでも選択されていない場合
+				} else {
+					// リーフレットを活性状態にする。
+					activateLeafletDoiCKBox();
+				}
+			}
+		
+		// 一般、季節、出稼ぎの場合
+		} else {
+			//オンライン提供を不可とする機関チェックボックスを活性状態にする。
+			activateONLINTeikyoHukaKikanCKBox();
+			
+			// 民間人材ビジネス、地方自治体（地方版ハローワーク）がどちらも選択されている場合
+			if (($('#ID_oNLINTeikyoHukaKikanMinCKBox1').is(':checked')) && ($('#ID_oNLINTeikyoHukaKikanChihoCKBox1').is(':checked'))) {
+				// リーフレットを非活性状態にする。
+				disabledLeafletDoiCKBox();
+				
+				// 民間人材ビジネス、地方自治体（地方版ハローワーク）が１つでも選択されていない場合
+			} else {
+				// リーフレットを活性状態にする。
+				activateLeafletDoiCKBox();
+			}
+		}
+	}
+	// ==============
+	// 単項目処理
+	// ==============
+	// 区分１の活性処理
+	function activateKBN1RadioBtn() {
+		$('#ID_kBN1RadioBtn1').prop('disabled',false);
+		$('#ID_kBN1RadioBtn2').prop('disabled',false);
+		$('#ID_kBN1RadioBtn3').prop('disabled',false);
+		$('#ID_kBN1RadioBtn4').prop('disabled',false);
+	}
+	// 区分１の非活性処理
+	function disabledKBN1RadioBtn() {
+		$('#ID_kBN1RadioBtn1').prop('disabled',true);
+		$('#ID_kBN1RadioBtn2').prop('disabled',true);
+		$('#ID_kBN1RadioBtn3').prop('disabled',true);
+		$('#ID_kBN1RadioBtn4').prop('disabled',true);
+	}
+	// 障害者の活性処理
+	function activateSGSYACKBox() {
+		$('input[name=sGSYACKBox]').prop('disabled',false);
+	}
+	// 障害者の非活性処理
+	function disabledSGSYACKBox() {
+		$('input[name=sGSYACKBox]').prop('disabled',true);
+	}
+	// 区分１詳細の活性処理
+	function activateKBN1SHSIRadioBtn() {
+		$('#ID_kBN1SHSIRadioBtn1').prop('disabled',false);
+		$('#ID_kBN1SHSIRadioBtn2').prop('disabled',false);
+	}
+	// 区分１詳細の非活性処理
+	function disabledKBN1SHSIRadioBtn() {
+		$('#ID_kBN1SHSIRadioBtn1').prop('disabled',true);
+		$('#ID_kBN1SHSIRadioBtn2').prop('disabled',true);
+	}
+	// 大卒等詳細の活性処理
+	function activateDSSUSlctCKBox() {
+		$('input[name=dSSUSlctCKBox]').prop('disabled', false);
+	}
+	// 大卒等詳細の非活性処理
+	function disabledDSSUSlctCKBox() {
+		$('input[name=dSSUSlctCKBox]').prop('disabled', true);
+	}
+	// 全て選択、全て削除ボタンの活性処理
+	function activateButton() {
+		$('#ID_allSlctBtn,#ID_allKaijoBtn').prop('disabled', false);
+		$('#ID_allSlctBtn,#ID_allKaijoBtn').removeClass('disable');
+	}
+	// 全て選択、全て削除ボタンの非活性処理
+	function disabledButton() {
+		$('#ID_allSlctBtn,#ID_allKaijoBtn').prop('disabled', true);
+		$('#ID_allSlctBtn,#ID_allKaijoBtn').addClass('disable');
+	}
+	// 求人の対象年度ラジオボタン（大卒等）の表示処理
+	function showKJTaishoNendoDaisotsu() {
+		$('.kbn_daisotsu').show();
+		$('.kbn_kosotsu').hide();
+	}
+	// 求人の対象年度ラジオボタン（高卒）の表示処理
+	function showKJTaishoNendoKosotsu() {
+		$('.kbn_kosotsu').show();
+		$('.kbn_daisotsu').hide();
+	}
+	// 求人の対象年度の活性処理
+	function activateKJTaishoNendoRadioBtn() {
+		$('#ID_kJTaishoNendoRadioBtnDaisotsu1').prop('disabled',false);
+		$('#ID_kJTaishoNendoRadioBtnDaisotsu2').prop('disabled',false);
+		$('#ID_kJTaishoNendoRadioBtnKosotsu1').prop('disabled',false);
+		$('#ID_kJTaishoNendoRadioBtnKosotsu2').prop('disabled',false);
+	}
+	// 求人の対象年度の非活性処理
+	function disabledKJTaishoNendoRadioBtn() {
+		$('#ID_kJTaishoNendoRadioBtnDaisotsu1').prop('disabled',true);
+		$('#ID_kJTaishoNendoRadioBtnDaisotsu2').prop('disabled',true);
+		$('#ID_kJTaishoNendoRadioBtnKosotsu1').prop('disabled',true);
+		$('#ID_kJTaishoNendoRadioBtnKosotsu2').prop('disabled',true);
+	}
+	// 区分２の活性処理
+	function activateKBN2RadioBtn() {
+		$('#ID_kBN2RadioBtn1').prop('disabled',false);
+		$('#ID_kBN2RadioBtn2').prop('disabled',false);
+	}
+	// 区分２の非活性処理
+	function disabledKBN2RadioBtn() {
+		$('#ID_kBN2RadioBtn1').prop('disabled',true);
+		$('#ID_kBN2RadioBtn2').prop('disabled',true);
+	}
+	// 就労継続支援Ａ型事業の表示処理
+	function showSRKZKSIENAGTJigyoRadioBtn() {
+		// 事業所情報_就労継続支援Ａ型事業所が設定された場合
+		if ($('[name=srkzksienAgtJgsh]').val() == '1') {
+			$('.kbn_ippan').show();
+		} else {
+			$('.kbn_ippan').hide();
+		}
+	}
+	// 就労継続支援Ａ型事業の非表示処理
+	function hideSRKZKSIENAGTJigyoRadioBtn() {
+		$('.kbn_ippan').hide();
+	}
+	// 就労継続支援Ａ型事業の活性処理
+	function activateSRKZKSIENAGTJigyoRadioBtn() {
+		$('#ID_sRKZKSIENAGTJigyoRadioBtn1').prop('disabled',false);
+		$('#ID_sRKZKSIENAGTJigyoRadioBtn2').prop('disabled',false);
+	}
+	// 就労継続支援Ａ型事業の非活性処理
+	function disabledSRKZKSIENAGTJigyoRadioBtn() {
+		$('#ID_sRKZKSIENAGTJigyoRadioBtn1').prop('disabled',true);
+		$('#ID_sRKZKSIENAGTJigyoRadioBtn2').prop('disabled',true);
+	}
+	// トライアル雇用併用を活性処理
+	function activateTrialKoyoHeiyoCKBox() {
+		$('input[name=trialKoyoHeiyoCKBox]').prop('disabled',false);
+	}
+	// トライアル雇用併用を非活性処理
+	function disabledTrialKoyoHeiyoCKBox() {
+		$('input[name=trialKoyoHeiyoCKBox]').prop('disabled',true);
+	}
+	// 一般トライアル雇用求人の活性処理
+	function activateLink02() {
+	}
+	// 一般トライアル雇用求人の非活性処理
+	function disabledLink02() {
+	}
+	// 障害者トライアル雇用求人の活性処理
+	function activateLink02shogai() {
+	}
+	// 障害者トライアル雇用求人の非活性処理
+	function disabledLink02shogai() {
+	}
+	// トライアル雇用助成金（一般）支給対象事業主要件票のアップロード（任意）の活性処理
+	function activateIppanUpload() {
+		$('#ID_trlKoyoJsknIppanFileMei_file').prop('disabled',false);
+		$('#ID_trlKoyoJsknIppanFileMei_fake').prop('disabled',false);
+		$('#ID_link03').css('pointer-events', '');
+	}
+	// トライアル雇用助成金（一般）支給対象事業主要件票のアップロード（任意）の非活性処理
+	function disabledIppanUpload() {
+		$('#ID_trlKoyoJsknIppanFileMei_file').prop('disabled',true);
+		$('#ID_trlKoyoJsknIppanFileMei_fake').prop('disabled',true);
+		$('#ID_link03').css('pointer-events', 'none');
+	}
+	// トライアル雇用助成金（障害者）支給対象事業主要件票のアップロード（任意）の活性処理
+	function activateShogaiUpload() {
+		$('#ID_trlKoyoJsknSGSYAFileMei_file').prop('disabled',false);
+		$('#ID_trlKoyoJsknSGSYAFileMei_fake').prop('disabled',false);
+		$('#ID_link04').css('pointer-events', '');
+	}
+	// トライアル雇用助成金（障害者）支給対象事業主要件票のアップロード（任意）の非活性処理
+	function disabledShogaiUpload() {
+		$('#ID_trlKoyoJsknSGSYAFileMei_file').prop('disabled',true);
+		$('#ID_trlKoyoJsknSGSYAFileMei_fake').prop('disabled',true);
+		$('#ID_link04').css('pointer-events', 'none');
+	}
+	// 公開希望の活性処理
+	function activateKOKIKiboRadioBtn() {
+		$('#ID_kOKIKiboRadioBtn1').prop('disabled',false);
+		$('#ID_kOKIKiboRadioBtn2').prop('disabled',false);
+		$('#ID_kOKIKiboRadioBtn3').prop('disabled',false);
+		$('#ID_kOKIKiboRadioBtn4').prop('disabled',false);
+	}
+	// 公開希望の非活性処理
+	function disabledKOKIKiboRadioBtn() {
+		$('#ID_kOKIKiboRadioBtn1').prop('disabled',true);
+		$('#ID_kOKIKiboRadioBtn2').prop('disabled',true);
+		$('#ID_kOKIKiboRadioBtn3').prop('disabled',true);
+		$('#ID_kOKIKiboRadioBtn4').prop('disabled',true);
+	}
+	// 公開希望の非活性処理（高卒用）
+	function disabledKOKIKiboRadioBtnKosotsu() {
+		$('#ID_kOKIKiboRadioBtn1').prop('disabled',false);
+		$('#ID_kOKIKiboRadioBtn2').prop('disabled',true);
+		$('#ID_kOKIKiboRadioBtn3').prop('disabled',true);
+		$('#ID_kOKIKiboRadioBtn4').prop('disabled',false);
+	}
+	// オンライン自主応募の受付ラジオボタンの活性処理
+	function activateONLineJiSyuOuboRadioBtn() {
+		$('#ID_oNLineJiSyuOuboRadioBtn1').prop('disabled',false);
+		$('#ID_oNLineJiSyuOuboRadioBtn0').prop('disabled',false);
+	}
+	// オンライン自主応募の受付ラジオボタンの非活性処理
+	function disabledONLineJiSyuOuboRadioBtn() {
+		$('#ID_oNLineJiSyuOuboRadioBtn1').prop('disabled',true);
+		$('#ID_oNLineJiSyuOuboRadioBtn0').prop('disabled',true);
+	}
+	// オンライン自主応募同意チェックボックスの活性処理
+	function activateOuboTyuiCKBox() {
+		$('input[name=ouboTyuiCKBox]').prop('disabled',false);
+	}
+	// オンライン自主応募同意チェックボックスの非活性処理
+	function disabledOuboTyuiCKBox() {
+		$('input[name=ouboTyuiCKBox]').prop('disabled',true);
+	}
+	// オンライン提供を不可とする機関チェックボックスの活性処理
+	function activateONLINTeikyoHukaKikanCKBox() {
+		$('input[name=oNLINTeikyoHukaKikanMinCKBox]').prop('disabled',false);
+		$('input[name=oNLINTeikyoHukaKikanChihoCKBox]').prop('disabled', false);
+	}
+	// オンライン提供を不可とする機関チェックボックスの非活性処理
+	function disabledONLINTeikyoHukaKikanCKBox() {
+		$('input[name=oNLINTeikyoHukaKikanMinCKBox]').prop('disabled',true);
+		$('input[name=oNLINTeikyoHukaKikanChihoCKBox]').prop('disabled', true);
+	}
+	// リーフレット活性処理
+	function activateLeafletDoiCKBox() {
+		$('input[name=leafletDoiCKBox]').prop('disabled',false);
+		$('#ID_reaf1_link').css('pointer-events', '');
+	}
+	// リーフレット非活性処理
+	function disabledLeafletDoiCKBox() {
+		$('input[name=leafletDoiCKBox]').prop('disabled',true);
+		$('#ID_reaf1_link').css('pointer-events', 'none');
+	}
+	// 求人対象年度の活性処理
+	function kjnTaishNendoShow() {
+		$('.kjn_Taisho_Nendo').show();
+	}
+	// 求人対象年度の非活性処理 
+	function kjnTaishoNendoHide() {
+		$('.kjn_Taisho_Nendo').hide();
+	}
+});

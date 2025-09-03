@@ -57,7 +57,7 @@ export default function HelloWork(): JSX.Element {
   const PDFGet = async (): Promise<void> => {
     setLoading(true)
     setDLnums(0)
-    const filterdata = jobList.filter((item) => item.status !== '公開中')
+    const filterdata = jobList.filter((item) => item.status == '公開中')
     await window.myInventoryAPI.HelloWorkPDFGet(filterdata)
   }
 
@@ -141,6 +141,14 @@ export default function HelloWork(): JSX.Element {
     return today >= limitDate ? '更新可能' : '更新不要'
   }
 
+  const WorksUpdate = () => {
+    const data = jobList.filter((item) => JOBupdateStatus(item.紹介期限日) == '更新可能')
+    const numberData = jobList.map((item) => item.求人番号)
+      .filter((num) => num !== undefined && num !== null && num !== '')
+    console.log(numberData)
+    window.myInventoryAPI.helloworkUpdate(numberData)
+  }
+
   const workResearch = (): void => {
     setLoading(true)
     toast.promise(Research(), {
@@ -168,6 +176,7 @@ export default function HelloWork(): JSX.Element {
   const handlePDFMarge = async (): Promise<void> => {
     await window.myInventoryAPI.PDFMarge()
   }
+
 
   return (
     <div className="HelloWorkWindow">
@@ -213,6 +222,9 @@ export default function HelloWork(): JSX.Element {
           )}
           <Button variant="outlined" onClick={handlePDFMarge}>
             PDF結合
+          </Button>
+          <Button variant="outlined" onClick={() => WorksUpdate()}>
+            求人更新
           </Button>
         </div>
         <div className="HelloWorkProgress">
