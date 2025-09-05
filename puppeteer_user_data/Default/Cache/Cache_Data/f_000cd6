@@ -1,0 +1,1075 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ja">
+
+
+	
+	<head>
+<title>ハローワークインターネットサービス - 青少年雇用情報登録</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=0.5,user-scalable=yes,initial-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="jsp/css/reset.css">
+<link rel="stylesheet" href="jsp/css/buttons_orange.css">
+<link rel="stylesheet" href="jsp/css/table_orange.css">
+<link rel="stylesheet" href="jsp/css/navbar_orange.css">
+<link rel="stylesheet" href="jsp/css/page.css">
+<link rel="stylesheet" href="jsp/css/progress_orange.css">
+<link rel="stylesheet" href="jsp/css/common_orange.css">
+<link rel="stylesheet" href="jsp/css/jquery-ui.css">
+<link rel="stylesheet" href="jsp/font-awesome-4.7.0/css/font-awesome.min.css">
+
+</head>
+
+
+	
+	<body onload="init();">
+
+
+		
+		<div id="all">
+
+
+			
+			<header id="top_header">
+
+				
+					
+<div id="header" class="flex align_center last_right nowrap ml2p">
+	<a href="https://www.hellowork.mhlw.go.jp/index.html">
+		<img class="top_image_min769" src="jsp/img/logo_big.gif">
+		<img class="top_image_max768" src="jsp/img/logo_small.gif">
+	</a>
+	<div class="flex jus_end align_center">
+		<script type="text/javascript" src="jsp/js/ewbc.min.js"></script>
+		<a href="javascript:void(0);" id="pt_enable">
+			<img class="img_small" src="jsp/img/yasashii.gif" alt="やさしいブラウザ・クラウド版はこちらからご利用ください" title="やさしいブラウザ">
+		</a>
+		<a href="./logout.do" class="button media_nodisp ml05">ログアウト</a>
+		<a href="https://www.mhlw.go.jp/index.html" target="_blank">
+			<img class="img_small ml05" src="jsp/img/mhlwlogo.gif" alt="厚生労働省Webサイトはこちら" title="厚生労働省">
+		</a>
+		<div style="min-width:40px"></div>
+	</div>
+</div>
+				
+				
+				
+				
+					<nav id="mainNav"><div id="navbar" class="navbar_default"><input type="checkbox" class="navbar_checkbox" id="navbar_checkbox"><div class="navbar_menu navbar_menu_left navbar_menu_light"><ul class="navbar_navigation"><li class="navbar_header" tabindex="0"><label class="navbar_hamburger navbar_hamburger_doublespin" id="navbar_hamburger"><span></span></label><label class="navbar_humburger_caption">メニュー</label></li><li class="navbar_item active "><a href="./GEAB100010.do?action=initDisp&screenId=GEAB100010">ホーム（求人／応募管理）</a></li><li class="navbar_item "><a href="./GEAB300110.do?action=initDisp&screenId=GEAB300110">メッセージ</a></li><li class="navbar_item "><a href="./GEAB500030.do?action=initDisp&screenId=GEAB500030">事業所情報設定</a></li><li class="navbar_item login_status "><a href="./logout.do">ログアウト</a></li></ul></div></div></nav>
+
+				
+				
+				<div id="breadcrumbs" class="m_side5p"><span>
+
+					
+					
+						<a href="./GEAB100010.do?screenId=GEAB100010&#x26;action=initDisp">ホーム</a>
+
+						&nbsp;&gt;&nbsp;求人登録
+
+					
+				</span></div>
+
+			</header><p class="pagebottom"><a href="#bottom">ページ<br>最下部へ<br><i class="fa fa-2x fa-chevron-down"></i></a></p>
+
+
+			
+			<div id="container">
+
+
+				
+				<div class="fs2 fb mt1">
+					求人仮登録
+				</div>
+
+				
+				<form name="form_1" id="ID_form_1" method="post" action="GEAB030030.do" novalidate="novalidate">
+<input type="text" style="position:absolute;visibility:hidden" disabled />
+
+
+				
+				<nav><ol class="progress triangle">
+
+					<li><a href="javascript:void(0)" onclick="submitFromProgress(this,'GEAB030030','statusLink','')">1<span class="cd_pc">.求人区分等</span></a></li>
+
+					<li><a href="javascript:void(0)" onclick="submitFromProgress(this,'GEAB030030','jigyoshoJohoLink','')">2<span class="cd_pc">.事業所情報</span></a></li>
+
+					<li><a href="javascript:void(0)" onclick="submitFromProgress(this,'GEAB030030','shigotoNaiyoLink','')">3<span class="cd_pc">.仕事内容</span></a></li>
+
+					<li><a href="javascript:void(0)" onclick="submitFromProgress(this,'GEAB030030','chinginTeateLink','')">4<span class="cd_pc">.賃金・手当</span></a></li>
+
+					<li><a href="javascript:void(0)" onclick="submitFromProgress(this,'GEAB030030','rodoJikanLink','')">5<span class="cd_pc">.労働時間</span></a></li>
+
+					<li><a href="javascript:void(0)" onclick="submitFromProgress(this,'GEAB030030','hokenNenkinTeinennadoLink','')">6<span class="cd_pc">.保険・年金・定年等</span></a></li>
+
+					
+					
+					
+					
+						<li><a href="javascript:void(0)" onclick="submitFromProgress(this,'GEAB030030','senkoHohoLink','')">7<span class="cd_pc">.選考方法・応募前職場見学</span></a></li>
+
+					
+					<li class="current"><span>8<span class="cd_pc">.青少年雇用情報</span></span></li>
+
+				</ol></nav>
+
+
+				
+				<div id="ID_container">
+					
+					<div class="flex align_end last_right">
+						<div class="page_title">青少年雇用情報登録</div><hr class="media_nodisp">
+
+						<div class="flex">
+							
+								<input class="button main" id="ID_seishonenKoyouJohoTenyouBtn" name="seishonenKoyouJohoTenyouBtn" type="submit" value="最後の登録情報の読み込み" />
+
+							
+							
+								<input class="button main" id="ID_ichijiHozonBtn" name="ichijiHozonBtn" type="submit" value="一時保存" />
+
+							
+						</div>
+					</div>
+
+					
+					<hr>
+
+
+					
+					
+					
+						<div class="mt1 mb1">
+							※「最後の登録情報の読み込み」ボタンをクリックすると、最後にハローワークが受理した同じ区分（高卒求人／大卒等求人）の青少年雇用情報を読み込むことができます（仮登録状態のものは反映されません）。
+							その際、入力途中の情報は読み込んだ情報に上書きされますのでご注意ください。
+						</div>
+					
+					
+						<div class="fs10 mt1 mb1">
+							※「一時保存」すると、一時保存を行ったところから求人仮登録を再開することができます。<br>
+ただし、登録内容が異なる求人区分を変更した場合（一般→高卒等）、変更前の求人区分に関連する項目は、保存されません。
+						</div>
+					
+					<div class="fs08 mt2 mb2">
+						<div class="mb03 lh1_8">
+							<span class="nes_label nes mr05">必須</span>
+							と表示されている項目は、必ず入力してください。
+						</div>
+						<div class="mb05 lh1_8">
+							<span class="nes_label any mr05">任意</span>
+							と表示されている項目は、可能な範囲で入力してください。
+						</div>
+						<div>
+							詳しい入力方法は、「<a id="ID_nyuryokuhoho" href="https://www.hellowork.mhlw.go.jp/enterprise/ent_inputmethod.html" target="_blank">事業所・求人情報の入力方法</a>」をご覧ください。
+						</div>
+					</div>
+				</div>
+
+				
+				<div>
+				
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="flex mb1"></div>
+<div class="fs1_5">企業の職場情報</div>
+<table class="table normal mb1">
+
+
+	
+	<tr>
+
+		<th scope="row">募集・採用に関する情報
+				<div class="fb fs08">できる限り全項目をご入力ください。</div>
+				<div class="fb fs08">なお、いずれかの項目は入力必須となっております。</div>
+		<span class="nes_label nes1 nes">必須</span></th><td class="nes2"><span class="nes_label nes">必須</span></td>
+		<td>
+		
+			
+			<div class="flex input align_center mb03">
+				<div class="input_label fb">新卒者等採用者数</div>
+				<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="新卒者のほか、新卒者と同じ採用枠で採用した既卒者など、新卒者と同等の処遇を行うものを含みます。直近で終了している事業年度を含む３年度間についての状況を入力してください。離職者数は、各年度の採用者数のうち、記入日現在における離職者数を入力してください。"></i>
+	
+				<span class="restrict">半角数字</span>
+			</div>
+			
+			<div>
+				<div id="ID_kGSYSS1" name="kGSYSS1" class="flex input align_center mb03">
+					<select id="ID_kGSNSTSYSSGengo1GG" name="kGSNSTSYSSGengo1GG" class="in_width_6em">
+<option value="">&nbsp;</option>
+<option value="1">明治</option>
+<option value="2">大正</option>
+<option value="3">昭和</option>
+<option value="4">平成</option>
+<option value="5" selected>令和</option>
+</select><input type="text" id="ID_kGSNSTSYSSGengo1YY" name="kGSNSTSYSSGengo1YY" class="in_width_3_5em" maxlength="2" value="6"><span class="fs08">年度</span>
+
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGSNSTSYSS1" name="kGSNSTSYSS1" maxlength="4" value="0"><div class="input_group_addon">人</div></div></div>
+
+				</div>
+			</div>
+			
+			<div>
+				<div id="ID_kGSYSS2" name="kGSYSS2" class="flex input align_center mb03">
+					<select id="ID_kGSNSTSYSSGengo2GG" name="kGSNSTSYSSGengo2GG" class="in_width_6em">
+<option value="">&nbsp;</option>
+<option value="1">明治</option>
+<option value="2">大正</option>
+<option value="3">昭和</option>
+<option value="4">平成</option>
+<option value="5" selected>令和</option>
+</select><input type="text" id="ID_kGSNSTSYSSGengo2YY" name="kGSNSTSYSSGengo2YY" class="in_width_3_5em" maxlength="2" value="5"><span class="fs08">年度</span>
+
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGSNSTSYSS2" name="kGSNSTSYSS2" maxlength="4" value="1"><div class="input_group_addon">人</div></div></div>
+
+				</div>
+			</div>
+			
+			<div>
+				<div id="ID_kGSYSS3" name="kGSYSS3" class="flex input align_center mb03">
+					<select id="ID_kGSNSTSYSSGengo3GG" name="kGSNSTSYSSGengo3GG" class="in_width_6em">
+<option value="">&nbsp;</option>
+<option value="1">明治</option>
+<option value="2">大正</option>
+<option value="3">昭和</option>
+<option value="4">平成</option>
+<option value="5" selected>令和</option>
+</select><input type="text" id="ID_kGSNSTSYSSGengo3YY" name="kGSNSTSYSSGengo3YY" class="in_width_3_5em" maxlength="2" value="4"><span class="fs08">年度</span>
+
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGSNSTSYSS3" name="kGSNSTSYSS3" maxlength="4" value="1"><div class="input_group_addon">人</div></div></div>
+
+				</div>
+			</div>
+			<hr>
+
+				
+			
+			<div class="flex input align_center mb03">
+				<div class="ml05 mt05 fb">新卒者等離職者数<span class="restrict">半角数字</span></div>
+			</div>
+			<div class="flex input">
+				<div>
+					<div id="ID_kGRSSS1" name="kGRSSS1" class="flex input align_center mb03">
+						<div class="m05 mt1" name="kGSNSTRSSSGengo1" id="ID_kGSNSTRSSSGengo1">5</div>
+
+						<div class="m05 mt1" name="kGSNSTRSSSWareki1" id="ID_kGSNSTRSSSWareki1">6</div>
+
+						<div class="fb">年度</div>
+						<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGSNSTRSSS1" name="kGSNSTRSSS1" maxlength="4" value="0"><div class="input_group_addon">人</div></div></div>
+
+					</div>					
+					<div id="ID_kGRSSS2" name="kGRSSS2" class="flex input align_center mb03">
+						<div class="m05 mt1" name="kGSNSTRSSSGengo2" id="ID_kGSNSTRSSSGengo2">5</div>
+
+						<div class="m05 mt1" name="kGSNSTRSSSWareki2" id="ID_kGSNSTRSSSWareki2">5</div>
+
+						<div class="fb">年度</div>
+						<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGSNSTRSSS2" name="kGSNSTRSSS2" maxlength="4" value="0"><div class="input_group_addon">人</div></div></div>
+
+					</div>
+					<div id="ID_kGRSSS3" name="kGRSSS3" class="flex input align_center mb03">
+						<div class="m05 mt1" name="kGSNSTRSSSGengo3" id="ID_kGSNSTRSSSGengo3">5</div>
+
+						<div class="m05 mt1" name="kGSNSTRSSSWareki3" id="ID_kGSNSTRSSSWareki3">4</div>
+
+						<div class="fb">年度</div>
+						<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGSNSTRSSS3" name="kGSNSTRSSS3" maxlength="4" value="1"><div class="input_group_addon">人</div></div></div>
+
+					</div>
+				</div>
+			</div>
+			<hr>
+
+			
+			
+			<div class="flex input align_center mb03">
+				<div class="ml05 mt05 fb">男性新卒者等採用者数<span class="restrict">半角数字</span></div>
+			</div>
+			<div class="flex input">
+				<div>
+					<div id="ID_kGDansei1" name="kGDansei1" class="flex input align_center mb03">
+						<div class="m05 mt1" name="kGDanseiSNSTSYSSGengo1" id="ID_kGDanseiSNSTSYSSGengo1">5</div>
+
+						<div class="m05 mt1" name="kGDanseiSNSTSYSSWareki1" id="ID_kGDanseiSNSTSYSSWareki1">6</div>
+
+						<div class="fb">年度</div>
+						<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGDanseiSNSTSYSS1" name="kGDanseiSNSTSYSS1" maxlength="4" value="0"><div class="input_group_addon">人</div></div></div>
+
+					</div>
+					<div id="ID_kGDansei2" name="kGDansei2" class="flex input align_center mb03">
+						<div class="m05 mt1" name="kGDanseiSNSTSYSSGengo2" id="ID_kGDanseiSNSTSYSSGengo2">5</div>
+
+						<div class="m05 mt1" name="kGDanseiSNSTSYSSWareki2" id="ID_kGDanseiSNSTSYSSWareki2">5</div>
+
+						<div class="fb">年度</div>
+						<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGDanseiSNSTSYSS2" name="kGDanseiSNSTSYSS2" maxlength="4" value="1"><div class="input_group_addon">人</div></div></div>
+
+					</div>
+					<div id="ID_kGDansei3" name="kGDansei3" class="flex input align_center mb03">
+						<div class="m05 mt1" name="kGDanseiSNSTSYSSGengo3" id="ID_kGDanseiSNSTSYSSGengo3">5</div>
+
+						<div class="m05 mt1" name="kGDanseiSNSTSYSSWareki3" id="ID_kGDanseiSNSTSYSSWareki3">4</div>
+
+						<div class="fb">年度</div>
+						<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGDanseiSNSTSYSS3" name="kGDanseiSNSTSYSS3" maxlength="4" value="1"><div class="input_group_addon">人</div></div></div>
+
+					</div>
+				</div>
+			</div>
+			<hr>
+
+			
+			
+			<div class="flex input align_center mb03">
+				<div class="ml05 mt05 fb">女性新卒者等採用者数<span class="restrict">半角数字</span></div>
+			</div>
+			<div class="flex input">
+				<div>
+					<div id="ID_kGJosei1" name="kGJosei1" class="flex input align_center mb03">
+						<div class="m05 mt1" name="kGJoseiSNSTSYSSGengo1" id="ID_kGJoseiSNSTSYSSGengo1">5</div>
+			
+						<div class="m05 mt1" name="kGJoseiSNSTSYSSWareki1" id="ID_kGJoseiSNSTSYSSWareki1">6</div>
+
+						<div class="fb">年度</div>
+						<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGJoseiSNSTSYSS1" name="kGJoseiSNSTSYSS1" maxlength="4" value="0"><div class="input_group_addon">人</div></div></div>
+
+					</div>
+					<div id="ID_kGJosei2" name="kGJosei2" class="flex input align_center mb03">
+						<div class="m05 mt1" name="kGJoseiSNSTSYSSGengo2" id="ID_kGJoseiSNSTSYSSGengo2">5</div>
+		
+						<div class="m05 mt1" name="kGJoseiSNSTSYSSWareki2" id="ID_kGJoseiSNSTSYSSWareki2">5</div>
+
+						<div class="fb">年度</div>
+						<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGJoseiSNSTSYSS2" name="kGJoseiSNSTSYSS2" maxlength="4" value="0"><div class="input_group_addon">人</div></div></div>
+
+					</div>
+					<div id="ID_kGJosei3" name="kGJosei3" class="flex input align_center mb03">
+						<div class="m05 mt1" name="kGJoseiSNSTSYSSGengo3" id="ID_kGJoseiSNSTSYSSGengo3">5</div>
+
+						<div class="m05 mt1" name="kGJoseiSNSTSYSSWareki3" id="ID_kGJoseiSNSTSYSSWareki3">4</div>
+
+						<div class="fb">年度</div>
+						<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGJoseiSNSTSYSS3" name="kGJoseiSNSTSYSS3" maxlength="4" value="0"><div class="input_group_addon">人</div></div></div>
+
+					</div>
+				</div>
+			</div>
+			<hr>
+
+			
+			
+			<div class="flex"><div>
+				<div class="flex input align_center mb03">
+					<div class="input_label fb">平均継続勤務年数</div>
+					<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="労働者ごとの雇い入れられてから入力日時点までに勤続した年数を合計した値を、労働者数で割って算出します。"></i>
+	
+					<span class="restrict">半角数字（小数点第一位まで）</span>
+				</div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGHeikinKimmuNensu" name="kGHeikinKimmuNensu" maxlength="4" value="7.0"><div class="input_group_addon">年</div></div></div>
+
+				</div>
+			</div></div>
+			<hr>
+
+			
+			
+			<div class="flex"><div>
+				<div class="flex input align_center mb03">
+					<div class="input_label fb">従業員の平均年齢</div>
+					<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="若者雇用促進法に基づく青少年雇用情報の項目ではありませんが、参考値として、入力日時点での平均年齢も可能な限り入力してください。平均勤続勤務年数及び平均年齢は、事業年度末時点、事業年度当初等、入力日直近の数値としても差し支えありません。"></i>
+
+					<span class="restrict">半角数字（小数点第一位まで）</span>
+				</div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGJGINNenrei" name="kGJGINNenrei" maxlength="4" value="35.0"><div class="input_group_addon">歳</div></div></div>
+
+				</div>
+			</div></div>
+		</td>
+	</tr>
+
+	
+	
+	<tr>
+
+		<th scope="row">職業能力の開発及び向上に関する取組の実施状況
+			<div class="fb fs08">できる限り全項目をご入力ください。</div>
+			<div class="fb fs08">なお、いずれかの項目は入力必須となっております。</div>
+		<span class="nes_label nes1 nes">必須</span></th><td class="nes2"><span class="nes_label nes">必須</span></td>
+		<td>
+		
+			
+			<div class="flex input"><div>
+				<div class="fb">研修の有無
+					<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="具体的な対象者、内容を示してください。全ての研修の内容を書き切れない場合は、主な研修の内容のみ入力してください。"></i>
+
+				</div>
+				<div id="ID_knsyuUmu" name="knsyuUmu" class="flex input align_center mb03">
+					<div class="radio"><label id="ID_LknsyuUmu1" for="ID_knsyuUmu1"><input type="radio" id="ID_knsyuUmu1" name="knsyuUmu" value="1" checked>あり</label></div>
+
+					<div class="radio"><label id="ID_LknsyuUmu2" for="ID_knsyuUmu2"><input type="radio" id="ID_knsyuUmu2" name="knsyuUmu" value="0">なし</label></div>
+
+					<div class="radio"><label id="ID_LknsyuUmu3" for="ID_knsyuUmu3"><input type="radio" id="ID_knsyuUmu3" name="knsyuUmu" value="">未選択</label></div>
+
+				</div>
+			</div></div>
+			
+			<div class="flex"><div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb">研修内容<span class="restrict ">全角63文字以内</span><br><span class="restrict ">出力帳票に合わせて縦2行、横32文字で編集します。</span></div><textarea  class="in_width_35em mt05 ml05" id="ID_knsyuNY" name="knsyuNY" maxlength="63" rows="2">個々の店舗で店長が新入社員に対して実務研修を実施</textarea></div>
+
+				</div>
+			</div></div>
+			<hr>
+
+			
+			
+			<div class="flex input"><div>
+					<div class="fb">自己啓発支援の有無
+						<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="教育訓練休暇制度、教育訓練短時間勤務制度がある場合は、その情報を含めて入力してください。他には、配置等についての配慮、始終業時刻の変更、資格取得の費用補助等もこの欄に入力してください。"></i>
+
+					</div>
+					<div id="ID_jKKHShienUmu" name="jKKHShienUmu" class="flex input align_center mb03">					
+						<div class="radio"><label id="ID_LjKKHShienUmu1" for="ID_jKKHShienUmu1"><input type="radio" id="ID_jKKHShienUmu1" name="jKKHShienUmu" value="1" checked>あり</label></div>
+
+						<div class="radio"><label id="ID_LjKKHShienUmu2" for="ID_jKKHShienUmu2"><input type="radio" id="ID_jKKHShienUmu2" name="jKKHShienUmu" value="0">なし</label></div>
+
+						<div class="radio"><label id="ID_LjKKHShienUmu3" for="ID_jKKHShienUmu3"><input type="radio" id="ID_jKKHShienUmu3" name="jKKHShienUmu" value="">未選択</label></div>
+
+					</div>
+				</div></div>
+			
+			<div class="flex"><div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb">自己啓発支援内容<span class="restrict ">全角60文字以内</span><br><span class="restrict ">出力帳票に合わせて縦2行、横30文字で編集します。</span></div><textarea  class="in_width_35em mt05 ml05" id="ID_jKKHShienNY" name="jKKHShienNY" maxlength="60" rows="2">通学される方については、勤務時間等の調整を行う
+資格取得の為の貸付制度あり</textarea></div>
+
+				</div>
+			</div></div>
+			<hr>
+
+			
+			
+			<div class="flex input"><div>
+				<div class="fb">メンター制度の有無
+					<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="メンター制度とは、新たに雇い入れた新規学卒者等からの職業能力の開発及び向上その他の職業生活に関する相談に応じ、並びに必要な助言その他の援助を行う者を当該新規学卒者に割り当てる制度のことです。"></i>
+
+				</div>
+				<div id="ID_mentorSDUmu" name="mentorSDUmu" class="flex input align_center mb03">		
+						<div class="radio"><label id="ID_LmentorSDUmu1" for="ID_mentorSDUmu1"><input type="radio" id="ID_mentorSDUmu1" name="mentorSDUmu" value="1" checked>あり</label></div>
+
+						<div class="radio"><label id="ID_LmentorSDUmu2" for="ID_mentorSDUmu2"><input type="radio" id="ID_mentorSDUmu2" name="mentorSDUmu" value="0">なし</label></div>
+
+						<div class="radio"><label id="ID_LmentorSDUmu3" for="ID_mentorSDUmu3"><input type="radio" id="ID_mentorSDUmu3" name="mentorSDUmu" value="">未選択</label></div>
+
+				</div>
+			</div></div>
+			<hr>
+
+			
+			
+			<div class="flex input"><div>
+				<div class="fb">キャリアコンサルティング制度の有無
+					<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="セルフ・キャリアドックを実施している場合は、その情報を含めて入力してください。キャリアコンサルティングを実施する者が企業に雇用されているかどうか、また資格の有無は問いませんが、企業内の仕組みとして実施されていることが必要です。"></i>
+
+				</div>
+				<div id="ID_careconSDUmu" name="careconSDUmu" class="flex input align_center mb03">
+						<div class="radio"><label id="ID_LcareconSDUmu1" for="ID_careconSDUmu1"><input type="radio" id="ID_careconSDUmu1" name="careconSDUmu" value="1" checked>あり</label></div>
+
+						<div class="radio"><label id="ID_LcareconSDUmu2" for="ID_careconSDUmu2"><input type="radio" id="ID_careconSDUmu2" name="careconSDUmu" value="0">なし</label></div>
+
+						<div class="radio"><label id="ID_LcareconSDUmu3" for="ID_careconSDUmu3"><input type="radio" id="ID_careconSDUmu3" name="careconSDUmu" value="">未選択</label></div>
+
+				</div>
+			</div></div>
+			
+			<div class="flex"><div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb">キャリアコンサルティング制度内容<span class="restrict ">全角60文字以内</span><br><span class="restrict ">出力帳票に合わせて縦2行、横30文字で編集します。</span></div><textarea  class="in_width_35em mt05 ml05" id="ID_careconSDNY" name="careconSDNY" maxlength="60" rows="2">上司とのキャリアコンサルティングあり</textarea></div>
+
+				</div>
+			</div></div>
+			<hr>
+
+			
+			
+			<div class="flex input"><div>
+				<div class="fb">社内検定等の制度の有無
+					<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="自社で実施する社内検定制度のほか、業界団体が実施する検定を活用する場合も「あり」と入力してください。"></i>
+
+				</div>
+				<div id="ID_kGSNKTUmu" name="kGSNKTUmu" class="flex input align_center mb03">
+						<div class="radio"><label id="ID_LkGSNKTUmu1" for="ID_kGSNKTUmu1"><input type="radio" id="ID_kGSNKTUmu1" name="kGSNKTUmu" value="1" checked>あり</label></div>
+
+						<div class="radio"><label id="ID_LkGSNKTUmu2" for="ID_kGSNKTUmu2"><input type="radio" id="ID_kGSNKTUmu2" name="kGSNKTUmu" value="0">なし</label></div>
+
+						<div class="radio"><label id="ID_LkGSNKTUmu3" for="ID_kGSNKTUmu3"><input type="radio" id="ID_kGSNKTUmu3" name="kGSNKTUmu" value="">未選択</label></div>
+
+				</div>
+			</div></div>
+			
+			<div class="flex"><div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb">社内検定等の制度内容<span class="restrict ">全角60文字以内</span><br><span class="restrict ">出力帳票に合わせて縦2行、横30文字で編集します。</span></div><textarea  class="in_width_35em mt05 ml05" id="ID_sNKTSDNY" name="sNKTSDNY" maxlength="60" rows="2">各種技術社内検定制度を実施</textarea></div>
+
+				</div>
+			</div></div>
+		</td>
+	</tr>
+
+	
+	
+	<tr>
+
+		<th scope="row">職場への定着の促進に関する取組の実施状況
+			<div class="fb fs08">できる限り全項目をご入力ください。</div>
+			<div class="fb fs08">なお、いずれかの項目は入力必須となっております。</div>
+		<span class="nes_label nes1 nes">必須</span></th><td class="nes2"><span class="nes_label nes">必須</span></td>
+		<td>
+		
+			
+			<div class="flex input"><div>
+				<div class="flex fb">前事業年度の月平均所定外労働時間
+					<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="『労働者ごとの一月あたりの所定外労働時間の平均値の合計／前事業年度の労働者数』または『前事業年度の所定外労働時間の合計／各月１日に在籍している労働者の延べ人数』（管理的地位にある者については、算出対象から除いて差し支えありません。）"></i>
+
+					<span class="restrict">半角数字（小数点第一位まで）</span>
+				</div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_6em" id="ID_kGShoteiGaiRodoJN" name="kGShoteiGaiRodoJN" maxlength="5" value="40.0"><div class="input_group_addon">時間</div></div></div>
+
+				</div>
+			</div></div>
+			<hr>
+
+			
+			
+			<div class="flex input"><div>
+				<div class="flex fb">前事業年度の有給休暇の平均取得日数
+					<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="『前事業年度の労働者ごとの年次有給休暇の取得日数の合計／前事業年度の労働者数』（管理的地位にある者、有給休暇が付与されていない者については、算出対象から除いて差し支えありません。）"></i>
+
+					<span class="restrict">半角数字（小数点第一位まで）</span>
+				</div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGYukyu" name="kGYukyu" maxlength="4" value="7.0"><div class="input_group_addon">日</div></div></div>
+
+				</div>
+			</div></div>
+			<hr>
+
+			
+			
+			<div><div class="flex input">
+			<div class="ml05 mt05 fb">前事業年度の育児休業取得者数
+				<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="育児休業取得者数及び出産者数について、いずれも入力してください。<br>男性については、配偶者の出産者数を入力してください。"></i>
+
+				<span class="restrict">半角数字</span>
+			</div>
+			</div></div>
+			
+			<div class="flex input">
+				<div id="ID_kGIkuKyu" name="kGIkuKyu" class="flex input align_center mb03">
+				<div>
+					<div class="flex fb">女性</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGJoseiIkuKyu" name="kGJoseiIkuKyu" maxlength="4" value="0"><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				<div>
+					<div class="flex fb">男性</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGDanseiIkuKyu" name="kGDanseiIkuKyu" maxlength="4" value="0"><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				</div>
+			</div>
+			
+			<div><div class="flex input">
+				<div class="ml05 mt05 fb">前事業年度の出産者数
+				<span class="restrict">半角数字</span></div>
+			</div></div>
+			
+			<div class="flex input">
+				<div id="ID_kGBirth" name="kGBirth" class="flex input align_center mb03">
+				<div>
+					<div class="flex fb">女性</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGJoseiBirth" name="kGJoseiBirth" maxlength="4" value="0"><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				<div>
+					<div class="flex fb">男性の配偶者</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kGDanseiBirth" name="kGDanseiBirth" maxlength="4" value="0"><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				</div>
+			</div>
+			<hr>
+
+			
+			
+			<div class="flex input">
+				<div id="ID_kGJoseiWrai" name="kGJoseiWrai" class="flex input align_center mb03">
+				<div>
+					<div class="flex fb">女性の役員割合</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_6em" id="ID_kGJoseiYakuin" name="kGJoseiYakuin" maxlength="5" value="25.0"><div class="input_group_addon">&#x25;</div></div></div>
+
+				</div>
+				<div>
+					<div class="flex fb">女性の管理職割合
+						<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="求人区分に関わらず、貴社の雇用されている全ての労働者に関する情報としてください。<br>※「管理的地位にある者」とは、原則としていわゆる課長級以上が該当します。"></i>
+
+						<span class="restrict">半角数字（小数点第一位まで）</span>
+					</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_6em" id="ID_kGJoseiKR" name="kGJoseiKR" maxlength="5" value="0.0"><div class="input_group_addon">&#x25;</div></div></div>
+
+				</div>
+				</div>
+			</div>
+		</td>
+	</tr>
+
+</table>
+
+
+<div class="fs1_5 mt1">区分毎の職場情報</div>
+<table class="table normal mb1">
+
+
+	
+	<tr>
+
+		<th scope="row">区分毎の情報<span class="nes_label nes1 any">任意</span></th><td class="nes2"><span class="nes_label any">任意</span></td>
+		<td>
+			<div class="flex input align_center mb03">
+				<div class="m03"><div class="fb"><span class="restrict nolabel ">全角6文字以内</span></div><div><input type="text" class="in_width_11em" id="ID_kBNINF" name="kBNINF" maxlength="6" value=""></div></div>
+
+			</div>
+		</td>
+	</tr>
+
+
+	
+	<tr>
+
+		<th scope="row">募集・採用に関する情報
+			<div class="fb fs08">できる限り全項目をご入力ください。</div>
+			<div class="fb fs08">なお、いずれかの項目は入力必須となっております。</div>
+		<span class="nes_label nes1 any">任意</span></th><td class="nes2"><span class="nes_label any">任意</span></td>
+		<td>
+		
+			
+			<div class="flex input align_center mb03">
+				<div class="input_label fb">新卒者等採用者数</div>
+				<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="新卒者のほか、新卒者と同じ採用枠で採用した既卒者など、新卒者と同等の処遇を行うものを含みます。直近で終了している事業年度を含む３年度間についての状況を入力してください。離職者数は、各年度の採用者数のうち、記入日現在における離職者数を入力してください。"></i>
+	
+				<span class="restrict">半角数字</span>
+			</div>
+			
+			
+			<div>
+				<div id="ID_kBNSYSS1" name="kBNSYSS1" class="flex input align_center mb03">
+					<select id="ID_kBNSNSTSYSSGengo1GG" name="kBNSNSTSYSSGengo1GG" class="in_width_6em">
+<option value="">&nbsp;</option>
+<option value="1">明治</option>
+<option value="2">大正</option>
+<option value="3">昭和</option>
+<option value="4">平成</option>
+<option value="5">令和</option>
+</select><input type="text" id="ID_kBNSNSTSYSSGengo1YY" name="kBNSNSTSYSSGengo1YY" class="in_width_3_5em" maxlength="2" value=""><span class="fs08">年度</span>
+
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNSNSTSYSS1" name="kBNSNSTSYSS1" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+			</div>
+			
+			<div>
+				<div id="ID_kBNSYSS2" name="kBNSYSS2" class="flex input align_center mb03">
+					<select id="ID_kBNSNSTSYSSGengo2GG" name="kBNSNSTSYSSGengo2GG" class="in_width_6em">
+<option value="">&nbsp;</option>
+<option value="1">明治</option>
+<option value="2">大正</option>
+<option value="3">昭和</option>
+<option value="4">平成</option>
+<option value="5">令和</option>
+</select><input type="text" id="ID_kBNSNSTSYSSGengo2YY" name="kBNSNSTSYSSGengo2YY" class="in_width_3_5em" maxlength="2" value=""><span class="fs08">年度</span>
+
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNSNSTSYSS2" name="kBNSNSTSYSS2" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+			</div>
+			
+			<div>
+				<div id="ID_kBNSYSS3" name="kBNSYSS3" class="flex input align_center mb03">
+					<select id="ID_kBNSNSTSYSSGengo3GG" name="kBNSNSTSYSSGengo3GG" class="in_width_6em">
+<option value="">&nbsp;</option>
+<option value="1">明治</option>
+<option value="2">大正</option>
+<option value="3">昭和</option>
+<option value="4">平成</option>
+<option value="5">令和</option>
+</select><input type="text" id="ID_kBNSNSTSYSSGengo3YY" name="kBNSNSTSYSSGengo3YY" class="in_width_3_5em" maxlength="2" value=""><span class="fs08">年度</span>
+
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNSNSTSYSS3" name="kBNSNSTSYSS3" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+			</div>
+			<hr>
+
+			
+			
+			<div class="flex input align_center mb03">
+				<div class="ml05 mt05 fb">新卒者等離職者数<span class="restrict">半角数字</span></div>
+			</div>
+			<div>
+				<div id="ID_kBNRSSS1" name="kBNRSSS1" class="flex input align_center mb03">
+					<div class="m05 mt1" name="kBNSNSTRSSSGengo1" id="ID_kBNSNSTRSSSGengo1">&nbsp;</div>
+
+					<div class="m05 mt1" name="kBNSNSTRSSSWareki1" id="ID_kBNSNSTRSSSWareki1">&nbsp;</div>
+
+					<div class="fb">年度</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNSNSTRSSS1" name="kBNSNSTRSSS1" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				<div id="ID_kBNRSSS2" name="kBNRSSS2" class="flex input align_center mb03">
+					<div class="m05 mt1" name="kBNSNSTRSSSGengo2" id="ID_kBNSNSTRSSSGengo2">&nbsp;</div>
+
+					<div class="m05 mt1" name="kBNSNSTRSSSWareki2" id="ID_kBNSNSTRSSSWareki2">&nbsp;</div>
+
+					<div class="fb">年度</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNSNSTRSSS2" name="kBNSNSTRSSS2" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				<div id="ID_kBNRSSS3" name="kBNRSSS3" class="flex input align_center mb03">
+					<div class="m05 mt1" name="kBNSNSTRSSSGengo3" id="ID_kBNSNSTRSSSGengo3">&nbsp;</div>
+
+					<div class="m05 mt1" name="kBNSNSTRSSSWareki3" id="ID_kBNSNSTRSSSWareki3">&nbsp;</div>
+
+					<div class="fb">年度</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNSNSTRSSS3" name="kBNSNSTRSSS3" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+			</div>
+			<hr>
+
+			
+			
+			<div class="flex input align_center mb03">
+				<div class="ml05 mt05 fb">男性新卒者等採用者数<span class="restrict">半角数字</span></div>
+			</div>
+			<div>
+				<div id="ID_kBNDansei1" name="kBNDansei1" class="flex input align_center mb03">
+					<div class="m05 mt1" name="kBNDanseiSNSTSYSSGengo1" id="ID_kBNDanseiSNSTSYSSGengo1">&nbsp;</div>
+
+					<div class="m05 mt1" name="kBNDanseiSNSTSYSSWareki1" id="ID_kBNDanseiSNSTSYSSWareki1">&nbsp;</div>
+
+					<div class="fb">年度</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNDanseiSNSTSYSS1" name="kBNDanseiSNSTSYSS1" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				<div id="ID_kBNDansei2" name="kBNDansei2" class="flex input align_center mb03">
+					<div class="m05 mt1" name="kBNDanseiSNSTSYSSGengo2" id="ID_kBNDanseiSNSTSYSSGengo2">&nbsp;</div>
+
+					<div class="m05 mt1" name="kBNDanseiSNSTSYSSWareki2" id="ID_kBNDanseiSNSTSYSSWareki2">&nbsp;</div>
+
+					<div class="fb">年度</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNDanseiSNSTSYSS2" name="kBNDanseiSNSTSYSS2" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				<div id="ID_kBNDansei3" name="kBNDansei3" class="flex input align_center mb03">
+					<div class="m05 mt1" name="kBNDanseiSNSTSYSSGengo3" id="ID_kBNDanseiSNSTSYSSGengo3">&nbsp;</div>
+
+					<div class="m05 mt1" name="kBNDanseiSNSTSYSSWareki3" id="ID_kBNDanseiSNSTSYSSWareki3">&nbsp;</div>
+
+					<div class="fb">年度</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNDanseiSNSTSYSS3" name="kBNDanseiSNSTSYSS3" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+			</div>
+			<hr>
+
+			
+			
+			<div class="flex input align_center mb03">
+				<div class="ml05 mt05 fb">女性新卒者等採用者数<span class="restrict">半角数字</span></div>
+			</div>
+			<div>
+				<div id="ID_kBNJosei1" name="kBNJosei1" class="flex input align_center mb03">
+					<div class="m05 mt1" name="kBNJoseiSNSTSYSSGengo1" id="ID_kBNJoseiSNSTSYSSGengo1">&nbsp;</div>
+			
+					<div class="m05 mt1" name="kBNJoseiSNSTSYSSWareki1" id="ID_kBNJoseiSNSTSYSSWareki1">&nbsp;</div>
+
+					<div class="fb">年度</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNJoseiSNSTSYSS1" name="kBNJoseiSNSTSYSS1" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				<div id="ID_kBNJosei2" name="kBNJosei2" class="flex input align_center mb03">
+					<div class="m05 mt2" name="kBNJoseiSNSTSYSSGengo2" id="ID_kBNJoseiSNSTSYSSGengo2">&nbsp;</div>
+			
+					<div class="m05 mt2" name="kBNJoseiSNSTSYSSWareki2" id="ID_kBNJoseiSNSTSYSSWareki2">&nbsp;</div>
+
+					<div class="fb">年度</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNJoseiSNSTSYSS2" name="kBNJoseiSNSTSYSS2" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				<div id="ID_kBNJosei3" name="kBNJosei3" class="flex input align_center mb03">
+					<div class="m05 mt3" name="kBNJoseiSNSTSYSSGengo3" id="ID_kBNJoseiSNSTSYSSGengo3">&nbsp;</div>
+		
+					<div class="m05 mt3" name="kBNJoseiSNSTSYSSWareki3" id="ID_kBNJoseiSNSTSYSSWareki3">&nbsp;</div>
+
+					<div class="fb">年度</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNJoseiSNSTSYSS3" name="kBNJoseiSNSTSYSS3" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+			</div>	
+			<hr>
+
+			
+			
+			<div class="flex"><div>
+				<div class="flex input align_center mb03">
+					<div class="flex fb">平均継続勤務年数
+						<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="労働者ごとの雇い入れられてから入力日時点までに勤続した年数を合計した値を、労働者数で割って算出します。"></i>
+
+						<span class="restrict">半角数字（小数点第一位まで）</span>
+					</div>
+				</div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNKimmuNensu" name="kBNKimmuNensu" maxlength="4" value=""><div class="input_group_addon">年</div></div></div>
+
+				</div>
+			</div></div>
+			<hr>
+
+
+			
+			<div class="flex"><div>
+				<div class="flex input align_center mb03">
+					<div class="flex fb">従業員の平均年齢
+						<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="若者雇用促進法に基づく青少年雇用情報の項目ではありませんが、参考値として、入力日時点での平均年齢も可能な限り入力してください。平均勤続勤務年数及び平均年齢は、事業年度末時点、事業年度当初等、入力日直近の数値としても差し支えありません。"></i>
+
+						<span class="restrict">半角数字（小数点第一位まで）</span>
+					</div>
+				</div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNJGINNenrei" name="kBNJGINNenrei" maxlength="4" value=""><div class="input_group_addon">歳</div></div></div>
+
+				</div>
+			</div></div>
+		</td>
+	</tr>
+
+
+	
+	<tr>
+
+		<th scope="row">職場への定着の促進に関する取組の実施状況
+			<div class="fb fs08">できる限り全項目をご入力ください。</div>
+			<div class="fb fs08">なお、いずれかの項目は入力必須となっております。</div>
+		<span class="nes_label nes1 any">任意</span></th><td class="nes2"><span class="nes_label any">任意</span></td>
+		<td>
+		
+			
+			<div class="flex input"><div>
+				<div class="flex fb">前事業年度の月平均所定外労働時間
+					<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="『労働者ごとの一月あたりの所定外労働時間の平均値の合計／前事業年度の労働者数』または『前事業年度の所定外労働時間の合計／各月１日に在籍している労働者の延べ人数』（管理的地位にある者については、算出対象から除いて差し支えありません。）"></i>
+
+					<span class="restrict">半角数字（小数点第一位まで）</span>
+				</div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_6em" id="ID_kBNShoteiGaiJN" name="kBNShoteiGaiJN" maxlength="5" value=""><div class="input_group_addon">時間</div></div></div>
+
+				</div>
+			</div></div>						
+			<hr>
+
+			
+			
+			<div class="flex input"><div>
+				<div class="flex fb">前事業年度の有給休暇の平均取得日数
+					<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="『前事業年度の労働者ごとの年次有給休暇の取得日数の合計／前事業年度の労働者数』（管理的地位にある者、有給休暇が付与されていない者については、算出対象から除いて差し支えありません。）"></i>
+
+					<span class="restrict">半角数字（小数点第一位まで）</span>
+				</div>
+				<div class="flex input align_center mb03">
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNYukyu" name="kBNYukyu" maxlength="4" value=""><div class="input_group_addon">日</div></div></div>
+
+				</div>
+			</div></div>
+			<hr>
+
+			
+			
+			<div><div class="flex input">
+				<div class="ml05 mt05 fb">前事業年度の育児休業取得者数
+					<i class="fa fa-question-circle-o fa-lg  " aria-hidden="true" rel="tooltip" title="育児休業取得者数及び出産者数について、いずれも入力してください。<br>男性については、配偶者の出産者数を入力してください。"></i>
+
+					<span class="restrict">半角数字</span>
+				</div>
+			</div></div>
+			
+			<div class="flex input">
+				<div id="ID_kBNIkuKyu" name="kBNIkuKyu" class="flex input align_center mb03">
+				<div>
+					<div class="flex fb">女性</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNJoseiIkuKyu" name="kBNJoseiIkuKyu" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				<div>
+						<div class="flex fb">男性</div>
+						<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNDanseiIkuKyu" name="kBNDanseiIkuKyu" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				</div>
+			</div>
+			
+			<div><div class="flex input">
+				<div class="ml05 mt05 fb">前事業年度の出産者数
+				<span class="restrict">半角数字</span></div>
+			</div></div>
+			
+			<div class="flex input">
+				<div id="ID_kBNBirth" name="kBNBirth" class="flex input align_center mb03">
+				<div>
+					<div class="flex fb">女性</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNJoseiBirth" name="kBNJoseiBirth" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				<div>
+					<div class="flex fb">男性の配偶者</div>
+					<div class="m03"><div class="fb"><span class="restrict nolabel "></span></div><div class="input_group"><input type="text" class="talign-right in_width_5em" id="ID_kBNDanseiBirth" name="kBNDanseiBirth" maxlength="4" value=""><div class="input_group_addon">人</div></div></div>
+
+				</div>
+				</div>
+			</div>
+		</td>
+	</tr>
+
+</table>
+
+<input type="hidden" id="ID_tokenNoReset" name="tokenNoReset" value="0">
+
+				</div>
+				
+				<div class="flex jus_end">
+					<button class="button button mr1" id="ID_kyujinhyoBtn" name="kyujinhyoBtn" type="button" value="仮求人票を表示">仮求人票を表示</button>
+
+				</div>
+				<div class="flex jus_end">
+					<input class="button sub" id="ID_prevScreenBtn" name="prevScreenBtn" type="submit" value="前へ戻る" />
+
+					<input class="button main" id="ID_kanryoBtn" name="kanryoBtn" type="submit" value="完了" />
+
+				</div>
+				
+				
+				
+					<input type="hidden" id="ID_rtmParam" name="rtmParam" value="GEAB030060">
+
+				
+				
+				
+					<input type="hidden" id="ID_rtmParam2" name="rtmParam2" value="GEAB030130">
+
+				
+				
+				
+				
+				
+				<input type="hidden" id="ID_sessionUniqueKey" name="sessionUniqueKey" value="20250905152002134347444b1-3098-4b85-a4f0-782f6f1d6ca8">
+
+				
+				<input type="hidden" id="ID_screenTranCt" name="screenTranCt" value="8">
+
+			<input type="hidden" id="ID_screenId" name="screenId" value="GEAB030030">
+<input type="hidden" id="ID_action" name="action" value="">
+<input type="hidden" id="ID_codeAssistType" name="codeAssistType" value="">
+<input type="hidden" id="ID_codeAssistKind" name="codeAssistKind" value="">
+<input type="hidden" id="ID_codeAssistCode" name="codeAssistCode" value="">
+<input type="hidden" id="ID_codeAssistItemCode" name="codeAssistItemCode" value="">
+<input type="hidden" id="ID_codeAssistItemName" name="codeAssistItemName" value="">
+<input type="hidden" id="ID_codeAssistDivide" name="codeAssistDivide" value="">
+<input type="hidden" id="ID_maba_vrbs" name="maba_vrbs" value="ichijiHozonBtn,prevScreenBtn,kanryoBtn,kyujinhyoBtn,seishonenKoyouJohoTenyouBtn">
+<input type="hidden" id="ID_preCheckFlg" name="preCheckFlg" value="true">
+<input type="hidden" id="ID_fwAddToken" name="fwAddToken" value="1" >
+<input type="hidden" id="ID_fwTokenKey" name="fwTokenKey" value="237e7505-80c5-4329-bd6d-383c196221ef">
+</form>
+
+			</div>
+
+
+			
+			
+<footer>
+	<p class="pagetop" style="display: block;"><a href="#all"><i class="fa fa-2x fa-chevron-up"></i><br>ページ<br>最上部へ</a></p>
+	<hr>
+	<div class="footer_navi">
+		<p class="m_side_auto">
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/link.html">リンク集</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/sitemap.html">サイトマップ</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/sitepolicy.html">サイトポリシー</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/privacypolicy.html">プライバシーポリシー</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/terms.html">利用規約</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/help/question.html">よくあるご質問</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/contact.html">お問い合わせ先</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/location_list.html">所在地情報</a>
+			｜
+		</p>
+		<p class="m_side_auto footer_copyright" id="bottom">All rights reserved, Copyright (C) Employment Security Bureau,Ministry of Health, Labour and Welfare</p>
+	</div>
+</footer>
+		</div>
+<script src="jsp/js/jquery/jquery-3.6.3.min.js"></script>
+<script src="jsp/js/jquery/jquery-ui.js"></script>
+<script src="jsp/js/common.js"></script>
+<script src="jsp/js/AssistCode.js"></script>
+
+
+
+		
+		<script src="jsp/js/EAB030/EAB030.js"></script>
+
+		<script src="jsp/js/EAB030/GEAB03002Z.js"></script>
+
+		<script src="jsp/js/EAB030/EAB030PrevScreen.js"></script>
+
+		<script src="jsp/js/ECZDisableMultipleClicks.js"></script>
+
+	</body>
+
+</html>
+

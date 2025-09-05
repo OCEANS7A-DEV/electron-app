@@ -35,7 +35,7 @@ export const loader = async () => {
 
 export default function HelloWork(): JSX.Element {
   const { works } = useLoaderData<typeof loader>()
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = React.useState(true)
   const [allPDFNum, setAllPDFNum] = useState(0)
   const allPDFNumRef = useRef(allPDFNum)
   const [DLnums, setDLnums] = useState(0)
@@ -109,11 +109,29 @@ export default function HelloWork(): JSX.Element {
     }
   }, [])
   useEffect(() => {
+    initcode()
+  }, [])
+
+  const initcode = async (): Promise<void> => {
     const init = async () => {
       await window.myInventoryAPI.helloworkInit()
     }
-    init()
-  }, [])
+    await toast.promise(
+      init(),
+      {
+        loading: 'ログイン中',
+        success: () => {
+          setLoading(false)
+          return 'ログイン成功'
+        },
+        error: () => {
+          setLoading(false)
+          return 'ログイン失敗'
+        }
+      }
+    )
+    workResearch('初期取得中...')
+  }
 
   const handleOtpSubmit = (): void => {
     window.myInventoryAPI.sendOtp(otpValue)
@@ -141,21 +159,114 @@ export default function HelloWork(): JSX.Element {
     return today >= limitDate ? '更新可能' : '更新不要'
   }
 
-  const WorksUpdate = () => {
-    //const data = jobList.filter((item) => JOBupdateStatus(item.紹介期限日) == '更新可能')
-    const numberData = jobList.map((item) => item.求人番号)
-      .filter((num) => num !== undefined && num !== null && num !== '')
-    console.log(numberData)
-    window.myInventoryAPI.helloworkUpdate(numberData)
+  const WorksUpdate = async (num) => {
+    setLoading(true)
+    const update = async () => {
+      const getdata = await window.myInventoryAPI.ListGet({
+        sheetName: '履歴',
+        action: 'StaffGet',
+        sheetid: '1pRCJyZEI14EUoqNiF2SORoL5gawCI9PyRK7td6ygOQo'
+      })
+      const now = new Date()
+      const searchDate = `${now.getFullYear()}/${now.getMonth() + 1}`
+      const targetData = (date) => {
+        const tDate = new Date(date)
+        return `${tDate.getFullYear()}/${tDate.getMonth() + 1}`
+      }
+      const helloworkHistory = getdata.filter(
+        (item) =>
+          item[1] == 'hellowork' &&
+          targetData(item[0]) == searchDate
+      )
+      const UpdatedNumbers = helloworkHistory.map((item) => item[2])
+      const data = jobList.find((item) => item.求人番号 == num)
+      if (data) {
+        const status = JOBupdateStatus(data.紹介期限日)
+        if (status == '更新可能' && !UpdatedNumbers.includes(num)) {
+          await window.myInventoryAPI.helloworkUpdate([num])
+        } else {
+          return '更新不要'
+        }
+      }
+      const updateLogInsert = [new Date().toLocaleString(), 'hellowork', num]
+      await window.myInventoryAPI.DataInsert({
+        action: 'KyujinLog',
+        sub_action: 'insert',
+        data: updateLogInsert
+      })
+      return '更新完了'
+    }
+
+    toast.promise(update(), {
+      loading: '更新中…',
+      success: (result) => {
+        setLoading(false)
+        return result
+      },
+      error: () => {
+        setLoading(false)
+        return 'エラーが発生しました'
+      }
+    })
   }
 
-  const workResearch = (): void => {
+  const allUpdate = async () => {
+    setLoading(true)
+    const update = async () => {
+      const getdata = await window.myInventoryAPI.ListGet({
+        sheetName: '履歴',
+        action: 'StaffGet',
+        sheetid: '1pRCJyZEI14EUoqNiF2SORoL5gawCI9PyRK7td6ygOQo'
+      })
+      const now = new Date()
+      const searchDate = `${now.getFullYear()}/${now.getMonth() + 1}`
+      const targetData = (date) => {
+        const tDate = new Date(date)
+        return `${tDate.getFullYear()}/${tDate.getMonth() + 1}`
+      }
+      const helloworkHistory = getdata.filter(
+        (item) =>
+          item[1] == 'hellowork' &&
+          targetData(item[0]) == searchDate
+      )
+      const UpdatedNumbers = helloworkHistory.map((item) => item[2])
+      const updatas = jobList.filter((item) => JOBupdateStatus(item.紹介期限日) == '更新可能')
+      const stillUpdatas = updatas.filter((item) => !UpdatedNumbers.includes(item.求人番号))
+      const targets = stillUpdatas.map((item) => item.求人番号)
+      if (targets.length === 0 || updatas.length === 0) {
+        return '更新可能な求人はありません'
+      }
+      const updateLogInsert = targets.map((item) => {
+        return [new Date().toLocaleString(), 'hellowork', item]
+      })
+      await window.myInventoryAPI.helloworkUpdate(targets)
+      await window.myInventoryAPI.DataInsert({
+        action: 'KyujinLog',
+        sub_action: 'insert',
+        data: updateLogInsert
+      })
+      return '更新完了'
+    }
+    toast.promise(update(), {
+      loading: '更新中…',
+      success: (result) => {
+        setLoading(false)
+        return result
+      },
+      error: () => {
+        setLoading(false)
+        return 'エラーが発生しました'
+      }
+    })
+  }
+
+  const workResearch = (name): void => {
     setLoading(true)
     toast.promise(Research(), {
-      loading: '読み込み中…',
+      loading: `${name}`,
       success: () => {
         setLoading(false)
-        return '読み込み完了'
+        return '取得完了'
       },
       error: () => {
         setLoading(false)
@@ -208,7 +319,7 @@ export default function HelloWork(): JSX.Element {
       )}
       <div className="HelloWorkMainArea">
         <div className="ButtonArea">
-          <Button variant="outlined" onClick={workResearch} loading={loading}>
+          <Button variant="outlined" onClick={() => workResearch('再取得中...')} loading={loading}>
             再取得
           </Button>
           {jobList.length !== 0 ? (
@@ -223,8 +334,8 @@ export default function HelloWork(): JSX.Element {
           <Button variant="outlined" onClick={handlePDFMarge}>
             PDF結合
           </Button>
-          <Button variant="outlined" onClick={WorksUpdate} disabled>
-            求人更新
+          <Button variant="outlined" onClick={allUpdate} loading={loading}>
+            一括更新
           </Button>
         </div>
         <div className="HelloWorkProgress">
@@ -255,6 +366,11 @@ export default function HelloWork(): JSX.Element {
                     <td className="HelloLimit">{row.紹介期限日}</td>
                     <td>{row.status}</td>
                     <td className="HelloLimitStatus">{JOBupdateStatus(row.紹介期限日)}</td>
+                    <td>
+                      <Button variant="outlined" onClick={() => WorksUpdate(row.求人番号)}>
+                        求人更新
+                      </Button>
+                    </td>
                   </tr>
                 ))}
             </tbody>
@@ -279,6 +395,11 @@ export default function HelloWork(): JSX.Element {
                     <td className="HelloLimit">{row.紹介期限日}</td>
                     <td>{row.status}</td>
                     <td className="HelloLimitStatus">{JOBupdateStatus(row.紹介期限日)}</td>
+                    <td>
+                      <Button variant="outlined" onClick={() => WorksUpdate(row.求人番号)}>
+                        求人更新
+                      </Button>
+                    </td>
                   </tr>
                 ))}
             </tbody>

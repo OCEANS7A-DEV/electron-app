@@ -1,0 +1,1717 @@
+window.onload = function(){
+	
+	//画面に戻ってきた時の説明会の数の保持
+	for (i=1;i<=5;i++){
+		$('#ID_sHKIKiboATS_'+i).find('input.button').attr({"name":"atsSelect"+i,"id":"ID_atsSelect"+i});
+	}
+	//画面に戻ってきた時の紹介希望安定所の数の保持
+	var addnum = $('#ID_sHKIKiboATSnum').val();
+	if(addnum == 5){
+		nodisp($('#ID_sHKIKiboATSbtnArea_1'));
+	}
+	
+	// 帳票出力前の入力チェックにてエラーが発生していない場合
+	if($('#ID_preCheckFlg').val() == 'false'){
+		// 仮求人票を新規Windowで表示
+		var form = $('#ID_kyujinhyoBtn').closest('form');
+		$('#ID_action').val('kyujinhyoBtn');
+		form.closest('form').attr('target', '_blank');
+		$('#ID_tokenNoReset').val('1');
+		form.closest('form').submit();
+		
+		// アクションをリセットして、新規Windowでのサブミットを無効化
+		$('#ID_tokenNoReset').val('0');
+		$('#ID_preCheckFlg').val('true');
+		$('#ID_action').val('');
+		form.closest('form').attr('target', '_self');
+	}
+}
+
+$(function() {
+	
+	// 求人連絡数を計算
+	$('tr.shokai_kibo_ats').on('change', '[id^="ID_kJRRSUInput"]', function(){
+		calcKjRenrakuNum();
+	});
+	
+	// 紹介希望安定所数を計算
+	$('tr.shokai_kibo_ats').on('change', '[id^="ID_atsCode"]', function(){
+		calcShkKiboAtsNum();
+	});
+	
+	// ================================
+	// 求人区分の取得
+	// ================================
+	// ID_1（フルタイム）、ID_2（パート）、ID_3（大卒等）、ID_4（高卒）、ID_5（季節）、ID_6（出稼ぎ）
+	var kjKbn = $('[name=kjKbn]').attr('id');
+	
+	// =============
+	// 初期化
+	// =============
+	$('#ID_sNTABoshuRYAny').prop('disabled', true);
+	$('#ID_sNTAB').prop('disabled', true);
+	$('#ID_kikanENDTsukiCmbBoxMM').prop('disabled', true);
+	$('#ID_kikanENDTsukiCmbBoxDD').prop('disabled', true);
+	$('#ID_setsumeikaiBtn').prop('disabled', true);
+	$('#ID_setsumeikaiBtn').addClass('disable');
+	$('#ID_nyushaNenYY').prop('disabled', true);
+	$('#ID_nyushaNenMM').prop('disabled', true);
+	$('#ID_nyushaNenDD').prop('disabled', true);
+	$('#ID_kaisaiNenYY').prop('disabled', true);
+	$('#ID_kaisaiNenMM').prop('disabled', true);
+	$('#ID_kaisaiNenDD').prop('disabled', true);
+	$('#ID_kaisaiJNJiCmbBoxHH').prop('disabled', true);
+	$('#ID_kaisaiJNJiCmbBoxMM').prop('disabled', true);
+	$('#ID_sMKIKaisaiBS').prop('disabled', true);
+	$('input[name=oBMESBKGKaCaseRadioBtn]').prop('disabled', true);
+	$('#ID_fukusuOboNenYY').prop('disabled', true);
+	$('#ID_fukusuOboNenMM').prop('disabled', true);
+	$('#ID_fukusuOboNenDD').prop('disabled', true);
+	checkkekkaTsuchiShoruiDisable();
+	checkkekkaTsuchiMnstDisable(kjKbn);
+	checkMnstYoteiKaisuDisable(kjKbn);
+	checkSNTASenkouHohoDisable(kjKbn);
+	checkHikkiShikenDisable();
+	checkGakkaShikenDisable();
+	shoruiSnkKKTTDisable();
+	mnstsnkKekkaTsuchiDisable(kjKbn);
+	sEBSCmbBox();
+	$('#ID_sNTASenkoubiJiNado').prop('disabled', true);
+	$('#ID_mapLabel1').hide();
+	$('#ID_mapLabel2').hide();
+	rRKSYOShashinHrtkRadioBtnDisable();
+	sNTAOboShoruiDisable();
+	yusoSofuBSCmbBoxDisable();
+	sNTASofuHohoDisable();
+	$('#ID_sNTASofuBS').prop('disabled', true);
+	$('#ID_sNTASofuBSDaisotsuto').prop('disabled', true);
+	$('#ID_tel1').prop('disabled', true);
+	$('#ID_tel2').prop('disabled', true);
+	$('#ID_tel3').prop('disabled', true);
+	$('#ID_fAXNoTELOnajiCKBox1').prop('disabled', true);
+	$('#ID_fax1').prop('disabled', true);
+	$('#ID_fax2').prop('disabled', true);
+	$('#ID_fax3').prop('disabled', true);
+	
+	// 「入力欄を追加」ボタン制御
+	addBtnNodisp();
+	
+	// 地図再表示
+	if($('#ID_latitudemap1').val() !== ''){
+		showMapFromHidden('map1');
+	}
+	
+	// 説明会開催有無の選択値より、説明会の活性／非活性をする
+	if($('#ID_sMKIKaisaiRadioBtn1').is(':checked')){
+		// 説明会が活性
+		var num = document.getElementById('ID_sMKIkaisaiHidden').value;
+		for(var i = num; i >= 1; i--){
+			sMKIkaisaiUnLock(i);
+		}
+		if (num == 3) {
+			nodisp($('#ID_sMKIkaisaibtnArea_1'));
+		}
+	} else {
+		var num = document.getElementById('ID_sMKIkaisaiHidden').value;
+		// 説明会が非活性
+		for(var i = num; i >= 1; i--){
+			sMKIkaisaiLock(i);
+		}
+	}
+	
+	// 項目名大：採用人数---------------------------------------------------------------------------------------
+	// 募集理由（任意）
+	// 「その他」が選択された場合、「その他の募集理由（任意）」を活性にする
+	
+	// 初期表示処理
+	if($("input:radio[name='boshuRYAnyRadioBtn']:checked").val() == '4') {
+		$('#ID_sNTABoshuRYAny').prop('disabled', false);
+	} else {
+		$('#ID_sNTABoshuRYAny').prop('disabled', true);
+	}
+	
+	$('input[name=boshuRYAnyRadioBtn]').click(function(){
+		// 4（その他）
+		if ($(this).val() == '4') {
+			if ($(this).is(':checked')) {
+				$('#ID_sNTABoshuRYAny').prop('disabled', false);
+			}
+		} else {
+			if ($(this).is(':checked')) {
+				$('#ID_sNTABoshuRYAny').prop('disabled', true);
+			}
+		}
+	});
+	
+	
+	// 項目名大：受付期間---------------------------------------------------------------------------------------
+	// 受付期間
+	// 「開始日のみ指定」が選択された場合、終了日を非活性にする。
+	
+	// 初期表示処理
+	if($("input:radio[name='uKTKKikanRadioBtn']:checked").val() == '1') {
+		$('#ID_kikanENDTsukiCmbBoxMM').prop('disabled', false);
+		$('#ID_kikanENDTsukiCmbBoxDD').prop('disabled', false);
+	} else {
+		$('#ID_kikanENDTsukiCmbBoxMM').prop('disabled', true);
+		$('#ID_kikanENDTsukiCmbBoxDD').prop('disabled', true);
+	}
+	
+	$('input[name=uKTKKikanRadioBtn]').click(function(){
+		// 1（期間）
+		if ($(this).val() == '1') {
+			if ($(this).is(':checked')) {
+				$('#ID_kikanENDTsukiCmbBoxMM').prop('disabled', false);
+				$('#ID_kikanENDTsukiCmbBoxDD').prop('disabled', false);
+			}
+		} else {
+			if ($(this).is(':checked')) {
+				$('#ID_kikanENDTsukiCmbBoxMM').prop('disabled', true);
+				$('#ID_kikanENDTsukiCmbBoxDD').prop('disabled', true);
+			}
+		}
+	});
+	
+	// 項目名大：既卒者等の入社日-------------------------------------------------------------------------------
+	// 既卒者等の入社日
+	// 「随時」「応募者の相談に応じる」「応募　不可」が選択された場合、日付入力を非活性にする
+	// 「その他」が選択された場合、「その他の場合」を活性にする
+	
+	// 初期表示処理
+	if($("input:radio[name='kSSYANadoNyushaNichiRadioBtn']:checked").val() == '2') {
+		$('#ID_nyushaNenYY').prop('disabled', false);
+		$('#ID_nyushaNenMM').prop('disabled', false);
+		$('#ID_nyushaNenDD').prop('disabled', false);
+		$('#ID_sNTAB').prop('disabled', true);
+	} else if($("input:radio[name='kSSYANadoNyushaNichiRadioBtn']:checked").val() == '1' ||
+			$("input:radio[name='kSSYANadoNyushaNichiRadioBtn']:checked").val() == '4' ||
+			$("input:radio[name='kSSYANadoNyushaNichiRadioBtn']:checked").val() == '5') {
+		$('#ID_nyushaNenYY').prop('disabled', true);
+		$('#ID_nyushaNenMM').prop('disabled', true);
+		$('#ID_nyushaNenDD').prop('disabled', true);
+		$('#ID_sNTAB').prop('disabled', true);
+	} else if($("input:radio[name='kSSYANadoNyushaNichiRadioBtn']:checked").val() == '3') {
+		$('#ID_nyushaNenYY').prop('disabled', true);
+		$('#ID_nyushaNenMM').prop('disabled', true);
+		$('#ID_nyushaNenDD').prop('disabled', true);
+		$('#ID_sNTAB').prop('disabled', false);
+	}
+	
+	$('input[name=kSSYANadoNyushaNichiRadioBtn]').click(function(){
+		// 2（日にちを指定）
+		if ($(this).val() == '2') {
+			if ($(this).is(':checked')) {
+				$('#ID_nyushaNenYY').prop('disabled', false);
+				$('#ID_nyushaNenMM').prop('disabled', false);
+				$('#ID_nyushaNenDD').prop('disabled', false);
+				$('#ID_sNTAB').prop('disabled', true);
+			}
+		// 1（随時）4（応募者の相談に応じる）5（応募　不可）
+		} else if (($(this).val() == '1') || ($(this).val() == '4') || ($(this).val() == '5')) {
+			if ($(this).is(':checked')) {
+				$('#ID_nyushaNenYY').prop('disabled', true);
+				$('#ID_nyushaNenMM').prop('disabled', true);
+				$('#ID_nyushaNenDD').prop('disabled', true);
+				$('#ID_sNTAB').prop('disabled', true);
+			}
+		// 3（その他）
+		} else if ($(this).val() == '3') {
+			$('#ID_nyushaNenYY').prop('disabled', true);
+			$('#ID_nyushaNenMM').prop('disabled', true);
+			$('#ID_nyushaNenDD').prop('disabled', true);
+			$('#ID_sNTAB').prop('disabled', false);
+		}
+	});
+	
+	// 項目名大：説明会---------------------------------------------------------------------------------------
+	// 説明会開催有無
+	// 「あり」が選択された場合、説明会情報の入力欄を活性にする
+	
+	// 初期表示処理
+	if($("input:radio[name='sMKIKaisaiRadioBtn']:checked").val() == '1') {
+		var num = sMKIkaisaiCount();
+		for(var i = num; i >= 1; i--){
+			sMKIkaisaiUnLock(i);
+		}
+	} else {
+		var num = sMKIkaisaiCount();
+		for(var i = num; i >= 1; i--){
+			sMKIkaisaiLock(i);
+		}
+	}
+	
+	$('input[name=sMKIKaisaiRadioBtn]').on('click', function(){
+		// 1（あり）
+		if ($(this).val() == '1') {
+			if ($(this).is(':checked')) {
+				var num = sMKIkaisaiCount();
+				for(var i = num; i >= 1; i--){
+					sMKIkaisaiUnLock(i);
+				}
+			}
+		} else {
+			if ($(this).is(':checked')) {
+				var num = sMKIkaisaiCount();
+				for(var i = num; i >= 1; i--){
+					sMKIkaisaiLock(i);
+				}
+			}
+		}
+	});
+	
+	// 項目名大：応募前職場見学---------------------------------------------------------------------------------------
+	// 応募前職場見学
+	
+	// 初期表示処理
+	if($("input:radio[name='oBMESBKGRadioBtn']:checked").val() == '1') {
+		$('input[name=oBMESBKGKaCaseRadioBtn]').prop('disabled', false);
+	} else {
+		$('input[name=oBMESBKGKaCaseRadioBtn]').prop('disabled', true);
+	}
+	
+	// 「可」が選択された場合、「可の場合」を活性にする
+	$('input[name=oBMESBKGRadioBtn]').click(function(){
+		// 1（可）
+		if ($(this).val() == '1') {
+			if ($(this).is(':checked')) {
+				$('input[name=oBMESBKGKaCaseRadioBtn]').prop('disabled', false);
+			}
+		} else {
+			if ($(this).is(':checked')) {
+				$('input[name=oBMESBKGKaCaseRadioBtn]').prop('disabled', true);
+			}
+		}
+	});
+	
+	// 項目名大：複数応募---------------------------------------------------------------------------------------
+	// 複数応募の可否
+	
+	// 初期表示処理
+	if($("input:radio[name='fukusuOboKahiRadioBtn']:checked").val() == '1') {
+		$('#ID_fukusuOboNenYY').prop('disabled', false);
+		$('#ID_fukusuOboNenMM').prop('disabled', false);
+		$('#ID_fukusuOboNenDD').prop('disabled', false);
+	} else {
+		$('#ID_fukusuOboNenYY').prop('disabled', true);
+		$('#ID_fukusuOboNenMM').prop('disabled', true);
+		$('#ID_fukusuOboNenDD').prop('disabled', true);
+	}
+	
+	// 「可」が選択された場合、「複数応募年月日」を活性にする
+	$('input[name=fukusuOboKahiRadioBtn]').click(function(){
+		// 1（可）
+		if ($(this).val() == '1') {
+			if ($(this).is(':checked')) {
+				$('#ID_fukusuOboNenYY').prop('disabled', false);
+				$('#ID_fukusuOboNenMM').prop('disabled', false);
+				$('#ID_fukusuOboNenDD').prop('disabled', false);
+			}
+		} else {
+			if ($(this).is(':checked')) {
+				$('#ID_fukusuOboNenYY').prop('disabled', true);
+				$('#ID_fukusuOboNenMM').prop('disabled', true);
+				$('#ID_fukusuOboNenDD').prop('disabled', true);
+			}
+		}
+	});
+	
+	// 項目名大：選考方法---------------------------------------------------------------------------------------
+	// 選考方法
+	// 「面接」が選択された場合、「面接予定回数（任意）」を活性にする
+	// 「その他」が選択された場合、「その他の選考方法」を活性にする
+	// 「筆記試験」（親）が選択された場合、「一般常識」～「その他」を活性にする
+	// 「学科試験」が選択された場合、「一般常識」～「その他」を活性にする
+	$('input[name=senkouHohoIppanCKBox]').click(function(){
+		// 書類選考後
+		checkkekkaTsuchiShoruiDisable();
+		// 面接選考後
+		checkkekkaTsuchiMnstDisable('ID_1');
+		// 面接予定回数
+		checkMnstYoteiKaisuDisable('ID_1');
+		// その他の選考方法
+		checkSNTASenkouHohoDisable('ID_1');
+	});
+	$('input[name=senkouHohoDaisotsutoCKBox]').click(function(){
+		// 面接予定回数
+		checkMnstYoteiKaisuDisable('ID_3');
+		// その他の選考方法
+		checkSNTASenkouHohoDisable('ID_3');
+	});
+	$('input[name=senkouHohoKosotsuCKBox]').click(function(){
+		// 面接選考後
+		checkkekkaTsuchiMnstDisable('ID_4')
+		// 面接予定回数
+		checkMnstYoteiKaisuDisable('ID_4');
+		// その他の選考方法
+		checkSNTASenkouHohoDisable('ID_4');
+	});
+	$('input[name=senkouHohoDaisotsutoCKBox]').click(function(){
+		// 筆記試験
+		checkHikkiShikenDisable();
+	});
+	$('input[name=senkouHohoKosotsuCKBox]').click(function(){
+		// 学科試験
+		checkGakkaShikenDisable();
+	});
+	function checkkekkaTsuchiShoruiDisable() {
+		//最初に選考結果通知のタイミング-書類選考後を非活性にする
+		$('#ID_kekkaTsuchiCKBox2').prop('disabled', true);
+		
+		// 書類選考後
+		if (($('#ID_senkouHohoIppanCKBox1').is(':checked'))) {
+			$('#ID_kekkaTsuchiCKBox2').prop('disabled', false);
+			// 書類選考結果通知
+			shoruiSnkKKTTDisable();
+		} else {
+			$('#ID_kekkaTsuchiCKBox2').prop('disabled', true);
+			$('#ID_shoruiSnkKKTT').prop('disabled', true);
+		}
+	}
+	function checkkekkaTsuchiMnstDisable(kjKbn) {
+		//最初に選考結果通知のタイミング-面接選考後を非活性にする
+		$('#ID_kekkaTsuchiCKBox3').prop('disabled', true);
+		
+		// 求人区分：ID_1（フルタイム）、ID_2（パート）、ID_3（大卒等）、ID_4（高卒）、ID_5（季節）、ID_6（出稼ぎ）
+		// 面接選考後
+		if (kjKbn == 'ID_1' || kjKbn == 'ID_2' || kjKbn == 'ID_5' || kjKbn == 'ID_6') {
+			// 一般の場合
+			if (($('#ID_senkouHohoIppanCKBox2').is(':checked'))) {
+				$('#ID_kekkaTsuchiCKBox3').prop('disabled', false);
+				// 面接選考結果通知
+				mnstsnkKekkaTsuchiDisable('ID_1');
+			} else {
+				$('#ID_kekkaTsuchiCKBox3').prop('disabled', true);
+				$('#ID_mnstsnkKekkaTsuchi').prop('disabled', true);
+			}
+		} else if (kjKbn == 'ID_4') {
+			// 高卒の場合
+			if (($('#ID_senkouHohoKosotsuCKBox1').is(':checked'))) {
+				$('#ID_kekkaTsuchiCKBox3').prop('disabled', false);
+				// 面接選考結果通知
+				mnstsnkKekkaTsuchiDisable('ID_4');
+			} else {
+				$('#ID_kekkaTsuchiCKBox3').prop('disabled', true);
+				$('#ID_mnstsnkKekkaTsuchi').prop('disabled', true);
+			}
+		}
+	}
+	function checkMnstYoteiKaisuDisable(kjKbn) {
+		//最初に面接予定回数を非活性にする
+		$('#ID_mnstYoteiKaisuAny').prop('disabled', true);
+		
+		// 面接
+		if (kjKbn == 'ID_1' || kjKbn == 'ID_2' || kjKbn == 'ID_5' || kjKbn == 'ID_6') {
+			// 一般の場合
+			if (($('#ID_senkouHohoIppanCKBox2').is(':checked'))) {
+				$('#ID_mnstYoteiKaisuAny').prop('disabled', false);
+			} else {
+				$('#ID_mnstYoteiKaisuAny').prop('disabled', true);
+			}
+		} else if (kjKbn == 'ID_3') {
+			// 大卒の場合
+			if (($('#ID_senkouHohoDaisotsutoCKBox2').is(':checked'))) {
+				$('#ID_mnstYoteiKaisuAny').prop('disabled', false);
+			} else {
+				$('#ID_mnstYoteiKaisuAny').prop('disabled', true);
+			}
+		} else if (kjKbn == 'ID_4') {
+			// 高卒の場合
+			if (($('#ID_senkouHohoKosotsuCKBox1').is(':checked'))) {
+				$('#ID_mnstYoteiKaisuAny').prop('disabled', false);
+			} else {
+				$('#ID_mnstYoteiKaisuAny').prop('disabled', true);
+			}
+		}
+	}
+	function checkSNTASenkouHohoDisable(kjKbn) {
+		//最初にその他の選考方法を非活性にする
+		$('#ID_sNTASenkouHoho').prop('disabled', true);
+		
+		// その他
+		if (kjKbn == 'ID_1' || kjKbn == 'ID_2' || kjKbn == 'ID_5' || kjKbn == 'ID_6') {
+			// 一般の場合
+			if (($('#ID_senkouHohoIppanCKBox4').is(':checked'))) {
+				$('#ID_sNTASenkouHoho').prop('disabled',false);
+			} else {
+				$('#ID_sNTASenkouHoho').prop('disabled', true);
+			}
+		} else if (kjKbn == 'ID_3') {
+			// 大卒の場合
+			if (($('#ID_senkouHohoDaisotsutoCKBox4').is(':checked'))) {
+				$('#ID_sNTASenkouHoho').prop('disabled',false);
+			} else {
+				$('#ID_sNTASenkouHoho').prop('disabled', true);
+			}
+		} else if (kjKbn == 'ID_4') {
+			// 高卒の場合
+			if (($('#ID_senkouHohoKosotsuCKBox3').is(':checked'))) {
+				$('#ID_sNTASenkouHoho').prop('disabled',false);
+			} else {
+				$('#ID_sNTASenkouHoho').prop('disabled', true);
+			}
+		}
+	}
+	function checkHikkiShikenDisable() {
+		//最初に筆記試験の詳細を非活性にする
+		$('#ID_senkouHohoDaisotsutoCKBox6').prop('disabled', true);
+		$('#ID_senkouHohoDaisotsutoCKBox7').prop('disabled', true);
+		$('#ID_senkouHohoDaisotsutoCKBox8').prop('disabled', true);
+		$('#ID_senkouHohoDaisotsutoCKBox9').prop('disabled', true);
+		$('#ID_senkouHohoDaisotsutoCKBox10').prop('disabled', true);
+		
+		// 筆記試験
+		if ($('#ID_senkouHohoDaisotsutoCKBox5').is(':checked')) {
+			$('#ID_senkouHohoDaisotsutoCKBox6').prop('disabled', false);
+			$('#ID_senkouHohoDaisotsutoCKBox7').prop('disabled', false);
+			$('#ID_senkouHohoDaisotsutoCKBox8').prop('disabled', false);
+			$('#ID_senkouHohoDaisotsutoCKBox9').prop('disabled', false);
+			$('#ID_senkouHohoDaisotsutoCKBox10').prop('disabled', false);
+		} else {
+			$('#ID_senkouHohoDaisotsutoCKBox6').prop('disabled', true);
+			$('#ID_senkouHohoDaisotsutoCKBox7').prop('disabled', true);
+			$('#ID_senkouHohoDaisotsutoCKBox8').prop('disabled', true);
+			$('#ID_senkouHohoDaisotsutoCKBox9').prop('disabled', true);
+			$('#ID_senkouHohoDaisotsutoCKBox10').prop('disabled', true);
+		}
+	}
+	function checkGakkaShikenDisable() {
+		//最初に学科試験の詳細を非活性にする
+		$('#ID_senkouHohoKosotsuCKBox5').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox6').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox7').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox8').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox9').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox10').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox11').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox12').prop('disabled', true);
+		
+		// 筆記試験
+		if ($('#ID_senkouHohoKosotsuCKBox4').is(':checked')) {
+			$('#ID_senkouHohoKosotsuCKBox5').prop('disabled', false);
+			$('#ID_senkouHohoKosotsuCKBox6').prop('disabled', false);
+			$('#ID_senkouHohoKosotsuCKBox7').prop('disabled', false);
+			$('#ID_senkouHohoKosotsuCKBox8').prop('disabled', false);
+			$('#ID_senkouHohoKosotsuCKBox9').prop('disabled', false);
+			$('#ID_senkouHohoKosotsuCKBox10').prop('disabled', false);
+			$('#ID_senkouHohoKosotsuCKBox11').prop('disabled', false);
+			$('#ID_senkouHohoKosotsuCKBox12').prop('disabled', false);
+		} else {
+			$('#ID_senkouHohoKosotsuCKBox5').prop('disabled', true);
+			$('#ID_senkouHohoKosotsuCKBox6').prop('disabled', true);
+			$('#ID_senkouHohoKosotsuCKBox7').prop('disabled', true);
+			$('#ID_senkouHohoKosotsuCKBox8').prop('disabled', true);
+			$('#ID_senkouHohoKosotsuCKBox9').prop('disabled', true);
+			$('#ID_senkouHohoKosotsuCKBox10').prop('disabled', true);
+			$('#ID_senkouHohoKosotsuCKBox11').prop('disabled', true);
+			$('#ID_senkouHohoKosotsuCKBox12').prop('disabled', true);
+		}
+	}
+	// 項目名大：選考方法------------------------------------------------------------------------------------------
+	// 「全て選択」ボタン押下時
+	$('#ID_senkouHoho_allSlctBtn').on('click',function(e){
+		// 選考方法
+		$('input:checkbox[name="senkouHohoIppanCKBox"]').prop({"checked":true});
+		$('input:checkbox[name="senkouHohoDaisotsutoCKBox"]').prop({"checked":true});
+		$('input:checkbox[name="senkouHohoKosotsuCKBox"]').prop({"checked":true});
+		$('#ID_senkouHohoDaisotsutoCKBox6').prop('disabled', false);
+		$('#ID_senkouHohoDaisotsutoCKBox7').prop('disabled', false);
+		$('#ID_senkouHohoDaisotsutoCKBox8').prop('disabled', false);
+		$('#ID_senkouHohoDaisotsutoCKBox9').prop('disabled', false);
+		$('#ID_senkouHohoDaisotsutoCKBox10').prop('disabled', false);
+		$('#ID_senkouHohoKosotsuCKBox5').prop('disabled', false);
+		$('#ID_senkouHohoKosotsuCKBox6').prop('disabled', false);
+		$('#ID_senkouHohoKosotsuCKBox7').prop('disabled', false);
+		$('#ID_senkouHohoKosotsuCKBox8').prop('disabled', false);
+		$('#ID_senkouHohoKosotsuCKBox9').prop('disabled', false);
+		$('#ID_senkouHohoKosotsuCKBox10').prop('disabled', false);
+		$('#ID_senkouHohoKosotsuCKBox11').prop('disabled', false);
+		$('#ID_senkouHohoKosotsuCKBox12').prop('disabled', false);
+		// 面接選考結果通知
+		$('#ID_mnstsnkKekkaTsuchi').prop('disabled', false);
+		// 面接予定回数
+		$('#ID_mnstYoteiKaisuAny').prop('disabled', false);
+		// その他の選考方法
+		$('#ID_sNTASenkouHoho').prop('disabled',false);
+	});
+	// 「全て解除」ボタン押下時
+	$('#ID_senkouHoho_allKaijoBtn').on('click',function(e){
+		// 選考方法
+		$('input:checkbox[name="senkouHohoIppanCKBox"]').prop({"checked":false});
+		$('input:checkbox[name="senkouHohoDaisotsutoCKBox"]').prop({"checked":false});
+		$('input:checkbox[name="senkouHohoKosotsuCKBox"]').prop({"checked":false});
+		$('#ID_senkouHohoDaisotsutoCKBox6').prop('disabled', true);
+		$('#ID_senkouHohoDaisotsutoCKBox7').prop('disabled', true);
+		$('#ID_senkouHohoDaisotsutoCKBox8').prop('disabled', true);
+		$('#ID_senkouHohoDaisotsutoCKBox9').prop('disabled', true);
+		$('#ID_senkouHohoDaisotsutoCKBox10').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox5').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox6').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox7').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox8').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox9').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox10').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox11').prop('disabled', true);
+		$('#ID_senkouHohoKosotsuCKBox12').prop('disabled', true);
+		// 面接選考結果通知
+		$('#ID_mnstsnkKekkaTsuchi').prop('disabled', true);
+		// 面接予定回数
+		$('#ID_mnstYoteiKaisuAny').prop('disabled', true);
+		// その他の選考方法
+		$('#ID_sNTASenkouHoho').prop('disabled', true);
+	});
+	
+	// 項目名大：選考結果通知---------------------------------------------------------------------------------------
+	// 選考結果通知のタイミング
+	// 「書類選考後」が選択された場合、「書類選考結果通知」を活性にする
+	// 「面接選考後」が選択された場合、「面接選考結果通知」を活性にする
+	
+	// 書類選考結果通知
+	shoruiSnkKKTTDisable();
+	// 面接選考結果通知
+	mnstsnkKekkaTsuchiDisable(kjKbn);
+	
+	$('input[name=kekkaTsuchiCKBox]').click(function(){
+		// 書類選考結果通知
+		shoruiSnkKKTTDisable();
+		// 面接選考結果通知
+		mnstsnkKekkaTsuchiDisable(kjKbn);
+	});
+	
+	function shoruiSnkKKTTDisable() {
+		//最初に書類選考結果通知を非活性にする
+		$('#ID_shoruiSnkKKTT').prop('disabled', true);
+		
+		// 書類選考後
+		if ($('#ID_kekkaTsuchiCKBox2').is(':disabled') == false && $('#ID_kekkaTsuchiCKBox2').is(':checked')) {
+			$('#ID_shoruiSnkKKTT').prop('disabled', false);
+		} else {
+			$('#ID_shoruiSnkKKTT').prop('disabled', true);
+		}
+	}
+	function mnstsnkKekkaTsuchiDisable(kjKbn) {
+		// 最初に面接選考結果通知を非活性にする
+		$('#ID_mnstsnkKekkaTsuchi').prop('disabled', true);
+		// 面接選考後
+		if (kjKbn == 'ID_1' || kjKbn == 'ID_2' || kjKbn == 'ID_5' || kjKbn == 'ID_6') {
+			if (($('#ID_kekkaTsuchiCKBox3').is(':disabled') == false && $('#ID_kekkaTsuchiCKBox3').is(':checked'))) {
+				$('#ID_mnstsnkKekkaTsuchi').prop('disabled', false);
+			} else {
+				$('#ID_mnstsnkKekkaTsuchi').prop('disabled', true);
+			}
+		} else if (kjKbn == 'ID_4') {
+			if (($('#ID_senkouHohoKosotsuCKBox1').is(':disabled') == false && $('#ID_senkouHohoKosotsuCKBox1').is(':checked'))) {
+				$('#ID_mnstsnkKekkaTsuchi').prop('disabled', false);
+			} else {
+				$('#ID_mnstsnkKekkaTsuchi').prop('disabled', true);
+			}
+		}
+	}
+	
+	// 項目名大：求職者への通知方法--------------------------------------------------------------------------------
+	// 「全て選択」ボタン押下時
+	$('#ID_tsuchiHoho_allSlctBtn').on('click',function(e){
+		$('input:checkbox[name="tsuchiHohoCKBox"]').prop({"checked":true});
+	});
+	// 「全て解除」ボタン押下時
+	$('#ID_tsuchiHoho_allKaijoBtn').on('click',function(e){
+		$('input:checkbox[name="tsuchiHohoCKBox"]').prop({"checked":false});
+	});
+
+	// 項目名大：選考日---------------------------------------------------------------------------------------
+	// 選考日時等
+	// 「その他」が選択された場合、「その他の選考日時等」を活性にする
+	
+	// 初期表示処理
+	if($("input:radio[name='senkoubiJiNadoRadioBtn']:checked").val() == '2') {
+		$('#ID_sNTASenkoubiJiNado').prop('disabled', false);
+	} else {
+		$('#ID_sNTASenkoubiJiNado').prop('disabled', true);
+	}
+	
+	$('input[name=senkoubiJiNadoRadioBtn]').click(function(){
+		// 2（その他）
+		if ($(this).val() == '2') {
+			if ($(this).is(':checked')) {
+				$('#ID_sNTASenkoubiJiNado').prop('disabled', false);
+			}
+		} else {
+			if ($(this).is(':checked')) {
+				$('#ID_sNTASenkoubiJiNado').prop('disabled', true);
+			}
+		}
+	});
+	
+	// 項目名大：選考場所---------------------------------------------------------------------------------------
+	// 選考場所
+	$('#ID_sEBSCmbBox').change(function(){
+		sEBSCmbBox();
+	});
+
+	// 選考場所制御
+	function sEBSCmbBox() {
+		var yubinNo1 = $('#ID_yubinNo1KJ').val();
+		var yubinNo2 = $('#ID_yubinNo2KJ').val();
+		var jusho = $('#ID_jushoKJ').val();
+		var moyoriEki = $('#ID_moyoriEkiKJ').val();
+		var kotsuShudanCmbBox = $('#ID_kotsuShudanCmbBoxKJ').val()
+		var shoyoJN = $('#ID_shoyoJNKJ').val()
+		var jGISSHGBS = $('#ID_jGISSHGBSKJ').val();
+		var jGISJosei = $('#ID_jGISJoseiKJ').val();
+		var jGISPart = $('#ID_jGISPartKJ').val();
+		var yubinNo1Hide = $('#ID_yubinNo1Hide').val();
+		var yubinNo2Hide = $('#ID_yubinNo2Hide').val();
+		var jushoHide = $('#ID_jushoHide').val();
+		var moyoriEkiHide = $('#ID_moyoriEkiHide').val();
+		var kotsuShudanCmbBoxHide = $('#ID_kotsuShudanCmbBoxHide').val()
+		var shoyoJNHide = $('#ID_shoyoJNHide').val()
+		var jGISSHGBSHide = $('#ID_jGISSHGBSHide').val();
+		var jGISJoseiHide = $('#ID_jGISJoseiHide').val();
+		var jGISPartHide = $('#ID_jGISPartHide').val();
+		
+		var in_yubinNo1 = $('#ID_yubinNo1').val();
+		var in_yubinNo2 = $('#ID_yubinNo2').val();
+		var in_jusho = $('#ID_jusho').val();
+		var in_moyoriEki = $('#ID_moyoriEkiAny').val();
+		var in_kotsuShudanCmbBox = $('#ID_moyoriEkiFromSEBSMadeKotsuShudanCmbBox').val();
+		var in_shoyoJN = $('#ID_shoyoJNAny').val();
+		// 画面入力がある場合、入力値を表示
+		if ($('#ID_SHGBSCmbBox').val() != '100000'
+			&& (
+				in_yubinNo1 != ''
+				|| in_yubinNo2 != ''
+				|| in_jusho != ''
+				|| in_moyoriEki != ''
+				|| in_kotsuShudanCmbBox != ''
+				|| in_shoyoJN != ''
+			)
+				) {
+			yubinNo1 = in_yubinNo1;
+			yubinNo2 = in_yubinNo2;
+			jusho = in_jusho;
+			moyoriEki = in_moyoriEki;
+			kotsuShudanCmbBox = in_kotsuShudanCmbBox;
+			shoyoJN = in_shoyoJN;
+		}
+		
+		// ""（空文字）
+		// 郵便番号、住所、地図表示ボタン、最寄り駅、最寄り駅から選考場所までの交通手段、所要時間を活性にする
+		// 地図、事業所所在地ラベル、事業所に登録した就業場所ラベル、地図説明ラベル、地図ピン設定ボタン、地図ピン削除ボタンを非表示にする。
+		if ($('#ID_sEBSCmbBox').val() == '') {
+			$('#ID_yubinNo1').prop('disabled', false);
+			$('#ID_yubinNo1').val(yubinNo1);
+			$('#ID_yubinNo2').prop('disabled', false);
+			$('#ID_yubinNo2').val(yubinNo2);
+			$('#ID_yubinNoBtn').prop('disabled', false);
+			$('#ID_jusho').prop('disabled', false);
+			$('#ID_jusho').val(jusho);
+			$('#ID_moyoriEkiAny').prop('disabled', false);
+			$('#ID_moyoriEkiAny').val(moyoriEki);
+			$('#ID_moyoriEkiFromSEBSMadeKotsuShudanCmbBox').prop('disabled', false);
+			$('#ID_moyoriEkiFromSEBSMadeKotsuShudanCmbBox').val(kotsuShudanCmbBox);
+			$('#ID_shoyoJNAny').prop('disabled', false);
+			$('#ID_shoyoJNAny').val(shoyoJN);
+			$('#ID_map1button').prop('disabled', false);
+			$('#ID_map1button').removeClass('disable');
+			$('#ID_map1regbutton').prop('disabled', true);
+			$('#ID_map1regbutton').addClass('disable');
+			$('#ID_mapmap1').hide();
+			$('#ID_mapLabel1').hide();
+			$('#ID_mapLabel2').hide();
+			$('#ID_map2setPoint').hide();
+			$('#ID_map2removePoint').hide();
+		// 100000（事業所所在地と同じ）
+		// 郵便番号、住所、地図表示ボタン、最寄り駅を非活性にする
+		// 登録済みの地図を表示ボタンを活性にする
+		// 事業所所在地ラベルを表示する
+		// 地図、事業所所在地ラベル、事業所に登録した就業場所ラベル、地図説明ラベル、地図ピン設定ボタン、地図ピン削除ボタンを非表示にする。
+		} else if ($('#ID_sEBSCmbBox').val() == '100000') {
+			$('#ID_yubinNo1').prop('disabled', true);
+			$('#ID_yubinNo1').val(yubinNo1Hide);
+			$('#ID_yubinNo2').prop('disabled', true);
+			$('#ID_yubinNo2').val(yubinNo2Hide);
+			$('#ID_yubinNoBtn').prop('disabled', true);
+			$('#ID_jusho').prop('disabled', true);
+			$('#ID_jusho').val(jushoHide);
+			$('#ID_moyoriEkiAny').prop('disabled', true);
+			$('#ID_moyoriEkiAny').val(moyoriEkiHide);
+			$('#ID_moyoriEkiFromSEBSMadeKotsuShudanCmbBox').prop('disabled', true);
+			$('#ID_moyoriEkiFromSEBSMadeKotsuShudanCmbBox').val(kotsuShudanCmbBoxHide);
+			$('#ID_shoyoJNAny').prop('disabled', true);
+			$('#ID_shoyoJNAny').val(shoyoJNHide);
+			$('#ID_map1button').prop('disabled', true);
+			$('#ID_map1button').addClass('disable');
+			$('#ID_mapmap1').hide();
+			$('#ID_mapLabel1').hide();
+			$('#ID_mapLabel2').hide();
+			$('#ID_map2setPoint').hide();
+			$('#ID_map2removePoint').hide();
+			
+			// hiddenから値を取得し、カンマで分割する
+			var array = $('#ID_registeredMapInfo100000').val().split(',');
+			
+			// 地図、ピン情報が全て存在する場合のみ登録済み求人の地図を活性化する
+			var map;
+			var mapFlg = 'true';
+			
+			for (i = 0; i < 4; i++) {
+				map = array[i];
+			    if (!map) {
+			    	mapFlg = 'false';
+			    }
+			}
+			
+			if (mapFlg == 'true'){
+				// 登録済み求人の地図を活性化
+				$('#ID_map1regbutton').prop('disabled',false);
+				$('#ID_map1regbutton').removeClass('disable');
+				
+				// 地図／緯度を設定
+				$('#ID_map1regbutton').attr('data-latitude', array[0]); 
+				// 地図／経度を設定
+				$('#ID_map1regbutton').attr('data-longitude', array[1]); 
+				// 地図／縮尺を設定
+				$('#ID_map1regbutton').attr('data-scale', array[2]); 
+				// ピン／緯度を設定
+				$('#ID_map1regbutton').attr('data-pin-latitude', array[3]); 
+				// ピン／経度を設定
+				$('#ID_map1regbutton').attr('data-pin-longitude', array[4]);
+			} else {
+				// 登録済み求人の地図を非活性化
+				$('#ID_map1regbutton').prop('disabled',true);
+				$('#ID_map1regbutton').addClass('disable');
+			}
+			
+		// 最大20件（事業所情報に登録した就業場所名称）
+		// 郵便番号、住所、地図表示ボタン、最寄り駅、最寄り駅から選考場所までの交通手段、所要時間を非活性にする
+		// 登録済みの地図を表示ボタンを活性にする
+		// 事業所に登録した就業場所ラベルを表示する
+		// 地図、事業所所在地ラベル、地図説明ラベル、地図ピン設定ボタン、地図ピン削除ボタンを非表示にする。
+		} else if ($('#ID_sEBSCmbBox').val() != '' && 
+						$('#ID_sEBSCmbBox').val() != '100000' &&
+						$('#ID_sEBSCmbBox').val() != '999999') {
+			// 何番目が選択されたかを取得
+			var cmbNo = $('#ID_sEBSCmbBox').val();
+
+			// 変換用Hiddenの値を取得する
+			var jgshYubinNo1 = $('#ID_jgshYubinNo1' + cmbNo).val();
+			var jgshYubinNo2 = $('#ID_jgshYubinNo2' + cmbNo).val();
+			var jgshJusho = $('#ID_jgshJusho' + cmbNo).val();
+			var jgshMoyoriEki = $('#ID_jgshMoyoriEki' + cmbNo).val();
+			var jgshKotsuShudan = $('#ID_jgshKotsuShudan' + cmbNo).val()
+			var jgshShoyoJN = $('#ID_jgshShoyoJN' + cmbNo).val()
+			var jgshJGISSHGBS = $('#ID_jgshJGISSHGBS' + cmbNo).val();
+			var jgshJGISJosei = $('#ID_jgshJGISJosei' + cmbNo).val();
+			var jgshJGISPart = $('#ID_jgshJGISPart' + cmbNo).val();
+			
+			$('#ID_yubinNo1').prop('disabled', true);
+			$('#ID_yubinNo1').val(jgshYubinNo1);
+			$('#ID_yubinNo2').prop('disabled', true);
+			$('#ID_yubinNo2').val(jgshYubinNo2);
+			$('#ID_yubinNoBtn').prop('disabled', true);
+			$('#ID_jusho').prop('disabled', true);
+			$('#ID_jusho').val(jgshJusho);
+			$('#ID_moyoriEkiAny').prop('disabled', true);
+			$('#ID_moyoriEkiAny').val(jgshMoyoriEki);
+			$('#ID_moyoriEkiFromSEBSMadeKotsuShudanCmbBox').prop('disabled', true);
+			$('#ID_moyoriEkiFromSEBSMadeKotsuShudanCmbBox').val(jgshKotsuShudan);
+			$('#ID_shoyoJNAny').prop('disabled', true);
+			$('#ID_shoyoJNAny').val(jgshShoyoJN);
+			$('#ID_map1button').prop('disabled', true);
+			$('#ID_map1button').addClass('disable');
+			$('#ID_mapmap1').hide();
+			$('#ID_mapLabel1').hide();
+			$('#ID_mapLabel2').hide();
+			$('#ID_map2setPoint').hide();
+			$('#ID_map2removePoint').hide();
+
+			// hiddenから値を取得し、カンマで分割する
+			var array = $('#ID_registeredMapInfo' + cmbNo).val().split(',');
+			
+			// 地図、ピン情報が全て存在する場合のみ登録済み求人の地図を活性化する
+			var map;
+			var mapFlg = 'true';
+			
+			for (i = 0; i < 4; i++) {
+				map = array[i];
+			    if (!map) {
+			    	mapFlg = 'false';
+			    }
+			}
+			if (mapFlg == 'true'){
+				// 登録済み求人の地図を活性化
+				$('#ID_map1regbutton').prop('disabled',false);
+				$('#ID_map1regbutton').removeClass('disable');
+				
+				// 地図／緯度を設定
+				$('#ID_map1regbutton').attr('data-latitude', array[0]); 
+				// 地図／経度を設定
+				$('#ID_map1regbutton').attr('data-longitude', array[1]); 
+				// 地図／縮尺を設定
+				$('#ID_map1regbutton').attr('data-scale', array[2]); 
+				// ピン／緯度を設定
+				$('#ID_map1regbutton').attr('data-pin-latitude', array[3]); 
+				// ピン／経度を設定
+				$('#ID_map1regbutton').attr('data-pin-longitude', array[4]);
+			} else {
+				
+				// 登録済み求人の地図を非活性化
+				$('#ID_map1regbutton').prop('disabled',true);
+				$('#ID_map1regbutton').addClass('disable');
+			}
+			
+		// 999999（選考場所を入力）
+		// 郵便番号、住所、地図表示ボタン、最寄り駅、最寄り駅から選考場所までの交通手段、所要時間を活性にする
+		// 登録済みの地図を表示ボタンを非活性にする。
+		// 事業所所在地ラベル、事業所に登録した就業場所ラベルを非表示にする。
+		} else if ($('#ID_sEBSCmbBox').val() == '999999') {
+			$('#ID_yubinNo1').prop('disabled', false);
+			$('#ID_yubinNo1').val(yubinNo1);
+			$('#ID_yubinNo2').prop('disabled', false);
+			$('#ID_yubinNo2').val(yubinNo2);
+			$('#ID_yubinNoBtn').prop('disabled', false);
+			$('#ID_jusho').prop('disabled', false);
+			$('#ID_jusho').val(jusho);
+			$('#ID_moyoriEkiAny').prop('disabled', false);
+			$('#ID_moyoriEkiAny').val(moyoriEki);
+			$('#ID_moyoriEkiFromSEBSMadeKotsuShudanCmbBox').prop('disabled', false);
+			$('#ID_moyoriEkiFromSEBSMadeKotsuShudanCmbBox').val(kotsuShudanCmbBox);
+			$('#ID_shoyoJNAny').prop('disabled', false);
+			$('#ID_shoyoJNAny').val(shoyoJN);
+			$('#ID_map1regbutton').prop('disabled', true);
+			$('#ID_map1regbutton').addClass('disable');
+			$('#ID_map1button').prop('disabled', false);
+			$('#ID_map1button').removeClass('disable');
+			$('#ID_mapmap1').hide();
+			$('#ID_mapLabel1').hide();
+			$('#ID_mapLabel2').hide();
+		}
+	}
+
+	// 地図表示ボタン
+	$('#ID_map1button').on('click',function(e){
+		// 地図が表示されていたら、説明ラベルを表示する
+		if ($('#ID_mapmap1').css('display') == 'block') {
+			$('#ID_mapLabel1').show();
+			$('#ID_mapLabel2').show();
+		} else {
+			$('#ID_mapLabel1').hide();
+			$('#ID_mapLabel2').hide();
+		}
+	});
+	
+	// 項目名大：応募書類等--------------------------------------------------------------------------------
+	// 応募書類等
+	// 「履歴書」が選択された場合、「履歴書の写真貼付の有無」を活性にする
+	// 「その他」が選択された場合、「その他の応募書類」を活性にする
+	
+	// 初期表示処理
+	rRKSYOShashinHrtkRadioBtnDisable();
+	sNTAOboShoruiDisable();
+	
+	$('input[name=oboShoruitoCKBox]').click(function(){
+		// 面接予定回数
+		rRKSYOShashinHrtkRadioBtnDisable();
+		// その他の選考方法
+		sNTAOboShoruiDisable();
+	});
+	function rRKSYOShashinHrtkRadioBtnDisable() {
+		//最初に履歴書の写真貼付の有無を非活性にする
+		$('input[name=rRKSYOShashinHrtkRadioBtn]').prop('disabled', true);
+		
+		// 履歴書
+		if ($('#ID_oboShoruitoCKBox2').is(':checked')){
+			$('input[name=rRKSYOShashinHrtkRadioBtn]').prop('disabled', false);
+		} else {
+			$('input[name=rRKSYOShashinHrtkRadioBtn]').prop('disabled', true);
+		}
+	}
+	function sNTAOboShoruiDisable() {
+		//最初にその他の応募書類を非活性にする
+		$('#ID_sNTAOboShorui').prop('disabled', true);
+		$('#ID_sNTAOboShoruiDaisotsuto').prop('disabled', true);
+		
+		// 履歴書
+		if ($('#ID_oboShoruitoCKBox7').is(':checked')){
+			$('#ID_sNTAOboShorui').prop('disabled', false);
+			$('#ID_sNTAOboShoruiDaisotsuto').prop('disabled', false);
+		} else {
+			$('#ID_sNTAOboShorui').prop('disabled', true);
+			$('#ID_sNTAOboShoruiDaisotsuto').prop('disabled', true);
+		}
+	}
+	
+	// 「全て選択」ボタン押下時
+	$('#ID_oboShoruito_allSlctBtn').on('click',function(e){
+		$('input:checkbox[name="oboShoruitoCKBox"]').prop({"checked":true});
+		$('input[name=rRKSYOShashinHrtkRadioBtn]').prop('disabled', false);
+		$('#ID_sNTAOboShorui').prop('disabled', false);
+		$('#ID_sNTAOboShoruiDaisotsuto').prop('disabled', false);
+	});
+	// 「全て解除」ボタン押下時
+	$('#ID_oboShoruito_allKaijoBtn').on('click',function(e){
+		$('input:checkbox[name="oboShoruitoCKBox"]').prop({"checked":false});
+		$('input[name=rRKSYOShashinHrtkRadioBtn]').prop('disabled', true);
+		$('#ID_sNTAOboShorui').prop('disabled', true);
+		$('#ID_sNTAOboShoruiDaisotsuto').prop('disabled', true);
+	});
+	
+	// 送付方法
+	// 「郵送」が選択された場合、「郵送の送付場所」を活性にする
+	// 「その他」が選択された場合、「その他の送付方法」を活性にする
+	
+	// 初期表示処理
+	yusoSofuBSCmbBoxDisable();
+	sNTASofuHohoDisable();
+	
+	$('input[name=oboShoruiSofuHohoCKBox]').click(function(){
+		// 郵送の送付場所
+		yusoSofuBSCmbBoxDisable();
+		// その他の送付方法
+		sNTASofuHohoDisable();
+	});
+	function yusoSofuBSCmbBoxDisable() {
+		//最初に郵送の送付場所を非活性にする
+		if(kjKbn != 'ID_3'){
+			$('#ID_yusoSofuBSCmbBox').prop('disabled', true);
+		}
+		// 郵送
+		if ($('#ID_oboShoruiSofuHohoCKBox1').is(':checked')){
+			$('#ID_yusoSofuBSCmbBox').prop('disabled', false);
+		} else {
+			if(kjKbn != 'ID_3'){
+				$('#ID_yusoSofuBSCmbBox').prop('disabled', true);
+				$('#ID_sNTASofuBS').prop('disabled', true);
+				$('#ID_sNTASofuBSDaisotsuto').prop('disabled', true);
+			}
+			$('#ID_yusoSofuBSCmbBox').prop('disabled', false);
+			$('#ID_sNTASofuBS').prop('disabled', true);
+			$('#ID_sNTASofuBSDaisotsuto').prop('disabled', true);
+		}
+		if(($('#ID_oboShoruiSofuHohoCKBox1').is(':checked')) && ($('#ID_yusoSofuBSCmbBox').val() == '4')){
+			$('#ID_yusoSofuBSCmbBox').prop('disabled', false);
+			$('#ID_sNTASofuBS').prop('disabled', false);
+			$('#ID_sNTASofuBSDaisotsuto').prop('disabled', false);
+		}
+		if(kjKbn == 'ID_3'){
+			// 大卒は郵送の送付場所を活性
+			$('#ID_yusoSofuBSCmbBox').prop('disabled', false);
+		}
+	}
+	function sNTASofuHohoDisable() {
+		//最初にその他の送付方法を非活性にする
+		$('#ID_sNTASofuHoho').prop('disabled', true);
+		
+		// その他
+		if ($('#ID_oboShoruiSofuHohoCKBox3').is(':checked')){
+			$('#ID_sNTASofuHoho').prop('disabled', false);
+		} else {
+			$('#ID_sNTASofuHoho').prop('disabled', true);
+		}
+	}
+	
+	// 郵送の送付場所
+	
+	yusouAddressDisable();
+	
+	$('[name^=oboShoruiSofuHohoCKBox]').click(function() {
+		if ($('#ID_oboShoruiSofuHohoCKBox1').is(':checked')){
+			$('#ID_yusoSofuBSCmbBox').prop('disabled', false);
+		} else {
+			$('#ID_yusoSofuBSCmbBox').prop('disabled', true);
+		}
+	});	
+	
+	function yusouAddressDisable() {
+		if ($('#ID_oboShoruiSofuHohoCKBox1').is(':checked')) {
+			$('#ID_yusoSofuBSCmbBox').prop('disabled', false);
+		} else {
+			if(kjKbn != 'ID_3'){
+				// 大卒以外は非活性
+				$('#ID_yusoSofuBSCmbBox').prop('disabled', true);
+			}
+		}
+	}
+	
+	
+	// 「その他」が選択された場合、「その他の送付場所」を活性にする
+	
+	// 初期表示処理
+	if (($('#ID_yusoSofuBSCmbBox').val() == '4')) {
+		$('#ID_sNTASofuBS').prop('disabled', false);
+		$('#ID_sNTASofuBSDaisotsuto').prop('disabled', false);
+	} else {
+		$('#ID_sNTASofuBS').prop('disabled', true);
+		$('#ID_sNTASofuBSDaisotsuto').prop('disabled', true);
+	}
+	
+	$('#ID_yusoSofuBSCmbBox').change(function(){
+		// 4（その他）
+		if ($('#ID_yusoSofuBSCmbBox').val() == '4') {
+			$('#ID_sNTASofuBS').prop('disabled', false);
+			$('#ID_sNTASofuBSDaisotsuto').prop('disabled', false);
+		} else {
+			$('#ID_sNTASofuBS').prop('disabled', true);
+			$('#ID_sNTASofuBSDaisotsuto').prop('disabled', true);
+		}
+		
+	});
+	
+	// 項目名大：担当者--------------------------------------------------------------------------------
+	// 事業所登録情報と電話番号が
+	// 「異なる」を選択した場合、「電話番号」を活性にする
+	
+	// 初期表示処理
+	if($("input:radio[name='jGSHTRKINFToTELRadioBtn']:checked").val() == '0') {
+		$('#ID_tel1').prop('disabled', false);
+		$('#ID_tel2').prop('disabled', false);
+		$('#ID_tel3').prop('disabled', false);
+	} else {
+		$('#ID_tel1').prop('disabled', true);
+		$('#ID_tel2').prop('disabled', true);
+		$('#ID_tel3').prop('disabled', true);
+	}
+	
+	$('input[name=jGSHTRKINFToTELRadioBtn]').click(function(){
+		// 0（異なる）
+		if ($(this).val() == '0') {
+			if ($(this).is(':checked')) {
+				$('#ID_tel1').prop('disabled', false);
+				$('#ID_tel2').prop('disabled', false);
+				$('#ID_tel3').prop('disabled', false);
+			}
+		} else {
+			if ($(this).is(':checked')) {
+				$('#ID_tel1').prop('disabled', true);
+				$('#ID_tel2').prop('disabled', true);
+				$('#ID_tel3').prop('disabled', true);
+			}
+		}
+	});
+	
+	// 事業所登録情報とＦＡＸ番号が
+	// 「異なる」を選択した場合、「ＦＡＸ番号」を活性にする
+	
+	// 初期表示処理
+	if($("input:radio[name='jGSHTRKINFToFAXNoRadioBtn']:checked").val() == '0') {
+		$('#ID_fAXNoTELOnajiCKBox1').prop('disabled', false);
+		if ($('#ID_fAXNoTELOnajiCKBox1').is(':checked')){
+			$('#ID_fax1').prop('disabled', true);
+			$('#ID_fax2').prop('disabled', true);
+			$('#ID_fax3').prop('disabled', true);
+		} else {
+			$('#ID_fax1').prop('disabled', false);
+			$('#ID_fax2').prop('disabled', false);
+			$('#ID_fax3').prop('disabled', false);
+		}
+		
+	} else {
+		$('#ID_fAXNoTELOnajiCKBox1').prop('disabled', true);
+		$('#ID_fax1').prop('disabled', true);
+		$('#ID_fax2').prop('disabled', true);
+		$('#ID_fax3').prop('disabled', true);
+	}
+	
+	$('input[name=jGSHTRKINFToFAXNoRadioBtn]').click(function(){
+		// 0（異なる）
+		if ($(this).val() == '0') {
+			if ($(this).is(':checked')) {
+				$('#ID_fAXNoTELOnajiCKBox1').prop('disabled', false);
+				$('#ID_fax1').prop('disabled', false);
+				$('#ID_fax2').prop('disabled', false);
+				$('#ID_fax3').prop('disabled', false);
+			}
+		} else {
+			if ($(this).is(':checked')) {
+				$('#ID_fAXNoTELOnajiCKBox1').prop('disabled', true);
+				$('#ID_fax1').prop('disabled', true);
+				$('#ID_fax2').prop('disabled', true);
+				$('#ID_fax3').prop('disabled', true);
+			}
+		}
+	});
+	
+	// 電話番号に同じ
+	// 「電話番号に同じ」を選択した場合、「ＦＡＸ番号」を活性にする
+	$('input[name=fAXNoTELOnajiCKBox]').click(function(){
+		if ($('#ID_fAXNoTELOnajiCKBox1').is(':checked')){
+			$('#ID_fax1').prop('disabled', true);
+			$('#ID_fax2').prop('disabled', true);
+			$('#ID_fax3').prop('disabled', true);
+		} else {
+			$('#ID_fax1').prop('disabled', false);
+			$('#ID_fax2').prop('disabled', false);
+			$('#ID_fax3').prop('disabled', false);
+		}
+	});
+
+	// 「入力欄を追加」ボタン制御(初期表示)
+	function addBtnNodisp() {
+		// 「説明会」が3件の場合、「入力欄を追加」ボタンを非表示にする
+		var num_smki = sMKIkaisaiCount();
+		if(num_smki == 3){
+			nodisp($('#ID_sMKIkaisaibtnArea_1'));
+		} else if (num_smki == 1){
+			nodisp($('#ID_sMKIkaisaidel_1'));
+		}
+	
+		// 「紹介希望安定所」が5件の場合、「入力欄を追加」ボタンを非表示にする
+		var num_shki = sHKIkiboATSCount();
+		if(num_shki == 5){
+			nodisp($('#ID_sHKIKiboATSbtnArea_1'));
+		} else if (num_shki == 1){
+			nodisp($('#ID_sHKIKiboATSdel_1'));
+		}
+
+		// 「指定校推薦」が30件の場合、「入力欄を追加」ボタンを非表示にする
+		var num_sitei = sITEIKouCount();
+		if(num_sitei == 30){
+			nodisp($('#ID_sITEIKoubtnArea_1'));
+		} else if (num_sitei == 1){
+			nodisp($('#ID_sITEIKoudel_1'));
+		}
+	}
+	
+});
+
+//=====================================================================
+//説明会
+//=====================================================================
+//追加削除
+$(function(){
+	// 入力欄を追加ボタンが押された時のアクション
+	$("table").on('click','[name^="sMKIkaisaiadd"]' ,function() {
+		// 説明会開催有無が「あり」で選択した場合、説明会情報を画面に追加する
+		if($('#ID_sMKIKaisaiRadioBtn1').is(':checked')){
+			// 画面のHTML内容より繰り返内容の最後のIDを取得する
+			var id = sMKIkaisaiCount();
+			// 追加上限
+			if(id < 3){
+				// 現在繰り返し数（隠し項目）の値をカウントする
+				var sMKIkaisainum = document.getElementById('ID_sMKIkaisaiHidden').value;
+				// カウントする
+				sMKIkaisainum = parseInt(sMKIkaisainum) + 1;
+				$('[id^="ID_sMKIkaisaiHidden"]').val(sMKIkaisainum);
+				// 繰り返す情報を画面に追加する
+				sMKIkaisaiAdd(id);
+				
+				sessionKeep();
+			}
+		}
+	});
+
+	// 削除ボタンが押された時のアクション
+	$("table").on('click','[name^="sMKIkaisaidel"]' ,function() {
+		// 説明会開催有無が「あり」で選択した場合、説明会情報を画面に追加する
+		if($('#ID_sMKIKaisaiRadioBtn1').is(':checked')){
+			// 画面のHTML内容より繰り返し内容の最後のIDを取得する
+			var id = sMKIkaisaiCount();
+			if(id > 1){
+				// 現在繰り返し数（隠し項目）の値をマイナスする
+				var sMKIkaisainum = document.getElementById('ID_sMKIkaisaiHidden').value;
+				sMKIkaisainum = parseInt(sMKIkaisainum) - 1;
+				$('[id^="ID_sMKIkaisaiHidden"]').val(sMKIkaisainum);
+				
+				// 削除対象の繰り返すIDを取得する
+				var target = $(this).attr('id').lastIndexOf('_', $(this).attr('id').length);
+				// 該当繰り返す情報を画面に削除する
+				sMKIkaisaiDel(parseInt($(this).attr('id').substr(target + 1, 2)));
+				
+				sessionKeep();
+			}
+		}
+	});
+});
+
+//説明会を増やすメソッド
+function sMKIkaisaiAdd(id){
+	// 画面最後の繰り返し情報をコピーする
+	var mainDivnew = $('#ID_sMKIkaisai_' + id).clone(true);
+	// 一番外側のDivのIDを変更する
+	mainDivnew.attr("id", "ID_sMKIkaisai_"+(id+1));
+	//	見出し項目を変更する
+	mainDivnew.find('[name^="sMKIkaisaiTitle"]').attr({"name":"sMKIkaisaiTitle"+(id+1),"id":"ID_tsMKIkaisaiTitle"+(id+1)});
+	mainDivnew.find('[name^="sMKIkaisaiTitle"]').html("説明会"+(id+1));
+	mainDivnew.find('[name^="sMKIkaisaiNichijiTitle"]').attr({"name":"sMKIkaisaiNichijiTitle"+(id+1),"id":"ID_sMKIkaisaiNichijiTitle"+(id+1)});
+	mainDivnew.find('[name^="sMKIkaisaiSub"]').attr({"name":"sMKIkaisaiSub"+(id+1),"id":"ID_sMKIkaisaiSub"+(id+1)});
+	// 削除ボタンのIDとNAMEを変更する
+	mainDivnew.find('[name^="sMKIkaisaidel_"]').attr({"name":"sMKIkaisaidel_"+(id+1),"id":"ID_sMKIkaisaidel_"+(id+1)});
+	// 場所項目のIDとNAMEを変更する
+	mainDivnew.find('[name^="smkiKaisaiBS"]').attr({"name":"smkiKaisaiBS"+(id+1),"id":"ID_smkiKaisaiBS"+(id+1)}).val("");
+	// 日付項目のIDとNAMEを変更する
+	mainDivnew.find('[name^="kaisaiNen'+id+'YY"]').attr({"name":"kaisaiNen"+(id+1)+"YY","id":"ID_kaisaiNen"+(id+1)+"YY"}).val("");
+	mainDivnew.find('[name^="kaisaiNen'+id+'MM"]').attr({"name":"kaisaiNen"+(id+1)+"MM","id":"ID_kaisaiNen"+(id+1)+"MM"}).val("");
+	mainDivnew.find('[name^="kaisaiNen'+id+'DD"]').attr({"name":"kaisaiNen"+(id+1)+"DD","id":"ID_kaisaiNen"+(id+1)+"DD"}).val("");
+	// 時刻項目のIDとNAMEを変更する
+	mainDivnew.find('[name^="kaisaiJNJiCmbBoxHH'+id+'HH"]').attr({"name":"kaisaiJNJiCmbBoxHH"+(id+1)+"HH","id":"ID_kaisaiJNJiCmbBoxHH"+(id+1)+"HH"}).val("");
+	mainDivnew.find('[name^="kaisaiJNJiCmbBoxHH'+id+'MM"]').attr({"name":"kaisaiJNJiCmbBoxHH"+(id+1)+"MM","id":"ID_kaisaiJNJiCmbBoxHH"+(id+1)+"MM"}).val("");
+	
+	// 入力支援ボタン「カレンダー」の初期化
+	mainDivnew.find('[id^="dp"]').each(function(i){
+		var cntTmp = $(this).attr('id').slice(-1);
+		cntTmp = Number(cntTmp) + 1;
+		$(this).attr('id',$(this).attr('id').slice(0, -1) + cntTmp);
+	});
+	mainDivnew.find('.button.calendar.ui-datepicker-trigger').remove(); 
+	// コピーした内容を画面に追加
+	$('#ID_sMKIkaisai_'+id).after(mainDivnew);
+	reInitDatePicker();
+	// 現在の件数より追加ボタンを表示／非表示にする
+	if(id < 2){
+		disp($('#ID_sMKIkaisaibtnArea_1'));
+	}else{
+		nodisp($('#ID_sMKIkaisaibtnArea_1'));
+	}
+	// 削除ボタンを表示にする
+	disp($('#ID_sMKIkaisaidel_1'));
+	disp($('#ID_sMKIkaisaidel_2'));
+	disp($('#ID_sMKIkaisaidel_3'));
+}
+
+//説明会を減らすメソッド
+function sMKIkaisaiDel(id){
+	var num = sMKIkaisaiCount();
+	// 削除対象の繰り返す情報を削除する
+	$('#ID_sMKIkaisai_' + id).remove();
+	// 削除対象後の繰り返す情報をリネームする
+	for(var i = id+1; i<= num; i++){
+		// // 一番外側のDivのIDを変更する
+		$('#ID_sMKIkaisai_'+i).attr('id','ID_sMKIkaisai_'+(i-1));
+		// 見出し項目を変更する
+		$('#ID_sMKIkaisai_'+(i-1)).find('[name^="sMKIkaisaiTitle"]').attr({"name":"sMKIkaisaiTitle"+(i-1),"id":"ID_tsMKIkaisaiTitle"+(i-1)});
+		$('#ID_sMKIkaisai_'+(i-1)).find('[name^="sMKIkaisaiTitle"]').html("説明会"+(i-1));
+		$('#ID_sMKIkaisai_'+(i-1)).find('[name^="sMKIkaisaiNichijiTitle"]').attr({"name":"sMKIkaisaiNichijiTitle"+(i-1),"id":"ID_sMKIkaisaiNichijiTitle"+(id+1)});
+		$('#ID_sMKIkaisai_'+(i-1)).find('[name^="sMKIkaisaiSub"]').attr({"name":"sMKIkaisaiSub"+(i-1),"id":"ID_sMKIkaisaiSub"+(i-1)});
+		// 場所項目のIDとNAMEを変更する
+		$('#ID_sMKIkaisai_'+(i-1)).find('[name^="smkiKaisaiBS"]').attr({"name":"smkiKaisaiBS"+(i-1),"id":"ID_smkiKaisaiBS"+(i-1)});
+		// 削除ボタンのIDとNAMEを変更する
+		$('#ID_sMKIkaisai_'+(i-1)).find('[name^="sMKIkaisaidel_"]').attr({"name":"sMKIkaisaidel_"+(i-1),"id":"ID_sMKIkaisaidel_"+(i-1)});
+		// 日付項目のIDとNAMEを変更する
+		$('#ID_sMKIkaisai_'+(i-1)).find('[name^="kaisaiNen'+(i)+'YY"]').attr({"name":"kaisaiNen"+(i-1)+"YY","id":"ID_kaisaiNen"+(i-1)+"YY"});
+		$('#ID_sMKIkaisai_'+(i-1)).find('[name^="kaisaiNen'+(i)+'MM"]').attr({"name":"kaisaiNen"+(i-1)+"MM","id":"ID_kaisaiNen"+(i-1)+"MM"});
+		$('#ID_sMKIkaisai_'+(i-1)).find('[name^="kaisaiNen'+(i)+'DD"]').attr({"name":"kaisaiNen"+(i-1)+"DD","id":"ID_kaisaiNen"+(i-1)+"DD"});
+		// 時刻項目のIDとNAMEを変更する
+		$('#ID_sMKIkaisai_'+(i-1)).find('[name^="kaisaiJNJiCmbBoxHH'+(i)+'HH"]').attr({"name":"kaisaiJNJiCmbBoxHH"+(i-1)+"HH","id":"ID_kaisaiJNJiCmbBoxHH"+(i-1)+"HH"});
+		$('#ID_sMKIkaisai_'+(i-1)).find('[name^="kaisaiJNJiCmbBoxHH'+(i)+'MM"]').attr({"name":"kaisaiJNJiCmbBoxHH"+(i-1)+"MM","id":"ID_kaisaiJNJiCmbBoxHH"+(i-1)+"MM"});
+	}
+	// 現在の件数より追加ボタンを表示／非表示にする
+	if(i > 1){
+		disp($('#ID_sMKIkaisaibtnArea_1'));
+	}else{
+		nodisp($('#ID_sMKIkaisaibtnArea_1'));
+	}
+	// 1件まで減らした場合、削除ボタンを非表示にする
+	if(i == 3){
+		nodisp($('#ID_sMKIkaisaidel_1'));
+	}
+}
+
+//「説明会」の数を判断するメソッド。
+function sMKIkaisaiCount(){
+	if ($('#ID_sMKIkaisai_3').length > 0){
+		var num = 3;
+	}else if ($('#ID_sMKIkaisai_2').length > 0){
+		var num = 2;
+	}else{
+		var num = 1;
+	}
+	return num;
+}
+
+//「説明会」の非活性メソッド。
+function sMKIkaisaiLock(i){
+	// 日付項目
+	$('#ID_sMKIkaisai_'+i).find('[name^="kaisaiNen'+i+'YY"]').attr('disabled', true);
+	$('#ID_sMKIkaisai_'+i).find('[name^="kaisaiNen'+i+'MM"]').attr('disabled', true);
+	$('#ID_sMKIkaisai_'+i).find('[name^="kaisaiNen'+i+'DD"]').attr('disabled', true);
+	// 時刻項目
+	$('#ID_sMKIkaisai_'+i).find('[name^="kaisaiJNJiCmbBoxHH'+i+'HH"]').attr('disabled', true);
+	$('#ID_sMKIkaisai_'+i).find('[name^="kaisaiJNJiCmbBoxHH'+i+'MM"]').attr('disabled', true);
+	// 説明会開催場所
+	$('#ID_sMKIkaisai_'+i).find('[name^="smkiKaisaiBS"]').attr('disabled', true);
+	// カレンダーボタン
+	$('#ID_sMKIkaisai_'+i).find('button.calendar').addClass('disable').attr('disabled',true);
+	// 削除ボタン
+	$('#ID_sMKIkaisai_'+i).find('[name^="sMKIkaisaidel_'+i+'"]').addClass('disable').attr('disabled',true);
+}
+
+//「説明会」の活性メソッド。
+function sMKIkaisaiUnLock(i){
+	// 日付項目
+	$('#ID_sMKIkaisai_'+i).find('[name^="kaisaiNen'+i+'YY"]').attr('disabled', false);
+	$('#ID_sMKIkaisai_'+i).find('[name^="kaisaiNen'+i+'MM"]').attr('disabled', false);
+	$('#ID_sMKIkaisai_'+i).find('[name^="kaisaiNen'+i+'DD"]').attr('disabled', false);
+	// 時刻項目
+	$('#ID_sMKIkaisai_'+i).find('[name^="kaisaiJNJiCmbBoxHH'+i+'HH"]').attr('disabled', false);
+	$('#ID_sMKIkaisai_'+i).find('[name^="kaisaiJNJiCmbBoxHH'+i+'MM"]').attr('disabled', false);
+	// 説明会開催場所
+	$('#ID_sMKIkaisai_'+i).find('[name^="smkiKaisaiBS"]').attr('disabled', false);
+	// カレンダーボタン
+	$('#ID_sMKIkaisai_'+i).find('button.calendar').removeClass('disable').attr('disabled',false);
+	// 削除ボタン
+	$('#ID_sMKIkaisai_'+i).find('[name^="sMKIkaisaidel_'+i+'"]').removeClass('disable').attr('disabled',false);
+}
+
+//=====================================================================
+//紹介希望安定所
+//=====================================================================
+//追加削除
+$(function(){
+	// 入力欄を追加ボタンが押された時のアクション
+	$("table").on('click','[name^="sHKIKiboATSadd"]' ,function() {
+		var id = sHKIkiboATSCount();
+		
+		if(id < 5){
+			var sHKIkiboATSnum = $('#ID_sHKIKiboATSnum').val();
+			sHKIkiboATSnum = parseInt(sHKIkiboATSnum) + 1;
+			$('#ID_sHKIKiboATSnum').val(sHKIkiboATSnum);
+			
+			// sHKIkiboATSAdd()呼び出し
+			sHKIkiboATSAdd(id);
+			
+			sessionKeep();
+		}
+		
+	});
+
+	// 削除ボタンが押された時のアクション
+	$("table").on('click','[name^="sHKIKiboATSdel_"]' ,function() {
+		var id = sHKIkiboATSCount();
+		if(id > 1){
+			var sHKIkiboATSnum = $('#ID_sHKIKiboATSnum').val();
+			sHKIkiboATSnum = parseInt(sHKIkiboATSnum) - 1;
+			$('#ID_sHKIKiboATSnum').val(sHKIkiboATSnum);
+
+			var target = $(this).attr('id').lastIndexOf('_', $(this).attr('id').length);
+			
+			// sHKIkiboATSDel()呼び出し
+			sHKIkiboATSDel(parseInt($(this).attr('id').substr(target + 1, 2)));
+			
+			// 希望紹介安定所数を計算
+			calcShkKiboAtsNum();
+			// 求人連絡数を計算
+			calcKjRenrakuNum();
+			
+			sessionKeep();
+		}
+	});
+});
+
+//紹介希望安定所を増やすメソッド
+function sHKIkiboATSAdd(id){
+	var mainDivnew = $('#ID_sHKIKiboATS_' + id).clone(true);
+	mainDivnew.attr("id", "ID_sHKIKiboATS_"+(id+1));
+	
+	var clickContent = "openCodeAssist('3','1','atsCode"+(id+1)+"','atsName"+(id+1)+"','1','','-1');";
+	mainDivnew.find("#ID_atsSelect"+id).attr({"name":"atsSelect"+(id+1),"id":"ID_atsSelect"+(id+1)}).attr("onclick",clickContent);
+	var errorArea = mainDivnew.find('.input_error');
+	errorArea.removeClass('input_error');
+	var errorMes = mainDivnew.find('.validate_msg')
+	errorMes.remove();
+	$('#ID_sHKIKiboATS_'+id).after(mainDivnew);
+	mainDivnew.find('[name^="sHKIKiboATS"]').attr({"name":"sHKIKiboATS"+(id+1),"id":"ID_sHKIKiboATS_"+(id+1)});
+	mainDivnew.find('[name^="tDFKCmbBox"]').attr({"name":"tDFKCmbBox"+(id+1),"id":"ID_tDFKCmbBox"+(id+1)}).val("");
+	mainDivnew.find('[name^="tDFKCmbTitle"]').attr({"name":"tDFKCmbTitle"+(id+1),"id":"ID_tDFKCmbTitle"+(id+1)});
+	mainDivnew.find('[name^="tDFKCmbTitle"]').html("都道府県");
+	mainDivnew.find('[name^="sHKIkiboATSTitle"]').attr({"name":"sHKIkiboATSTitle"+(id+1),"id":"ID_sHKIkiboATSTitle"+(id+1)});
+	mainDivnew.find('[name^="sHKIkiboATSTitle"]').html("紹介希望安定所");
+	mainDivnew.find('[name^="sHKIkiboATSSubTitle"]').attr({"name":"sHKIkiboATSSubTitle"+(id+1),"id":"ID_sHKIkiboATSSubTitle"+(id+1)});
+	mainDivnew.find('[name^="sHKIkiboATSSubTitle"]').html("求人連絡数");
+	mainDivnew.find('span.button').attr({"name":"sHKIKiboATSdel_"+(id+1),"id":"ID_sHKIKiboATSdel_"+(id+1)});
+	mainDivnew.find('[name^="atsCode"]').attr({"name":"atsCode"+(id+1),"id":"ID_atsCode"+(id+1)}).val("");
+	mainDivnew.find('[name^="atsName"]').attr({"name":"atsName"+(id+1),"id":"ID_atsName"+(id+1)}).html("");
+	mainDivnew.find('[name^="kJRRSUInput"]').attr({"name":"kJRRSUInput"+(id+1),"id":"ID_kJRRSUInput"+(id+1)}).val("");
+	if(id == 4){
+		nodisp($('#ID_sHKIKiboATSbtnArea_1'));
+	}
+	// 削除ボタンを表示にする
+	disp($('#ID_sHKIKiboATSdel_1'));
+	disp($('#ID_sHKIKiboATSdel_2'));
+	disp($('#ID_sHKIKiboATSdel_3'));
+	disp($('#ID_sHKIKiboATSdel_4'));
+	
+}
+
+//紹介希望安定所を減らすメソッド
+function sHKIkiboATSDel(id){
+	var num = sHKIkiboATSCount();
+	$('#ID_sHKIKiboATS_' + id).remove();
+	
+	for(var i = id+1; i<= num; i++){
+		$('#ID_sHKIKiboATS_'+i).attr('id','ID_sHKIKiboATS_'+(i-1));
+		$('#ID_sHKIKiboATS_'+(i-1)).find('[name^="sHKIKiboATS"]').attr({"name":"sHKIKiboATS"+(i-1),"id":"ID_sHKIKiboATS_"+(i-1)});
+		$('#ID_sHKIKiboATS_'+(i-1)).find('[name^="tDFKCmbBox"]').attr({"name":"tDFKCmbBox"+(i-1),"id":"ID_tDFKCmbBox"+(i-1)});
+		$('#ID_sHKIKiboATS_'+(i-1)).find('[name^="tDFKCmbTitle"]').attr({"name":"tDFKCmbTitle"+(i-1),"id":"ID_tDFKCmbTitle"+(i-1)});
+		$('#ID_sHKIKiboATS_'+(i-1)).find('[name^="tDFKCmbTitle"]').html("都道府県");
+		$('#ID_sHKIKiboATS_'+(i-1)).find('[name^="sHKIkiboATSTitle"]').attr({"name":"sHKIkiboATSTitle"+(i-1),"id":"ID_sHKIkiboATSTitle"+(i-1)});
+		$('#ID_sHKIKiboATS_'+(i-1)).find('[name^="sHKIkiboATSTitle"]').html("紹介希望安定所");
+		$('#ID_sHKIKiboATS_'+(i-1)).find('[name^="sHKIkiboATSSubTitle"]').attr({"name":"sHKIkiboATSSubTitle"+(i-1),"id":"ID_sHKIkiboATSSubTitle"+(i-1)});
+		$('#ID_sHKIKiboATS_'+(i-1)).find('[name^="sHKIkiboATSSubTitle"]').html("求人連絡数");
+		$('#ID_sHKIKiboATS_'+(i-1)).find('span.button').attr({"name":"sHKIKiboATSdel_"+(i-1),"id":"ID_sHKIKiboATSdel_"+(i-1)});
+		$('#ID_sHKIKiboATS_'+(i-1)).find('[name^="atsCode"]').attr({"name":"atsCode"+(i-1),"id":"ID_atsCode"+(i-1)});
+		$('#ID_sHKIKiboATS_'+(i-1)).find('[name^="atsName"]').attr({"name":"atsName"+(i-1),"id":"ID_atsName"+(i-1)})
+		$('#ID_sHKIKiboATS_'+(i-1)).find('[name^="kJRRSUInput"]').attr({"name":"kJRRSUInput"+(i-1),"id":"ID_kJRRSUInput"+(i-1)});
+		var clickContent = "openCodeAssist('3','1','atsCode"+(i-1)+"','atsName"+(i-1)+"','1','','-1');";
+		$('#ID_sHKIKiboATS_'+(i-1)).find("#ID_atsSelect"+i).attr({"name":"atsSelect"+(i-1),"id":"ID_atsSelect"+(i-1)}).attr("onclick",clickContent);
+	}
+	disp($('#ID_sHKIKiboATSbtnArea_1'));
+	// 1件まで減らした場合、削除ボタンを非表示にする
+	if(i == 3){
+		nodisp($('#ID_sHKIKiboATSdel_1'));
+	}
+}
+
+//「紹介希望安定所」の数を判断するメソッド。
+function sHKIkiboATSCount(){
+	if ($('#ID_sHKIKiboATS_5').length > 0){
+		var num = 5;
+	}else if ($('#ID_sHKIKiboATS_4').length > 0){
+		var num = 4;
+	}else if ($('#ID_sHKIKiboATS_3').length > 0){
+		var num = 3;
+	}else if ($('#ID_sHKIKiboATS_2').length > 0){
+		var num = 2;
+	}else{
+		var num = 1;
+	}
+	return num;
+}
+
+//=====================================================================
+//指定校推薦
+//=====================================================================
+//追加削除
+$(function(){
+	// 入力欄を追加ボタンが押された時のアクション
+	$("table").on('click','[name^="siteikouBtnadd_1"]' ,function() {
+		var id = sITEIKouCount();
+		
+		if(id < 30){
+			var sITEIKounum = document.getElementById('ID_sITEIKouHidden').value;
+			sITEIKounum = parseInt(sITEIKounum) + 1;
+			$('[id^="ID_sITEIKouHidden"]').val(sITEIKounum);
+			
+			// sITEIKouAdd()呼び出し
+			sITEIKouAdd(id);
+			
+			sessionKeep();
+		}
+		
+	});
+
+	// 削除ボタンが押された時のアクション
+	$("table").on('click','[name^="sITEIKoudel_"]' ,function() {
+		var id = sITEIKouCount();
+		if(id > 1){
+			var sITEIKounum = document.getElementById('ID_sITEIKouHidden').value;
+			sITEIKounum = parseInt(sITEIKounum) - 1;
+			$('[id^="ID_sITEIKouHidden"]').val(sITEIKounum);
+
+			var target = $(this).attr('id').lastIndexOf('_', $(this).attr('id').length);
+			
+			// sITEIKouDel()呼び出し
+			sITEIKouDel(parseInt($(this).attr('id').substr(target + 1, 2)));
+			
+			sessionKeep();
+		}
+	});
+});
+
+//指定校推薦を増やすメソッド
+function sITEIKouAdd(id){
+	var addnum = document.getElementById('ID_sITEIKouHidden').value;
+	var mainDivnew = $('#ID_sITEIKou_' + id).clone(true);
+	mainDivnew.attr("id", "ID_sITEIKou_"+(id+1));
+	
+	$('#ID_sITEIKou_'+id).after(mainDivnew);
+	$('#ID_sITEIKou_'+(id+1)).find('[name^="gakkoMei"]').attr({"name":"gakkoMei"+(id+1),"id":"ID_gakkoMei"+(id+1)});
+	$('#ID_sITEIKou_'+(id+1)).find('[name^="suisenJinin"]').attr({"name":"suisenJinin"+(id+1),"id":"ID_suisenJinin"+(id+1)});
+	$('#ID_sITEIKou_'+(id+1)).find('[name^="sITEIKouTitle"]').attr({"name":"sITEIKouTitle"+(id+1),"id":"ID_sITEIKouTitle"+(id+1)});
+	$('#ID_sITEIKou_'+(id+1)).find('[name^="sITEIKouTitle"]').html("指定校推薦"+(id+1));
+	$('#ID_sITEIKou_'+(id+1)).find('[name^="gakkoMeiTitle"]').attr({"name":"gakkoMeiTitle"+(id+1),"id":"ID_gakkoMeiTitle"+(id+1)});
+	$('#ID_sITEIKou_'+(id+1)).find('[name^="gakkoMeiTitle"]').html("学校名");
+	$('#ID_sITEIKou_'+(id+1)).find('[name^="suisenJininTitle"]').attr({"name":"suisenJininTitle"+(id+1),"id":"ID_suisenJininTitle"+(id+1)});
+	$('#ID_sITEIKou_'+(id+1)).find('[name^="suisenJininTitle"]').html("推薦人員");
+	$('#ID_sITEIKou_'+(id+1)).find('[name^="gakkoMei"]').attr({"name":"gakkoMei"+(id+1),"id":"ID_gakkoMei"+(id+1)}).val("");
+	$('#ID_sITEIKou_'+(id+1)).find('[name^="suisenJinin"]').attr({"name":"suisenJinin"+(id+1),"id":"ID_suisenJinin"+(id+1)}).val("");
+	$('#ID_sITEIKou_'+(id+1)).find('[name^="sITEIKoudel_"]').attr({"name":"sITEIKoudel_"+(id+1),"id":"ID_sITEIKoudel_"+(id+1)});
+	
+	if(id < 29){
+		disp($('#ID_sITEIKoubtnArea_1'));
+		disp($('#ID_sITEIKoudel_1'));
+		disp($('#ID_sITEIKoudel_2'));
+		disp($('#ID_sITEIKoudel_3'));
+		disp($('#ID_sITEIKoudel_4'));
+		disp($('#ID_sITEIKoudel_1'));
+		disp($('#ID_sITEIKoudel_2'));
+		disp($('#ID_sITEIKoudel_3'));
+		disp($('#ID_sITEIKoudel_4'));
+		disp($('#ID_sITEIKoudel_5'));
+		disp($('#ID_sITEIKoudel_6'));
+		disp($('#ID_sITEIKoudel_7'));
+		disp($('#ID_sITEIKoudel_8'));
+		disp($('#ID_sITEIKoudel_9'));
+		disp($('#ID_sITEIKoudel_10'));
+		disp($('#ID_sITEIKoudel_11'));
+		disp($('#ID_sITEIKoudel_12'));
+		disp($('#ID_sITEIKoudel_13'));
+		disp($('#ID_sITEIKoudel_14'));
+		disp($('#ID_sITEIKoudel_15'));
+		disp($('#ID_sITEIKoudel_16'));
+		disp($('#ID_sITEIKoudel_17'));
+		disp($('#ID_sITEIKoudel_18'));
+		disp($('#ID_sITEIKoudel_19'));
+		disp($('#ID_sITEIKoudel_20'));
+		disp($('#ID_sITEIKoudel_21'));
+		disp($('#ID_sITEIKoudel_22'));
+		disp($('#ID_sITEIKoudel_23'));
+		disp($('#ID_sITEIKoudel_24'));
+		disp($('#ID_sITEIKoudel_25'));
+		disp($('#ID_sITEIKoudel_26'));
+		disp($('#ID_sITEIKoudel_27'));
+		disp($('#ID_sITEIKoudel_28'));
+		disp($('#ID_sITEIKoudel_29'));
+		disp($('#ID_sITEIKoudel_30'));
+
+	}else{
+		nodisp($('#ID_sITEIKoubtnArea_1'));
+	}
+}
+
+//指定校推薦を減らすメソッド
+function sITEIKouDel(id){
+	var num = sITEIKouCount();
+	$('#ID_sITEIKou_' + id).remove();
+	
+	for(var i = id+1; i<= num; i++){
+		$('#ID_sITEIKou_'+i).attr('id','ID_sITEIKou_'+(i-1));
+		$('#ID_sITEIKou_'+(i-1)).find('[name^="gakkoMei"]').attr({"name":"gakkoMei"+(i-1),"id":"ID_gakkoMei"+(i-1)});
+		$('#ID_sITEIKou_'+(i-1)).find('[name^="suisenJinin"]').attr({"name":"suisenJinin"+(i-1),"id":"ID_suisenJinin"+(i-1)});
+		$('#ID_sITEIKou_'+(i-1)).find('[name^="sITEIKouTitle"]').attr({"name":"sITEIKouTitle"+(i-1),"id":"ID_sITEIKouTitle"+(i-1)});
+		$('#ID_sITEIKou_'+(i-1)).find('[name^="sITEIKouTitle"]').attr({"name":"sITEIKouTitle"+(i-1),"id":"ID_sITEIKouTitle"+(i-1)});
+		$('#ID_sITEIKou_'+(i-1)).find('[name^="sITEIKouTitle"]').html("指定校推薦"+(i-1));
+		$('#ID_sITEIKou_'+(id+1)).find('[name^="gakkoMeiTitle"]').attr({"name":"gakkoMeiTitle"+(id+1),"id":"ID_gakkoMeiTitle"+(i-1)});
+		$('#ID_sITEIKou_'+(id+1)).find('[name^="gakkoMeiTitle"]').html("学校名");
+		$('#ID_sITEIKou_'+(id+1)).find('[name^="suisenJininTitle"]').attr({"name":"suisenJininTitle"+(id+1),"id":"ID_suisenJininTitle"+(i-1)});
+		$('#ID_sITEIKou_'+(id+1)).find('[name^="suisenJininTitle"]').html("推薦人員");
+		$('#ID_sITEIKou_'+(i-1)).find('[name^="gakkoMei"]').attr({"name":"gakkoMei"+(i-1),"id":"ID_gakkoMei"+(i-1)});
+		$('#ID_sITEIKou_'+(i-1)).find('[name^="suisenJinin"]').attr({"name":"suisenJinin"+(i-1),"id":"ID_suisenJinin"+(i-1)});
+		$('#ID_sITEIKou_'+(i-1)).find('[name^="sITEIKoudel_"]').attr({"name":"sITEIKoudel_"+(i-1),"id":"ID_sITEIKoudel_"+(i-1)});
+	}
+	if(i > 1){
+		disp($('#ID_sITEIKoubtnArea_1'));
+	}else{
+		nodisp($('#ID_sITEIKoubtnArea_1'));
+	}
+	// 1件まで減らした場合、削除ボタンを非表示にする
+	if(i == 3){
+		nodisp($('#ID_sITEIKoudel_1'));
+	}
+}
+
+//「指定校推薦」の数を判断するメソッド。
+function sITEIKouCount(){
+	if ($('#ID_sITEIKou_30').length){
+		var num = 30;
+	}else if ($('#ID_sITEIKou_29').length){
+		var num = 29;
+	}else if ($('#ID_sITEIKou_28').length){
+		var num = 28;
+	}else if ($('#ID_sITEIKou_27').length){
+		var num = 27;
+	}else if ($('#ID_sITEIKou_26').length){
+		var num = 26;
+	}else if ($('#ID_sITEIKou_25').length){
+		var num = 25;
+	}else if ($('#ID_sITEIKou_24').length){
+		var num = 24;
+	}else if ($('#ID_sITEIKou_23').length){
+		var num = 23;
+	}else if ($('#ID_sITEIKou_22').length){
+		var num = 22;
+	}else if ($('#ID_sITEIKou_21').length){
+		var num = 21;
+	}else if ($('#ID_sITEIKou_20').length){
+		var num = 20;
+	}else if ($('#ID_sITEIKou_19').length){
+		var num = 19;
+	}else if ($('#ID_sITEIKou_18').length){
+		var num = 18;
+	}else if ($('#ID_sITEIKou_17').length){
+		var num = 17;
+	}else if ($('#ID_sITEIKou_16').length){
+		var num = 16;
+	}else if ($('#ID_sITEIKou_15').length){
+		var num = 15;
+	}else if ($('#ID_sITEIKou_14').length){
+		var num = 14;
+	}else if ($('#ID_sITEIKou_13').length){
+		var num = 13;
+	}else if ($('#ID_sITEIKou_12').length){
+		var num = 12;
+	}else if ($('#ID_sITEIKou_11').length){
+		var num = 11;
+	}else if ($('#ID_sITEIKou_10').length){
+		var num = 10;
+	}else if ($('#ID_sITEIKou_9').length){
+		var num = 9;
+	}else if ($('#ID_sITEIKou_8').length){
+		var num = 8;
+	}else if ($('#ID_sITEIKou_7').length){
+		var num = 7;
+	}else if ($('#ID_sITEIKou_6').length){
+		var num = 6;
+	}else if ($('#ID_sITEIKou_5').length){
+		var num = 5;
+	}else if ($('#ID_sITEIKou_4').length){
+		var num = 4;
+	}else if ($('#ID_sITEIKou_3').length){
+		var num = 3;
+	}else if ($('#ID_sITEIKou_2').length){
+		var num = 2;
+	}else{
+		var num = 1;
+	}
+	return num;
+}
+
+// 数値をカンマ編集
+function toCommaNum(num){
+	return String(num).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
+}
+// 求人連絡数を計算
+function calcKjRenrakuNum(){
+	var num = 0;
+	var tmp;
+	// 各項目の合計値を算出
+	$('tr.shokai_kibo_ats').find('[id^="ID_kJRRSUInput"]').each(function(i, e){
+		tmp = $(this).val();
+		if(Math.round(tmp) == tmp && tmp >= 0 & new RegExp(/^\d{1,}$/).test(tmp)) {
+			// 数値チェックOKの場合のみ加算
+			num = num + Number(tmp);
+		}
+	});
+	// 算出結果を設定
+	// hidden
+	$('#ID_kJRRSUSosuHyoji').val(toCommaNum(num));
+	// ラベル
+	$('#ID_kJRRSUSosuHyojiLabel').children('div:first').html(toCommaNum(num));
+}
+
+// 紹介希望安定所数を計算
+function calcShkKiboAtsNum(){
+	var num = 0;
+	var tmp;
+	// 各項目の有効入力数を算出
+	$('tr.shokai_kibo_ats').find('[id^="ID_atsCode"]').each(function(i, e){
+		tmp = $(this).val();
+		if(tmp.trim() !== ''){
+			num = num + 1;
+		}
+	});
+	// 算出結果を設定
+	// hidden
+	$('#ID_aTSSosuHyoji').val(toCommaNum(num));
+	// ラベル
+	$('#ID_aTSSosuHyojiLabel').children('div:first').html(toCommaNum(num));
+
+}

@@ -75,8 +75,8 @@ const createMemoDetailTable = DB.prepare(
     delete_Flg INTEGER DEFAULT 0
   )`
 )
-
 createMemoDetailTable.run()
+
 
 const gotTheLock = app.requestSingleInstanceLock()
 const windowManager = new Map()
@@ -256,8 +256,7 @@ const createUpdaterWindow = async () => {
             status: 'start'
           })
         }
-
-        StartUpSet()
+        // StartUpSet()
         hasGoogleLoginCookie().then((isLoggedIn) => {
           if (!isLoggedIn) {
             createGoogleLoginWindow()
@@ -325,6 +324,8 @@ function createZaikoWindow(): void {
     if (win) win.focus()
     return
   }
+
+  StartUpSet()
 
   zaikoWindow = new BrowserWindow({
     width: 950,
@@ -1425,13 +1426,13 @@ ipcMain.handle('hellowork-get', async () => {
       ])
 
       const allJobs: any[] = []
-      let pageIndex = 1
 
       while (true) {
         const jobsOnPage = await page.evaluate(() => {
           const jobs: any[] = []
 
           const tables = document.querySelectorAll('table.kyujin')
+
           tables.forEach((table) => {
             const job: any = {}
 
@@ -1498,7 +1499,6 @@ ipcMain.handle('hellowork-get', async () => {
         if (isDisabled) {
           break
         }
-        pageIndex++
         await Promise.all([
           page.waitForNavigation({ waitUntil: 'networkidle2' }),
           nextButton.click()
@@ -1560,6 +1560,12 @@ ipcMain.handle('hellowork-get', async () => {
     } catch (err) {
       console.error(err)
       throw err
+    } finally {
+      const linkLocator = page.locator('a[href*="GEAB100010.do"]');
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'networkidle2' }),
+        linkLocator.click(),
+      ])
     }
   } catch (e) {
     log.error('ハロワ取得エラー:', e)
@@ -1568,31 +1574,45 @@ ipcMain.handle('hellowork-get', async () => {
 })
 
 
-ipcMain.handle('hellowork-update', async (_event, RecruitNumbers) => {
-  console.log(RecruitNumbers)
-  //try {
-  //  const scrapeHelloWork = async (): Promise<any> => {
-  //    await Promise.all([
-  //      page.waitForNavigation({ waitUntil: 'networkidle2' }),
-  //      page.evaluate(() => {
-  //        const btn = document.getElementById('ID_yukoKyujinBtn') as HTMLAnchorElement
-  //        if (!btn) throw new Error('ボタンが見つかりません')
-  //        btn.click()
-  //      })
-  //    ])
+ipcMain.handle('hellowork-update', async (_event, RecruitNumbers: any) => {
+  try {
+    for (const num of RecruitNumbers) {
+      const updatePass = `https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB031010.do?screenId=GEAB031010&action=tenyoTorokuBtn&kjNo=${num}`
+      await page.goto(updatePass, { waitUntil: 'networkidle2' })
+      let pagenum = 1
+      while (true) {
+        if (pagenum == 1) {
+          await page.click('input[name="leafletDoiCKBox"]')
+        }
+        const nextButton = await page.$('input[name="nextScreenBtn"]')
+        if (!nextButton) {
+          break
+        }
+        await Promise.all([
+          page.waitForNavigation({ waitUntil: 'networkidle2' }),
+          nextButton.click()
+        ])
+        pagenum++
+      }
+      const confirmButton = await page.$('input[name="kanryoBtn"]')
+      if (confirmButton) {
+        await Promise.all([
+          page.waitForNavigation({ waitUntil: 'networkidle2' }),
+          confirmButton.click()
+        ])
+      }
+    }
+    return
+  } catch {
+    return
+  } finally {
+    const linkLocator = page.locator('a[href*="GEAB100010.do"]');
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle2' }),
+      linkLocator.click(),
+    ])
+  }
 
-  //  }
-  //  try {
-  //    const result = await scrapeHelloWork()
-  //    return result
-  //  } catch (err) {
-  //    console.error(err)
-  //    throw err
-  //  }
-  //} catch (e) {
-  //  log.error('ハロワ取得エラー:', e)
-  //  throw e
-  //}
 })
 
 interface Works {

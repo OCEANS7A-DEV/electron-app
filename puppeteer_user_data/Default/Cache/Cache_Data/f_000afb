@@ -1,0 +1,2580 @@
+$(function(){
+	// ================================
+	// 大卒等詳細の取得
+	// ================================
+	// 1:大学院 2:大学 3:短大 4:高専 5:専修学校 6:能開校
+	var getGakuseiKbn = $('[name=gakuseiKbn]').attr('id');
+	var removeId = getGakuseiKbn.split('_');
+	var splitGakuseiKbn = removeId[1].split(',');
+	var startKbn = splitGakuseiKbn[0];
+	
+	// =============
+	// 初期化
+	// =============
+	$('.kbn_daigakuin').show();
+	$('.kbn_daigaku').show();
+	$('.kbn_tandai').show();
+	$('.kbn_kosen').show();
+	$('.kbn_senshu').show();
+	$('.kbn_nokaiko').show();
+	// 大卒等詳細区分判定（その他の内容）を呼び出す
+	naiyouKbn();
+	// 大卒等詳細区分判定（固定残業代）を呼び出す
+	kTIZangyDIKingakuKbn();
+	// 月額／日額制御を呼び出す
+	getsugakuHigakuCmbBox();
+	// 金額（通勤手当）制御を呼び出す
+	tSKNTATKingaku();
+	// 毎月（賃金締切日）制御を呼び出す
+	cHGNSKBIMITK();
+	// その他の締切日制御を呼び出す
+	sNTASKBI();
+	// 支払月制御を呼び出す
+	shiharaiTsukiRadioBtn();
+	// 支払日制御を呼び出す
+	sHBI();
+	// その他支払日制御を呼び出す
+	sNTASHBI();
+	// 昇給（前年度実績）の有無制御を呼び出す
+	shokyuZnNndJsskUmuRadioBtn();
+	// 昇給金額（前年度実績）制御を呼び出す
+	sOKKGZnNndJssk();
+	// 昇給率（前年度実績）制御を呼び出す
+	sKRTZnNndJssk();
+	// 新規学卒者の賞与（前年度実績）の有無制御を呼び出す
+	shinGSSYShoyoZnNndJsskUmuRadioBtn();
+	// 新規学卒者の賞与制御
+	shinGSSYShoyoKaisu();
+	// 一般労働者の賞与（前年度実績）の有無制御を呼び出す
+	ippanRDSYAShoyoZnNndJsskUmuRadioBtn();
+	// 一般労働者の賞与制御を呼び出す
+	ippanRDSYAShoyoKaisu();
+	// 「入力欄を追加」ボタン制御
+	addBtnNodisp();
+	// 賃金計算初期値
+	chinginInit();
+
+	// ==================================
+	// 大卒等詳細区分による表示非表示制御
+	// ==================================
+	if($.inArray('1', splitGakuseiKbn) === -1){
+		$('.kbn_daigakuin').hide();
+	}
+	if($.inArray('2', splitGakuseiKbn) === -1){
+		$('.kbn_daigaku').hide();
+	}
+	if($.inArray('3', splitGakuseiKbn) === -1){
+		$('.kbn_tandai').hide();
+	}
+	if($.inArray('4', splitGakuseiKbn) === -1){
+		$('.kbn_kosen').hide();
+	}
+	if($.inArray('5', splitGakuseiKbn) === -1){
+		$('.kbn_senshu').hide();
+	}
+	if($.inArray('6', splitGakuseiKbn) === -1){
+		$('.kbn_nokaiko').hide();
+	}
+	
+	// 固定残業代に関する特記事項の制御を呼び出す
+	kTIZangyDITKJK();
+	
+	// ==================================
+	// 手当名、ボタン表示処理
+	// ==================================
+	if(startKbn === '1'){
+		// 大学院
+		$('#ID_teate').show();
+		$('[id^=ID_digkidel_], [id^=ID_digkiadd_]').show();
+		$('#ID_teate1, #ID_teate2, #ID_teate3, #ID_teate4, #ID_teate5').hide();
+		$('[id^=ID_digkadd_], [id^=ID_tndiadd_], [id^=ID_kusnadd_], [id^=ID_snshuadd_], [id^=ID_nukaiadd_]').hide();
+		$('[id^=ID_digkdel_], [id^=ID_tndidel_], [id^=ID_kusndel_], [id^=ID_snshudel_], [id^=ID_nukaidel_]').hide();
+		$('#ID_inputLabel1, #ID_inputLabel2, #ID_inputLabel3, #ID_inputLabel4, #ID_inputLabel5').hide();
+
+		// 補足説明表示制御
+		var num = tgkttatDIGKICount();
+		for (var i = 1; i <= num; i++) {
+			$('#ID_tGKTTATDIGKSub' + i).html("半角数字"); // 大学
+			$('#ID_tGKTTATTNDISub' + i).html("半角数字"); // 短大
+			$('#ID_tGKTTATKUSNSub' + i).html("半角数字"); // 高専
+			$('#ID_tGKTTATSNSHUSub' + i).html("半角数字"); // 専修学校
+			$('#ID_tGKTTATNUKAISub' + i).html("半角数字"); // 能開校
+		}
+		// 削除ボタン表示制御
+		if(num == 1){
+			nodisp($('#ID_digkidel_1'));
+		}
+	}else if(startKbn === '2'){
+		// 大学
+		$('[id^=ID_teateMei1]').hide();
+		$('#ID_teate1').show();
+		$('[id^=ID_digkdel_], [id^=ID_digkadd_]').show();
+		$('#ID_teate, #ID_teate2, #ID_teate3, #ID_teate4, #ID_teate5').hide();
+		$('[id^=ID_digkiadd_], [id^=ID_tndiadd_], [id^=ID_kusnadd_], [id^=ID_snshuadd_], [id^=ID_nukaiadd_]').hide();
+		$('[id^=ID_digkidel_], [id^=ID_tndidel_], [id^=ID_kusndel_], [id^=ID_snshudel_], [id^=ID_nukaidel_]').hide();
+		$('#ID_inputLabel, #ID_inputLabel2, #ID_inputLabel3, #ID_inputLabel4, #ID_inputLabel5').hide();
+
+		// 補足説明表示制御
+		var num = tgkttatDIGKCount();
+		for (var i = 1; i <= num; i++) {
+			$('#ID_tGKTTATTNDISub' + i).html("半角数字"); // 短大
+			$('#ID_tGKTTATKUSNSub' + i).html("半角数字"); // 高専
+			$('#ID_tGKTTATSNSHUSub' + i).html("半角数字"); // 専修学校
+			$('#ID_tGKTTATNUKAISub' + i).html("半角数字"); // 能開校
+		}
+		// 削除ボタン表示制御
+		if(num == 1){
+			nodisp($('#ID_digkdel_1'));
+		}
+	}else if(startKbn === '3'){
+		// 短大
+		$('[id^=ID_teateMei2]').hide();
+		$('#ID_teate2').show();
+		$('[id^=ID_tndidel_], [id^=ID_tndiadd_]').show();
+		$('#ID_teate, #ID_teate1, #ID_teate3, #ID_teate4, #ID_teate5').hide();
+		$('[id^=ID_digkiadd_], [id^=ID_digkadd_], [id^=ID_kusnadd_], [id^=ID_snshuadd_], [id^=ID_nukaiadd_]').hide();
+		$('[id^=ID_digkidel_], [id^=ID_digkdel_], [id^=ID_kusndel_], [id^=ID_snshudel_], [id^=ID_nukaidel_]').hide();
+		$('#ID_inputLabel, #ID_inputLabel1, #ID_inputLabel3, #ID_inputLabel4, #ID_inputLabel5').hide();
+
+		// 補足説明表示制御
+		var num = tgkttatTNDICount();
+		for (var i = 1; i <= num; i++) {
+			$('#ID_tGKTTATKUSNSub' + i).html("半角数字"); // 高専
+			$('#ID_tGKTTATSNSHUSub' + i).html("半角数字"); // 専修学校
+			$('#ID_tGKTTATNUKAISub' + i).html("半角数字"); // 能開校
+		}
+		// 削除ボタン表示制御
+		if(num == 1){
+			nodisp($('#ID_tndidel_1'));
+		}
+	}else if(startKbn === '4'){
+		// 高専
+		$('[id^=ID_teateMei3]').hide();
+		$('#ID_teate3').show();
+		$('[id^=ID_kusndel_], [id^=ID_kusnadd_]').show();
+		$('#ID_teate, #ID_teate1, #ID_teate2, #ID_teate4, #ID_teate5').hide();
+		$('[id^=ID_digkiadd_], [id^=ID_digkadd_], [id^=ID_tndiadd_], [id^=ID_snshuadd_], [id^=ID_nukaiadd_]').hide();
+		$('[id^=ID_digkidel_], [id^=ID_digkdel_], [id^=ID_tndidel_], [id^=ID_snshudel_], [id^=ID_nukaidel_]').hide();
+		$('#ID_inputLabel, #ID_inputLabel1, #ID_inputLabel2, #ID_inputLabel4, #ID_inputLabel5').hide();
+
+		// 補足説明表示制御
+		var num = tgkttatKUSNCount();
+		for (var i = 1; i <= num; i++) {
+			$('#ID_tGKTTATSNSHUSub' + i).html("半角数字"); // 専修学校
+			$('#ID_tGKTTATNUKAISub' + i).html("半角数字"); // 能開校
+		}
+		// 削除ボタン表示制御
+		if(num == 1){
+			nodisp($('#ID_kusndel_1'));
+		}
+	}else if(startKbn === '5'){
+		// 専修学校
+		$('[id^=ID_teateMei4]').hide();
+		$('#ID_teate4').show();
+		$('[id^=ID_snshudel_], [id^=ID_snshuadd_]').show();
+		$('#ID_teate, #ID_teate1, #ID_teate2, #ID_teate3, #ID_teate5').hide();
+		$('[id^=ID_digkiadd_], [id^=ID_digkadd_], [id^=ID_tndiadd_], [id^=ID_kusnadd_], [id^=ID_nukaiadd_]').hide();
+		$('[id^=ID_digkidel_], [id^=ID_digkdel_], [id^=ID_tndidel_], [id^=ID_kusndel_], [id^=ID_nukaidel_]').hide();
+		$('#ID_inputLabel, #ID_inputLabel1, #ID_inputLabel2, #ID_inputLabel3, #ID_inputLabel5').hide();
+
+		// 補足説明表示制御
+		var num = tgkttatSNSHUCount();
+		for (var i = 1; i <= num; i++) {
+			$('#ID_tGKTTATNUKAISub' + i).html("半角数字"); // 能開校
+		}
+		// 削除ボタン表示制御
+		if(num == 1){
+			nodisp($('#ID_snshudel_1'));
+		}
+	}else if(startKbn === '6'){
+		// 能開校
+		$('[id^=ID_teateMei5]').hide();
+		$('#ID_teate5').show();
+		$('[id^=ID_nukaidel_], [id^=ID_nukaiadd_]').show();
+		$('#ID_teate, #ID_teate1, #ID_teate2, #ID_teate3, #ID_teate4').hide();
+		$('[id^=ID_digkiadd_], [id^=ID_digkadd_], [id^=ID_tndiadd_], [id^=ID_kusnadd_], [id^=ID_snshuadd_]').hide();
+		$('[id^=ID_digkidel_], [id^=ID_digkdel_], [id^=ID_tndidel_], [id^=ID_kusndel_], [id^=ID_snshudel_]').hide();
+		$('#ID_inputLabel, #ID_inputLabel1, #ID_inputLabel2, #ID_inputLabel3, #ID_inputLabel4').hide();
+		
+		// 削除ボタン表示制御
+		var num = tgkttatNUKAICount();
+		if(num == 1){
+			nodisp($('#ID_nukaidel_1'));
+		}
+	}
+	
+	// =============
+	// 入力時の処理
+	// =============
+	// 賃金形態
+	$('input[name=cHGNKeitaiRadioBtn]').change(function(){
+		// 大卒等詳細区分判定（その他の内容）を呼び出す
+		naiyouKbn();
+	});
+	$('input[name=cHGNKeitaiRadioBtn1]').change(function(){
+		// 大卒等詳細区分判定（その他の内容）を呼び出す
+		naiyouKbn();
+	});
+	$('input[name=cHGNKeitaiRadioBtn2]').change(function(){
+		// 大卒等詳細区分判定（その他の内容）を呼び出す
+		naiyouKbn();
+	});
+	$('input[name=cHGNKeitaiRadioBtn3]').change(function(){
+		// 大卒等詳細区分判定（その他の内容）を呼び出す
+		naiyouKbn();
+	});
+	$('input[name=cHGNKeitaiRadioBtn4]').change(function(){
+		// 大卒等詳細区分判定（その他の内容）を呼び出す
+		naiyouKbn();
+	});
+	$('input[name=cHGNKeitaiRadioBtn5]').change(function(){
+		// 大卒等詳細区分判定（その他の内容）を呼び出す
+		naiyouKbn();
+	});
+	// 大学院
+	$("table").on('change', '[name^="tGKTShiharaiTATTATMeiDIGKI"]', function() {
+		var id = $(this).attr('id');
+		var num = id.slice(-1);
+		var teateTxt = $(this).val();
+
+		$('[id^="ID_teateMei"]').each(function(i, elem){
+			if(num == $(elem).attr('id').slice(-1)){
+				$(elem).text(teateTxt + '手当');
+			}
+		});
+		// 大学院以外の手当名を入力した内容に変更
+		setTgktShiharaiTattatmei(num,teateTxt);
+	});
+	// 大学
+	$("table").on('change', '[name^="tGKTShiharaiTATTATMeiDIGK"]', function() {
+		var id = $(this).attr('id');
+		var num = id.slice(-1);
+		var teateTxt = $(this).val();
+		
+		$('[id^="ID_teateMei"]').each(function(i, elem){
+			if(num == $(elem).attr('id').slice(-1)){
+				$(elem).text(teateTxt + '手当');
+			}
+		});
+		// 大学以外の手当名を入力した内容に変更
+		setTgktShiharaiTattatmei(num,teateTxt);
+	});
+	// 短大
+	$("table").on('change', '[name^="tGKTShiharaiTATTATMeiTNDI"]', function() {
+		var id = $(this).attr('id');
+		var num = id.slice(-1);
+		var teateTxt = $(this).val();
+		
+		$('[id^="ID_teateMei"]').each(function(i, elem){
+			if(num == $(elem).attr('id').slice(-1)){
+				$(elem).text(teateTxt + '手当');
+			}
+		});
+		// 短大以外の手当名を入力した内容に変更
+		setTgktShiharaiTattatmei(num,teateTxt);
+	});
+	// 高専
+	$("table").on('change', '[name^="tGKTShiharaiTATTATMeiKUSN"]', function() {
+		var id = $(this).attr('id');
+		var num = id.slice(-1);
+		var teateTxt = $(this).val();
+		
+		$('[id^="ID_teateMei"]').each(function(i, elem){
+			if(num == $(elem).attr('id').slice(-1)){
+				$(elem).text(teateTxt + '手当');
+			}
+		});
+		// 高専以外の手当名を入力した内容に変更
+		setTgktShiharaiTattatmei(num,teateTxt);
+	});
+	// 専修学校
+	$("table").on('change', '[name^="tGKTShiharaiTATTATMeiSNSHU"]', function() {
+		var id = $(this).attr('id');
+		var num = id.slice(-1);
+		var teateTxt = $(this).val();
+		
+		$('[id^="ID_teateMei"]').each(function(i, elem){
+			if(num == $(elem).attr('id').slice(-1)){
+				$(elem).text(teateTxt + '手当');
+			}
+		});
+		// 専修学校以外の手当名を入力した内容に変更
+		setTgktShiharaiTattatmei(num,teateTxt);
+	});
+	// 能開校
+	$("table").on('change', '[name^="tGKTShiharaiTATTATMeiNUKAI"]', function() {
+		var id = $(this).attr('id');
+		var num = id.slice(-1);
+		var teateTxt = $(this).val();
+		
+		$('[id^="ID_teateMei"]').each(function(i, elem){
+			if(num == $(elem).attr('id').slice(-1)){
+				$(elem).text(teateTxt + '手当');
+			}
+		});
+		// 能開校以外の手当名を入力した内容に変更
+		setTgktShiharaiTattatmei(num,teateTxt);
+	});
+	
+	// 固定残業代の有無
+	$('input[name=kTIZangyDIUmuRadioBtn]').change(function(){
+		// 大卒等詳細区分判定（固定残業代）を呼び出す
+		kTIZangyDIKingakuKbn();
+		// 計算処理
+		chinginKeisan('0');
+	});
+	$('input[name=kTIZangyDIUmuRadioBtn1]').change(function(){
+		// 大卒等詳細区分判定（固定残業代）を呼び出す
+		kTIZangyDIKingakuKbn();
+		// 計算処理
+		chinginKeisan('1');
+	});
+	$('input[name=kTIZangyDIUmuRadioBtn2]').change(function(){
+		// 大卒等詳細区分判定（固定残業代）を呼び出す
+		kTIZangyDIKingakuKbn();
+		// 計算処理
+		chinginKeisan('2');
+	});
+	$('input[name=kTIZangyDIUmuRadioBtn3]').change(function(){
+		// 大卒等詳細区分判定（固定残業代）を呼び出す
+		kTIZangyDIKingakuKbn();
+		// 計算処理
+		chinginKeisan('3');
+	});
+	$('input[name=kTIZangyDIUmuRadioBtn4]').change(function(){
+		// 大卒等詳細区分判定（固定残業代）を呼び出す
+		kTIZangyDIKingakuKbn();
+		// 計算処理
+		chinginKeisan('4');
+	});
+	$('input[name=kTIZangyDIUmuRadioBtn5]').change(function(){
+		// 大卒等詳細区分判定（固定残業代）を呼び出す
+		kTIZangyDIKingakuKbn();
+		// 計算処理
+		chinginKeisan('5');
+	});
+
+	// ａ ＋ ｂ（固定残業代がある場合はａ ＋ ｂ ＋ ｃ）の計算
+	// 大学院
+	$('#ID_kHKYGtgkHeikinOrJKGK').change(function() {
+		// 計算処理
+		chinginKeisan('0');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI1').change(function() {
+		// 計算処理
+		chinginKeisan('0');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI2').change(function() {
+		// 計算処理
+		chinginKeisan('0');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI3').change(function() {
+		// 計算処理
+		chinginKeisan('0');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI4').change(function() {
+		// 計算処理
+		chinginKeisan('0');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI5').change(function() {
+		// 計算処理
+		chinginKeisan('0');
+	});
+	$('#ID_kTIZangyDIKingaku').change(function() {
+		// 計算処理
+		chinginKeisan('0');
+	});
+
+	// 大学
+	$('#ID_kHKYGtgkHeikinOrJKGK1').change(function() {
+		// 計算処理
+		chinginKeisan('1');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK1').change(function() {
+		// 計算処理
+		chinginKeisan('1');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK2').change(function() {
+		// 計算処理
+		chinginKeisan('1');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK3').change(function() {
+		// 計算処理
+		chinginKeisan('1');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK4').change(function() {
+		// 計算処理
+		chinginKeisan('1');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK5').change(function() {
+		// 計算処理
+		chinginKeisan('1');
+	});
+	$('#ID_kTIZangyDIKingaku1').change(function() {
+		// 計算処理
+		chinginKeisan('1');
+	});
+
+	// 短大
+	$('#ID_kHKYGtgkHeikinOrJKGK2').change(function() {
+		// 計算処理
+		chinginKeisan('2');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI1').change(function() {
+		// 計算処理
+		chinginKeisan('2');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI2').change(function() {
+		// 計算処理
+		chinginKeisan('2');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI3').change(function() {
+		// 計算処理
+		chinginKeisan('2');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI4').change(function() {
+		// 計算処理
+		chinginKeisan('2');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI5').change(function() {
+		// 計算処理
+		chinginKeisan('2');
+	});
+	$('#ID_kTIZangyDIKingaku2').change(function() {
+		// 計算処理
+		chinginKeisan('2');
+	});
+
+	// 高専
+	$('#ID_kHKYGtgkHeikinOrJKGK3').change(function() {
+		// 計算処理
+		chinginKeisan('3');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN1').change(function() {
+		// 計算処理
+		chinginKeisan('3');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN2').change(function() {
+		// 計算処理
+		chinginKeisan('3');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN3').change(function() {
+		// 計算処理
+		chinginKeisan('3');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN4').change(function() {
+		// 計算処理
+		chinginKeisan('3');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN5').change(function() {
+		// 計算処理
+		chinginKeisan('3');
+	});
+	$('#ID_kTIZangyDIKingaku3').change(function() {
+		// 計算処理
+		chinginKeisan('3');
+	});
+
+	// 専修学校
+	$('#ID_kHKYGtgkHeikinOrJKGK4').change(function() {
+		// 計算処理
+		chinginKeisan('4');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU1').change(function() {
+		// 計算処理
+		chinginKeisan('4');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU2').change(function() {
+		// 計算処理
+		chinginKeisan('4');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU3').change(function() {
+		// 計算処理
+		chinginKeisan('4');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU4').change(function() {
+		// 計算処理
+		chinginKeisan('4');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU5').change(function() {
+		// 計算処理
+		chinginKeisan('4');
+	});
+	$('#ID_kTIZangyDIKingaku4').change(function() {
+		// 計算処理
+		chinginKeisan('4');
+	});
+
+	// 能開校
+	$('#ID_kHKYGtgkHeikinOrJKGK5').change(function() {
+		// 計算処理
+		chinginKeisan('5');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI1').change(function() {
+		// 計算処理
+		chinginKeisan('5');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI2').change(function() {
+		// 計算処理
+		chinginKeisan('5');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI3').change(function() {
+		// 計算処理
+		chinginKeisan('5');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI4').change(function() {
+		// 計算処理
+		chinginKeisan('5');
+	});
+	$('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI5').change(function() {
+		// 計算処理
+		chinginKeisan('5');
+	});
+	$('#ID_kTIZangyDIKingaku5').change(function() {
+		// 計算処理
+		chinginKeisan('5');
+	});
+
+	// 通勤手当
+	$('input[name=tSKNTATRadioBtn]').change(function(){
+		// 月額／日額制御を呼び出す
+		getsugakuHigakuCmbBox();
+		// 金額（通勤手当）制御を呼び出す
+		tSKNTATKingaku();
+		
+	});
+	// 賃金締切日
+	$('input[name=cHGNSKBIRadioBtn]').change(function(){
+		// 毎月（賃金締切日）制御を呼び出す
+		cHGNSKBIMITK();
+		// その他の締切日制御を呼び出す
+		sNTASKBI();
+	});
+	// 賃金支払日
+	 $('input[name=cHGNSHBIRadioBtn]').change(function(){
+		// 支払月制御を呼び出す
+		shiharaiTsukiRadioBtn();
+		// 支払日制御を呼び出す
+		sHBI();
+		// その他支払日制御を呼び出す
+		sNTASHBI();
+	});
+	// 昇給制度の有無
+	$('input[name=shokyuSDUmuRadioBtn]').change(function(){
+		// 昇給（前年度実績）の有無制御を呼び出す
+		shokyuZnNndJsskUmuRadioBtn();
+		// 昇給金額（前年度実績）制御を呼び出す
+		sOKKGZnNndJssk();
+		// 昇給率（前年度実績）制御を呼び出す
+		sKRTZnNndJssk();
+	});
+	
+	// 昇給（前年度実績）の有無
+	$('input[name=shokyuZnNndJsskUmuRadioBtn]').change(function(){
+		// 昇給金額（前年度実績）制御を呼び出す
+		sOKKGZnNndJssk();
+		// 昇給率（前年度実績）制御を呼び出す
+		sKRTZnNndJssk();
+	});
+	
+	// 新規学卒者の賞与制度の有無
+	$('input[name=shinGSSYShoyoSDUmuRadioBtn]').change(function(){
+		// 新規学卒者の賞与（前年度実績）の有無制御を呼び出す
+		shinGSSYShoyoZnNndJsskUmuRadioBtn();
+		// 新規学卒者の賞与制御
+		shinGSSYShoyoKaisu();
+	});
+	
+	// 新規学卒者の賞与（前年度実績）の有無
+	$('input[name=shinGSSYShoyoZnNndJsskUmuRadioBtn]').change(function(){
+		// 新規学卒者の賞与制御
+		shinGSSYShoyoKaisu();
+	});
+	
+	// 一般労働者の賞与制度の有無
+	$('input[name=ippanRDSYAShoyoSDUmuRadioBtn]').change(function(){
+		// 一般労働者の賞与（前年度実績）の有無制御を呼び出す
+		ippanRDSYAShoyoZnNndJsskUmuRadioBtn();
+		// 一般労働者の賞与制御
+		ippanRDSYAShoyoKaisu();
+	});
+	
+	// 一般労働者の賞与（前年度実績）の有無
+	$('input[name=ippanRDSYAShoyoZnNndJsskUmuRadioBtn]').change(function(){
+		// 一般労働者の賞与制御
+		ippanRDSYAShoyoKaisu();
+	});
+	
+	// =============
+	// 相関処理
+	// =============
+	// 大卒等詳細区分判定（その他の内容）
+	function naiyouKbn() {
+		if($.inArray('1', splitGakuseiKbn) != -1){
+			// その他の内容制御を呼び出す
+			naiyou('');
+		}
+		if($.inArray('2', splitGakuseiKbn) != -1){
+			// その他の内容制御を呼び出す
+			naiyou('1');
+		}
+		if($.inArray('3', splitGakuseiKbn) != -1){
+			// その他の内容制御を呼び出す
+			naiyou('2');
+		}
+		if($.inArray('4', splitGakuseiKbn) != -1){
+			// その他の内容制御を呼び出す
+			naiyou('3');
+		}
+		if($.inArray('5', splitGakuseiKbn) != -1){
+			// その他の内容制御を呼び出す
+			naiyou('4');
+		}
+		if($.inArray('6', splitGakuseiKbn) != -1){
+			// その他の内容制御を呼び出す
+			naiyou('5');
+		}
+	}
+	// その他の内容制御
+	function naiyou(gakuseiKbn) {
+		// その他が選択さている場合
+		if ($('input:radio[name="cHGNKeitaiRadioBtn' + gakuseiKbn + '"]:checked').val() == '6') {
+			$('#ID_sNTANY' + gakuseiKbn).prop('disabled',false);
+		
+		// その他以外が選択されている場合
+		} else if ($('input:radio[name="cHGNKeitaiRadioBtn' + gakuseiKbn + '"]:checked').val() == '1' ||
+						$('input:radio[name="cHGNKeitaiRadioBtn' + gakuseiKbn + '"]:checked').val() == '3' ||
+						$('input:radio[name="cHGNKeitaiRadioBtn' + gakuseiKbn + '"]:checked').val() == '4' ||
+						$('input:radio[name="cHGNKeitaiRadioBtn' + gakuseiKbn + '"]:checked').val() == '5') {
+			$('#ID_sNTANY' + gakuseiKbn).prop('disabled',true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_sNTANY' + gakuseiKbn).prop('disabled',true);
+		}
+	}
+	// 大卒等詳細区分判定（固定残業代）
+	function kTIZangyDIKingakuKbn() {
+		
+		if($.inArray('1', splitGakuseiKbn) != -1){
+			// 固定残業代制御を呼び出す
+			kTIZangyDIKingaku('');
+		}
+		if($.inArray('2', splitGakuseiKbn) != -1){
+			// 固定残業代制御を呼び出す
+			kTIZangyDIKingaku('1');
+		}
+		if($.inArray('3', splitGakuseiKbn) != -1){
+			// 固定残業代制御を呼び出す
+			kTIZangyDIKingaku('2');
+		}
+		if($.inArray('4', splitGakuseiKbn) != -1){
+			// 固定残業代制御を呼び出す
+			kTIZangyDIKingaku('3');
+		}
+		if($.inArray('5', splitGakuseiKbn) != -1){
+			// 固定残業代制御を呼び出す
+			kTIZangyDIKingaku('4');
+		}
+		if($.inArray('6', splitGakuseiKbn) != -1){
+			// 固定残業代制御を呼び出す
+			kTIZangyDIKingaku('5');
+		}
+		// 固定残業代に関する特記事項制御を呼び出す
+		kTIZangyDITKJK()
+	}
+	
+	// 固定残業代制御
+	function kTIZangyDIKingaku(gakuseiKbn) {
+		// ありが選択さている場合
+		if ($('input:radio[name="kTIZangyDIUmuRadioBtn' + gakuseiKbn + '"]:checked').val() == '1') {
+			$('#ID_kTIZangyDIKingaku' + gakuseiKbn).prop('disabled',false);
+		
+		// なしが選択されている場合
+		} else if ($('input:radio[name="kTIZangyDIUmuRadioBtn' + gakuseiKbn + '"]:checked').val() == '0') {
+			$('#ID_kTIZangyDIKingaku' + gakuseiKbn).prop('disabled',true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_kTIZangyDIKingaku' + gakuseiKbn).prop('disabled',true);
+		}
+	}
+	
+	// 固定残業代に関する特記事項制御
+	function kTIZangyDITKJK() {
+		
+		var cnt = 0;
+		
+		// チェック時に対象の項目が表示されているか確認し
+		// その後で選択状態判定をする。
+		if ($('.kbn_daigakuin').css('display') == 'block') {
+			if ($('input:radio[name="kTIZangyDIUmuRadioBtn"]:checked').val() == '1'){
+				cnt++;
+			}
+		}
+		if ($('.kbn_daigaku').css('display') == 'block') {
+			if ($('input:radio[name="kTIZangyDIUmuRadioBtn1"]:checked').val() == '1'){
+				cnt++;
+			}
+		}
+		if ($('.kbn_tandai').css('display') == 'block') {
+			if ($('input:radio[name="kTIZangyDIUmuRadioBtn2"]:checked').val() == '1'){
+				cnt++;
+			}
+		}
+		if ($('.kbn_kosen').css('display') == 'block') {
+			if ($('input:radio[name="kTIZangyDIUmuRadioBtn3"]:checked').val() == '1'){
+				cnt++;
+			}
+		}
+		if ($('.kbn_senshu').css('display') == 'block') {
+			if ($('input:radio[name="kTIZangyDIUmuRadioBtn4"]:checked').val() == '1'){
+				cnt++;
+			}
+		}
+		if ($('.kbn_nokaiko').css('display') == 'block') {
+			if ($('input:radio[name="kTIZangyDIUmuRadioBtn5"]:checked').val() == '1'){
+				cnt++;
+			}
+		}
+		
+		// 選択項目が1つでもありの場合は「固定残業代に関する特記事項」を有効化する
+		if (cnt == 0){
+			$('#ID_kTIZangyDITKJK').prop('disabled',true);
+		} else {
+			$('#ID_kTIZangyDITKJK').prop('disabled',false);
+		}
+	}
+	
+	//=====================================================================
+	// 定額的に支払われる手当（大学院）
+	//=====================================================================
+	// 追加削除
+	$(function(){
+		// 入力欄を追加ボタンが押された時のアクション
+		$("table").on('click','[name^="digkiadd"]' ,function() {
+			var id = tgkttatDIGKICount();
+			if(id < 5){
+				var tgkttatdigkinum = document.getElementById('ID_tGKTTATdigkiHidden').value;
+				tgkttatdigkinum = parseInt(tgkttatdigkinum) + 1;
+				$('[id^="ID_tGKTTATdigkiHidden"]').val(tgkttatdigkinum);
+				
+				// tgkttatDIGKIAdd()呼び出し
+				tgkttatDIGKIAdd(id);
+				
+				sessionKeep();
+			}
+			
+		});
+
+		// 削除ボタンが押された時のアクション
+		$("table").on('click','[name^="digkidel"]' ,function() {
+			var id = tgkttatDIGKICount();
+			if(id > 1){
+				var tgkttatdigkinum = document.getElementById('ID_tGKTTATdigkiHidden').value;
+				tgkttatdigkinum = parseInt(tgkttatdigkinum) - 1;
+				$('[id^="ID_tGKTTATdigkiHidden"]').val(tgkttatdigkinum);
+
+				var target = $(this).attr('id').lastIndexOf('_', $(this).attr('id').length);
+				
+				// tgkttatDIGKIDel()呼び出し
+				tgkttatDIGKIDel(parseInt($(this).attr('id').substr(target + 1, 2)));
+				chinginInit();
+				sessionKeep();
+			}
+		});
+	});
+	
+	//=====================================================================
+	//定額的に支払われる手当（大学）
+	//=====================================================================
+	//追加削除
+	$(function(){
+		// 入力欄を追加ボタンが押された時のアクション
+		$("table").on('click','[name^="digkadd"]' ,function() {
+			var id = tgkttatDIGKCount();
+			
+			if(id < 5){
+				var tgkttatdigknum = document.getElementById('ID_tGKTTATdigkHidden').value;
+				tgkttatdigknum = parseInt(tgkttatdigknum) + 1;
+				$('[id^="ID_tGKTTATdigkHidden"]').val(tgkttatdigknum);
+				
+				// tgkttatDIGKAdd()呼び出し
+				tgkttatDIGKAdd(id);
+				
+				sessionKeep();
+			}
+			
+		});
+
+		// 削除ボタンが押された時のアクション
+		$("table").on('click','[name^="digkdel"]' ,function() {
+			var id = tgkttatDIGKCount();
+			if(id > 1){
+				var tgkttatdigknum = document.getElementById('ID_tGKTTATdigkHidden').value;
+				tgkttatdigknum = parseInt(tgkttatdigknum) - 1;
+				$('[id^="ID_tGKTTATdigkHidden"]').val(tgkttatdigknum);
+
+				var target = $(this).attr('id').lastIndexOf('_', $(this).attr('id').length);
+				
+				// tgkttatDIGKDel()呼び出し
+				tgkttatDIGKDel(parseInt($(this).attr('id').substr(target + 1, 2)));
+				chinginInit();
+				sessionKeep();
+			}
+		});
+	});
+	
+	//=====================================================================
+	//定額的に支払われる手当（短大）
+	//=====================================================================
+	//追加削除
+	$(function(){
+		// 入力欄を追加ボタンが押された時のアクション
+		$("table").on('click','[name^="tndiadd"]' ,function() {
+			var id = tgkttatTNDICount();
+			
+			if(id < 5){
+				var tgkttattndinum = document.getElementById('ID_tGKTTATtndiHidden').value;
+				tgkttattndinum = parseInt(tgkttattndinum) + 1;
+				$('[id^="ID_tGKTTATtndiHidden"]').val(tgkttattndinum);
+				
+				// tgkttatTNDIAdd()呼び出し
+				tgkttatTNDIAdd(id);
+				
+				sessionKeep();
+			}
+			
+		});
+
+		// 削除ボタンが押された時のアクション
+		$("table").on('click','[name^="tndidel"]' ,function() {
+			var id = tgkttatTNDICount();
+			if(id > 1){
+				var tgkttattndinum = document.getElementById('ID_tGKTTATtndiHidden').value;
+				tgkttattndinum = parseInt(tgkttattndinum) - 1;
+				$('[id^="ID_tGKTTATtndiHidden"]').val(tgkttattndinum);
+
+				var target = $(this).attr('id').lastIndexOf('_', $(this).attr('id').length);
+				
+				// tgkttatTNDIDel()呼び出し
+				tgkttatTNDIDel(parseInt($(this).attr('id').substr(target + 1, 2)));
+				chinginInit();
+				sessionKeep();
+			}
+		});
+	});
+	
+	//=====================================================================
+	//定額的に支払われる手当（高専）
+	//=====================================================================
+	//追加削除
+	$(function(){
+		// 入力欄を追加ボタンが押された時のアクション
+		$("table").on('click','[name^="kusnadd"]' ,function() {
+			var id = tgkttatKUSNCount();
+			
+			if(id < 5){
+				var tgkttatkusnnum = document.getElementById('ID_tGKTTATkusnHidden').value;
+				tgkttatkusnnum = parseInt(tgkttatkusnnum) + 1;
+				$('[id^="ID_tGKTTATkusnHidden"]').val(tgkttatkusnnum);
+				
+				// tgkttatKUSNAdd()呼び出し
+				tgkttatKUSNAdd(id);
+				
+				sessionKeep();
+			}
+			
+		});
+
+		// 削除ボタンが押された時のアクション
+		$("table").on('click','[name^="kusndel"]' ,function() {
+			var id = tgkttatKUSNCount();
+			if(id > 1){
+				var tgkttatkusnnum = document.getElementById('ID_tGKTTATkusnHidden').value;
+				tgkttatkusnnum = parseInt(tgkttatkusnnum) - 1;
+				$('[id^="ID_tGKTTATkusnHidden"]').val(tgkttatkusnnum);
+
+				var target = $(this).attr('id').lastIndexOf('_', $(this).attr('id').length);
+				
+				// tgkttatKUSNDel()呼び出し
+				tgkttatKUSNDel(parseInt($(this).attr('id').substr(target + 1, 2)));
+				chinginInit();
+				sessionKeep();
+			}
+		});
+	});
+	
+	//=====================================================================
+	//定額的に支払われる手当（専修学校）
+	//=====================================================================
+	//追加削除
+	$(function(){
+		// 入力欄を追加ボタンが押された時のアクション
+		$("table").on('click','[name^="snshuadd"]' ,function() {
+			var id = tgkttatSNSHUCount();
+			
+			if(id < 5){
+				var tgkttatsnshunum = document.getElementById('ID_tGKTTATsnshuHidden').value;
+				tgkttatsnshunum = parseInt(tgkttatsnshunum) + 1;
+				$('[id^="ID_tGKTTATsnshuHidden"]').val(tgkttatsnshunum);
+				
+				// tgkttatSNSHUAdd()呼び出し
+				tgkttatSNSHUAdd(id);
+				
+				sessionKeep();
+			}
+			
+		});
+
+		// 削除ボタンが押された時のアクション
+		$("table").on('click','[name^="snshudel"]' ,function() {
+			var id = tgkttatSNSHUCount();
+			if(id > 1){
+				var tgkttatsnshunum = document.getElementById('ID_tGKTTATsnshuHidden').value;
+				tgkttatsnshunum = parseInt(tgkttatsnshunum) - 1;
+				$('[id^="ID_tGKTTATsnshuHidden"]').val(tgkttatsnshunum);
+
+				var target = $(this).attr('id').lastIndexOf('_', $(this).attr('id').length);
+				
+				// tgkttatSNSHUDel()呼び出し
+				tgkttatSNSHUDel(parseInt($(this).attr('id').substr(target + 1, 2)));
+				chinginInit();
+				sessionKeep();
+			}
+		});
+	});
+	
+	//=====================================================================
+	//定額的に支払われる手当（能開校）
+	//=====================================================================
+	//追加削除
+	$(function(){
+		// 入力欄を追加ボタンが押された時のアクション
+		$("table").on('click','[name^="nukaiadd"]' ,function() {
+			var id = tgkttatNUKAICount();
+			
+			if(id < 5){
+				var tgkttatnukainum = document.getElementById('ID_tGKTTATnukaiHidden').value;
+				tgkttatnukainum = parseInt(tgkttatnukainum) + 1;
+				$('[id^="ID_tGKTTATnukaiHidden"]').val(tgkttatnukainum);
+				
+				// tgkttatNUKAIAdd()呼び出し
+				tgkttatNUKAIAdd(id);
+				
+				sessionKeep();
+			}
+			
+		});
+
+		// 削除ボタンが押された時のアクション
+		$("table").on('click','[name^="nukaidel"]' ,function() {
+			var id = tgkttatNUKAICount();
+			if(id > 1){
+				var tgkttatnukainum = document.getElementById('ID_tGKTTATnukaiHidden').value;
+				tgkttatnukainum = parseInt(tgkttatnukainum) - 1;
+				$('[id^="ID_tGKTTATnukaiHidden"]').val(tgkttatnukainum);
+
+				var target = $(this).attr('id').lastIndexOf('_', $(this).attr('id').length);
+				
+				// tgkttatNUKAIDel()呼び出し
+				tgkttatNUKAIDel(parseInt($(this).attr('id').substr(target + 1, 2)));
+				chinginInit();
+				sessionKeep();
+			}
+		});
+	});
+	
+	// 賃金計算初期値処理
+	function chinginInit() {
+		
+		if($.inArray('1', splitGakuseiKbn) != -1){
+			// 賃金計算処理
+			chinginKeisan('0');
+		}
+		if($.inArray('2', splitGakuseiKbn) != -1){
+			// 賃金計算処理
+			chinginKeisan('1');
+		}
+		if($.inArray('3', splitGakuseiKbn) != -1){
+			// 賃金計算処理
+			chinginKeisan('2');
+		}
+		if($.inArray('4', splitGakuseiKbn) != -1){
+			// 賃金計算処理
+			chinginKeisan('3');
+		}
+		if($.inArray('5', splitGakuseiKbn) != -1){
+			// 賃金計算処理
+			chinginKeisan('4');
+		}
+		if($.inArray('6', splitGakuseiKbn) != -1){
+			// 賃金計算処理
+			chinginKeisan('5');
+		}
+	}
+	
+	// 月額／日額制御
+	function getsugakuHigakuCmbBox() {
+		// 実費支給（上限あり）または、一定額が選択されている場合
+		if ($("input:radio[name='tSKNTATRadioBtn']:checked").val() == '1' ||
+				$("input:radio[name='tSKNTATRadioBtn']:checked").val() == '2') {
+			$('#ID_getsugakuHigakuCmbBox').prop('disabled',false);
+			
+		// 実費支給（上限なし）または、なしが選択されている場合
+		} else if ($("input:radio[name='tSKNTATRadioBtn']:checked").val() == '4' ||
+				$("input:radio[name='tSKNTATRadioBtn']:checked").val() == '3') {
+			$('#ID_getsugakuHigakuCmbBox').prop('disabled',true);
+			
+		// 未選択
+		} else {
+			$('#ID_getsugakuHigakuCmbBox').prop('disabled',true);
+		}
+	}
+	// 金額（通勤手当）制御
+	function tSKNTATKingaku() {
+		// 実費支給（上限あり）または、一定額が選択されている場合
+		if ($("input:radio[name='tSKNTATRadioBtn']:checked").val() == '1' ||
+				$("input:radio[name='tSKNTATRadioBtn']:checked").val() == '2') {
+			$('#ID_tSKNTATKingaku').prop('disabled', false);
+			
+		// 実費支給（上限なし）または、なしが選択されている場合
+		} else if ($("input:radio[name='tSKNTATRadioBtn']:checked").val() == '4' ||
+						$("input:radio[name='tSKNTATRadioBtn']:checked").val() == '3') {
+			$('#ID_tSKNTATKingaku').prop('disabled', true);
+			
+		// 未選択
+		} else {
+			$('#ID_tSKNTATKingaku').prop('disabled',true);
+		}
+	}
+	// 毎月（賃金締切日）制御
+	function cHGNSKBIMITK() {
+		// 固定（月末以外）が選択されている場合
+		if ($("input:radio[name='cHGNSKBIRadioBtn']:checked").val() == '1') {
+			$('#ID_cHGNSKBIMITK').prop('disabled',false);
+			
+		// 固定（月末）または、その他が選択されている場合
+		} else if ($("input:radio[name='cHGNSKBIRadioBtn']:checked").val() == '2' ||
+						$("input:radio[name='cHGNSKBIRadioBtn']:checked").val() == '3') {
+			$('#ID_cHGNSKBIMITK').prop('disabled',true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_cHGNSKBIMITK').prop('disabled',true);
+		}
+	}
+	// その他の締切日制御
+	function sNTASKBI() {
+		// その他が選択されている場合が選択されている場合
+		if ($("input:radio[name='cHGNSKBIRadioBtn']:checked").val() == '3') {
+			$('#ID_sNTASKBI').prop('disabled',false);
+			
+		// 固定（月末）または、固定（月末以外）が選択されている場合
+		} else if ($("input:radio[name='cHGNSKBIRadioBtn']:checked").val() == '1' ||
+						$("input:radio[name='cHGNSKBIRadioBtn']:checked").val() == '2') {
+			$('#ID_sNTASKBI').prop('disabled',true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_sNTASKBI').prop('disabled',true);
+		}
+	}
+	// 支払月制御
+	function shiharaiTsukiRadioBtn() {
+		// 固定（月末以外）が選択されている場合
+		if ($("input:radio[name='cHGNSHBIRadioBtn']:checked").val() == '1') {
+			$('#ID_shiharaiTsukiRadioBtn1').prop('disabled', false);
+			$('#ID_shiharaiTsukiRadioBtn2').prop('disabled', false);
+			
+		// 固定（月末）または、その他が選択されている場合
+		} else if ($("input:radio[name='cHGNSHBIRadioBtn']:checked").val() == '2' ||
+						$("input:radio[name='cHGNSHBIRadioBtn']:checked").val() == '3') {
+			$('#ID_shiharaiTsukiRadioBtn1').prop('disabled', true);
+			$('#ID_shiharaiTsukiRadioBtn2').prop('disabled', true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_shiharaiTsukiRadioBtn1').prop('disabled', true);
+			$('#ID_shiharaiTsukiRadioBtn2').prop('disabled', true);
+		}
+	}
+	// 支払日制御
+	function sHBI() {
+		// 固定（月末以外）が選択されている場合
+		if ($("input:radio[name='cHGNSHBIRadioBtn']:checked").val() == '1') {
+			$('#ID_sHBI').prop('disabled', false);
+			
+		// 固定（月末）または、その他が選択されている場合
+		} else if ($("input:radio[name='cHGNSHBIRadioBtn']:checked").val() == '2' ||
+						$("input:radio[name='cHGNSHBIRadioBtn']:checked").val() == '3') {
+			$('#ID_sHBI').prop('disabled', true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_sHBI').prop('disabled', true);
+		}
+	}
+	// その他支払日制御
+	function sNTASHBI() {
+		// その他が選択されている場合
+		if ($("input:radio[name='cHGNSHBIRadioBtn']:checked").val() == '3') {
+			$('#ID_sNTASHBI').prop('disabled', false);
+			
+		// 固定（月末）または、固定（月末以外）が選択されている場合
+		} else if ($("input:radio[name='cHGNSHBIRadioBtn']:checked").val() == '1' ||
+						$("input:radio[name='cHGNSHBIRadioBtn']:checked").val() == '2') {
+			$('#ID_sNTASHBI').prop('disabled', true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_sNTASHBI').prop('disabled', true);
+		}
+	}
+	// 昇給（前年度実績）の有無制御
+	function shokyuZnNndJsskUmuRadioBtn() {
+		// 昇給制度ありが選択されている場合
+		if ($("input:radio[name='shokyuSDUmuRadioBtn']:checked").val() == '1') {
+			$('input[name=shokyuZnNndJsskUmuRadioBtn]').prop('disabled',false);
+			
+		// 昇給制度なしが選択されている場合
+		} else if ($("input:radio[name='shokyuSDUmuRadioBtn']:checked").val() == '0') {
+			$('input[name=shokyuZnNndJsskUmuRadioBtn]').prop('disabled',true);
+			
+		// 未選択の場合
+		} else {
+			$('input[name=shokyuZnNndJsskUmuRadioBtn]').prop('disabled',true);
+		}
+	}
+	// 昇給金額（前年度実績）制御
+	function sOKKGZnNndJssk() {
+		// 昇給制度の有無でありが選択されている場合
+		if ($("input:radio[name='shokyuSDUmuRadioBtn']:checked").val() == '1') {
+			
+			// 昇給制度（前年度実績）ありが選択されている場合
+			if ($("input:radio[name='shokyuZnNndJsskUmuRadioBtn']:checked").val() == '1') {
+				$('#ID_sOKKGZnNndJssk').prop('disabled',false);
+				
+			// 昇給制度（前年度実績）なしが選択されている場合
+			} else if ($("input:radio[name='shokyuZnNndJsskUmuRadioBtn']:checked").val() == '0') {
+				$('#ID_sOKKGZnNndJssk').prop('disabled',true);
+				
+			// 未選択の場合
+			} else {
+				$('#ID_sOKKGZnNndJssk').prop('disabled',true);
+			}
+			
+		// 昇給制度の有無でなしが選択されている場合	
+		} else if ($("input:radio[name='shokyuSDUmuRadioBtn']:checked").val() == '0') {
+			$('#ID_sOKKGZnNndJssk').prop('disabled',true);
+		
+		// 未選択の場合
+		} else {
+			$('#ID_sOKKGZnNndJssk').prop('disabled',true);
+		}
+	}
+	// 昇給率（前年度実績）制御
+	function sKRTZnNndJssk() {
+		// 昇給制度の有無でありが選択されている場合
+		if ($("input:radio[name='shokyuSDUmuRadioBtn']:checked").val() == '1') {
+			
+			// 昇給制度（前年度実績）ありが選択されている場合
+			if ($("input:radio[name='shokyuZnNndJsskUmuRadioBtn']:checked").val() == '1') {
+				$('#ID_sKRTZnNndJssk').prop('disabled',false);
+				
+			// 昇給制度（前年度実績）なしが選択されている場合
+			} else if ($("input:radio[name='shokyuZnNndJsskUmuRadioBtn']:checked").val() == '0') {
+				$('#ID_sKRTZnNndJssk').prop('disabled',true);
+				
+			// 未選択の場合
+			} else {
+				$('#ID_sKRTZnNndJssk').prop('disabled',true);
+			}
+		// 昇給制度の有無でなしが選択されている場合	
+		} else if ($("input:radio[name='shokyuSDUmuRadioBtn']:checked").val() == '0') {
+			$('#ID_sKRTZnNndJssk').prop('disabled',true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_sKRTZnNndJssk').prop('disabled',true);
+		}
+	}
+	
+	// 新規学卒者の賞与（前年度実績）の有無制御
+	function shinGSSYShoyoZnNndJsskUmuRadioBtn() {
+		// 新規学卒者の賞与制度ありが選択されている場合
+		if ($("input:radio[name='shinGSSYShoyoSDUmuRadioBtn']:checked").val() == '1') {
+			$('#ID_shinGSSYShoyoZnNndJsskUmuRadioBtn1').prop('disabled', false);
+			$('#ID_shinGSSYShoyoZnNndJsskUmuRadioBtn2').prop('disabled', false);
+			
+		// 新規学卒者の賞与制度なしが選択されている場合
+		} else if ($("input:radio[name='shinGSSYShoyoSDUmuRadioBtn']:checked").val() == '0') {
+			$('#ID_shinGSSYShoyoZnNndJsskUmuRadioBtn1').prop('disabled', true);
+			$('#ID_shinGSSYShoyoZnNndJsskUmuRadioBtn2').prop('disabled', true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_shinGSSYShoyoZnNndJsskUmuRadioBtn1').prop('disabled', true);
+			$('#ID_shinGSSYShoyoZnNndJsskUmuRadioBtn2').prop('disabled', true);
+		}
+	}
+	
+	// 新規学卒者の賞与制御
+	function shinGSSYShoyoKaisu() {
+		// 新規学卒者の賞与制度ありが選択されている場合
+		if ($("input:radio[name='shinGSSYShoyoSDUmuRadioBtn']:checked").val() == '1') {
+			// 新規学卒者の賞与（前年度実績）の有無がありを選択されている場合
+			if ($("input:radio[name='shinGSSYShoyoZnNndJsskUmuRadioBtn']:checked").val() == '1') {
+				$('#ID_shinGSSYShoyoKaisu').prop('disabled',false);
+				$('#ID_shinGSSYShoyoBuai').prop('disabled',false);
+				$('#ID_shinGSSYShoyoSDKingakuKagen').prop('disabled',false);
+				$('#ID_shinGSSYShoyoSDKingakuJGN').prop('disabled',false);
+			
+			// 新規学卒者の賞与（前年度実績）の有無がなしを選択されている場合
+			} else if ($("input:radio[name='shinGSSYShoyoZnNndJsskUmuRadioBtn']:checked").val() == '0') {
+				$('#ID_shinGSSYShoyoKaisu').prop('disabled',true);
+				$('#ID_shinGSSYShoyoBuai').prop('disabled',true);
+				$('#ID_shinGSSYShoyoSDKingakuKagen').prop('disabled',true);
+				$('#ID_shinGSSYShoyoSDKingakuJGN').prop('disabled',true);
+				
+			// 未選択の場合
+			} else {
+				$('#ID_shinGSSYShoyoKaisu').prop('disabled',true);
+				$('#ID_shinGSSYShoyoBuai').prop('disabled',true);
+				$('#ID_shinGSSYShoyoSDKingakuKagen').prop('disabled',true);
+				$('#ID_shinGSSYShoyoSDKingakuJGN').prop('disabled',true);
+			}
+			
+		// 新規学卒者の賞与制度なしが選択されている場合
+		} else if ($("input:radio[name='shinGSSYShoyoSDUmuRadioBtn']:checked").val() == '0') {
+			$('#ID_shinGSSYShoyoKaisu').prop('disabled',true);
+			$('#ID_shinGSSYShoyoBuai').prop('disabled',true);
+			$('#ID_shinGSSYShoyoSDKingakuKagen').prop('disabled',true);
+			$('#ID_shinGSSYShoyoSDKingakuJGN').prop('disabled',true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_shinGSSYShoyoKaisu').prop('disabled',true);
+			$('#ID_shinGSSYShoyoBuai').prop('disabled',true);
+			$('#ID_shinGSSYShoyoSDKingakuKagen').prop('disabled',true);
+			$('#ID_shinGSSYShoyoSDKingakuJGN').prop('disabled',true);
+		}
+	}
+	
+	// 一般労働者の賞与（前年度実績）の有無制御
+	function ippanRDSYAShoyoZnNndJsskUmuRadioBtn() {
+		// 一般労働者の賞与制度ありが選択されている場合
+		if ($("input:radio[name='ippanRDSYAShoyoSDUmuRadioBtn']:checked").val() == '1') {
+			$('#ID_ippanRDSYAShoyoZnNndJsskUmuRadioBtn1').prop('disabled', false);
+			$('#ID_ippanRDSYAShoyoZnNndJsskUmuRadioBtn2').prop('disabled', false);
+			
+		// 一般労働者の賞与制度なしが選択されている場合
+		} else if ($("input:radio[name='ippanRDSYAShoyoSDUmuRadioBtn']:checked").val() == '0') {
+			$('#ID_ippanRDSYAShoyoZnNndJsskUmuRadioBtn1').prop('disabled', true);
+			$('#ID_ippanRDSYAShoyoZnNndJsskUmuRadioBtn2').prop('disabled', true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_ippanRDSYAShoyoZnNndJsskUmuRadioBtn1').prop('disabled', true);
+			$('#ID_ippanRDSYAShoyoZnNndJsskUmuRadioBtn2').prop('disabled', true);
+		}
+	}
+	
+	// 一般労働者の賞与制御
+	function ippanRDSYAShoyoKaisu() {
+		// 一般労働者の賞与制度ありが選択されている場合
+		if ($("input:radio[name='ippanRDSYAShoyoSDUmuRadioBtn']:checked").val() == '1') {
+			// 一般労働者の賞与（前年度実績）の有無がありが選択されている場合
+			if ($("input:radio[name='ippanRDSYAShoyoZnNndJsskUmuRadioBtn']:checked").val() == '1') {
+				$('#ID_ippanRDSYAShoyoKaisu').prop('disabled',false);
+				$('#ID_ippanRDSYAShoyoBuai').prop('disabled',false);
+				$('#ID_ippanRDSYAShoyoKingakuKagen').prop('disabled',false);
+				$('#ID_ippanRDSYAShoyoKingakuJGN').prop('disabled',false);
+			
+			// 一般労働者の賞与（前年度実績）の有無がなしが選択されている場合
+			} else if ($("input:radio[name='ippanRDSYAShoyoZnNndJsskUmuRadioBtn']:checked").val() == '0'){
+				$('#ID_ippanRDSYAShoyoKaisu').prop('disabled',true);
+				$('#ID_ippanRDSYAShoyoBuai').prop('disabled',true);
+				$('#ID_ippanRDSYAShoyoKingakuKagen').prop('disabled',true);
+				$('#ID_ippanRDSYAShoyoKingakuJGN').prop('disabled',true);
+			
+			// 未選択の場合
+			} else {
+				$('#ID_ippanRDSYAShoyoKaisu').prop('disabled',true);
+				$('#ID_ippanRDSYAShoyoBuai').prop('disabled',true);
+				$('#ID_ippanRDSYAShoyoKingakuKagen').prop('disabled',true);
+				$('#ID_ippanRDSYAShoyoKingakuJGN').prop('disabled',true);
+			}
+		// 一般労働者の賞与制度なしが選択されている場合
+		} else if ($("input:radio[name='ippanRDSYAShoyoSDUmuRadioBtn']:checked").val() == '0') {
+			$('#ID_ippanRDSYAShoyoKaisu').prop('disabled',true);
+			$('#ID_ippanRDSYAShoyoBuai').prop('disabled',true);
+			$('#ID_ippanRDSYAShoyoKingakuKagen').prop('disabled',true);
+			$('#ID_ippanRDSYAShoyoKingakuJGN').prop('disabled',true);
+			
+		// 未選択の場合
+		} else {
+			$('#ID_ippanRDSYAShoyoKaisu').prop('disabled',true);
+			$('#ID_ippanRDSYAShoyoBuai').prop('disabled',true);
+			$('#ID_ippanRDSYAShoyoKingakuKagen').prop('disabled',true);
+			$('#ID_ippanRDSYAShoyoKingakuJGN').prop('disabled',true);
+		}
+	}
+	
+	// 「入力欄を追加」ボタン制御(初期表示)
+	function addBtnNodisp() {
+		
+		// 「定額的に支払われる手当」が5件の場合、「入力欄を追加」ボタンを非表示にする（大学院）
+		var num_digki = tgkttatDIGKICount();
+		if(num_digki == 5){
+			nodisp($('#ID_digkibtnArea_1'));
+		}
+
+		// 「定額的に支払われる手当」が5件の場合、「入力欄を追加」ボタンを非表示にする（大学）
+		var num_digk = tgkttatDIGKCount();
+		if(num_digk == 5){
+			nodisp($('#ID_digkbtnArea_1'));
+		}
+
+		// 「定額的に支払われる手当」が5件の場合、「入力欄を追加」ボタンを非表示にする（短大）
+		var num_tnsi = tgkttatTNDICount();
+		if(num_tnsi == 5){
+			nodisp($('#ID_tndibtnArea_1'));
+		}
+
+		// 「定額的に支払われる手当」が5件の場合、「入力欄を追加」ボタンを非表示にする（高専）
+		var num_kusn = tgkttatKUSNCount();
+		if(num_kusn == 5){
+			nodisp($('#ID_kusnbtnArea_1'));
+		}
+
+		// 「定額的に支払われる手当」が5件の場合、「入力欄を追加」ボタンを非表示にする（専修学校）
+		var num_snshu = tgkttatSNSHUCount();
+		if(num_snshu == 5){
+			nodisp($('#ID_snshubtnArea_1'));
+		}
+
+		// 「定額的に支払われる手当」が5件の場合、「入力欄を追加」ボタンを非表示にする（能開校）
+		var num_nukai = tgkttatNUKAICount();
+		if(num_nukai == 5){
+			nodisp($('#ID_nukaibtnArea_1'));
+		}
+	}
+	
+});
+
+// 計算処理
+function chinginKeisan(gakuseiKbn) {
+	if (gakuseiKbn === '0') {
+		// 大学院
+		var total = "-";
+		var chinginA = isNaN($('#ID_kHKYGtgkHeikinOrJKGK').val());
+		var chinginB1 = isNaN($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI1').val());
+		var chinginB2 = "";
+		var chinginB3 = "";
+		var chinginB4 = "";
+		var chinginB5 = "";
+		if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI2') != null) {
+			chinginB2 = isNaN($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI2').val());
+		}
+		if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI3') != null) {
+			chinginB3 = isNaN($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI3').val());
+		}
+		if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI4') != null) {
+			chinginB4 = isNaN($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI4').val());
+		}
+		if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI5') != null) {
+			chinginB5 = isNaN($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI5').val());
+		}
+		var chinginC = isNaN($('#ID_kTIZangyDIKingaku').val());
+		
+		// 基本給（月額平均）又は時間額が半角数字以外の場合
+		if(chinginA){
+			total = "-";
+		// 固定残業代の有無が「なし」の場合
+		}else if ($('#ID_kTIZangyDIUmuRadioBtn2').is(':checked')) {
+			chinginA = parseInt($('#ID_kHKYGtgkHeikinOrJKGK').val());
+			if (chinginB1){
+				chinginB1 = 0;
+			} else {
+				chinginB1 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI1').val());
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI2') != null) {
+				if (chinginB2){
+					chinginB2 = 0;
+				} else {
+					chinginB2 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI2').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI3') != null) {
+				if (chinginB3){
+					chinginB3 = 0;
+				} else {
+					chinginB3 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI3').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI4') != null) {
+				if (chinginB4){
+					chinginB4 = 0;
+				} else {
+					chinginB4 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI4').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI5') != null) {
+				if (chinginB5){
+					chinginB5 = 0;
+				} else {
+					chinginB5 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI5').val());
+				}
+			}
+			chinginC = parseInt($('#ID_kTIZangyDIKingaku').val());
+			// 空白（null）の場合、任意項目に0を設定する
+			if(!chinginB1){
+				chinginB1 = 0;
+			}
+			if(!chinginB2){
+				chinginB2 = 0;
+			}
+			if(!chinginB3){
+				chinginB3 = 0;
+			}
+			if(!chinginB4){
+				chinginB4 = 0;
+			}
+			if(!chinginB5){
+				chinginB5 = 0;
+			}
+			// 空白（null）の場合、"-"を設定する
+			if (!chinginA && chinginA != 0){
+				total = "-";
+			}else {
+				total = chinginA + chinginB1 + chinginB2 + chinginB3 + chinginB4 +chinginB5;
+			}
+		} else {
+			chinginA = parseInt($('#ID_kHKYGtgkHeikinOrJKGK').val());
+			if (chinginB1){
+				chinginB1 = 0;
+			} else {
+				chinginB1 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI1').val());
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI2') != null) {
+				if (chinginB2){
+					chinginB2 = 0;
+				} else {
+					chinginB2 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI2').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI3') != null) {
+				if (chinginB3){
+					chinginB3 = 0;
+				} else {
+					chinginB3 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI3').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI4') != null) {
+				if (chinginB4){
+					chinginB4 = 0;
+				} else {
+					chinginB4 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI4').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI5') != null) {
+				if (chinginB5){
+					chinginB5 = 0;
+				} else {
+					chinginB5 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI5').val());
+				}
+			}
+			chinginC = parseInt($('#ID_kTIZangyDIKingaku').val());
+			// 空白（null）の場合、任意項目に0を設定する
+			if (!chinginB1){
+				chinginB1 = 0;
+			}
+			if(!chinginB2){
+				chinginB2 = 0;
+			}
+			if(!chinginB3){
+				chinginB3 = 0;
+			}
+			if(!chinginB4){
+				chinginB4 = 0;
+			}
+			if(!chinginB5){
+				chinginB5 = 0;
+			}
+			
+			// 空白（null）の場合、"-"を設定する
+			if((!chinginA && chinginA != 0) || (!chinginC && chinginC != 0) ){
+				total = "-";
+			}else {
+				total = chinginA + chinginB1 + chinginB2 + chinginB3 + chinginB4 + chinginB5 + chinginC;
+			}
+		}
+	$('#ID_APlusBKTIZangyDiAPlusBPlusC').val(total);
+	$('#ID_APlusB').text(amountComma(total));
+	} else {
+		// 大学院以外
+		var total = "-";
+		var gakuseiKbnMei = "";
+		
+		if( gakuseiKbn === '1' ){
+			//大学の賃金・手当
+			gakuseiKbnMei = 'DIGK';
+		}else if (gakuseiKbn === '2' ){
+			//短大の賃金・手当
+			gakuseiKbnMei = 'TNDI';
+		}else if (gakuseiKbn === '3' ){
+			//高専の賃金・手当
+			gakuseiKbnMei = 'KUSN';
+		}else if (gakuseiKbn === '4' ){
+			//専修学校の賃金・手当
+			gakuseiKbnMei = 'SNSHU';
+		}else if (gakuseiKbn === '5' ){
+			//能開校の賃金・手当
+			gakuseiKbnMei = 'NUKAI';
+		}
+		
+		var chinginA = isNaN($('#ID_kHKYGtgkHeikinOrJKGK' + gakuseiKbn).val());
+		var chinginB1 = isNaN($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '1').val());
+		if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '2') != null) {
+			chinginB2 = isNaN($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '2').val());
+		}
+		if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '3') != null) {
+			chinginB3 = isNaN($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '3').val());
+		}
+		if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '4') != null) {
+			chinginB4 = isNaN($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '4').val());
+		}
+		if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '5') != null) {
+			chinginB5 = isNaN($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '5').val());
+		}
+		var chinginC = isNaN($('#ID_kTIZangyDIKingaku' + gakuseiKbn).val());
+		// 基本給（月額平均）又は時間額が半角数字以外の場合
+		if(chinginA){
+			total = "-";
+		// 固定残業代の有無が「なし」の場合
+		}else if ($('#ID_kTIZangyDIUmuRadioBtn' + gakuseiKbn + '2').is(':checked')) {
+			chinginA = parseInt($('#ID_kHKYGtgkHeikinOrJKGK' + gakuseiKbn).val());
+			if (chinginB1){
+				chinginB1 = 0;
+			} else {
+				chinginB1 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '1').val());
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '2') != null) {
+				if (chinginB2){
+					chinginB2 = 0;
+				} else {
+					chinginB2 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '2').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '3') != null) {
+				if (chinginB3){
+					chinginB3 = 0;
+				} else {
+					chinginB3 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '3').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '4') != null) {
+				if (chinginB4){
+					chinginB4 = 0;
+				} else {
+					chinginB4 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '4').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '5') != null) {
+				if (chinginB5){
+					chinginB5 = 0;
+				} else {
+					chinginB5 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '5').val());
+				}
+			}
+			chinginC = parseInt($('#ID_kTIZangyDIKingaku' + gakuseiKbn).val());
+			// 空白（null）の場合、任意項目に0を設定する
+			if(!chinginB1){
+				chinginB1 = 0;
+			}
+			if(!chinginB2){
+				chinginB2 = 0;
+			}
+			if(!chinginB3){
+				chinginB3 = 0;
+			}
+			if(!chinginB4){
+				chinginB4 = 0;
+			}
+			if(!chinginB5){
+				chinginB5 = 0;
+			}
+			// 空白（null）の場合、"-"を設定する
+			if(!chinginA && chinginA != 0){
+				total = "-";
+			}else {
+				total = chinginA + chinginB1 + chinginB2 + chinginB3 + chinginB4 + chinginB5;
+			}
+		}else{
+			chinginA = parseInt($('#ID_kHKYGtgkHeikinOrJKGK' + gakuseiKbn).val());
+			if (chinginB1){
+				chinginB1 = 0;
+			} else {
+				chinginB1 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '1').val());
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '2') != null) {
+				if (chinginB2){
+					chinginB2 = 0;
+				} else {
+					chinginB2 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '2').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '3') != null) {
+				if (chinginB3){
+					chinginB3 = 0;
+				} else {
+					chinginB3 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '3').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '4') != null) {
+				if (chinginB4){
+					chinginB4 = 0;
+				} else {
+					chinginB4 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '4').val());
+				}
+			}
+			if ($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '5') != null) {
+				if (chinginB5){
+					chinginB5 = 0;
+				} else {
+					chinginB5 = parseInt($('#ID_tGKTShiharaiTATGtgkOrJKGKKnsnGaku' + gakuseiKbnMei + '5').val());
+				}
+			}
+			chinginC = parseInt($('#ID_kTIZangyDIKingaku' + gakuseiKbn).val());
+			// 空白（null）の場合、任意項目に0を設定する
+			if(!chinginB1){
+				chinginB1 = 0;
+			}
+			if(!chinginB2){
+				chinginB2 = 0;
+			}
+			if(!chinginB3){
+				chinginB3 = 0;
+			}
+			if(!chinginB4){
+				chinginB4 = 0;
+			}
+			if(!chinginB5){
+				chinginB5 = 0;
+			}
+			// 空白（null）の場合、"-"を設定する
+			if((!chinginA && chinginA != 0) || (!chinginC && chinginC != 0)){
+				total = "-";
+			} else {
+				total = chinginA + chinginB1 + chinginB2 + chinginB3 + chinginB4 + chinginB5 + chinginC;
+			}
+		}
+		$('#ID_APlusBKTIZangyDiAPlusBPlusC' + gakuseiKbn).val(amountComma(total));
+		$('#ID_APlusB' + gakuseiKbn).text(amountComma(total));
+	}
+}
+
+//金額の,付け
+function amountComma(num) {
+	return String(num).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
+}
+
+
+
+//定額的に支払われる手当（大学院）を増やすメソッド
+function tgkttatDIGKIAdd(id){
+	// 大学院
+	var digkiaddnum = document.getElementById('ID_tGKTTATdigkiHidden').value;
+	var Divnew = $('#ID_tGKTTATdigki_' + id).clone(true);
+	Divnew.attr("id", "ID_tGKTTATdigki_"+(id+1));
+	// 大学
+	var Divnew1 = $('#ID_tGKTTATdigk_' + id).clone(true);
+	Divnew1.attr("id", "ID_tGKTTATdigk_"+(id+1));
+	
+	// 短大
+	var Divnew2 = $('#ID_tGKTTATtndi_' + id).clone(true);
+	Divnew2.attr("id", "ID_tGKTTATtndi_"+(id+1));
+	
+	// 高専
+	var Divnew3 = $('#ID_tGKTTATkusn_' + id).clone(true);
+	Divnew3.attr("id", "ID_tGKTTATkusn_"+(id+1));
+	
+	// 専修学校
+	var Divnew4 = $('#ID_tGKTTATsnshu_' + id).clone(true);
+	Divnew4.attr("id", "ID_tGKTTATsnshu_"+(id+1));
+	
+	// 能開校
+	var Divnew5 = $('#ID_tGKTTATnukai_' + id).clone(true);
+	Divnew5.attr("id", "ID_tGKTTATnukai_"+(id+1));
+	
+	// 大学院
+	$('#ID_tGKTTATdigki_'+id).after(Divnew);
+	// 大学
+	$('#ID_tGKTTATdigk_'+id).after(Divnew1);
+	// 短大
+	$('#ID_tGKTTATtndi_'+id).after(Divnew2);
+	// 高専
+	$('#ID_tGKTTATkusn_'+id).after(Divnew3);
+	// 専修学校
+	$('#ID_tGKTTATsnshu_'+id).after(Divnew4);
+	// 能開校
+	$('#ID_tGKTTATnukai_'+id).after(Divnew5);
+	
+	// 大学院
+	$('#ID_tGKTTATdigki_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiDIGKI"]').attr({"name":"tGKTShiharaiTATTATMeiDIGKI"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiDIGKI"+(id+1)}).val("");
+	$('#ID_tGKTTATdigki_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI"+(id+1)}).val("");
+	$('#ID_tGKTTATdigki_'+(id+1)).find('[name^="tGKTTATDIGKITitle"]').attr({"name":"tGKTTATDIGKITitle"+(id+1),"id":"ID_tGKTTATDIGKITitle"+(id+1)});
+	$('#ID_tGKTTATdigki_'+(id+1)).find('[name^="tGKTTATDIGKITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATdigki_'+(id+1)).find('[name^="tGKTTATDIGKISub"]').attr({"name":"tGKTTATDIGKISub"+(id+1),"id":"ID_tGKTTATDIGKISub"+(id+1)});
+	$('#ID_tGKTTATdigki_'+(id+1)).find('[name^="tGKTTATDIGKISub"]').html("手当名は全角6文字以内、金額は半角数字");
+	$('#ID_tGKTTATdigki_'+(id+1)).find('[name^="digkidel_"]').attr({"name":"digkidel_"+(id+1),"id":"ID_digkidel_"+(id+1)});
+	
+	// 大学の手当の行を増やす
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="teateMei1"]').attr({"name":"teateMei1"+(id+1),"id":"ID_teateMei1"+(id+1)}).html("手当");
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiDIGK"]').attr({"name":"tGKTShiharaiTATTATMeiDIGK"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiDIGK"+(id+1)}).val("");
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"+(id+1)}).val("");
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTTATDIGKTitle"]').attr({"name":"tGKTTATDIGKTitle"+(id+1),"id":"ID_tGKTTATDIGKTitle"+(id+1)});
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTTATDIGKTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTTATDIGKSub"]').attr({"name":"tGKTTATDIGKSub"+(id+1),"id":"ID_tGKTTATDIGKSub"+(id+1)});
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTTATDIGKSub"]').html("半角数字");
+	
+	// 短大の手当の行を増やす
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="teateMei2"]').attr({"name":"teateMei2"+(id+1),"id":"ID_teateMei2"+(id+1)}).html("手当");
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiTNDI"]').attr({"name":"tGKTShiharaiTATTATMeiTNDI"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiTNDI"+(id+1)}).val("");
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(id+1)}).val("");
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDITitle"]').attr({"name":"tGKTTATTNDITitle"+(id+1),"id":"ID_tGKTTATTNDITitle"+(id+1)});
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDISub"]').attr({"name":"tGKTTATTNDISub"+(id+1),"id":"ID_tGKTTATTNDISub"+(id+1)});
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDISub"]').html("半角数字");
+	
+	// 高専の手当の行を増やす
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="teateMei3"]').attr({"name":"teateMei3"+(id+1),"id":"ID_teateMei3"+(id+1)}).html("手当");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiKUSN"]').attr({"name":"tGKTShiharaiTATTATMeiKUSN"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiKUSN"+(id+1)}).val("");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(id+1)}).val("");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNTitle"]').attr({"name":"tGKTTATKUSNTitle"+(id+1),"id":"ID_tGKTTATKUSNTitle"+(id+1)});
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNSub"]').attr({"name":"tGKTTATKUSNSub"+(id+1),"id":"ID_tGKTTATKUSNSub"+(id+1)});
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNSub"]').html("半角数字");
+	
+	// 専修学校の手当の行を増やす
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="teateMei4"]').attr({"name":"teateMei4"+(id+1),"id":"ID_teateMei4"+(id+1)}).html("手当");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiSNSHU"]').attr({"name":"tGKTShiharaiTATTATMeiSNSHU"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiSNSHU"+(id+1)}).val("");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(id+1)}).val("");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUTitle"]').attr({"name":"tGKTTATSNSHUTitle"+(id+1),"id":"ID_tGKTTATSNSHUTitle"+(id+1)});
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUSub"]').attr({"name":"tGKTTATSNSHUSub"+(id+1),"id":"ID_tGKTTATSNSHUSub"+(id+1)});
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUSub"]').html("半角数字");
+	
+	// 能開校の手当の行を増やす
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="teateMei5"]').attr({"name":"teateMei5"+(id+1),"id":"ID_teateMei5"+(id+1)}).html("手当");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(id+1),"id":"ID_tGKTTATNUKAITitle"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(id+1),"id":"ID_tGKTTATNUKAISub"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').html("半角数字");
+	
+	if(id < 4){
+		disp($('#ID_digkibtnArea_1'));
+		disp($('#ID_digkidel_1'));
+		disp($('#ID_digkidel_2'));
+		disp($('#ID_digkidel_3'));
+		disp($('#ID_digkidel_4'));
+		disp($('#ID_digkidel_5'));
+	}else{
+		nodisp($('#ID_digkibtnArea_1'));
+	}
+	chinginKeisan('0');
+}
+
+//定額的に支払われる手当（大学院）を減らすメソッド
+function tgkttatDIGKIDel(id){
+	var num = tgkttatDIGKICount();
+	// 大学院
+	$('#ID_tGKTTATdigki_' + id).remove();
+	// 大学
+	$('#ID_tGKTTATdigk_' + id).remove();
+	// 短大
+	$('#ID_tGKTTATtndi_' + id).remove();
+	// 高専
+	$('#ID_tGKTTATkusn_' + id).remove();
+	// 専修学校
+	$('#ID_tGKTTATsnshu_' + id).remove();
+	// 能開校
+	$('#ID_tGKTTATnukai_' + id).remove();
+	
+	for(var i = id+1; i<= num; i++){
+		// 大学院
+		$('#ID_tGKTTATdigki_'+i).attr('id','ID_tGKTTATdigki_'+(i-1));
+		$('#ID_tGKTTATdigki_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiDIGKI"]').attr({"name":"tGKTShiharaiTATTATMeiDIGKI"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiDIGKI"+(i-1)});
+		$('#ID_tGKTTATdigki_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGKI"+(i-1)});
+		$('#ID_tGKTTATdigki_'+(i-1)).find('[name^="tGKTTATDIGKITitle"]').attr({"name":"tGKTTATDIGKITitle"+(i-1),"id":"ID_tGKTTATDIGKITitle"+(i-1)});
+		$('#ID_tGKTTATdigki_'+(i-1)).find('[name^="tGKTTATDIGKITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATdigki_'+(i-1)).find('[name^="tGKTTATDIGKISub"]').attr({"name":"tGKTTATDIGKISub"+(i-1),"id":"ID_tGKTTATDIGKISub"+(i-1)});
+		$('#ID_tGKTTATdigki_'+(i-1)).find('[name^="tGKTTATDIGKISub"]').html("手当名は全角6文字以内、金額は半角数字");
+		$('#ID_tGKTTATdigki_'+(i-1)).find('[name^="digkidel_"]').attr({"name":"digkidel_"+(i-1),"id":"ID_digkidel_"+(i-1)});
+		
+		// 大学の手当の行を減らす
+		$('#ID_tGKTTATdigk_'+i).attr('id','ID_tGKTTATdigk_'+(i-1));
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="teateMei1"]').attr({"name":"teateMei1"+(i-1),"id":"ID_teateMei1"+(i-1)});
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiDIGK"]').attr({"name":"tGKTShiharaiTATTATMeiDIGK"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiDIGK"+(i-1)});
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"+(i-1)});
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTTATDIGKTitle"]').attr({"name":"tGKTTATDIGKTitle"+(i-1),"id":"ID_tGKTTATDIGKTitle"+(i-1)});
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTTATDIGKTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTTATDIGKSub"]').attr({"name":"tGKTTATDIGKSub"+(i-1),"id":"ID_tGKTTATDIGKSub"+(i-1)});
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTTATDIGKSub"]').html("半角数字");
+		
+		// 短大の手当の行を減らす
+		$('#ID_tGKTTATtndi_'+i).attr('id','ID_tGKTTATtndi_'+(i-1));
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="teateMei2"]').attr({"name":"teateMei2"+(i-1),"id":"ID_teateMei2"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiTNDI"]').attr({"name":"tGKTShiharaiTATTATMeiTNDI"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiTNDI"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDITitle"]').attr({"name":"tGKTTATTNDITitle"+(i-1),"id":"ID_tGKTTATTNDITitle"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDISub"]').attr({"name":"tGKTTATTNDISub"+(i-1),"id":"ID_tGKTTATTNDISub"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDISub"]').html("半角数字");
+		
+		// 高専の手当の行を減らす
+		$('#ID_tGKTTATkusn_'+i).attr('id','ID_tGKTTATkusn_'+(i-1));
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="teateMei3"]').attr({"name":"teateMei3"+(i-1),"id":"ID_teateMei3"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiKUSN"]').attr({"name":"tGKTShiharaiTATTATMeiKUSN"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiKUSN"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNTitle"]').attr({"name":"tGKTTATKUSNTitle"+(i-1),"id":"ID_tGKTTATKUSNTitle"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNSub"]').attr({"name":"tGKTTATKUSNSub"+(i-1),"id":"ID_tGKTTATKUSNSub"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNSub"]').html("半角数字");
+		
+		// 専修学校の手当の行を減らす
+		$('#ID_tGKTTATsnshu_'+i).attr('id','ID_tGKTTATsnshu_'+(i-1));
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="teateMei4"]').attr({"name":"teateMei4"+(i-1),"id":"ID_teateMei4"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiSNSHU"]').attr({"name":"tGKTShiharaiTATTATMeiSNSHU"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiSNSHU"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUTitle"]').attr({"name":"tGKTTATSNSHUTitle"+(i-1),"id":"ID_tGKTTATSNSHUTitle"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUSub"]').attr({"name":"tGKTTATSNSHUSub"+(i-1),"id":"ID_tGKTTATSNSHUSub"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUSub"]').html("半角数字");
+		
+		// 能開校の手当の行を減らす
+		$('#ID_tGKTTATnukai_'+i).attr('id','ID_tGKTTATnukai_'+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="teateMei5"]').attr({"name":"teateMei5"+(i-1),"id":"ID_teateMei5"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(i-1),"id":"ID_tGKTTATNUKAITitle"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(i-1),"id":"ID_tGKTTATNUKAISub"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').html("半角数字");
+	}
+	if(i == 3){
+		nodisp($('#ID_digkidel_1'));
+	}else if(i > 1){
+		disp($('#ID_digkibtnArea_1'));
+	}else{
+		nodisp($('#ID_digkibtnArea_1'));
+	}
+	chinginKeisan('0');
+}
+
+//「定額的に支払われる手当（大学院）」の数を判断するメソッド。
+function tgkttatDIGKICount(){
+	if($('#ID_tGKTShiharaiTATTATMeiDIGKI5').length){
+		var num = 5;
+	}else if($('#ID_tGKTShiharaiTATTATMeiDIGKI4').length){
+		var num = 4;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiDIGKI3').length){
+		var num = 3;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiDIGKI2').length){
+		var num = 2;
+	}else{
+		var num = 1;
+	}
+	return num;
+}
+
+
+
+
+//定額的に支払われる手当（大学）を増やすメソッド
+function tgkttatDIGKAdd(id){
+	var digkaddnum = document.getElementById('ID_tGKTTATdigkHidden').value;
+	// 大学
+	var Divnew = $('#ID_tGKTTATdigk_' + id).clone(true);
+	Divnew.attr("id", "ID_tGKTTATdigk_"+(id+1));
+	
+	// 短大
+	var Divnew2 = $('#ID_tGKTTATtndi_' + id).clone(true);
+	Divnew2.attr("id", "ID_tGKTTATtndi_"+(id+1));
+	
+	// 高専
+	var Divnew3 = $('#ID_tGKTTATkusn_' + id).clone(true);
+	Divnew3.attr("id", "ID_tGKTTATkusn_"+(id+1));
+	
+	// 専修学校
+	var Divnew4 = $('#ID_tGKTTATsnshu_' + id).clone(true);
+	Divnew4.attr("id", "ID_tGKTTATsnshu_"+(id+1));
+	
+	// 能開校
+	var Divnew5 = $('#ID_tGKTTATnukai_' + id).clone(true);
+	Divnew5.attr("id", "ID_tGKTTATnukai_"+(id+1));
+	
+	// 大学
+	$('#ID_tGKTTATdigk_'+id).after(Divnew);
+	// 短大
+	$('#ID_tGKTTATtndi_'+id).after(Divnew2);
+	// 高専
+	$('#ID_tGKTTATkusn_'+id).after(Divnew3);
+	// 専修学校
+	$('#ID_tGKTTATsnshu_'+id).after(Divnew4);
+	// 能開校
+	$('#ID_tGKTTATnukai_'+id).after(Divnew5);
+	
+	// 大学
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiDIGK"]').attr({"name":"tGKTShiharaiTATTATMeiDIGK"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiDIGK"+(id+1)}).val("");
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"+(id+1)}).val("");
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTTATDIGKTitle"]').attr({"name":"tGKTTATDIGKTitle"+(id+1),"id":"ID_tGKTTATDIGKTitle"+(id+1)});
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTTATDIGKTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTTATDIGKSub"]').attr({"name":"tGKTTATDIGKSub"+(id+1),"id":"ID_tGKTTATDIGKSub"+(id+1)});
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="tGKTTATDIGKSub"]').html("手当名は全角6文字以内、金額は半角数字");
+	$('#ID_tGKTTATdigk_'+(id+1)).find('[name^="digkdel_"]').attr({"name":"digkdel_"+(id+1),"id":"ID_digkdel_"+(id+1)});
+	
+	// 短大の手当の行を増やす
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="teateMei2"]').attr({"name":"teateMei2"+(id+1),"id":"ID_teateMei2"+(id+1)}).html("手当");
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiTNDI"]').attr({"name":"tGKTShiharaiTATTATMeiTNDI"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiTNDI"+(id+1)}).val("");
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(id+1)}).val("");
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDITitle"]').attr({"name":"tGKTTATTNDITitle"+(id+1),"id":"ID_tGKTTATTNDITitle"+(id+1)});
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDISub"]').attr({"name":"tGKTTATTNDISub"+(id+1),"id":"ID_tGKTTATTNDISub"+(id+1)});
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDISub"]').html("半角数字");
+	
+	// 高専の手当の行を増やす
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="teateMei3"]').attr({"name":"teateMei3"+(id+1),"id":"ID_teateMei3"+(id+1)}).html("手当");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiKUSN"]').attr({"name":"tGKTShiharaiTATTATMeiKUSN"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiKUSN"+(id+1)}).val("");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(id+1)}).val("");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNTitle"]').attr({"name":"tGKTTATKUSNTitle"+(id+1),"id":"ID_tGKTTATKUSNTitle"+(id+1)});
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNSub"]').attr({"name":"tGKTTATKUSNSub"+(id+1),"id":"ID_tGKTTATKUSNSub"+(id+1)});
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNSub"]').html("半角数字");
+	
+	// 専修学校の手当の行を増やす
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="teateMei4"]').attr({"name":"teateMei4"+(id+1),"id":"ID_teateMei4"+(id+1)}).html("手当");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiSNSHU"]').attr({"name":"tGKTShiharaiTATTATMeiSNSHU"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiSNSHU"+(id+1)}).val("");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(id+1)}).val("");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUTitle"]').attr({"name":"tGKTTATSNSHUTitle"+(id+1),"id":"ID_tGKTTATSNSHUTitle"+(id+1)});
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUSub"]').attr({"name":"tGKTTATSNSHUSub"+(id+1),"id":"ID_tGKTTATSNSHUSub"+(id+1)});
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUSub"]').html("半角数字");
+	
+	// 能開校の手当の行を増やす
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="teateMei5"]').attr({"name":"teateMei5"+(id+1),"id":"ID_teateMei5"+(id+1)}).html("手当");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(id+1),"id":"ID_tGKTTATNUKAITitle"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(id+1),"id":"ID_tGKTTATNUKAISub"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').html("半角数字");
+	
+	if(id < 4){
+		disp($('#ID_digkbtnArea_1'));
+		disp($('#ID_digkdel_1'));
+		disp($('#ID_digkdel_2'));
+		disp($('#ID_digkdel_3'));
+		disp($('#ID_digkdel_4'));
+		disp($('#ID_digkdel_5'));
+	}else{
+		nodisp($('#ID_digkbtnArea_1'));
+	}
+	chinginKeisan('1');
+}
+
+//定額的に支払われる手当（大学）を減らすメソッド
+function tgkttatDIGKDel(id){
+	var num = tgkttatDIGKCount();
+	// 大学
+	$('#ID_tGKTTATdigk_' + id).remove();
+	// 短大
+	$('#ID_tGKTTATtndi_' + id).remove();
+	// 高専
+	$('#ID_tGKTTATkusn_' + id).remove();
+	// 専修学校
+	$('#ID_tGKTTATsnshu_' + id).remove();
+	// 能開校
+	$('#ID_tGKTTATnukai_' + id).remove();
+	
+	for(var i = id+1; i<= num; i++){
+		// 大学
+		$('#ID_tGKTTATdigk_'+i).attr('id','ID_tGKTTATdigk_'+(i-1));
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiDIGK"]').attr({"name":"tGKTShiharaiTATTATMeiDIGK"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiDIGK"+(i-1)});
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuDIGK"+(i-1)});
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTTATDIGKTitle"]').attr({"name":"tGKTTATDIGKTitle"+(i-1),"id":"ID_tGKTTATDIGKTitle"+(i-1)});
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTTATDIGKTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTTATDIGKSub"]').attr({"name":"tGKTTATDIGKSub"+(i-1),"id":"ID_tGKTTATDIGKSub"+(i-1)});
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="tGKTTATDIGKSub"]').html("手当名は全角6文字以内、金額は半角数字");
+		$('#ID_tGKTTATdigk_'+(i-1)).find('[name^="digkdel_"]').attr({"name":"digkdel_"+(i-1),"id":"ID_digkdel_"+(i-1)});
+		
+		// 短大の手当の行を減らす
+		$('#ID_tGKTTATtndi_'+i).attr('id','ID_tGKTTATtndi_'+(i-1));
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="teateMei2"]').attr({"name":"teateMei2"+(i-1),"id":"ID_teateMei2"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiTNDI"]').attr({"name":"tGKTShiharaiTATTATMeiTNDI"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiTNDI"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDITitle"]').attr({"name":"tGKTTATTNDITitle"+(i-1),"id":"ID_tGKTTATTNDITitle"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDISub"]').attr({"name":"tGKTTATTNDISub"+(i-1),"id":"ID_tGKTTATTNDISub"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDISub"]').html("半角数字");
+		
+		
+		// 高専の手当の行を減らす
+		$('#ID_tGKTTATkusn_'+i).attr('id','ID_tGKTTATkusn_'+(i-1));
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="teateMei3"]').attr({"name":"teateMei3"+(i-1),"id":"ID_teateMei3"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiKUSN"]').attr({"name":"tGKTShiharaiTATTATMeiKUSN"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiKUSN"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNTitle"]').attr({"name":"tGKTTATKUSNTitle"+(i-1),"id":"ID_tGKTTATKUSNTitle"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNSub"]').attr({"name":"tGKTTATKUSNSub"+(i-1),"id":"ID_tGKTTATKUSNSub"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNSub"]').html("半角数字");
+		
+		// 専修学校の手当の行を減らす
+		$('#ID_tGKTTATsnshu_'+i).attr('id','ID_tGKTTATsnshu_'+(i-1));
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="teateMei4"]').attr({"name":"teateMei4"+(i-1),"id":"ID_teateMei4"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiSNSHU"]').attr({"name":"tGKTShiharaiTATTATMeiSNSHU"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiSNSHU"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUTitle"]').attr({"name":"tGKTTATSNSHUTitle"+(i-1),"id":"ID_tGKTTATSNSHUTitle"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUSub"]').attr({"name":"tGKTTATSNSHUSub"+(i-1),"id":"ID_tGKTTATSNSHUSub"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUSub"]').html("半角数字");
+		
+		// 能開校の手当の行を減らす
+		$('#ID_tGKTTATnukai_'+i).attr('id','ID_tGKTTATnukai_'+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="teateMei5"]').attr({"name":"teateMei5"+(i-1),"id":"ID_teateMei5"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(i-1),"id":"ID_tGKTTATNUKAITitle"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(i-1),"id":"ID_tGKTTATNUKAISub"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').html("半角数字");
+
+
+	}
+	if(i == 3){
+		nodisp($('#ID_digkdel_1'));
+	}else if(i > 1){
+		disp($('#ID_digkbtnArea_1'));
+	}else{
+		nodisp($('#ID_digkbtnArea_1'));
+	}
+	chinginKeisan('1');
+}
+
+//「定額的に支払われる手当（大学）」の数を判断するメソッド。
+function tgkttatDIGKCount(){
+	if($('#ID_tGKTShiharaiTATTATMeiDIGK5').length){
+		var num = 5;
+	}else if($('#ID_tGKTShiharaiTATTATMeiDIGK4').length){
+		var num = 4;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiDIGK3').length){
+		var num = 3;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiDIGK2').length){
+		var num = 2;
+	}else{
+		var num = 1;
+	}
+	return num;
+}
+
+
+
+//定額的に支払われる手当（短大）を増やすメソッド
+function tgkttatTNDIAdd(id){
+	var tndiaddnum = document.getElementById('ID_tGKTTATtndiHidden').value;
+	// 短大
+	var Divnew2 = $('#ID_tGKTTATtndi_' + id).clone(true);
+	Divnew2.attr("id", "ID_tGKTTATtndi_"+(id+1));
+	
+	// 高専
+	var Divnew3 = $('#ID_tGKTTATkusn_' + id).clone(true);
+	Divnew3.attr("id", "ID_tGKTTATkusn_"+(id+1));
+	
+	// 専修学校
+	var Divnew4 = $('#ID_tGKTTATsnshu_' + id).clone(true);
+	Divnew4.attr("id", "ID_tGKTTATsnshu_"+(id+1));
+	
+	// 能開校
+	var Divnew5 = $('#ID_tGKTTATnukai_' + id).clone(true);
+	Divnew5.attr("id", "ID_tGKTTATnukai_"+(id+1));
+	
+	// 短大
+	$('#ID_tGKTTATtndi_'+id).after(Divnew2);
+	// 高専
+	$('#ID_tGKTTATkusn_'+id).after(Divnew3);
+	// 専修学校
+	$('#ID_tGKTTATsnshu_'+id).after(Divnew4);
+	// 能開校
+	$('#ID_tGKTTATnukai_'+id).after(Divnew5);
+	
+	// 短大
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiTNDI"]').attr({"name":"tGKTShiharaiTATTATMeiTNDI"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiTNDI"+(id+1)}).val("");
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(id+1)}).val("");
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDITitle"]').attr({"name":"tGKTTATTNDITitle"+(id+1),"id":"ID_tGKTTATTNDITitle"+(id+1)});
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDISub"]').attr({"name":"tGKTTATTNDISub"+(id+1),"id":"ID_tGKTTATTNDISub"+(id+1)});
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tGKTTATTNDISub"]').html("手当名は全角6文字以内、金額は半角数字");
+	$('#ID_tGKTTATtndi_'+(id+1)).find('[name^="tndidel_"]').attr({"name":"tndidel_"+(id+1),"id":"ID_tndidel_"+(id+1)});
+	
+	// 高専の手当の行を増やす
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="teateMei3"]').attr({"name":"teateMei3"+(id+1),"id":"ID_teateMei3"+(id+1)}).html("手当");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiKUSN"]').attr({"name":"tGKTShiharaiTATTATMeiKUSN"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiKUSN"+(id+1)}).val("");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(id+1)}).val("");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNTitle"]').attr({"name":"tGKTTATKUSNTitle"+(id+1),"id":"ID_tGKTTATKUSNTitle"+(id+1)});
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNSub"]').attr({"name":"tGKTTATKUSNSub"+(id+1),"id":"ID_tGKTTATKUSNSub"+(id+1)});
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNSub"]').html("半角数字");
+	
+	// 専修学校の手当の行を増やす
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="teateMei4"]').attr({"name":"teateMei4"+(id+1),"id":"ID_teateMei4"+(id+1)}).html("手当");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiSNSHU"]').attr({"name":"tGKTShiharaiTATTATMeiSNSHU"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiSNSHU"+(id+1)}).val("");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(id+1)}).val("");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUTitle"]').attr({"name":"tGKTTATSNSHUTitle"+(id+1),"id":"ID_tGKTTATSNSHUTitle"+(id+1)});
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUSub"]').attr({"name":"tGKTTATSNSHUSub"+(id+1),"id":"ID_tGKTTATSNSHUSub"+(id+1)});
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUSub"]').html("半角数字");
+	
+	// 能開校の手当の行を増やす
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="teateMei5"]').attr({"name":"teateMei5"+(id+1),"id":"ID_teateMei5"+(id+1)}).html("手当");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(id+1),"id":"ID_tGKTTATNUKAITitle"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(id+1),"id":"ID_tGKTTATNUKAISub"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').html("半角数字");
+	
+	if(id < 4){
+		disp($('#ID_tndibtnArea_1'));
+		disp($('#ID_tndidel_1'));
+		disp($('#ID_tndidel_2'));
+		disp($('#ID_tndidel_3'));
+		disp($('#ID_tndidel_4'));
+		disp($('#ID_tndidel_5'));
+	}else{
+		nodisp($('#ID_tndibtnArea_1'));
+	}
+	chinginKeisan('2');
+}
+
+//定額的に支払われる手当（短大）を減らすメソッド
+function tgkttatTNDIDel(id){
+	var num = tgkttatTNDICount();
+	// 短大
+	$('#ID_tGKTTATtndi_' + id).remove();
+	// 高専
+	$('#ID_tGKTTATkusn_' + id).remove();
+	// 専修学校
+	$('#ID_tGKTTATsnshu_' + id).remove();
+	// 能開校
+	$('#ID_tGKTTATnukai_' + id).remove();
+	
+	for(var i = id+1; i<= num; i++){
+		// 短大
+		$('#ID_tGKTTATtndi_'+i).attr('id','ID_tGKTTATtndi_'+(i-1));
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiTNDI"]').attr({"name":"tGKTShiharaiTATTATMeiTNDI"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiTNDI"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuTNDI"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDITitle"]').attr({"name":"tGKTTATTNDITitle"+(i-1),"id":"ID_tGKTTATTNDITitle"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDISub"]').attr({"name":"tGKTTATTNDISub"+(i-1),"id":"ID_tGKTTATTNDISub"+(i-1)});
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tGKTTATTNDISub"]').html("手当名は全角6文字以内、金額は半角数字");
+		$('#ID_tGKTTATtndi_'+(i-1)).find('[name^="tndidel_"]').attr({"name":"tndidel_"+(i-1),"id":"ID_tndidel_"+(i-1)});
+		
+		// 高専の手当の行を減らす
+		$('#ID_tGKTTATkusn_'+i).attr('id','ID_tGKTTATkusn_'+(i-1));
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="teateMei3"]').attr({"name":"teateMei3"+(i-1),"id":"ID_teateMei3"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiKUSN"]').attr({"name":"tGKTShiharaiTATTATMeiKUSN"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiKUSN"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNTitle"]').attr({"name":"tGKTTATKUSNTitle"+(i-1),"id":"ID_tGKTTATKUSNTitle"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNSub"]').attr({"name":"tGKTTATKUSNSub"+(i-1),"id":"ID_tGKTTATKUSNSub"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNSub"]').html("半角数字");
+		
+		// 専修学校の手当の行を減らす
+		$('#ID_tGKTTATsnshu_'+i).attr('id','ID_tGKTTATsnshu_'+(i-1));
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="teateMei4"]').attr({"name":"teateMei4"+(i-1),"id":"ID_teateMei4"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiSNSHU"]').attr({"name":"tGKTShiharaiTATTATMeiSNSHU"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiSNSHU"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUTitle"]').attr({"name":"tGKTTATSNSHUTitle"+(i-1),"id":"ID_tGKTTATSNSHUTitle"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUSub"]').attr({"name":"tGKTTATSNSHUSub"+(i-1),"id":"ID_tGKTTATSNSHUSub"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUSub"]').html("半角数字");
+		
+		// 能開校の手当の行を減らす
+		$('#ID_tGKTTATnukai_'+i).attr('id','ID_tGKTTATnukai_'+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="teateMei5"]').attr({"name":"teateMei5"+(i-1),"id":"ID_teateMei5"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(i-1),"id":"ID_tGKTTATNUKAITitle"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(i-1),"id":"ID_tGKTTATNUKAISub"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').html("半角数字");
+
+	}
+	if(i == 3){
+		nodisp($('#ID_tndidel_1'));
+	}else if(i > 1){
+		disp($('#ID_tndibtnArea_1'));
+	}else{
+		nodisp($('#ID_tndibtnArea_1'));
+	}
+	chinginKeisan('2');
+}
+
+//「定額的に支払われる手当（短大）」の数を判断するメソッド。
+function tgkttatTNDICount(){
+	if($('#ID_tGKTShiharaiTATTATMeiTNDI5').length){
+		var num = 5;
+	}else if($('#ID_tGKTShiharaiTATTATMeiTNDI4').length){
+		var num = 4;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiTNDI3').length){
+		var num = 3;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiTNDI2').length){
+		var num = 2;
+	}else{
+		var num = 1;
+	}
+	return num;
+}
+
+
+
+
+//定額的に支払われる手当（高専）を増やすメソッド
+function tgkttatKUSNAdd(id){
+	var kusnaddnum = document.getElementById('ID_tGKTTATkusnHidden').value;
+	// 高専
+	var Divnew3 = $('#ID_tGKTTATkusn_' + id).clone(true);
+	Divnew3.attr("id", "ID_tGKTTATkusn_"+(id+1));
+	
+	// 専修学校
+	var Divnew4 = $('#ID_tGKTTATsnshu_' + id).clone(true);
+	Divnew4.attr("id", "ID_tGKTTATsnshu_"+(id+1));
+	
+	// 能開校
+	var Divnew5 = $('#ID_tGKTTATnukai_' + id).clone(true);
+	Divnew5.attr("id", "ID_tGKTTATnukai_"+(id+1));
+	
+	// 高専
+	$('#ID_tGKTTATkusn_'+id).after(Divnew3);
+	// 専修学校
+	$('#ID_tGKTTATsnshu_'+id).after(Divnew4);
+	// 能開校
+	$('#ID_tGKTTATnukai_'+id).after(Divnew5);
+	
+	// 高専
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiKUSN"]').attr({"name":"tGKTShiharaiTATTATMeiKUSN"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiKUSN"+(id+1)}).val("");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(id+1)}).val("");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNTitle"]').attr({"name":"tGKTTATKUSNTitle"+(id+1),"id":"ID_tGKTTATKUSNTitle"+(id+1)});
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNSub"]').attr({"name":"tGKTTATKUSNSub"+(id+1),"id":"ID_tGKTTATKUSNSub"+(id+1)});
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="tGKTTATKUSNSub"]').html("手当名は全角6文字以内、金額は半角数字");
+	$('#ID_tGKTTATkusn_'+(id+1)).find('[name^="kusndel_"]').attr({"name":"kusndel_"+(id+1),"id":"ID_kusndel_"+(id+1)});
+	
+	// 専修学校の手当の行を増やす
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="teateMei4"]').attr({"name":"teateMei4"+(id+1),"id":"ID_teateMei4"+(id+1)}).html("手当");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiSNSHU"]').attr({"name":"tGKTShiharaiTATTATMeiSNSHU"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiSNSHU"+(id+1)}).val("");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(id+1)}).val("");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUTitle"]').attr({"name":"tGKTTATSNSHUTitle"+(id+1),"id":"ID_tGKTTATSNSHUTitle"+(id+1)});
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUSub"]').attr({"name":"tGKTTATSNSHUSub"+(id+1),"id":"ID_tGKTTATSNSHUSub"+(id+1)});
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUSub"]').html("半角数字");
+	
+	// 能開校の手当の行を増やす
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="teateMei5"]').attr({"name":"teateMei5"+(id+1),"id":"ID_teateMei5"+(id+1)}).html("手当");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(id+1),"id":"ID_tGKTTATNUKAITitle"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(id+1),"id":"ID_tGKTTATNUKAISub"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').html("半角数字");
+	
+	if(id < 4){
+		disp($('#ID_kusnbtnArea_1'));
+		disp($('#ID_kusndel_1'));
+		disp($('#ID_kusndel_2'));
+		disp($('#ID_kusndel_3'));
+		disp($('#ID_kusndel_4'));
+		disp($('#ID_kusndel_5'));
+	}else{
+		nodisp($('#ID_kusnbtnArea_1'));
+	}
+	chinginKeisan('3');
+}
+
+//定額的に支払われる手当（高専）を減らすメソッド
+function tgkttatKUSNDel(id){
+	var num = tgkttatKUSNCount();
+	// 高専
+	$('#ID_tGKTTATkusn_' + id).remove();
+	// 専修学校
+	$('#ID_tGKTTATsnshu_' + id).remove();
+	// 能開校
+	$('#ID_tGKTTATnukai_' + id).remove();
+	for(var i = id+1; i<= num; i++){
+		// 高専
+		$('#ID_tGKTTATkusn_'+i).attr('id','ID_tGKTTATkusn_'+(i-1));
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiKUSN"]').attr({"name":"tGKTShiharaiTATTATMeiKUSN"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiKUSN"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuKUSN"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNTitle"]').attr({"name":"tGKTTATKUSNTitle"+(i-1),"id":"ID_tGKTTATKUSNTitle"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNSub"]').attr({"name":"tGKTTATKUSNSub"+(i-1),"id":"ID_tGKTTATKUSNSub"+(i-1)});
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="tGKTTATKUSNSub"]').html("手当名は全角6文字以内、金額は半角数字");
+		$('#ID_tGKTTATkusn_'+(i-1)).find('[name^="kusndel_"]').attr({"name":"kusndel_"+(i-1),"id":"ID_kusndel_"+(i-1)});
+		
+		// 専修学校の手当の行を減らす
+		$('#ID_tGKTTATsnshu_'+i).attr('id','ID_tGKTTATsnshu_'+(i-1));
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="teateMei4"]').attr({"name":"teateMei4"+(i-1),"id":"ID_teateMei4"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiSNSHU"]').attr({"name":"tGKTShiharaiTATTATMeiSNSHU"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiSNSHU"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUTitle"]').attr({"name":"tGKTTATSNSHUTitle"+(i-1),"id":"ID_tGKTTATSNSHUTitle"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUSub"]').attr({"name":"tGKTTATSNSHUSub"+(i-1),"id":"ID_tGKTTATSNSHUSub"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUSub"]').html("半角数字");
+		
+		// 能開校の手当の行を減らす
+		$('#ID_tGKTTATnukai_'+i).attr('id','ID_tGKTTATnukai_'+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="teateMei5"]').attr({"name":"teateMei5"+(i-1),"id":"ID_teateMei5"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(i-1),"id":"ID_tGKTTATNUKAITitle"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(i-1),"id":"ID_tGKTTATNUKAISub"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').html("半角数字");
+	}
+	if(i == 3){
+		nodisp($('#ID_kusndel_1'));
+	}else if(i > 1){
+		disp($('#ID_kusnbtnArea_1'));
+	}else{
+		nodisp($('#ID_kusnbtnArea_1'));
+	}
+	chinginKeisan('3');
+}
+
+//「定額的に支払われる手当（高専）」の数を判断するメソッド。
+function tgkttatKUSNCount(){
+	if($('#ID_tGKTShiharaiTATTATMeiKUSN5').length){
+		var num = 5;
+	}else if($('#ID_tGKTShiharaiTATTATMeiKUSN4').length){
+		var num = 4;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiKUSN3').length){
+		var num = 3;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiKUSN2').length){
+		var num = 2;
+	}else{
+		var num = 1;
+	}
+	return num;
+}
+
+
+
+//定額的に支払われる手当（専修学校）を増やすメソッド
+function tgkttatSNSHUAdd(id){
+	var snshuaddnum = document.getElementById('ID_tGKTTATsnshuHidden').value;
+	// 専修学校
+	var Divnew4 = $('#ID_tGKTTATsnshu_' + id).clone(true);
+	Divnew4.attr("id", "ID_tGKTTATsnshu_"+(id+1));
+	// 能開校
+	var Divnew5 = $('#ID_tGKTTATnukai_' + id).clone(true);
+	Divnew5.attr("id", "ID_tGKTTATnukai_"+(id+1));
+	
+	// 専修学校
+	$('#ID_tGKTTATsnshu_'+id).after(Divnew4);
+	// 能開校
+	$('#ID_tGKTTATnukai_'+id).after(Divnew5);
+	
+	// 専修学校
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiSNSHU"]').attr({"name":"tGKTShiharaiTATTATMeiSNSHU"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiSNSHU"+(id+1)}).val("");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(id+1)}).val("");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUTitle"]').attr({"name":"tGKTTATSNSHUTitle"+(id+1),"id":"ID_tGKTTATSNSHUTitle"+(id+1)});
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUSub"]').attr({"name":"tGKTTATSNSHUSub"+(id+1),"id":"ID_tGKTTATSNSHUSub"+(id+1)});
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="tGKTTATSNSHUSub"]').html("手当名は全角6文字以内、金額は半角数字");
+	$('#ID_tGKTTATsnshu_'+(id+1)).find('[name^="snshudel_"]').attr({"name":"snshudel_"+(id+1),"id":"ID_snshudel_"+(id+1)});
+	
+	// 能開校の手当の行を増やす
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="teateMei5"]').attr({"name":"teateMei5"+(id+1),"id":"ID_teateMei5"+(id+1)}).html("手当");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(id+1),"id":"ID_tGKTTATNUKAITitle"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(id+1),"id":"ID_tGKTTATNUKAISub"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').html("半角数字");
+	
+	if(id < 4){
+		disp($('#ID_snshubtnArea_1'));
+		disp($('#ID_snshudel_1'));
+		disp($('#ID_snshudel_2'));
+		disp($('#ID_snshudel_3'));
+		disp($('#ID_snshudel_4'));
+		disp($('#ID_snshudel_5'));
+	}else{
+		nodisp($('#ID_snshubtnArea_1'));
+	}
+	chinginKeisan('4');
+}
+
+//定額的に支払われる手当（専修学校）を減らすメソッド
+function tgkttatSNSHUDel(id){
+	var num = tgkttatSNSHUCount();
+	$('#ID_tGKTTATsnshu_' + id).remove();
+	// 能開校
+	$('#ID_tGKTTATnukai_' + id).remove();
+	
+	for(var i = id+1; i<= num; i++){
+		// 専修学校
+		$('#ID_tGKTTATsnshu_'+i).attr('id','ID_tGKTTATsnshu_'+(i-1));
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiSNSHU"]').attr({"name":"tGKTShiharaiTATTATMeiSNSHU"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiSNSHU"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuSNSHU"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUTitle"]').attr({"name":"tGKTTATSNSHUTitle"+(i-1),"id":"ID_tGKTTATSNSHUTitle"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUTitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUSub"]').attr({"name":"tGKTTATSNSHUSub"+(i-1),"id":"ID_tGKTTATSNSHUSub"+(i-1)});
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="tGKTTATSNSHUSub"]').html("手当名は全角6文字以内、金額は半角数字");
+		$('#ID_tGKTTATsnshu_'+(i-1)).find('[name^="snshudel_"]').attr({"name":"snshudel_"+(i-1),"id":"ID_snshudel_"+(i-1)});
+		
+		// 能開校の手当の行を減らす
+		$('#ID_tGKTTATnukai_'+i).attr('id','ID_tGKTTATnukai_'+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="teateMei5"]').attr({"name":"teateMei5"+(i-1),"id":"ID_teateMei5"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(i-1),"id":"ID_tGKTTATNUKAITitle"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(i-1),"id":"ID_tGKTTATNUKAISub"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').html("半角数字");
+		
+	}
+	if(i == 3){
+		nodisp($('#ID_snshudel_1'));
+	}else if(i > 1){
+		disp($('#ID_snshubtnArea_1'));
+	}else{
+		nodisp($('#ID_snshubtnArea_1'));
+	}
+	chinginKeisan('4');
+}
+
+//「定額的に支払われる手当」（専修学校）の数を判断するメソッド。
+function tgkttatSNSHUCount(){
+	if($('#ID_tGKTShiharaiTATTATMeiSNSHU5').length){
+		var num = 5;
+	}else if($('#ID_tGKTShiharaiTATTATMeiSNSHU4').length){
+		var num = 4;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiSNSHU3').length){
+		var num = 3;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiSNSHU2').length){
+		var num = 2;
+	}else{
+		var num = 1;
+	}
+	return num;
+}
+
+
+
+
+//定額的に支払われる手当（能開校）を増やすメソッド
+function tgkttatNUKAIAdd(id){
+	var nukaiaddnum = document.getElementById('ID_tGKTTATnukaiHidden').value;
+	var Divnew5 = $('#ID_tGKTTATnukai_' + id).clone(true);
+	Divnew5.attr("id", "ID_tGKTTATnukai_"+(id+1));
+	
+	$('#ID_tGKTTATnukai_'+id).after(Divnew5);
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(id+1)}).val("");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(id+1),"id":"ID_tGKTTATNUKAITitle"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(id+1));
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(id+1),"id":"ID_tGKTTATNUKAISub"+(id+1)});
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="tGKTTATNUKAISub"]').html("手当名は全角6文字以内、金額は半角数字");
+	$('#ID_tGKTTATnukai_'+(id+1)).find('[name^="nukaidel_"]').attr({"name":"nukaidel_"+(id+1),"id":"ID_nukaidel_"+(id+1)});
+	
+	if(id < 4){
+		disp($('#ID_nukaibtnArea_1'));
+		disp($('#ID_nukaidel_1'));
+		disp($('#ID_nukaidel_2'));
+		disp($('#ID_nukaidel_3'));
+		disp($('#ID_nukaidel_4'));
+		disp($('#ID_nukaidel_5'));
+	}else{
+		nodisp($('#ID_nukaibtnArea_1'));
+	}
+	chinginKeisan('5');
+}
+
+//定額的に支払われる手当（能開校）を減らすメソッド
+function tgkttatNUKAIDel(id){
+	var num = tgkttatNUKAICount();
+	$('#ID_tGKTTATnukai_' + id).remove();
+	
+	for(var i = id+1; i<= num; i++){
+		$('#ID_tGKTTATnukai_'+i).attr('id','ID_tGKTTATnukai_'+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATTATMeiNUKAI"]').attr({"name":"tGKTShiharaiTATTATMeiNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATTATMeiNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"]').attr({"name":"tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1),"id":"ID_tGKTShiharaiTATGtgkOrJKGKKnsnGakuNUKAI"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').attr({"name":"tGKTTATNUKAITitle"+(i-1),"id":"ID_tGKTTATNUKAITitle"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAITitle"]').html("定額的に支払われる手当（月額又は時間額換算額）"+(i-1));
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').attr({"name":"tGKTTATNUKAISub"+(i-1),"id":"ID_tGKTTATNUKAISub"+(i-1)});
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="tGKTTATNUKAISub"]').html("手当名は全角6文字以内、金額は半角数字");
+		$('#ID_tGKTTATnukai_'+(i-1)).find('[name^="nukaidel_"]').attr({"name":"nukaidel_"+(i-1),"id":"ID_nukaidel_"+(i-1)});
+	}
+	if(i == 3){
+		nodisp($('#ID_nukaidel_1'));
+	}else if(i > 1){
+		disp($('#ID_nukaibtnArea_1'));
+	}else{
+		nodisp($('#ID_nukaibtnArea_1'));
+	}
+	chinginKeisan('5');
+}
+
+//「定額的に支払われる手当（能開校）」の数を判断するメソッド。
+function tgkttatNUKAICount(){
+	if($('#ID_tGKTShiharaiTATTATMeiNUKAI5').length){
+		var num = 5;
+	}else if($('#ID_tGKTShiharaiTATTATMeiNUKAI4').length){
+		var num = 4;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiNUKAI3').length){
+		var num = 3;
+	}else if ($('#ID_tGKTShiharaiTATTATMeiNUKAI2').length){
+		var num = 2;
+	}else{
+		var num = 1;
+	}
+	return num;
+}
+
+//他の大学等詳細の手当も入力した内容に変更するメソッド
+function setTgktShiharaiTattatmei(num,teateTxt) {
+	// 大学院の手当名が存在する場合
+	if ($('#ID_tGKTShiharaiTATTATMeiDIGKI'+num).val() != null) {
+		// 入力内容を反映
+		$('#ID_tGKTShiharaiTATTATMeiDIGKI'+num).val(teateTxt);
+	}
+	// 大学の手当名が存在する場合
+	if ($('#ID_tGKTShiharaiTATTATMeiDIGK'+num).val() != null) {
+		// 入力内容を反映
+		$('#ID_tGKTShiharaiTATTATMeiDIGK'+num).val(teateTxt);
+	}
+	// 短大の手当名が存在する場合
+	if ($('#ID_tGKTShiharaiTATTATMeiTNDI'+num).val() != null) {
+		// 入力内容を反映
+		$('#ID_tGKTShiharaiTATTATMeiTNDI'+num).val(teateTxt);
+	}
+	// 高専の手当名が存在する場合
+	if ($('#ID_tGKTShiharaiTATTATMeiKUSN'+num).val() != null) {
+		// 入力内容を反映
+		$('#ID_tGKTShiharaiTATTATMeiKUSN'+num).val(teateTxt);
+	}
+	// 専修学校の手当名が存在する場合
+	if ($('#ID_tGKTShiharaiTATTATMeiSNSHU'+num).val() != null) {
+		// 入力内容を反映
+		$('#ID_tGKTShiharaiTATTATMeiSNSHU'+num).val(teateTxt);
+	}
+	// 能開校の手当名が存在する場合
+	if ($('#ID_tGKTShiharaiTATTATMeiNUKAI'+num).val() != null) {
+		// 入力内容を反映
+		$('#ID_tGKTShiharaiTATTATMeiNUKAI'+num).val(teateTxt);
+	}
+}
