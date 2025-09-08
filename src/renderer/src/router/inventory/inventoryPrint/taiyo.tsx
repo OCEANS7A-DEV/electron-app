@@ -24,17 +24,20 @@ export const loader = async ({ request }: { request: Request }) => {
   const address = url.searchParams.get('address')
   if (address !== '会議室'){
     const resultData = await window.myInventoryAPI.ListGet({
-      sheetName: '在庫一覧テスト',
+      sheetName: '一覧',
       action: 'TotallingGet',
-      ranges: 'B2:N'
+      ranges: 'A2:O'
     })
-    const codeList = resultData.map((item) => item[1])
-    const filterd = resultData.filter((row) => row[0] === vendor && row[12] < 0)
+    const donotOrder = [2001, 2002, 2003]
+    const codeList = resultData.map((item) => item[2])
+    const filterd = resultData.filter(
+      (row) => row[1] === vendor && row[14] < 0 && !donotOrder.includes(row[2])
+    )
     const orderResult = filterd.map((item) => {
-      let shortageNum = Number(item[12])
+      let shortageNum = Number(item[14])
       let num = 0
-      if (item[7] !== '' && Number(item[7]) > 0) {
-        let up = Number(item[7])
+      if (item[8] !== '' && Number(item[8]) > 0) {
+        let up = Number(item[8])
         if (item[1] == 2002){
           up = up * 2
         }
@@ -42,9 +45,9 @@ export const loader = async ({ request }: { request: Request }) => {
           shortageNum = shortageNum + up
           num = num + up
         }
-        return ['', item[2], num, '', '', '']
+        return ['', item[3], num, '', '', '']
       } else {
-        return ['', item[2], Number(item[12]) * -1, '', '', '']
+        return ['', item[3], Number(item[14]) * -1, '', '', '']
       }
     })
     taiyoData = orderResult

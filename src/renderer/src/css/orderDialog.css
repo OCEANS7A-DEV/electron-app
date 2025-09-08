@@ -147,6 +147,7 @@
 
 
 .modal-dialog-table-area {
+  flex-flow: column;
   display: flex;
   flex: 1;
   text-align: center;

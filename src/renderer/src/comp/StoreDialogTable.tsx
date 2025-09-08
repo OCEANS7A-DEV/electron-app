@@ -12,6 +12,9 @@ interface ConfirmDialogProps {
 const StoreDialogTable: React.FC<ConfirmDialogProps> = ({ tableData }) => {
   return (
     <div className="modal-dialog-table-area">
+      <div>
+        数量の入力なし、または0の行は表示されません。
+      </div>
       <table className="data-table">
         <thead>
           <tr>
@@ -26,10 +29,7 @@ const StoreDialogTable: React.FC<ConfirmDialogProps> = ({ tableData }) => {
         </thead>
         <tbody>
           {tableData
-            .filter((row) => {
-              const 商品コード = row.code;
-              return 商品コード !== '';
-            })
+            .filter((row) => row.quantity !== "" && row.quantity !== "0")
             .map((row, index) => (
               <tr key={index}>
                 <td className='dtvendor'>{row.vendor}</td>

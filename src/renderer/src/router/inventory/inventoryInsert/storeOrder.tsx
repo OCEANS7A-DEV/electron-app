@@ -158,7 +158,7 @@ export default function StoreOrderPage(): JSX.Element {
         return
       }
       const Now = await window.myInventoryAPI.NowGet()
-      const filterData = getValues().rows.filter((row) => row.code !== '')
+      const filterData = getValues().rows.filter((row) => row.quantity !== "0" && row.quantity !== "")
       const formData = filterData.map((item) => {
         const result = [
           InsertDate,
@@ -232,7 +232,6 @@ export default function StoreOrderPage(): JSX.Element {
 
   const DetailsSet = async () => {
     const list = await window.myInventoryAPI.DetailsData()
-    console.log(list)
     const filtered = list.filter(row => row[1] !== '')
     setProductdetailsList(filtered)
   }
@@ -405,18 +404,18 @@ export default function StoreOrderPage(): JSX.Element {
     }
   }
 
-  const selectForcus = async(row) => {
-    const input = document.querySelector<HTMLInputElement>(
-      `input[name="rows.${row}.code"]`
-    )
-    if (input) input.focus();
-  }
+
 
   const RowRemove = async (index) => {
     remove(index)
     append(defaultRowData, { shouldFocus: false })
+
+
     setTimeout(() => {
-      selectForcus(index)
+      const input = document.querySelector<HTMLInputElement>(
+        `input[name="rows.${index}.vendor"]`
+      )
+      if (input) input.focus();
     }, 0)
   }
 

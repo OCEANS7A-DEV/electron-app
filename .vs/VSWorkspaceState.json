@@ -2,15 +2,14 @@
   "ExpandedNodes": [
     "",
     "\\src",
+    "\\src\\main",
     "\\src\\renderer",
     "\\src\\renderer\\src",
+    "\\src\\renderer\\src\\comp",
+    "\\src\\renderer\\src\\css",
     "\\src\\renderer\\src\\router",
-    "\\src\\renderer\\src\\router\\helloWork",
     "\\src\\renderer\\src\\router\\inventory",
-    "\\src\\renderer\\src\\router\\inventory\\inventoryGet",
-    "\\src\\renderer\\src\\router\\inventory\\inventoryInsert",
-    "\\src\\renderer\\src\\router\\inventory\\inventorySetting"
+    "\\src\\renderer\\src\\router\\inventory\\inventoryPrint"
   ],
-  "SelectedNode": "\\src\\renderer\\src\\router\\helloWork\\helloWork.tsx",
   "PreviewInSolutionExplorer": false
 }

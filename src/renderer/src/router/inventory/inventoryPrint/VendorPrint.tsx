@@ -19,9 +19,10 @@ const isoToJstYMD = (isoString): string => {
 
 
 export const loader = async ({ request }: { request: Request }) => {
+
   const productData = await window.myInventoryAPI.ListGet(
     {
-      sheetName: '在庫一覧',
+      sheetName: '一覧',
       action: 'TotallingGet',
       ranges: 'A2:O'
     }
@@ -38,57 +39,125 @@ export const loader = async ({ request }: { request: Request }) => {
   const date = url.searchParams.get('date') ?? '2025-03-24'
   const address = url.searchParams.get('address')
   const Addressdata = await window.myInventoryAPI.storeGet('address')
-  const vendors = ['キンバト', 'ムラカミ', '三久', 'タムラ']
-  const ShippingAddress = Addressdata.address.find(row => row[0] === address)
+  const vendors = ['キンバト', 'ムラカミ', '三久', 'タムラ', 'ミラビス']
+  const ShippingAddress = Addressdata.address.find((row) => row[0] === address)
 
 
-  const shortage = productData.filter((row) => (Number(row[12]) < 0 || (Number(row[14]) >= 1 && Number(row[12]) <= Number(row[14]))) && (!row[2].includes('eco') && !row[2].includes('ﾙﾍﾞﾙ') && row[1] !== 100001 && !(Number(row[1]) >= 300100 && Number(row[1]) <= 300500)))
-
+  const shortage = productData.filter(
+    (row) =>
+      (Number(row[14]) < 0 || (Number(row[10]) >= 1 && Number(row[14]) <= Number(row[10]))) &&
+      (!row[3].includes('eco') && !row[3].includes('ﾙﾍﾞﾙ') &&
+        row[2] !== 100001 &&
+        !(Number(row[2]) >= 300100 && Number(row[2]) <= 300500)
+      )
+  )
   let subData = []
   let subdata: any[] = []
 
   const resultdata = vendors.map((item) => {
-    const swKH = jaconv.toHan(item);
-    const vendorfilter = shortage.filter((row) => row[0] == item || row[0] == swKH)
-    const mapData = vendorfilter.map((fitem) => {
-      if (fitem[11] !== ''){
-        let shortage = fitem[12];
-        let orderNum = 0
-        const ordernumCount = Number(fitem[11])
-        if (shortage < 0) {
-          while (shortage < 0){
-            shortage += ordernumCount
+    const swKH = jaconv.toHan(item)
+    const vendorfilter = shortage.filter((row) => row[1] == item || row[1] == swKH)
+    let resultData: any[] = []
+    if (item == 'キンバト') {
+      if (vendorfilter.some((row) => row[3].includes('ｱﾐﾉ'))) {
+        resultData.push(['ｱﾐﾉｱｼｯﾄﾞ', 20])
+      }
+      if (vendorfilter.some((row) => row[3].includes('ﾈｽﾗｰ'))) {
+        resultData.push(['ﾈｽﾗｰﾁｵﾊｰﾄﾞ', 20])
+      }
+      vendorfilter.filter((row) => !row[3].includes('ｱﾐﾉ') && !row[3].includes('ﾈｽﾗｰ'))
+        .forEach((fitem) => {
+          if (fitem[8] !== '') {
+            let shortage = fitem[14]
+            let orderNum = 0
+            const ordernumCount = Number(fitem[8])
+            if (shortage < 0) {
+              while (shortage < 0) {
+                shortage += ordernumCount
+                orderNum += ordernumCount
+              }
+            } else {
+              orderNum += ordernumCount
+            }
+            resultData.push([fitem[3], orderNum])
+          } else {
+            resultData.push([fitem[3], fitem[14] * -1])
+          }
+        })
+    } else if (item == 'ミラビス') {
+      const mirabisuFilter = productData.filter(
+        (row) => row[1] == 'ミラビス' && row[13] == 'FAX' && row[14] < 0
+      )
+
+      const mapping = mirabisuFilter.map((fitem) => {
+        if (fitem[8] !== '') {
+          let shortage = fitem[14]
+          let orderNum = 0
+          const ordernumCount = Number(fitem[8])
+          if (shortage < 0) {
+            while (shortage < 0) {
+              shortage += ordernumCount
+              orderNum += ordernumCount
+            }
+          } else {
             orderNum += ordernumCount
           }
+          return [fitem[3], orderNum]
         } else {
-          orderNum += ordernumCount
+          return [fitem[3], fitem[14] * -1]
         }
-        return [fitem[2], orderNum]
-      } else {
-        return [fitem[2], fitem[12] * -1]
-      }
-    })
+      })
+      resultData = mapping
+    } else {
+      vendorfilter.forEach((fitem) => {
+        if (fitem[8] !== '') {
+          let shortage = fitem[14]
+          let orderNum = 0
+          const ordernumCount = Number(fitem[8])
+          if (shortage < 0) {
+            while (shortage < 0) {
+              shortage += ordernumCount
+              orderNum += ordernumCount
+            }
+          } else {
+            orderNum += ordernumCount
+          }
+          resultData.push([fitem[3], orderNum])
+        } else {
+          resultData.push([fitem[3], fitem[14] * -1])
+        }
+      })
+    }
+
     if (item == 'タムラ') {
-      const newOrder = orderData.filter((item) => item[2] == 'タムラ' && isoToJstYMD(item[0]) == date && typeof item[3] == 'string')
+      const newOrder = orderData.filter(
+        (item) => item[2] == 'タムラ' && isoToJstYMD(item[0]) == date && typeof item[3] == 'string'
+      )
       newOrder.forEach((item) => {
         const result = [item[4], item[6]]
-        mapData.push(result)
+        resultData.push(result)
       })
-      const addData = orderData.filter((item) => item[4].includes('eco') && isoToJstYMD(item[0]) == date)
+      const addData = orderData.filter(
+        (item) => item[4].includes('eco') && isoToJstYMD(item[0]) == date
+      )
       addData.forEach((item) => {
         const result = [`${item[4]} ${item[5]}`, item[6]]
-        mapData.push(result)
+        resultData.push(result)
       })
     } else if (item == 'ムラカミ') {
-      const addData = orderData.filter((item) => item[3] == 100001 && isoToJstYMD(item[0]) == date )
+      const addData = orderData.filter(
+        (item) =>
+          item[3] == 100001 &&
+          isoToJstYMD(item[0]) == date
+      )
       subdata = [...new Set(addData.map((items) => items[1]))]
       subData = addData
     }
-    const calcD = 24 - mapData.length
+    const calcD = 24 - resultData.length
     for (let i = 0; i < calcD; i++){
-      mapData.push(['', ''])
+      resultData.push(['', ''])
     }
-    const pushData = { vendor: item, data: mapData }
+    const pushData = { vendor: item, data: resultData }
     return pushData
   })
 
@@ -110,6 +179,7 @@ export default function EtcPrint(): JSX.Element {
   const { ShippingAddress, subData, subdata, vendors, Addressdata, resultdata } = useLoaderData<typeof loader>()
 
   const AddressFindData = (data, col) => {
+    //console.log(Addressdata)
     const result = Addressdata.address.find((row) => row[0] == data)
     return result[col]
   }
