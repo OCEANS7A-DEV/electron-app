@@ -102,3 +102,13 @@
   align-items: center;
   justify-content: space-between;
 }
+
+
+.HelloWorkNumStatus {
+  color: white;
+  display: flex;
+  margin: 10px 0px;
+  font-size: 20px;
+  width: 400px;
+  justify-content: space-between;
+}
