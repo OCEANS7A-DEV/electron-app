@@ -46,7 +46,9 @@ export const loader = async ({ request }: { request: Request }) => {
   const shortage = productData.filter(
     (row) =>
       (Number(row[14]) < 0 || (Number(row[10]) >= 1 && Number(row[14]) <= Number(row[10]))) &&
-      (!row[3].includes('eco') && !row[3].includes('ﾙﾍﾞﾙ') &&
+      (
+        !row[3].includes('eco') &&
+        !row[3].includes('ﾙﾍﾞﾙ') &&
         row[2] !== 100001 &&
         !(Number(row[2]) >= 300100 && Number(row[2]) <= 300500)
       )

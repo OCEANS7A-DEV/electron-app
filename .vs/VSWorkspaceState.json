@@ -5,11 +5,10 @@
     "\\src\\main",
     "\\src\\renderer",
     "\\src\\renderer\\src",
-    "\\src\\renderer\\src\\comp",
     "\\src\\renderer\\src\\css",
     "\\src\\renderer\\src\\router",
-    "\\src\\renderer\\src\\router\\inventory",
-    "\\src\\renderer\\src\\router\\inventory\\inventoryPrint"
+    "\\src\\renderer\\src\\router\\helloWork",
+    "\\src\\renderer\\src\\router\\inventory"
   ],
   "PreviewInSolutionExplorer": false
 }

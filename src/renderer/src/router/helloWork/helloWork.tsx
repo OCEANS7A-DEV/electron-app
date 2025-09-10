@@ -43,6 +43,7 @@ export default function HelloWork(): JSX.Element {
   const [isOtpModalVisible, setOtpModalVisible] = useState(false)
   const [otpValue, setOtpValue] = useState('')
 
+  //console.log(jobList)
 
   const start = (): void => {
     const PDFnums = works.length
@@ -63,6 +64,7 @@ export default function HelloWork(): JSX.Element {
 
   useEffect(() => {
     setAllPDFNum(jobList.length)
+    console.log(jobList)
     toast.success(`取得した求人数:${jobList.length}`)
   }, [jobList])
 
@@ -358,7 +360,7 @@ export default function HelloWork(): JSX.Element {
             </thead>
             <tbody>
               {jobList
-                .filter((item) => item.求人区分 == 'フルタイム')
+                .filter((item) => item.求人区分 == 'フルタイム' && item.status == '公開中')
                 .map((row, index) => (
                   <tr key={index}>
                     <td className="HelloType">{row.職種}</td>
@@ -387,7 +389,7 @@ export default function HelloWork(): JSX.Element {
             </thead>
             <tbody>
               {jobList
-                .filter((item) => item.求人区分 == 'パート')
+                .filter((item) => item.求人区分 == 'パート' && item.status == '公開中')
                 .map((row, index) => (
                   <tr key={index}>
                     <td className="HelloType">{row.職種}</td>
@@ -417,7 +419,33 @@ export default function HelloWork(): JSX.Element {
             </thead>
             <tbody>
               {jobList
-                .filter((item) => item.求人区分 !== 'パート' && item.求人区分 !== 'フルタイム')
+                .filter((item) => item.求人区分 !== 'パート' && item.求人区分 !== 'フルタイム' && item.status == '公開中')
+                .map((row, index) => (
+                  <tr key={index}>
+                    <td className="HelloType">{row.職種}</td>
+                    <td className="HelloWhere">{storeName(row.address)}</td>
+                    <td className="HelloLimit">{row.紹介期限日}</td>
+                    <td>{row.status}</td>
+                    <td>{row.求人区分}</td>
+                    <td className="HelloLimitStatus">{JOBupdateStatus(row.紹介期限日)}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+          <div style={{ marginTop: 20 }}>更新待機</div>
+          <table className="fullTime">
+            <thead>
+              <tr>
+                <td className="HelloType">職種</td>
+                <td className="HelloWhere">就業場所</td>
+                <td className="HelloLimit">紹介期限</td>
+                <td className="HelloStatus">ステータス</td>
+                <td>求人区分</td>
+              </tr>
+            </thead>
+            <tbody>
+              {jobList
+                .filter((item) => item.求人区分 !== 'パート' && item.求人区分 !== 'フルタイム' && item.status == '公開中')
                 .map((row, index) => (
                   <tr key={index}>
                     <td className="HelloType">{row.職種}</td>
