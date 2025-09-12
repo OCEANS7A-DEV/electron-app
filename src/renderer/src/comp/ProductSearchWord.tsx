@@ -25,19 +25,14 @@ export default function WordSearch({DisplayStatus, setDisplayStatus, RegisterDat
 
   // データ更新
   const productListUpdate = async () => {
-    const Lists = await window.myInventoryAPI.ListGet({
-      sheetName: '在庫一覧',
-      action: 'ListGet',
-      ranges: 'A2:L'
-    })
-    localStorage.setItem('data', Lists)
+    await window.myInventoryAPI.ListReload()
+    dataSet()
   }
 
 
   // データ取得
   const dataSet = async () => {
     const data = await window.myInventoryAPI.ListData()
-    //console.log(data)
     setData(data)
   }
 
@@ -61,27 +56,27 @@ export default function WordSearch({DisplayStatus, setDisplayStatus, RegisterDat
     setButtonLabel(result)
   }
 
-  const ProductClick = async(row) => {
+  const ProductClick = async (row) => {
     RegisterData(row)
   }
 
 
 
-  const productReSearch = async() => {
+  const productReSearch = async () => {
     if (!SWord){
       setTableData(data)
     } else {
-      const swKZ = jaconv.toKatakana(SWord);
-      const swHZ = jaconv.toHiragana(swKZ);
-      const swKH = jaconv.toHan(swKZ);
-      const SearchWords = [SWord,swKZ,swHZ,swKH]
+      const swKZ = jaconv.toKatakana(SWord)
+      const swHZ = jaconv.toHiragana(swKZ)
+      const swKH = jaconv.toHan(swKZ)
+      const SearchWords = [SWord, swKZ, swHZ, swKH]
       if (!SWord) {
         setTableData([])
         return
       }
-      const searchresult = data.filter(item => {
+      const searchresult = data.filter((item) => {
         const nameStr = String(item.name ?? '')
-        return SearchWords.some(sw => nameStr.includes(sw))
+        return SearchWords.some((sw) => nameStr.includes(sw))
       })
       setTableData(searchresult)
     }
@@ -99,7 +94,7 @@ export default function WordSearch({DisplayStatus, setDisplayStatus, RegisterDat
   return (
     <div className="WordSearch-area">
       <div className="OandC">
-        <Button variant='outlined' onClick={switching} sx={{ height: '30px' }}>
+        <Button variant="outlined" onClick={switching} sx={{ height: '30px' }}>
           {buttonlabel}
         </Button>
       </div>

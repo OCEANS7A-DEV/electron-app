@@ -624,6 +624,24 @@ export const productGet = async () => {
       })
     })
     const result = await response.json()
+    const ListResult = result.map((item) => {
+      return {
+        vendor: item[1],
+        code: item[2],
+        name: item[3],
+        defaultPrice: '',
+        newPrice: item[4],
+        VC: item[5],
+        store: item[6],
+        type: item[11],
+        remarks: item[7],
+        Possibility: item[12],
+        service: item[9],
+        order: item[8],
+        vendorid: item[0]
+      }
+    })
+    store.set('data', ListResult)
     return result
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
@@ -790,28 +808,7 @@ export const ProductDetails = async () => {
 }
 
 export const StartUpSet = async () => {
-  const list = await productGet()
-
-  const ListResult = list.map((item) => {
-    const result = {
-      vendor: item[1],
-      code: item[2],
-      name: item[3],
-      defaultPrice: '',
-      newPrice: item[4],
-      VC: item[5],
-      store: item[6],
-      type: item[11],
-      remarks: item[7],
-      Possibility: item[12],
-      service: item[9],
-      order: item[8],
-      vendorid: item[0]
-    }
-    return result
-  })
-
-  store.set('data', ListResult)
+  await productGet()
 
   const types = await productTypesGet()
 
@@ -989,6 +986,9 @@ app.whenReady().then(async () => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
+})
+ipcMain.on('product-reload', async () => {
+  await productGet()
 })
 
 ipcMain.handle('product-list', async () => {
@@ -1596,6 +1596,8 @@ ipcMain.handle('hellowork-update', async (_event, RecruitNumbers: any) => {
       }
       const confirmButton = await page.$('input[name="kanryoBtn"]')
       if (confirmButton) {
+        const comment = '来月からの更新をお願いします'
+        await page.type('textarea[name="helloworkRKJK"]', comment)
         await Promise.all([
           page.waitForNavigation({ waitUntil: 'networkidle2' }),
           confirmButton.click()

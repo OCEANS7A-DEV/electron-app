@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   ListGet: (payload) => ipcRenderer.invoke('list-get', payload),
   DataInsert: (payload) => ipcRenderer.invoke('data-insert', payload),
   ListData: () => ipcRenderer.invoke('product-list'),
+  ListReload: () => ipcRenderer.send('product-reload'),
   DetailsData: () => ipcRenderer.invoke('details-list'),
   NowGet: () => ipcRenderer.invoke('now-DateGet'),
   WorkGet: () => ipcRenderer.invoke('hellowork-get'),

@@ -40,6 +40,7 @@ declare global {
       UuidGet: (payload: any) => Promise<any>;
       DetailsData: () => Promise<any>;
       ListData: () => Promise<any>;
+      ListReload: () Promise<void>;
       VendorData: () => Promise<any>;
       shortageGet: () => Promise<any>;
       PrintReady: () => Promise<any>;
