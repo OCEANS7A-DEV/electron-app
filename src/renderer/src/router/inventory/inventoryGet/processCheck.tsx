@@ -104,6 +104,7 @@ const HQPage = (): JSX.Element => {
         action: 'InputDataGet',
         ranges: 'A2:M'
       })
+      console.log(ordersGet)
       const storeData = await window.myInventoryAPI.ListGet({
         sheetName: 'その他一覧',
         action: 'ListGet',
@@ -229,6 +230,7 @@ const HQPage = (): JSX.Element => {
     if (filterData.length === 0) {
       return
     }
+    console.log(filterData)
 
     await window.myInventoryAPI.storeSet('printData', JSON.stringify(filterData))
     await window.myInventoryAPI.storeSet('printDate', setDate)

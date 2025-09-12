@@ -179,11 +179,16 @@ export default function StoreOrderPage(): JSX.Element {
         ]
         return result
       })
+      let insertAction = 'append'
+      if (DeleteRowNum >= 1) {
+        insertAction = 'update'
+      }
       if (formData.length >= 1) {
         await window.myInventoryAPI.DataInsert({
           sheetName: '店舗へ',
           action: 'Orderinsert',
           sub_action: 'insert',
+          insert_action: insertAction,
           data: formData,
           formulaConfig: {
             targetCol: 10,
