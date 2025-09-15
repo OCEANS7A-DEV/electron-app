@@ -1,0 +1,11 @@
+
+
+@media print {
+  @page {
+    @bottom-right {
+      content: counter(page) "/" counter(pages);
+      font-size: 10pt;
+      margin-bottom: 10mm;
+    }
+  }
+}

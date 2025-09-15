@@ -109,12 +109,20 @@ export const loader = async () => {
     monthList.push({ value: i + 1, label: `${i + 1}月`})
   }
 
-  return { storenames, yearList, monthList, datas }
+  const typeDatas = await window.myInventoryAPI.ListGet({
+    sheetName: '商品タイプ一覧',
+    action: 'ListGet',
+    ranges: 'B2:B'
+  })
+
+  const types = typeDatas.map((item) => item[0]).filter((row) => row !== '')
+
+  return { storenames, yearList, monthList, datas, types }
 }
 
 
 export default function FCInventory() {
-  const { storenames, yearList, monthList, datas } = useLoaderData<typeof loader>()
+  const { storenames, yearList, monthList, datas, types } = useLoaderData<typeof loader>()
   // console.log(datas)
 
   const [marginNum, setMarginNum] = useState(100)
@@ -133,7 +141,6 @@ export default function FCInventory() {
     reset({
       rows: defaultSet()
     })
-    // console.log(storeSelect)
     const List = await window.myInventoryAPI.ListData()
     const storeId = storenames.find((item) => item.value == storeSelect)
     const date = new Date(Year, Month, 1)
@@ -153,7 +160,6 @@ export default function FCInventory() {
     filter.forEach(async (item) => {
       const code = item[2]
       const productData = List.find((item) => item.code == code)
-      console.log(productData)
       if (productData) {
         const name = productData.name
         setValue(`rows.${count}.name`, name)
@@ -313,6 +319,60 @@ export default function FCInventory() {
   };
 
 
+  const Reget = async () => {
+    const DataGets = async() => {
+      const data = await window.myInventoryAPI.ListGet({
+        sheetName: '在庫履歴',
+        action: 'FCInventoryGet',
+        ranges: 'A2:D'
+      })
+
+      const storeId = storenames.find((item) => item.value == storeSelect)
+      const date = new Date(Year, Month, 1)
+      date.setDate(date.getDate() - 1)
+      const filter = data.filter(
+        (item) => item[1] == storeId?.id &&
+          new Date(item[0]).toLocaleDateString() == date.toLocaleDateString()
+      )
+      const List = await window.myInventoryAPI.ListData()
+      const inventorys: any[] = []
+      for (let i = 0; i < types.length; i++) {
+        const targets = List.filter((item) => item.type.includes(i + 1))
+        const pushData = targets.map((item) => {
+          const findData = filter.find((row) => row[2] == item.code)
+          const result = [
+            item.code,
+            item.name,
+            findData ? findData[3] : 0,
+            item.newPrice
+          ]
+          return result
+        }).filter((row) => row[2] !== 0)
+        inventorys.push({ type: types[i], data: pushData })
+      }
+      const PrintData = {
+        printDate: date.toLocaleDateString(),
+        printStore: storeSelect,
+        printData: JSON.stringify(inventorys)
+      }
+      console.log(PrintData)
+      await window.myInventoryAPI.storeSet('inventoryPrint', JSON.stringify(PrintData))
+      window.myInventoryAPI.orderPrint('FCPrintContent')
+    }
+    
+    toast.promise(
+      DataGets(),
+      {
+        loading: '読み込み中',
+        success: () => '終了',
+        error: () => `エラーが発生しました`,
+      }
+    )
+
+    
+  }
+
+
   return(
     <div>
       <div>
@@ -359,11 +419,7 @@ export default function FCInventory() {
                   </Select>
                 </FormControl>
               </div>
-              {/* <div style={{ width: 100 }}>
-                <Button variant="outlined" onClick={Reget}>
-                  再取得
-                </Button>
-              </div> */}
+              
               <div>
                 <FormControl>
                   <InputLabel id="demo-simple-select-label">店舗</InputLabel>
@@ -381,6 +437,11 @@ export default function FCInventory() {
                     ))}
                   </Select>
                 </FormControl>
+              </div>
+              <div style={{ width: 100 }}>
+                <Button variant="outlined" onClick={Reget}>
+                  印刷
+                </Button>
               </div>
             </div>
           </div>

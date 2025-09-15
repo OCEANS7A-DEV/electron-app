@@ -320,7 +320,7 @@ export default function StoreOrderPage(): JSX.Element {
       rows: defaultSet()
     })
     const ordersGet = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M'})
-    const targetDateStr = new Date(InsertDate).toDateString();
+    const targetDateStr = new Date(InsertDate).toDateString()
     const filtered = ordersGet.filter(item => new Date(item[0]).toDateString() == targetDateStr && item[1] == storeSelect)
     const UpDataRowNum = filtered.length
     setDeleteRowNum(UpDataRowNum)

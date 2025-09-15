@@ -36,6 +36,7 @@ import HQdata, { loader as HQLoader } from './router/HQwork/HQdata'
 import HQmemo, { loader as HQMemoLoader } from './router/HQwork/HQmemo'
 import HQPrivatememo, { loader as HQPrivatememoLoader } from './router/HQwork/PersonMemo'
 import StaffData, { loader as StaffDataLoader } from './router/HQwork/StaffData'
+import FCPrintContent, { loader as FCPrintContentLoader } from './router/inventory/inventoryPrint/FCInventoryPrint'
 
 export const router = createHashRouter([
   {
@@ -170,5 +171,10 @@ export const router = createHashRouter([
     path: '/StaffData',
     element: <StaffData />,
     loader: StaffDataLoader
+  },
+  {
+    path: '/FCPrintContent',
+    element: <FCPrintContent />,
+    loader: FCPrintContentLoader
   }
 ])

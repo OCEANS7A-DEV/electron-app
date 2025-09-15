@@ -19,3 +19,76 @@
     display: none;
   }
 }
+
+
+
+.FCprint-area {
+  margin: auto;
+  border-collapse: collapse;
+}
+
+.FCPrintName {
+  padding-top: 200px;
+}
+
+.FCprintData {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.DataColumn th, .FCprintData td {
+  border: 1px solid black;
+  padding: 8px;
+}
+
+.FCprintData h2, .FCprintData h3 {
+  margin: 0;
+}
+
+.FCPrintDate {
+  text-align: right;
+  margin: 10px 0px;
+  padding-right: 10px;
+  font-size: 12px;
+}
+
+
+.FCPrintItemRow {
+  height: 42px;
+  font-size: 16px;
+}
+
+.FC-Code {
+  width: 80px;
+  text-align: right;
+}
+
+.FC-Name {
+  width: 400px;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.FC-Price {
+  width: 80px;
+  text-align: right;
+}
+
+.FC-Num {
+  width: 60px;
+  text-align: right;
+}
+
+
+.FCPageBreak {
+  page-break-after: always;
+}
+
+.FC-total-amount {
+  position: absolute;
+  font-size: 20px;
+  top: 60px;
+}
+
+
+

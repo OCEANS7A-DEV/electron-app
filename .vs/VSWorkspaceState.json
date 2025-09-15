@@ -2,14 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\main",
+    "\\src\\preload",
     "\\src\\renderer",
-    "\\src\\renderer\\src",
-    "\\src\\renderer\\src\\css",
-    "\\src\\renderer\\src\\router",
-    "\\src\\renderer\\src\\router\\helloWork",
-    "\\src\\renderer\\src\\router\\inventory"
+    "\\src\\renderer\\src"
   ],
-  "SelectedNode": "\\eslint.config.mjs",
+  "SelectedNode": "\\src\\renderer\\src\\index.tsx",
   "PreviewInSolutionExplorer": false
 }

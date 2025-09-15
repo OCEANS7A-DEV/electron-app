@@ -642,7 +642,6 @@ export const productGet = async () => {
       }
     })
     store.set('data', ListResult)
-    return result
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     return errorMessage
@@ -987,6 +986,7 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
 })
+
 ipcMain.on('product-reload', async () => {
   await productGet()
 })
