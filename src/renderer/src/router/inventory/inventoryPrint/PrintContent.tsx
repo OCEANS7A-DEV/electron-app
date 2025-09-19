@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import type { JSX } from 'react'
-import '../../../css/PrintContent.css'
+//import '../../../css/PrintContent.css'
 import '../../../css/orderPrint.css'
 import { useLoaderData } from 'react-router-dom'
 import { Button } from '@mui/material'
@@ -18,7 +18,7 @@ export const loader = async (): Promise<LoaderData> => {
   const printDate = printDataObj.printDate
   const ordersGet: Row[] = JSON.parse(printDataObj.printData)
   const stores = [...new Set(ordersGet.map((item) => item[1] as string))]
-  const rowNum = 19
+  const rowNum = 20
   const resultdata = await Promise.all(
     stores.map(async (storeName) => {
       const storeData = ordersGet.filter((row) => row[1] === storeName)
@@ -54,7 +54,7 @@ export const loader = async (): Promise<LoaderData> => {
               item[8],
               item[9],
               item[10],
-              item[11],
+              'サービス',
               item[12]
             ]
           ]
@@ -77,7 +77,7 @@ export const loader = async (): Promise<LoaderData> => {
 
 const PrintContent = (): JSX.Element => {
   const { printDate, resultdata, stores } = useLoaderData<typeof loader>()
-  const SetRows = 19
+  const SetRows = 20
   const storeTotalResult = (data): number => {
     return data.reduce((sum, row) => sum + (Number(row[9]) || 0), 0)
   }
@@ -133,8 +133,8 @@ const PrintContent = (): JSX.Element => {
   const serviceCheck = (row, index): JSX.Element => {
     if (row[7] == '') {
       return (
-        <tr key={index} className="special-row no-break">
-          <td>
+        <tr key={index}>
+          <td className="P-name-code">
             <div className="P-code">{row[3]}</div>
             <div className="P-name">{row[4]}</div>
           </td>
@@ -149,8 +149,8 @@ const PrintContent = (): JSX.Element => {
       )
     } else {
       return (
-        <tr key={index} className="special-row no-break">
-          <td>
+        <tr key={index}>
+          <td className="P-name-code">
             <div className="P-code">{row[3]}</div>
             <div className="P-name">{row[4]}</div>
           </td>
@@ -160,7 +160,7 @@ const PrintContent = (): JSX.Element => {
           <td className="P-totalprice">0</td>
           <td className="P-personal"></td>
           <td className="P-personal-taxin"></td>
-          <td className="P-remarks">サービス</td>
+          <td className="P-remarks">{row[11]}</td>
         </tr>
       )
     }
@@ -183,7 +183,7 @@ const PrintContent = (): JSX.Element => {
           </Button>
         </div>
         {stores.map((storerow, storeindex) => (
-          <table className="printData" key={storeindex}>
+          <table className="StoreprintData" key={storeindex}>
             <thead>
               <tr>
                 <th colSpan={10}>
@@ -217,32 +217,30 @@ const PrintContent = (): JSX.Element => {
                 <React.Fragment key={index}>
                   {index % SetRows === 0 && index > 1 && (
                     <>
-                      <tr key={`condition-${index}`}>
-                        <td colSpan={10} className="special-row no-break">
+                      <div className="page-break">
+                        <div className="last-page-data">
                           {index / SetRows}/{resultdata[storeindex].length / SetRows}
-                        </td>
-                      </tr>
+                        </div>
+                      </div>
                     </>
                   )}
                   {serviceCheck(row, index)}
                 </React.Fragment>
               ))}
-              <>
-                <tr className="special-row no-break">
-                  <td colSpan={11} className="special-row">
-                    <div className="last-row">
-                      <div className="last-page-data">
-                        {resultdata[storeindex].length / SetRows}/
-                        {resultdata[storeindex].length / SetRows}
-                      </div>
-                      <div className="last-page-amount">
-                        税抜注文合計金額(個人購入・欠品分含む): ¥
-                        {Number(storeTotalResult(resultdata[storeindex])).toLocaleString('ja-JP')}
-                      </div>
+              <tr className="lastPage-Row">
+                <td colSpan={11} className="last-row-td">
+                  <div className="last-page-data">
+                    {resultdata[storeindex].length / SetRows}/
+                    {resultdata[storeindex].length / SetRows}
+                  </div>
+                  <div className="last-row">
+                    <div className="last-page-amount">
+                      税抜注文合計金額(個人購入・欠品分含む): ¥
+                      {Number(storeTotalResult(resultdata[storeindex])).toLocaleString('ja-JP')}
                     </div>
-                  </td>
-                </tr>
-              </>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
         ))}

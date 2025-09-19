@@ -2,10 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\preload",
+    "\\src\\main",
     "\\src\\renderer",
-    "\\src\\renderer\\src"
+    "\\src\\renderer\\src",
+    "\\src\\renderer\\src\\router",
+    "\\src\\renderer\\src\\router\\inventory",
+    "\\src\\renderer\\src\\router\\inventory\\inventoryInsert",
+    "\\src\\renderer\\src\\router\\inventory\\inventoryPrint",
+    "\\src\\renderer\\src\\Util"
   ],
-  "SelectedNode": "\\src\\renderer\\src\\index.tsx",
+  "SelectedNode": "\\src\\renderer\\src\\router\\inventory\\inventoryInsert\\storeOrder.tsx",
   "PreviewInSolutionExplorer": false
 }

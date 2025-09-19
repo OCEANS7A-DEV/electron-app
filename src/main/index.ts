@@ -641,7 +641,9 @@ export const productGet = async () => {
         vendorid: item[0]
       }
     })
+    // 修正
     store.set('data', ListResult)
+    return
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     return errorMessage

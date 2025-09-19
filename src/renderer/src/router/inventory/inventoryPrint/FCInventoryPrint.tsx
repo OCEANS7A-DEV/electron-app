@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import type { JSX } from 'react'
 import '../../../css/PrintContent.css'
 import '../../../css/FCPrint.css'
-import '../../../css/orderPrint.css'
+//import '../../../css/orderPrint.css'
 import { useLoaderData } from 'react-router-dom'
 import { Button } from '@mui/material'
 
@@ -13,17 +13,30 @@ export const loader = async () => {
   const printData = JSON.parse(data.inventoryPrint)
   const printStore = printData.printStore
   const printDate = printData.printDate
-  const Data = JSON.parse(printData.printData)
+  const PData = JSON.parse(printData.printData)
+  const Data = PData.filter((item) => item.data.length !== 0)
   return { printStore, printDate, Data }
 }
 
 
 const FCPrintContent = (): JSX.Element => {
   const { printStore, printDate, Data } = useLoaderData<typeof loader>()
-  console.log(Data)
+
   const [AllAmount, setAllAmount] = React.useState('0')
 
+  const [PageNum, setPageNum] = React.useState(0)
+
+  const pageNums = () => {
+    let totalPage = 0
+    Data.forEach((item) => {
+      const Num = Math.ceil(item.data.length / 22)
+      totalPage += Num
+    })
+    setPageNum(totalPage)
+  }
+
   useEffect(() => {
+    pageNums()
     invetoryAmount()
   }, [])
 
@@ -39,7 +52,8 @@ const FCPrintContent = (): JSX.Element => {
     setAllAmount(total.toLocaleString())
   }
 
-  const typeRow = (item) => {
+  const typeRow = (item, pageIndex) => {
+
     // 元のデータを変更しないようにコピーを作成
     const localData = [...item.data];
     const rowNum = 22; // 1ページあたりの行数
@@ -53,8 +67,11 @@ const FCPrintContent = (): JSX.Element => {
       localData.push(...emptyRows);
     }
 
+    
+
     return localData.map((row, index: number) => {
       // 分割代入で可読性を向上
+
       const [code, name, num, price] = row;
 
       return (
@@ -71,9 +88,11 @@ const FCPrintContent = (): JSX.Element => {
               <td colSpan={4} className="FCPageBreak">
                 <div className="FCPageBreakText">{item.type}</div>
                 <div>{Math.ceil(index / rowNum)}/{pageNum}</div>
+                <div className="FC-test">{pageIndex + 1}/{PageNum}</div>
               </td>
             </tr>
           )}
+          
         </React.Fragment>
       )
     })
@@ -82,6 +101,8 @@ const FCPrintContent = (): JSX.Element => {
   const PrintExecution = async () => {
     await window.myInventoryAPI.PrintReady()
   }
+
+
 
   return (
     <div className="print-area">
@@ -113,8 +134,8 @@ const FCPrintContent = (): JSX.Element => {
             </tr>
           </thead>
           <tbody>
-            {Data.map((item) => (
-              typeRow(item)
+            {Data.map((item, pageIndex) => (
+              typeRow(item, pageIndex)
             ))}
           </tbody>
         </table>

@@ -13,28 +13,17 @@
 
 
 
-.printData{
+.printData {
   margin: auto;
+}
+
+.StoreprintData {
   border-collapse: collapse;
+  page-break-after: always;
 }
 
-.last-row {
-  display: flex;
-  align-items: center;
-  position: relative; /* 中央配置の基準点にする */
-  width: 100%;
-}
 
-.last-page-data {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap; /* 改行を防ぐ */
-}
 
-.last-row div:last-child {
-  margin-left: auto;
-}
 
 .printDate {
   margin-top: 10px;
@@ -88,8 +77,16 @@
   /* text-align: left; */
 }
 
-.printData td {
-  height: 37px;
+
+.P-name-code,
+.P-detail,
+.P-number,
+.P-price,
+.P-totalprice,
+.P-personal,
+.P-personal-taxin,
+.P-remarks{
+  height: 36px;
   min-height: 37px;
   max-height: 37px;
   padding: 6px;
@@ -99,10 +96,10 @@
 .print-table-header th {
   font-size: 12px;
   background-color: #f2f2f2; /* ヘッダーの背景色 */
-  font-weight: bold;         /* ヘッダーの太字 */
+  font-weight: bold; /* ヘッダーの太字 */
 }
 
-.printData tr:nth-child(even) {
+.StoreprintData tr:nth-child(even) {
   background-color: #f9f9f9; /* 偶数行の背景色を変更 */
 }
 
@@ -190,10 +187,10 @@
   text-align: right;
 }
 
-.special-row{
+/*.special-row{
   background-color: white;
   text-align: center;
-}
+}*/
 
 .total-row {
   position:  absolute;
@@ -202,7 +199,12 @@
 }
 
 .last-page-amount {
+  position: relative;
+  top: 10px;
   font-size: 14px;
+  text-align: right;
+  text-underline-offset: 6px;
+  text-decoration: underline solid #000000;
 }
 
 
@@ -218,3 +220,47 @@
     break-inside: avoid; /* 一部ブラウザ用 */
   }
 }
+
+
+.printWindow {
+  width: 210mm;
+  background-color: white;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+
+
+.printButton {
+  position: fixed;
+  top: 10px;
+  left: 700px;
+  z-index: 1000;
+}
+
+@media print {
+  .printButton {
+    display: none;
+  }
+}
+
+.page-brake {
+  page-break-after: always;
+}
+
+.last-page-data {
+  position: relative;
+  width: 40px;
+  left: 188mm;
+  bottom: 282mm;
+  margin: 0;
+  height: 0px;
+}
+
+
+
+.lastPage-Row {
+  height: 0px;
+}
+
+
