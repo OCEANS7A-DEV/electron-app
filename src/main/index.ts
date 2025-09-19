@@ -1723,7 +1723,7 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
         //
       }
     }
-    PDFfileMarge()
+    PDFfileMarge(`ハロワPDFs${today}.pdf`)
     NotificationEXE('すべてのPDFのダウンロード完了')
   } catch (e) {
     log.error('ハロワ取得エラー:', e)
@@ -1731,10 +1731,10 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
 })
 
 ipcMain.on('PDF-Marge', () => {
-  PDFfileMarge()
+  PDFfileMarge('merged.pdf')
 })
 
-const PDFfileMarge = async (): Promise<{
+const PDFfileMarge = async (fileName): Promise<{
   canceled: boolean
   output?: string
   error?: string
@@ -1760,7 +1760,7 @@ const PDFfileMarge = async (): Promise<{
 
   const { filePath: outPath, canceled: saveCanceled } = await dialog.showSaveDialog({
     title: '結合後の PDF を保存',
-    defaultPath: path.join(folder, 'merged.pdf'),
+    defaultPath: path.join(folder, fileName),
     filters: [{ name: 'PDF', extensions: ['pdf'] }]
   })
   if (saveCanceled || !outPath) {
