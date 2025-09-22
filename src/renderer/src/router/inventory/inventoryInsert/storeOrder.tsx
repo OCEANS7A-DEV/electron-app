@@ -195,6 +195,7 @@ export default function StoreOrderPage(): JSX.Element {
           deleteNum: DeleteRowNum
         })
       }
+      setDeleteRowNum(formData.length)
     }
     toast.promise(
       insertExecution(),
