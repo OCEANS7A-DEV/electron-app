@@ -1,27 +1,18 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, ChangeEvent, useEffect } from 'react'
 import Select from 'react-select'
-//import { useLoaderData } from 'react-router-dom'
 import WordSearch from '../../../comp/ProductSearchWord'
 import '../../../css/Receiving.css'
 import { Button } from '@mui/material'
 import LinkBaner from '../../../comp/Linkbanar'
 import SendIcon from '@mui/icons-material/Send'
-////import DeleteIcon from '@mui/icons-material/Delete'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import SweetAlert2 from 'react-sweetalert2';
 import ConfirmDialogTable from '../../../comp/DialogTable'
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast'
+import { productGet } from '../../../Util/util'
 
 
-// interface InsertData {
-//   業者: { value: string; label: string }[]
-//   商品コード: string
-//   商品名: string
-//   数量: string
-//   商品単価: string
-//   VendorList: { value: string; label: string }[]
-// }
 
 interface SelectOption {
   value: string
@@ -29,21 +20,6 @@ interface SelectOption {
   id: string
 }
 
-// interface InventoryDataType {
-//   業者: string
-//   商品コード: string
-//   商品名: string
-//   商品単価: string
-// }
-
-// const productSearch = async (codenumber: number) => {
-//   const data = await window.myInventoryAPI.ListData()
-//   //console.log(data)
-//   const storageGet = data
-//   const product = storageGet.find((item) => item.code === codenumber)
-//   console.log(product)
-//   return product
-// }
 
 type FormValues = {
   rows: {
@@ -251,15 +227,13 @@ export default function ReceivingPage() {
   }
 
   const search = async (index) => {
-    const List = await window.myInventoryAPI.ListData()
-    console.log(List)
     const values = getValues()
     const code = values.rows[index].code
-    const productData = List.find((item) => item.code === Number(code))
-    if (productData) {
-      const vendordata = { value: productData.vendor, label: productData.vendor, id: productData.vendorid }
-      const name = productData.name
-      const Price = productData.newPrice
+    const result = await productGet(code)
+    if (result.productData) {
+      const vendordata = { value: result.productData.vendor, label: result.productData.vendor, id: result.productData.vendorid }
+      const name = result.productData.name
+      const Price = result.productData.newPrice
       setValue(`rows.${index}.vendor`, vendordata)
       setValue(`rows.${index}.name`, name)
       setValue(`rows.${index}.price`, Price)

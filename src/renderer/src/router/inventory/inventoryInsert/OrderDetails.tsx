@@ -17,14 +17,13 @@ export const loader = async () => {
 
   const detailmap = detailsfilter.map(items => {
     const resultmap = datalist.find(row => row.code === items[0])
-    const result = [items[0],resultmap.name,items[1]]
+    const result = [items[0], resultmap.name, items[1]]
     return result
   })
 
   const filtered = orderdata.filter(row => row[5] !== '');
 
-  const filteredData = filtered
-  .filter((row: any) => {
+  const filteredData = filtered.filter((row: any) => {
     const utcDate = new Date(row[0]);
     const japanTime = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
     const formattedJapanDate = japanTime.toISOString().split('T')[0];

@@ -21,6 +21,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/ja'
 
+import { productGet } from '../../../Util/util'
+
 dayjs.locale('ja')
 
 
@@ -338,10 +340,8 @@ export default function StoreOrderPage(): JSX.Element {
       filtered.forEach(item => {
         setValue(`rows.${count}.vendor`, item[2])
         setValue(`rows.${count}.code`, item[3])
-        const detailfilter = ProductdetailsList.filter(row => row[0] == item[3] && row[1] !== '')
-        const detaillist = detailfilter.map(item => {
-          const result = {value: item[1] ?? '', label: item[1] ?? ''}
-          return result
+        const detaillist = ProductdetailsList.filter(row => row[0] == item[3] && row[1] !== '').map(item => {
+          return {value: item[1] ?? '', label: item[1] ?? ''}
         })
         setValue(`rows.${count}.detailList`, detaillist)
         const detail = {value: item[5], label: item[5]}
@@ -384,29 +384,22 @@ export default function StoreOrderPage(): JSX.Element {
   
 
   const search = async (index) => {
-    const List = await window.myInventoryAPI.ListData()
     const values = getValues()
     let code = values.rows[index].code
     if (index >= 1 && code == '') {
       code = values.rows[index - 1].code
       setValue(`rows.${index}.code`, code)
     }
-    const productData = List.find((item) => item.code === Number(code))
-    if (productData) {
-      const vendordata = productData.vendor
-      const name = productData.name
-      setValue(`rows.${index}.vendor`, vendordata)
-      setValue(`rows.${index}.name`, name)
-      const detailfilter = ProductdetailsList.filter(row => row[0] == code && row[1] !== '')
-      const detaillist = detailfilter.map(item => {
-        const result = {value: item[1] ?? '', label: item[1] ?? ''}
-        return result
-      })
-      setValue(`rows.${index}.detailList`, detaillist)
+
+    const result = await productGet(code, true)
+    if (result.productData) {
+      setValue(`rows.${index}.vendor`, result.productData.vendor)
+      setValue(`rows.${index}.name`, result.productData.name)
+      setValue(`rows.${index}.detailList`, result.detailsData)
       if (SelectType !== 'VC'){
-        setValue(`rows.${index}.price`, productData.newPrice)
+        setValue(`rows.${index}.price`, result.productData.newPrice)
       } else {
-        setValue(`rows.${index}.price`, productData.VC)
+        setValue(`rows.${index}.price`, result.productData.VC)
       }
     }
   }
@@ -416,8 +409,6 @@ export default function StoreOrderPage(): JSX.Element {
   const RowRemove = async (index) => {
     remove(index)
     append(defaultRowData, { shouldFocus: false })
-
-
     setTimeout(() => {
       const input = document.querySelector<HTMLInputElement>(
         `input[name="rows.${index}.vendor"]`
@@ -438,9 +429,7 @@ export default function StoreOrderPage(): JSX.Element {
   };
 
   const RegisterData = async(data) => {
-    //console.log(data)
     const filterData = getValues().rows.filter((row) => row.code !== '')
-    //const vendordata = { value: data.vendor, label: data.vendor, id: data.vendorid }
     const list = await window.myInventoryAPI.DetailsData()
     const filtered = list.filter(row => row[1] !== '')
     const details = filtered.filter(item => item[0] == data.code)
