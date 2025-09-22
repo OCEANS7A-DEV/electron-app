@@ -103,6 +103,8 @@ export default function StoreOrderPage(): JSX.Element {
 
   const [dateValue, setDateValue] = useState<Dayjs | null>(null);
 
+  const [insertAction, setInsertAction] = useState('append');
+
 
 
   const swalWindow = async (): Promise<void> => {
@@ -179,10 +181,6 @@ export default function StoreOrderPage(): JSX.Element {
         ]
         return result
       })
-      let insertAction = 'append'
-      if (DeleteRowNum >= 1) {
-        insertAction = 'update'
-      }
       if (formData.length >= 1) {
         await window.myInventoryAPI.DataInsert({
           sheetName: '店舗へ',
@@ -365,11 +363,14 @@ export default function StoreOrderPage(): JSX.Element {
         {
           loading: '注文データ読み込み中…',
           success: (data) => {
-            if (data.length == 0){
+            if (data.length == 0) {
+              setInsertAction('append')
               return `${InsertDate}の${storeSelect}店は注文されていません`
-            } else if (data.length == 1 && data[0][12]){
+            } else if (data.length == 1 && data[0][12]) {
+              setInsertAction('append')
               return `${InsertDate}の${storeSelect}店は注文無し`
             } else {
+              setInsertAction('update')
               return `${InsertDate}の${storeSelect}店の注文数${data.length}`
             }
           },
