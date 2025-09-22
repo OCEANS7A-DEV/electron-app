@@ -15,3 +15,10 @@ export const productGet = async (code, withDetails = false) => {
   }
   return { productData, detailsData }
 }
+
+
+export const pageNums = (Data, maxRow) => {
+  const dataRow = Data.length
+  const Num = Math.ceil(dataRow / maxRow)
+  return Num
+}

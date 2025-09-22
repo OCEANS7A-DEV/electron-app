@@ -40,7 +40,6 @@ export default function NetEtcPrint(): JSX.Element {
           </tbody>
         </table>
       </div>
-      
     </div>
   )
 }
