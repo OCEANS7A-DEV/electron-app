@@ -81,7 +81,7 @@ const HQPage = (): JSX.Element => {
 
   const StoresGet = async (): Promise<void> => {
     const stores = await window.myInventoryAPI.ListGet({
-      sheetName: 'その他一覧',
+      sheetName: '店舗一覧',
       action: 'ListGet',
       ranges: 'A2:B'
     })
@@ -106,7 +106,7 @@ const HQPage = (): JSX.Element => {
       })
       //console.log(ordersGet)
       const storeData = await window.myInventoryAPI.ListGet({
-        sheetName: 'その他一覧',
+        sheetName: '店舗一覧',
         action: 'ListGet',
         ranges: 'A2:B'
       })

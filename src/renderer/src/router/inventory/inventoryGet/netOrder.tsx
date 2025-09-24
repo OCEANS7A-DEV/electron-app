@@ -14,7 +14,7 @@ const columns: GridColDef[] = [
 
 
 export const loader = async() => {
-  const data = await window.myInventoryAPI.ListGet({sheetName: 'ネット発注', action: 'ListGet', ranges: 'A2:B'})
+  const data = await window.myInventoryAPI.ListGet({sheetName: 'ネット発注', action: 'ListGet', ranges: 'B2:C'})
   const URLs = data.filter(item => item[0] !== '')
   return URLs
 };

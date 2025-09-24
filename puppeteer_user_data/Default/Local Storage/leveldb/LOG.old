@@ -1,3 +1,2 @@
-2025/09/24-14:22:05.538 3c8c Reusing MANIFEST C:\Users\user-1\Desktop\VSCode\electron-app\puppeteer_user_data\Default\Local Storage\leveldb/MANIFEST-000001
-2025/09/24-14:22:05.559 3c8c Recovering log #3
-2025/09/24-14:22:05.566 3c8c Reusing old log C:\Users\user-1\Desktop\VSCode\electron-app\puppeteer_user_data\Default\Local Storage\leveldb/000003.log 
+2025/09/25-03:23:26.521 6a94 Creating DB C:\Users\storm\Desktop\study\electron-app\puppeteer_user_data\Default\Local Storage\leveldb since it was missing.
+2025/09/25-03:23:26.533 6a94 Reusing MANIFEST C:\Users\storm\Desktop\study\electron-app\puppeteer_user_data\Default\Local Storage\leveldb/MANIFEST-000001

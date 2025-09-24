@@ -620,11 +620,12 @@ const productGet = async () => {
       body: JSON.stringify({
         sheetName: '一覧',
         action: 'ProductsGet',
-        ranges: 'A3:M',
+        ranges: 'A2:M',
         LastDate: LastUpdatedDate
       })
     })
     const result = await response.json()
+    //console.log(result)
     const ListResult = result.ProductsData.filter((item) => item[3] !== '').map((item) => {
       return {
         vendor: item[1],
@@ -642,8 +643,58 @@ const productGet = async () => {
         vendorid: item[0]
       }
     })
+    const VendorList = result.VendorData.filter((item) => item[0] !== '')
+    const productDetails = result.DetailsData.filter((item) => item[0] !== '')
+
+    store.set('details', productDetails)
+    store.set('vendor', VendorList)
     store.set('data', ListResult)
     store.set('LastUpdatedDate', result.date)
+    return
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+    return errorMessage
+  }
+}
+
+const DataUpdate = async (sheetname, range, key) => {
+  try {
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+
+    const response = await net.fetch(GetAPI_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Cookie: cookieHeader
+      },
+      body: JSON.stringify({ sheetName: sheetname, action: 'ListGet', ranges: range })
+    })
+    const result = await response.json()
+    if (key === 'data') {
+      const ListResult = result.filter((item) => item[3] !== '').map((item) => {
+        return {
+          vendor: item[1],
+          code: item[2],
+          name: item[3],
+          defaultPrice: '',
+          newPrice: item[4],
+          VC: item[5],
+          store: item[6],
+          type: item[11],
+          remarks: item[7],
+          Possibility: item[12],
+          service: item[9],
+          order: item[8],
+          vendorid: item[0]
+        }
+      })
+    }
+    store.set(key, result)
     return
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
@@ -841,13 +892,13 @@ export const ProductDetails = async () => {
 export const StartUpSet = async () => {
   await productGet()
 
-  productTypesGet()
-  vendorGet()
+  //productTypesGet()
+  //vendorGet()
   addressGet()
   storeList()
 
-  const productDetails = await ProductDetails()
-  store.set('details', productDetails)
+  //const productDetails = await ProductDetails()
+  //store.set('details', productDetails)
 
   if (updaterWindow && !updaterWindow.isDestroyed()) {
     updaterWindow.webContents.send('check', {
@@ -1012,7 +1063,7 @@ app.whenReady().then(async () => {
 })
 
 ipcMain.on('product-reload', async () => {
-  await productGet()
+  DataUpdate('一覧', 'A2:M', 'data')
 })
 
 ipcMain.handle('product-list', async () => {

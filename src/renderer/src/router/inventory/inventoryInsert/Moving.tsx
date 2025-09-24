@@ -124,7 +124,7 @@ export default function InventoryMoving() {
 
   const StoresGet = async () => {
     const stores = await window.myInventoryAPI.ListGet({
-      sheetName: 'その他一覧',
+      sheetName: '店舗一覧',
       action: 'ListGet',
       ranges: 'A2:B'
     });
