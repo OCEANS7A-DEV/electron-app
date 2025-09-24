@@ -40,7 +40,7 @@ export const loader = async ({ request }: { request: Request }) => {
   const address = url.searchParams.get('address')
   const Addressdata = await window.myInventoryAPI.storeGet('address')
   const vendors = ['キンバト', 'ムラカミ', '三久', 'タムラ', 'ミラビス']
-  const ShippingAddress = Addressdata.address.find((row) => row[0] === address)
+  const ShippingAddress = Addressdata.find((row) => row[0] === address)
 
 
   const shortage = productData.filter(
@@ -181,8 +181,8 @@ export default function EtcPrint(): JSX.Element {
   const { ShippingAddress, subData, subdata, vendors, Addressdata, resultdata } = useLoaderData<typeof loader>()
 
   const AddressFindData = (data, col) => {
-    //console.log(Addressdata)
-    const result = Addressdata.address.find((row) => row[0] == data)
+
+    const result = Addressdata.find((row) => row[0] == data)
     return result[col]
   }
   

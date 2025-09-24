@@ -602,7 +602,8 @@ const hasGoogleLoginCookie = async (): Promise<boolean> => {
   return allCookies.some((c) => authCookieNames.includes(c.name))
 }
 
-export const productGet = async () => {
+const productGet = async () => {
+  const LastUpdatedDate = store.get('LastUpdatedDate') || ''
   try {
     const cookies1 = await session.defaultSession.cookies.get({
       url: 'https://accounts.google.com'
@@ -610,7 +611,6 @@ export const productGet = async () => {
     const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
     const allCookies = [...cookies1, ...cookies2]
     const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
-
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
@@ -620,11 +620,12 @@ export const productGet = async () => {
       body: JSON.stringify({
         sheetName: '一覧',
         action: 'ProductsGet',
-        ranges: 'A2:M'
+        ranges: 'A3:M',
+        LastDate: LastUpdatedDate
       })
     })
     const result = await response.json()
-    const ListResult = result.map((item) => {
+    const ListResult = result.ProductsData.filter((item) => item[3] !== '').map((item) => {
       return {
         vendor: item[1],
         code: item[2],
@@ -641,8 +642,8 @@ export const productGet = async () => {
         vendorid: item[0]
       }
     })
-    // 修正
     store.set('data', ListResult)
+    store.set('LastUpdatedDate', result.date)
     return
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
@@ -668,14 +669,15 @@ export const productTypesGet = async () => {
       body: JSON.stringify({ sheetName: '商品タイプ一覧', action: 'ListGet', ranges: 'A2:B' })
     })
     const result = await response.json()
-    return result
+    store.set('types', result)
+    return
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     return errorMessage
   }
 }
 
-export const vendorGet = async () => {
+const vendorGet = async () => {
   try {
     const cookies1 = await session.defaultSession.cookies.get({
       url: 'https://accounts.google.com'
@@ -693,7 +695,34 @@ export const vendorGet = async () => {
       body: JSON.stringify({ sheetName: '業者一覧', action: 'ListGet', ranges: 'A2:B' })
     })
     const result = await response.json()
-    return result
+    const filterd = result.filter((item) => item[0] !== '')
+    store.set('vendor', filterd)
+    return
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+    return errorMessage
+  }
+}
+
+const storeList = async () => {
+  try {
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+    const response = await net.fetch(GetAPI_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Cookie: cookieHeader
+      },
+      body: JSON.stringify({ sheetName: 'その他一覧', action: 'ListGet', ranges: 'A2:B' })
+    })
+    const result = await response.json()
+    store.set('storeList', result)
+    return
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     return errorMessage
@@ -718,7 +747,8 @@ export const addressGet = async () => {
       body: JSON.stringify({ sheetName: 'その他データ', action: 'ListGet', ranges: 'A2:H' })
     })
     const result = await response.json()
-    return result
+    store.set('address', result)
+    return
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     return errorMessage
@@ -811,20 +841,12 @@ export const ProductDetails = async () => {
 export const StartUpSet = async () => {
   await productGet()
 
-  const types = await productTypesGet()
-
-  store.set('types', types)
-
-  const VendorList = await vendorGet()
-
-  store.set('vendor', VendorList)
-
-  const AddressList = await addressGet()
-
-  store.set('address', AddressList)
+  productTypesGet()
+  vendorGet()
+  addressGet()
+  storeList()
 
   const productDetails = await ProductDetails()
-
   store.set('details', productDetails)
 
   if (updaterWindow && !updaterWindow.isDestroyed()) {
@@ -1022,8 +1044,8 @@ ipcMain.handle('storeSet', async (_event, key, value) => {
   store.set(key, value)
 })
 
-ipcMain.handle('storeGet', async (_event, payload: { gettitle: string }) => {
-  return store.get(payload.gettitle)
+ipcMain.handle('storeGet', async (_event, payload) => {
+  return store.get(payload)
 })
 
 ipcMain.handle('list-get', async (_event, payload: any) => {

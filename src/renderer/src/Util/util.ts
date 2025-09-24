@@ -22,3 +22,17 @@ export const pageNums = (Data, maxRow) => {
   const Num = Math.ceil(dataRow / maxRow)
   return Num
 }
+
+
+export const getNearestMonday = (D): string => {
+  const date = new Date(D)
+  const dayOfWeek = date.getDay()
+  const diffToMonday = dayOfWeek <= 3 ? 1 - dayOfWeek : 8 - dayOfWeek
+  const nearestMonday = new Date(date)
+  nearestMonday.setDate(date.getDate() + diffToMonday)
+  const year = nearestMonday.getFullYear()
+  const month = String(nearestMonday.getMonth() + 1).padStart(2, '0')
+  const day = String(nearestMonday.getDate()).padStart(2, '0')
+  const result = `${year}-${month}-${day}`
+  return result
+}

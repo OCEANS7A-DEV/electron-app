@@ -10,7 +10,7 @@ import { Button } from '@mui/material'
 
 export const loader = async () => {
   const data = await window.myInventoryAPI.storeGet('inventoryPrint')
-  const printData = JSON.parse(data.inventoryPrint)
+  const printData = JSON.parse(data)
   const printStore = printData.printStore
   const printDate = printData.printDate
   const PData = JSON.parse(printData.printData)

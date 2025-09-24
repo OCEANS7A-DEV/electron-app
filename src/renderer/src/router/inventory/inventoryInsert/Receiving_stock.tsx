@@ -62,6 +62,8 @@ export default function ReceivingPage() {
 
   const [marginNum, setMarginNum] = useState(100)
 
+  const keyData = 'ReceivingstockInputData'
+
   useEffect(() => {
     if(DisplayStatus){
       setMarginNum(330)
@@ -88,7 +90,7 @@ export default function ReceivingPage() {
   }
 
 
-  const { control, register, handleSubmit, getValues, setValue, reset } =
+  const { control, register, handleSubmit, getValues, setValue, reset, watch } =
     useForm<FormValues>({
       defaultValues: {
         rows: defaultSet()
@@ -99,6 +101,36 @@ export default function ReceivingPage() {
     control,
     name: 'rows'
   })
+
+  const watchedValues = watch()
+
+
+  useEffect(() => {
+    SaveInputContents()
+  }, [watchedValues])
+
+  useEffect(() => {
+    const SaveDataSet = async () => {
+      const inputData = await window.myInventoryAPI.storeGet('ReceivingstockInputData')
+      const parsedData = JSON.parse(inputData)
+      if (parsedData.length === 0) return
+      let index = 0
+      parsedData.forEach((item) => {
+        setValue(`rows.${index}.vendor`, item.vendor)
+        setValue(`rows.${index}.name`, item.name)
+        setValue(`rows.${index}.quantity`, item.quantity)
+        setValue(`rows.${index}.code`, item.code)
+        setValue(`rows.${index}.price`, item.price)
+        index++
+      })
+    }
+    SaveDataSet()
+  }, [])
+
+  const SaveInputContents = () => {
+    const filterData = getValues().rows.filter((row) => row.code !== '')
+    window.myInventoryAPI.storeSet(keyData, JSON.stringify(filterData))
+  }
 
   const onSubmit = (data: FormValues) => {
     console.log('送信データ:', data.rows)
@@ -164,6 +196,7 @@ export default function ReceivingPage() {
     reset({
       rows: defaultSet()
     })
+    window.myInventoryAPI.storeSet(keyData, JSON.stringify([]))
   }
 
   const handleOpenDialog = () => {

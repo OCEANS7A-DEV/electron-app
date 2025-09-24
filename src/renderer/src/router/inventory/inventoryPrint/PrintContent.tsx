@@ -15,8 +15,8 @@ type LoaderData = {
 
 export const loader = async (): Promise<LoaderData> => {
   const printDataObj = await window.myInventoryAPI.storeGet('printData')
-  const printDate = printDataObj.printDate
-  const ordersGet: Row[] = JSON.parse(printDataObj.printData)
+  const printDate = await window.myInventoryAPI.storeGet('printDate')
+  const ordersGet: Row[] = JSON.parse(printDataObj)
   const stores = [...new Set(ordersGet.map((item) => item[1] as string))]
   const rowNum = 20
   const resultdata = await Promise.all(

@@ -21,7 +21,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/ja'
 
-import { productGet } from '../../../Util/util'
+import { productGet, getNearestMonday } from '../../../Util/util'
 
 dayjs.locale('ja')
 
@@ -66,21 +66,6 @@ const defaultSet = (): FormValues["rows"] => {
   }
   return result
 }
-
-
-const getNearestMonday = (D): string => {
-  const date = new Date(D);
-  const dayOfWeek = date.getDay();
-  const diffToMonday = dayOfWeek <= 3 ? 1 - dayOfWeek : 8 - dayOfWeek;
-  const nearestMonday = new Date(date);
-  nearestMonday.setDate(date.getDate() + diffToMonday);
-  const year = nearestMonday.getFullYear();
-  const month = String(nearestMonday.getMonth() + 1).padStart(2, "0");
-  const day = String(nearestMonday.getDate()).padStart(2, "0");
-  const result = `${year}-${month}-${day}`
-  return result
-};
-
 
 
 export default function StoreOrderPage(): JSX.Element {
@@ -164,7 +149,7 @@ export default function StoreOrderPage(): JSX.Element {
       const Now = await window.myInventoryAPI.NowGet()
       const filterData = getValues().rows.filter((row) => row.quantity !== "0" && row.quantity !== "")
       const formData = filterData.map((item) => {
-        const result = [
+        return [
           InsertDate,
           storeSelect,
           item.vendor,
@@ -181,7 +166,6 @@ export default function StoreOrderPage(): JSX.Element {
           Now[0],
           Now[1]
         ]
-        return result
       })
       if (formData.length >= 1) {
         await window.myInventoryAPI.DataInsert({
@@ -218,12 +202,7 @@ export default function StoreOrderPage(): JSX.Element {
   }
 
   const StoresGet = async () => {
-    const stores = await window.myInventoryAPI.ListGet({
-      sheetName: 'その他一覧',
-      action: 'ListGet',
-      ranges: 'A2:B'
-    });
-
+    let stores = await window.myInventoryAPI.storeGet('storeList')
     const storenames: SelectOption[] = stores
       .filter(row => row[0] !== "")
       .map(item => ({
@@ -234,6 +213,15 @@ export default function StoreOrderPage(): JSX.Element {
 
 
     setStoreOptions(storenames);
+
+    const update = await window.myInventoryAPI.ListGet({
+      sheetName: 'その他一覧',
+      action: 'ListGet',
+      ranges: 'A2:B'
+    })
+    if(stores !== update) {
+      setStoreOptions(update)
+    }
   }
 
   const DetailsSet = async () => {

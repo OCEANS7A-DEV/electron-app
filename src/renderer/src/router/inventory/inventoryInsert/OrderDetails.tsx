@@ -6,8 +6,8 @@ import { useLoaderData } from "react-router-dom"
 export const loader = async () => {
   let result = []
   const printDataObj = await window.myInventoryAPI.storeGet('printData')
-  const date = printDataObj.printDate
-  const orderdata = JSON.parse(printDataObj.printData)
+  const date = await window.myInventoryAPI.storeGet('printDate')
+  const orderdata = JSON.parse(printDataObj)
   const details = await window.myInventoryAPI.DetailsData()
 
   const datalist = await window.myInventoryAPI.ListData()

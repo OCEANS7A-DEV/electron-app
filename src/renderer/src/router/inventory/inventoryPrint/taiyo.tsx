@@ -18,6 +18,7 @@ const isoToJstYMD = (isoString): string => {
 export const loader = async ({ request }: { request: Request }) => {
   let taiyoData: string[][] = []
   const addressData = await window.myInventoryAPI.storeGet('address')
+  console.log(addressData)
   const url = new URL(request.url)
   const date = url.searchParams.get('date')
   const vendor = url.searchParams.get('vendor')
@@ -90,8 +91,8 @@ export const loader = async ({ request }: { request: Request }) => {
 
 export default function TaiyoPrint(): JSX.Element {
   const { taiyoData, addressData, address } = useLoaderData<typeof loader>()
-  const ShippingAddress = addressData.address.find((item) => item[0] === address)
-  const VendorData = addressData.address.find((item) => item[0] === '大洋商会')
+  const ShippingAddress = addressData.find((item) => item[0] === address)
+  const VendorData = addressData.find((item) => item[0] === '大洋商会')
 
   useEffect(() => {
     //window.myInventoryAPI.PrintReady()

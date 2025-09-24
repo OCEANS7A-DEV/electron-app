@@ -33,6 +33,7 @@ export default function WordSearch({DisplayStatus, setDisplayStatus, RegisterDat
   // データ取得
   const dataSet = async () => {
     const data = await window.myInventoryAPI.ListData()
+    console.log(data)
     setData(data)
   }
 
