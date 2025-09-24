@@ -675,8 +675,9 @@ const DataUpdate = async (sheetname, range, key) => {
       body: JSON.stringify({ sheetName: sheetname, action: 'ListGet', ranges: range })
     })
     const result = await response.json()
+    let ListResult
     if (key === 'data') {
-      const ListResult = result.filter((item) => item[3] !== '').map((item) => {
+      ListResult = result.filter((item) => item[3] !== '').map((item) => {
         return {
           vendor: item[1],
           code: item[2],
@@ -694,7 +695,7 @@ const DataUpdate = async (sheetname, range, key) => {
         }
       })
     }
-    store.set(key, result)
+    store.set(key, ListResult)
     return
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
@@ -728,32 +729,32 @@ export const productTypesGet = async () => {
   }
 }
 
-const vendorGet = async () => {
-  try {
-    const cookies1 = await session.defaultSession.cookies.get({
-      url: 'https://accounts.google.com'
-    })
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
-    const allCookies = [...cookies1, ...cookies2]
-    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+//const vendorGet = async () => {
+//  try {
+//    const cookies1 = await session.defaultSession.cookies.get({
+//      url: 'https://accounts.google.com'
+//    })
+//    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+//    const allCookies = [...cookies1, ...cookies2]
+//    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
 
-    const response = await net.fetch(GetAPI_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Cookie: cookieHeader
-      },
-      body: JSON.stringify({ sheetName: '業者一覧', action: 'ListGet', ranges: 'A2:B' })
-    })
-    const result = await response.json()
-    const filterd = result.filter((item) => item[0] !== '')
-    store.set('vendor', filterd)
-    return
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-    return errorMessage
-  }
-}
+//    const response = await net.fetch(GetAPI_URL, {
+//      method: 'POST',
+//      headers: {
+//        'Content-Type': 'application/x-www-form-urlencoded',
+//        Cookie: cookieHeader
+//      },
+//      body: JSON.stringify({ sheetName: '業者一覧', action: 'ListGet', ranges: 'A2:B' })
+//    })
+//    const result = await response.json()
+//    const filterd = result.filter((item) => item[0] !== '')
+//    store.set('vendor', filterd)
+//    return
+//  } catch (err) {
+//    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+//    return errorMessage
+//  }
+//}
 
 const storeList = async () => {
   try {
