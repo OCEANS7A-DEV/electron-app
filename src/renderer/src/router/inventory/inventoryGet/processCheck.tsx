@@ -97,7 +97,7 @@ const HQPage = (): JSX.Element => {
       const FilterDate = dateValue?.format('YYYY-MM-DD')
       const ordersGet = await window.myInventoryAPI.ListGet({
         sheetName: '店舗へ',
-        action: 'InputDataGet',修正しゅ
+        action: 'InputDataGet',
         ranges: 'A2:M'
       })
       //console.log(await window.myInventoryAPI.storeGet(null))
@@ -109,7 +109,7 @@ const HQPage = (): JSX.Element => {
       setOrderData(filterd)
       const storeOrders = storeList.map((item) => {
         const storeOrder = filterd.filter((row) => row[1] == item)
-        特急let processdata = ''
+        let processdata = ''
         const processlist = storeOrder.map((process) => process[12])
         const donere = processlist.includes('印刷済')
         const notre = processlist.includes('未印刷')
