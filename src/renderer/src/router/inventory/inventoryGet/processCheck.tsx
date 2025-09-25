@@ -104,7 +104,7 @@ const HQPage = (): JSX.Element => {
       const storeData = await window.myInventoryAPI.storeGet('storeList')
       const storefilter = storeData.filter((item) => item[1] !== '')
       const storeList = storefilter.map((item) => item[1])
-      const filterd = JSON.parse(ordersGet).filter((row) => isoToJstYMD(row[0]) == FilterDate)
+      const filterd = ordersGet.filter((row) => isoToJstYMD(row[0]) == FilterDate)
       //console.log(filterd)
       setOrderData(filterd)
       const storeOrders = storeList.map((item) => {
@@ -345,18 +345,6 @@ const HQPage = (): JSX.Element => {
         </div>
         <div style={{ padding: 20, position: 'sticky', top: 60 }}>
           <div>
-            {/* <div className='operation_area'>
-              <a className="buttonUnderline" type="button" onClick={() => setDialogOpen(true)}>
-                発注区切
-              </a>
-              <DeadLineDialog
-                title="確認"
-                message={message}
-                onConfirm={handleConfirm}
-                onCancel={handleCancel}
-                isOpen={isDialogOpen}
-              />
-            </div> */}
             <div className="print-set-area">
               <div className="explanation" style={{ color: 'red' }}>
                 印刷の際は余白をデフォルトにしてください
