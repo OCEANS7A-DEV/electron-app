@@ -196,6 +196,8 @@ const TokenCheck = async (token: string) => {
 
 const store = new Store() as any
 
+
+
 // const Img_URL =
 //   'https://script.google.com/macros/s/AKfycbzCrMJDEFvfTTTCjb2b-8SwVgc2ySlsKwpf7c49H08DS6P4-ZulaS4zcNtiioytK0i6/exec'
 
@@ -626,7 +628,7 @@ const productGet = async () => {
     })
     const result = await response.json()
     //console.log(result)
-    const ListResult = result.ProductsData.filter((item) => item[3] !== '').map((item) => {
+    const ListResult = result.ProductsData.map((item) => {
       return {
         vendor: item[1],
         code: item[2],
@@ -643,9 +645,11 @@ const productGet = async () => {
         vendorid: item[0]
       }
     })
-    const VendorList = result.VendorData.filter((item) => item[0] !== '')
-    const productDetails = result.DetailsData.filter((item) => item[0] !== '')
-
+    const VendorList = result.VendorData
+    const productDetails = result.DetailsData
+    const storeList = result.StoresData
+    console.log(storeList)
+    store.set('storeList', storeList)
     store.set('details', productDetails)
     store.set('vendor', VendorList)
     store.set('data', ListResult)
@@ -756,30 +760,30 @@ export const productTypesGet = async () => {
 //  }
 //}
 
-const storeList = async () => {
-  try {
-    const cookies1 = await session.defaultSession.cookies.get({
-      url: 'https://accounts.google.com'
-    })
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
-    const allCookies = [...cookies1, ...cookies2]
-    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
-    const response = await net.fetch(GetAPI_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Cookie: cookieHeader
-      },
-      body: JSON.stringify({ sheetName: 'その他一覧', action: 'ListGet', ranges: 'A2:B' })
-    })
-    const result = await response.json()
-    store.set('storeList', result)
-    return
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-    return errorMessage
-  }
-}
+//const storeList = async () => {
+//  try {
+//    const cookies1 = await session.defaultSession.cookies.get({
+//      url: 'https://accounts.google.com'
+//    })
+//    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+//    const allCookies = [...cookies1, ...cookies2]
+//    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+//    const response = await net.fetch(GetAPI_URL, {
+//      method: 'POST',
+//      headers: {
+//        'Content-Type': 'application/x-www-form-urlencoded',
+//        Cookie: cookieHeader
+//      },
+//      body: JSON.stringify({ sheetName: 'その他一覧', action: 'ListGet', ranges: 'A2:B' })
+//    })
+//    const result = await response.json()
+//    store.set('storeList', result)
+//    return
+//  } catch (err) {
+//    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+//    return errorMessage
+//  }
+//}
 
 export const addressGet = async () => {
   try {
@@ -896,7 +900,7 @@ export const StartUpSet = async () => {
   //productTypesGet()
   //vendorGet()
   addressGet()
-  storeList()
+  //storeList()
 
   //const productDetails = await ProductDetails()
   //store.set('details', productDetails)
@@ -1108,7 +1112,6 @@ ipcMain.handle('list-get', async (_event, payload: any) => {
     const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
     const allCookies = [...cookies1, ...cookies2]
     const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
-
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
@@ -1117,7 +1120,7 @@ ipcMain.handle('list-get', async (_event, payload: any) => {
       },
       body: JSON.stringify(payload)
     })
-    const result = await response.json()
+    const result = await response.text()
     return result
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'

@@ -80,17 +80,13 @@ const HQPage = (): JSX.Element => {
   }
 
   const StoresGet = async (): Promise<void> => {
-    const stores = await window.myInventoryAPI.ListGet({
-      sheetName: '店舗一覧',
-      action: 'ListGet',
-      ranges: 'A2:B'
-    })
+    const stores = await window.myInventoryAPI.storeGet('storeList')
 
     const storenames: SelectOption[] = stores
       .filter((item) => item[1] !== '')
       .map((item) => ({
-        value: item[0],
-        label: item[0]
+        value: item[1],
+        label: item[1]
       }))
     setSelectOptions(storenames)
   }
@@ -98,25 +94,22 @@ const HQPage = (): JSX.Element => {
   const PrintProcessList = async (): Promise<void> => {
     try {
       setListload(true)
-      const Date = dateValue?.format('YYYY-MM-DD')
+      const FilterDate = dateValue?.format('YYYY-MM-DD')
       const ordersGet = await window.myInventoryAPI.ListGet({
         sheetName: '店舗へ',
-        action: 'InputDataGet',
+        action: 'InputDataGet',修正しゅ
         ranges: 'A2:M'
       })
-      //console.log(ordersGet)
-      const storeData = await window.myInventoryAPI.ListGet({
-        sheetName: '店舗一覧',
-        action: 'ListGet',
-        ranges: 'A2:B'
-      })
+      //console.log(await window.myInventoryAPI.storeGet(null))
+      const storeData = await window.myInventoryAPI.storeGet('storeList')
       const storefilter = storeData.filter((item) => item[1] !== '')
-      const storeList = storefilter.map((item) => item[0])
-      const filterd = ordersGet.filter((row) => isoToJstYMD(row[0]) == Date)
+      const storeList = storefilter.map((item) => item[1])
+      const filterd = JSON.parse(ordersGet).filter((row) => isoToJstYMD(row[0]) == FilterDate)
+      //console.log(filterd)
       setOrderData(filterd)
       const storeOrders = storeList.map((item) => {
         const storeOrder = filterd.filter((row) => row[1] == item)
-        let processdata = ''
+        特急let processdata = ''
         const processlist = storeOrder.map((process) => process[12])
         const donere = processlist.includes('印刷済')
         const notre = processlist.includes('未印刷')

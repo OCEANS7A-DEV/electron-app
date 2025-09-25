@@ -203,6 +203,7 @@ export default function StoreOrderPage(): JSX.Element {
 
   const StoresGet = async () => {
     let stores = await window.myInventoryAPI.storeGet('storeList')
+    console.log(stores)
     const storenames: SelectOption[] = stores
       .filter(row => row[0] !== "")
       .map(item => ({
@@ -211,17 +212,17 @@ export default function StoreOrderPage(): JSX.Element {
         type: item[1]
       }))
 
-
+    console.log(storenames)
     setStoreOptions(storenames);
 
-    const update = await window.myInventoryAPI.ListGet({
-      sheetName: '店舗一覧',
-      action: 'ListGet',
-      ranges: 'A2:B'
-    })
-    if(stores !== update) {
-      setStoreOptions(update)
-    }
+    //const update = await window.myInventoryAPI.ListGet({
+    //  sheetName: '店舗一覧',
+    //  action: 'ListGet',
+    //  ranges: 'A2:B'
+    //})
+    //if(stores !== update) {
+    //  setStoreOptions(update)
+    //}
   }
 
   const DetailsSet = async () => {
