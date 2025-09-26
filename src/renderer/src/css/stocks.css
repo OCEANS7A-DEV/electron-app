@@ -84,8 +84,10 @@
   text-align: right;
 }
 
-.HQInventoryPrintTable .name {
-  width: 400px;
-}
+  .HQInventoryPrintTable .name {
+    max-width: 340px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 
 

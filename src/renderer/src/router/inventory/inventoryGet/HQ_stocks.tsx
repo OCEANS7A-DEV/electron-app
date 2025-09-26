@@ -134,13 +134,14 @@ export default function HQStocks() {
   }, [])
 
   const HQStockPrint = async () => {
-    const PrintData = stockData.map((row) => [
+    const PrintData = stockData.filter((item) => item[11] == true).map((row) => [
       row[0],
       row[1],
       row[2],
       Number(row[3]).toLocaleString('ja-JP'),
       row[13]
     ])
+    console.log(PrintData)
     await window.myInventoryAPI.storeSet('HQinventoryPrint', PrintData)
     window.myInventoryAPI.orderPrint('HQPrintContent')
   }

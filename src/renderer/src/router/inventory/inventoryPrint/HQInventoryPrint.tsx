@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import type { JSX } from 'react'
 import { useLoaderData } from 'react-router-dom'
 import { Button } from '@mui/material'
@@ -7,7 +7,6 @@ import { Button } from '@mui/material'
 
 export const loader = async () => {
   const data = await window.myInventoryAPI.storeGet('HQinventoryPrint')
-  
   return { data }
 }
 
