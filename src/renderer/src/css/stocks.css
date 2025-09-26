@@ -39,5 +39,53 @@
   white-space: nowrap;
 }
 
+.HQInventoryPrintTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.HQInventoryPrintTable th {
+  border: 2px solid black;
+  padding: 6px 8px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.HQInventoryPrintTable td {
+  border: 1px solid black;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.HQInventoryPrintTable .vendor {
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.HQInventoryPrintTable .code {
+  max-width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: right;
+}
+
+.HQInventoryPrintTable .price {
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: right;
+}
+
+.HQInventoryPrintTable .Num {
+  max-width: 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: right;
+}
+
+.HQInventoryPrintTable .name {
+  width: 400px;
+}
 
 

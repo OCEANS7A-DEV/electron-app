@@ -627,7 +627,7 @@ const firstGet = async () => {
       })
     })
     const result = await response.json()
-    const ListResult = result.ProductsData.map((item) => {
+    const ListResult = await result.ProductsData.map((item) => {
       return {
         vendor: item[1],
         code: item[2],
@@ -644,19 +644,15 @@ const firstGet = async () => {
         vendorid: item[0]
       }
     })
-    const VendorList = result.VendorData
-    const productDetails = result.DetailsData
-    const storeList = result.StoresData
-    const addressList = result.AddressData
-
-    store.set('address', addressList)
-    store.set('storeList', storeList)
-    store.set('details', productDetails)
-    store.set('vendor', VendorList)
+    store.set('address', result.AddressData)
+    store.set('storeList', result.StoresData)
+    store.set('details', result.DetailsData)
+    store.set('vendor', result.VenderData)
     store.set('data', ListResult)
     store.set('LastUpdatedDate', result.date)
     return
   } catch (err) {
+    console.log(err)
     const errorMessage = err instanceof Error ? err.message : 'Unknown error'
     return errorMessage
   }

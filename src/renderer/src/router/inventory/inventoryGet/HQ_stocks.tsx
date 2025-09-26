@@ -16,7 +16,6 @@ import FormControl from '@mui/material/FormControl'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 
 
-
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -48,7 +47,8 @@ export const loader = async () => {
     return { label: new Date(row[0]).toLocaleDateString(), value: new Date(row[0]).toLocaleDateString() }
   })
   const PList = await window.myInventoryAPI.ListData()
-  return { loaderData, archiveData, archiveDateList, PList }
+  const inventoryData = loaderData.filter((item) => item[2] !== '')
+  return { inventoryData, archiveData, archiveDateList, PList }
 }
 
 
@@ -74,7 +74,7 @@ const CustomTabPanel = (props: TabPanelProps) => {
 }
 
 export default function HQStocks() {
-  const { loaderData, archiveData, archiveDateList, PList } = useLoaderData<typeof loader>()
+  const { inventoryData, archiveData, archiveDateList, PList } = useLoaderData<typeof loader>()
 
   const [stockData, setStockData] = useState([])
   const [value, setValue] = React.useState(0)
@@ -85,7 +85,7 @@ export default function HQStocks() {
   }
   
   const handleDateChange = (event: SelectChangeEvent) => {
-    setDate(event.target.value as string);
+    setDate(event.target.value as string)
   }
 
   
@@ -97,7 +97,7 @@ export default function HQStocks() {
   }
 
   const PnameGet = (code) => {
-    const result = PList.find(item => item.code == Number(code))
+    const result = PList.find((item) => item.code === Number(code)) ?? ''
     return result.name ?? ''
   }
 
@@ -130,8 +130,20 @@ export default function HQStocks() {
   }
 
   useEffect(() => {
-    setStockData(loaderData)
+    setStockData(inventoryData)
   }, [])
+
+  const HQStockPrint = async () => {
+    const PrintData = stockData.map((row) => [
+      row[0],
+      row[1],
+      row[2],
+      Number(row[3]).toLocaleString('ja-JP'),
+      row[13]
+    ])
+    await window.myInventoryAPI.storeSet('HQinventoryPrint', PrintData)
+    window.myInventoryAPI.orderPrint('HQPrintContent')
+  }
 
   return(
     <div>
@@ -153,6 +165,7 @@ export default function HQStocks() {
               <Button variant="outlined" onClick={dataset}>在庫データ再取得</Button>
               <Button variant="outlined" onClick={dialog}>現物数オールクリア</Button>
               <Button variant="outlined" href={URL} target="_blank">入出庫等入力データへ</Button>
+              <Button variant="outlined" onClick={HQStockPrint}>在庫数印刷</Button>
             </div>
             <table style={{ marginTop: 10 }}>
               <thead>
@@ -162,7 +175,6 @@ export default function HQStocks() {
                   <th>商品名</th>
                   <th>商品単価</th>
                   <th>在庫数</th>
-                  <th>現物数</th>
                 </tr>
               </thead>
               <tbody>
@@ -172,9 +184,8 @@ export default function HQStocks() {
                       <td>{row[0]}</td>
                       <td>{row[1]}</td>
                       <td>{row[2]}</td>
-                      <td className="stocksNum">{Number(row[4]).toLocaleString('ja-JP')}</td>
-                      <td className="stocksNum">{row[12]}</td>
-                      <td className="stocksNum" style={{color: row[12] === row[13] ? "black" : "red"}}>{row[13]}</td>
+                      <td className="stocksNum">{Number(row[3]).toLocaleString('ja-JP')}</td>
+                      <td className="stocksNum">{row[13]}</td>
                     </tr>
                   ))
                 }

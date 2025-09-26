@@ -1,3 +1,6 @@
-2025/09/24-14:31:16.492 2004 Reusing MANIFEST C:\Users\user-1\Desktop\VSCode\electron-app\puppeteer_user_data\Default\shared_proto_db/MANIFEST-000001
-2025/09/24-14:31:16.493 2004 Recovering log #4
-2025/09/24-14:31:16.496 2004 Reusing old log C:\Users\user-1\Desktop\VSCode\electron-app\puppeteer_user_data\Default\shared_proto_db/000004.log 
+2025/09/26-14:37:07.425 40bc Reusing MANIFEST C:\Users\user-1\Desktop\VSCode\electron-app\puppeteer_user_data\Default\shared_proto_db/MANIFEST-000001
+2025/09/26-14:37:07.426 40bc Recovering log #4
+2025/09/26-14:37:07.435 40bc Reusing old log C:\Users\user-1\Desktop\VSCode\electron-app\puppeteer_user_data\Default\shared_proto_db/000004.log 
+2025/09/26-14:37:07.485 20ac Level-0 table #8: started
+2025/09/26-14:37:07.496 20ac Level-0 table #8: 73083 bytes OK
+2025/09/26-14:37:07.499 20ac Delete type=0 #4

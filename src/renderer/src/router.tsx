@@ -13,6 +13,7 @@ import HQStocks, { loader as HQStocksLoader } from './router/inventory/inventory
 import HQPage from './router/inventory/inventoryGet/processCheck'
 import PrintContent, { loader as PrintLoader } from './router/inventory/inventoryPrint/PrintContent'
 import TaiyoPrint, { loader as TaiyoLoader } from './router/inventory/inventoryPrint/taiyo'
+
 import EtcPrint, { loader as EtcLoader } from './router/inventory/inventoryPrint/VendorPrint'
 import ZaikoSettingPage, { loader as ZaikoSettingLoader } from './router/setting/setting'
 import HelloWork, { loader as HelloWorkLoader } from './router/helloWork/helloWork'
@@ -37,11 +38,18 @@ import HQmemo, { loader as HQMemoLoader } from './router/HQwork/HQmemo'
 import HQPrivatememo, { loader as HQPrivatememoLoader } from './router/HQwork/PersonMemo'
 import StaffData, { loader as StaffDataLoader } from './router/HQwork/StaffData'
 import FCPrintContent, { loader as FCPrintContentLoader } from './router/inventory/inventoryPrint/FCInventoryPrint'
+import HQPrintContent, { loader as HQPrintLoader } from './router/inventory/inventoryPrint/HQInventoryPrint'
+
 
 export const router = createHashRouter([
   {
     path: '/',
     element: <ReceivingPage />
+  },
+  {
+    path: '/HQPrintContent',
+    element: <HQPrintContent />,
+    loader: HQPrintLoader
   },
   {
     path: '/StoreOrder',
