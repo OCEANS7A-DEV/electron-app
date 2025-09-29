@@ -139,7 +139,7 @@
 
 
 .WordSearchA {
-  height: calc(100% - 30px);
+  max-height: calc(100% - 30px);
   display: flex;
   flex-direction: column;
 }
@@ -149,6 +149,14 @@
   display: flex;
 }
 
+
+.WordSearch-vendorFilter {
+  position: relative;
+  bottom: 30px;
+  height: 10px;
+  width: 200px;
+  left: 100px;
+}
 
 
 

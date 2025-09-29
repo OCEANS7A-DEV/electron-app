@@ -27,6 +27,7 @@ dayjs.locale('ja')
 
 
 interface SelectOption {
+  id: number
   value: string
   label: string
   type: string
@@ -207,9 +208,10 @@ export default function StoreOrderPage(): JSX.Element {
     const storenames: SelectOption[] = stores
       .filter(row => row[0] !== "")
       .map(item => ({
-        value: item[0],
-        label: item[0],
-        type: item[1]
+        id: item[0],
+        value: item[1],
+        label: item[1],
+        type: item[2]
       }))
 
     console.log(storenames)

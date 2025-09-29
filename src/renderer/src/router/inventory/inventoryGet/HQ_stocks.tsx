@@ -134,7 +134,9 @@ export default function HQStocks() {
   }, [])
 
   const HQStockPrint = async () => {
-    const PrintData = stockData.filter((item) => item[11] == true).map((row) => [
+    const PrintData = stockData
+      .filter((item) => item[11] == true)
+      .map((row) => [
       row[0],
       row[1],
       row[2],
