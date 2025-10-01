@@ -123,8 +123,6 @@ export const loader = async () => {
 
 export default function FCInventory() {
   const { storenames, yearList, monthList, datas, types } = useLoaderData<typeof loader>()
-  // console.log(datas)
-
   const [marginNum, setMarginNum] = useState(100)
   const [DisplayStatus, setDisplayStatus] = useState(false)
   const [storeSelect, setStoreSelect] = React.useState('')
@@ -173,9 +171,9 @@ export default function FCInventory() {
 
 
   useEffect(() => {
-    if(DisplayStatus){
+    if (DisplayStatus){
       setMarginNum(330)
-    }else{
+    } else {
       setMarginNum(80)
     }
   }, [DisplayStatus])
@@ -355,7 +353,6 @@ export default function FCInventory() {
         printStore: storeSelect,
         printData: JSON.stringify(inventorys)
       }
-      console.log(PrintData)
       await window.myInventoryAPI.storeSet('inventoryPrint', JSON.stringify(PrintData))
       window.myInventoryAPI.orderPrint('FCPrintContent')
     }

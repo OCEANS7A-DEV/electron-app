@@ -1,7 +1,6 @@
 import React, { useState, ChangeEvent, useEffect } from 'react'
 import '../css/ProductSearchWord.css'
 import { Button } from '@mui/material'
-//import { searchStr } from '../backend/WebStorage.ts';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 /* @ts-ignore */
 import jaconv from 'jaconv';
@@ -9,9 +8,6 @@ import { MenuItem } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import InputLabel from '@mui/material/InputLabel'
-
-
-
 
 export default function WordSearch({ DisplayStatus, setDisplayStatus, RegisterData }) {
   const [SWord, setSWord] = useState<string>('')
@@ -91,7 +87,7 @@ export default function WordSearch({ DisplayStatus, setDisplayStatus, RegisterDa
       const multiword = SWord.split(/[ 　]+/).filter((word) => word)
       if (multiword.length === 0) {
         setTableData(filterdData)
-        return;
+        return
       }
 
       const searchresult = filterdData.filter((item) => {
@@ -101,11 +97,11 @@ export default function WordSearch({ DisplayStatus, setDisplayStatus, RegisterDa
           const swHZ = jaconv.toHiragana(swKZ)
           const swKH = jaconv.toHan(swKZ)
           const variations = [word, swKZ, swHZ, swKH]
-          return variations.some((sw) => nameStr.includes(sw));
+          return variations.some((sw) => nameStr.includes(sw))
         })
       })
 
-      setTableData(searchresult);
+      setTableData(searchresult)
     }
   };
 

@@ -122,7 +122,6 @@ export default function StoreOrderPage(): JSX.Element {
   })
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    // data は FormValues 型として認識される
     console.log(data)
   }
 
@@ -203,8 +202,7 @@ export default function StoreOrderPage(): JSX.Element {
   }
 
   const StoresGet = async () => {
-    let stores = await window.myInventoryAPI.storeGet('storeList')
-    console.log(stores)
+    const stores = await window.myInventoryAPI.storeGet('storeList')
     const storenames: SelectOption[] = stores
       .filter(row => row[0] !== "")
       .map(item => ({
@@ -213,18 +211,7 @@ export default function StoreOrderPage(): JSX.Element {
         label: item[1],
         type: item[2]
       }))
-
-    console.log(storenames)
     setStoreOptions(storenames);
-
-    //const update = await window.myInventoryAPI.ListGet({
-    //  sheetName: '店舗一覧',
-    //  action: 'ListGet',
-    //  ranges: 'A2:B'
-    //})
-    //if(stores !== update) {
-    //  setStoreOptions(update)
-    //}
   }
 
   const DetailsSet = async () => {
@@ -311,9 +298,32 @@ export default function StoreOrderPage(): JSX.Element {
     reset({
       rows: defaultSet()
     })
-    const ordersGet = await window.myInventoryAPI.ListGet({sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M'})
+    const ordersGet = await window.myInventoryAPI.ListGet({ sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M' })
+    const storeFilterd = ordersGet.filter(item => item[1] == storeSelect)
+    const beforeDate = new Date(storeFilterd[storeFilterd.length - 1][0]).toLocaleDateString()
+    const beforeData = storeFilterd.filter((item) => new Date(item[0]).toLocaleDateString() == beforeDate)
+    const beforeOutStock = beforeData.filter((item) => (item[11].includes('欠品') && !item[11].includes('前回欠品分')) || item[11].includes('前回欠品分欠品'))
+    let count = 0
+    beforeOutStock.forEach((item) => {
+      const OutStockNum = item[11].replace(/[^0-9]/g, '')
+      setValue(`rows.${count}.vendor`, item[2])
+      setValue(`rows.${count}.code`, item[3])
+      const detaillist = ProductdetailsList.filter(row => row[0] == item[3] && row[1] !== '').map(item => {
+        return { value: item[1] ?? '', label: item[1] ?? '' }
+      })
+      setValue(`rows.${count}.detailList`, detaillist)
+      const detail = { value: item[5], label: item[5] }
+      setValue(`rows.${count}.detail`, detail)
+      setValue(`rows.${count}.name`, item[4])
+      setValue(`rows.${count}.quantity`, OutStockNum)
+      setValue(`rows.${count}.person`, item[10])
+      setValue(`rows.${count}.price`, item[8])
+      setValue(`rows.${count}.remarks`, '前回欠品分')
+      count++
+    })
+
     const targetDateStr = new Date(InsertDate).toDateString()
-    const filtered = ordersGet.filter(item => new Date(item[0]).toDateString() == targetDateStr && item[1] == storeSelect)
+    const filtered = ordersGet.filter(item => new Date(item[0]).toDateString() == targetDateStr && item[1] == storeSelect && item[11] !== '前回欠品分')
     const UpDataRowNum = filtered.length
     setDeleteRowNum(UpDataRowNum)
 
@@ -327,7 +337,7 @@ export default function StoreOrderPage(): JSX.Element {
           await addNewForm()
         }
       }
-      let count = 0
+      
       filtered.forEach(item => {
         setValue(`rows.${count}.vendor`, item[2])
         setValue(`rows.${count}.code`, item[3])

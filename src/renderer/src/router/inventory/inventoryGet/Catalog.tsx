@@ -8,7 +8,6 @@ export default function CatalogView() {
   const [Filepath, setFilePath] = useState('')
   const [searchText, setSearchText] = useState('');
   const webviewRef = useRef<any>(null);
-  
 
   const FilePath = async () => {
     const pathName = await window.myInventoryAPI.getFilePath(selectFileName)
