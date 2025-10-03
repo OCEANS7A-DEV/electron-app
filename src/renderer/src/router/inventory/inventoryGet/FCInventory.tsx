@@ -15,7 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
 import Swal from 'sweetalert2'
-
+import { productGet } from '../../../Util/util'
 
 
 interface SelectOption {
@@ -86,7 +86,7 @@ export const loader = async () => {
     sheetName: '在庫履歴',
     action: 'FCInventoryGet',
     ranges: 'A2:D'
-  });
+  })
 
   const storenames: SelectOption[] = stores
     .filter((row) => row[2] !== "" && row[2] == 'FC')
@@ -210,14 +210,13 @@ export default function FCInventory() {
 
 
   const search = async (index) => {
-    const List = await window.myInventoryAPI.ListData()
     const values = getValues()
     const code = values.rows[index].code
-    const productData = List.find((item) => item.code === Number(code))
-    if (productData) {
-      const name = productData.name
+    const result = await productGet(code)
+    if (result) {
+      const name = result.productData.name
       setValue(`rows.${index}.name`, name)
-      setValue(`rows.${index}.price`, productData.newPrice)
+      setValue(`rows.${index}.price`, result.productData.newPrice)
     }
   }
 

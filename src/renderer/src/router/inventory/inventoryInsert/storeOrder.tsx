@@ -300,9 +300,17 @@ export default function StoreOrderPage(): JSX.Element {
     })
     const ordersGet = await window.myInventoryAPI.ListGet({ sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M' })
     const storeFilterd = ordersGet.filter(item => item[1] == storeSelect)
-    const beforeDate = new Date(storeFilterd[storeFilterd.length - 1][0]).toLocaleDateString()
-    const beforeData = storeFilterd.filter((item) => new Date(item[0]).toLocaleDateString() == beforeDate)
-    const beforeOutStock = beforeData.filter((item) => (item[11].includes('欠品') && !item[11].includes('前回欠品分')) || item[11].includes('前回欠品分欠品'))
+    const latestRow = storeFilterd.reduce((latest, current) => {
+      const latestDate = new Date(latest[0])
+      const currentDate = new Date(current[0])
+      return currentDate > latestDate ? current : latest
+    })
+    const searchDate = new Date(latestRow[0]).toLocaleDateString()
+    const beforeData = storeFilterd.filter((item) => new Date(item[0]).toLocaleDateString() == searchDate)
+    const beforeOutStock = beforeData.filter((item) =>
+      (item[11].includes('欠品') && !item[11].includes('前回欠品分')) ||
+      item[11].includes('前回欠品分欠品')
+    )
     let count = 0
     beforeOutStock.forEach((item) => {
       const OutStockNum = item[11].replace(/[^0-9]/g, '')
@@ -404,8 +412,6 @@ export default function StoreOrderPage(): JSX.Element {
       }
     }
   }
-
-
 
   const RowRemove = async (index) => {
     remove(index)

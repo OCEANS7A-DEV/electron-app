@@ -21,9 +21,6 @@ export default function WordSearch({ DisplayStatus, setDisplayStatus, RegisterDa
   const handlewordchange = (event: ChangeEvent<HTMLInputElement>) => {
     setSWord(event.target.value)
   }
-  
-
-  
 
   // データ更新
   const productListUpdate = async () => {
