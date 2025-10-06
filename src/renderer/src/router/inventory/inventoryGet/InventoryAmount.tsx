@@ -95,17 +95,25 @@ export const loader = async () => {
   const storenames: SelectStoreOption[] = stores.filter(
     (row) => row[0] !== '' && row[2] == 'DM' && row[1] !== '会議室'
   )
-  console.log(storenames)
 
   return { loaderData, yearList, monthList, storenames }
 }
 
 export default function InventoryAmount(): JSX.Element {
   const { loaderData, yearList, monthList, storenames } = useLoaderData<typeof loader>()
-  const [Year, setYear] = useState<number>(new Date().getFullYear())
-  const [Month, setMonth] = useState<number>(new Date().getMonth() + 1)
+  const [Year, setYear] = useState<number>(0)
+  const [Month, setMonth] = useState<number>(0)
   const insertActionRef = useRef<string>('')
   const [DATA, setDATA] = useState(loaderData)
+
+  useEffect(() => {
+    const defaultDate = new Date()
+    defaultDate.setMonth(defaultDate.getMonth() - 1)
+    const year = defaultDate.getFullYear()
+    const month = defaultDate.getMonth() + 1
+    setYear(year)
+    setMonth(month)
+  }, [])
 
   const dataGet = async (): Promise<[string, string, number, number, number, string]> => {
     const getData = await window.myInventoryAPI.ListGet({

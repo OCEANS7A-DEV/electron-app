@@ -15,13 +15,29 @@
 
 .SearchPage-inputArea {
   display: flex;
+  width: calc(100% - 80px);
   background-color: white;
   justify-content: center;
   padding: 20px;
+  position: fixed;
+  box-shadow: 0px 10px 10px 0px rgba(0,0,0,0.5)
+}
+
+.SearchPage-Setting {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+.SearchPage-StartButton {
+  display: flex;
+  justify-content: center;
+  width: 100px;
 }
 
 
 .SearchPage-ResultArea {
   flex: 1;
   background-color: aliceblue;
+  padding-top: 100px;
 }

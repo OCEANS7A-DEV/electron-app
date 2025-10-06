@@ -22,6 +22,12 @@ const InventorySearchPage = () => {
   }
 
 
+  const Search = async () => {
+    const data = await window.myInventoryAPI.ListData()
+    console.log(data)
+  }
+
+
   return (
     <div className="SearchPage-Window">
       <div>
@@ -39,10 +45,15 @@ const InventorySearchPage = () => {
             />
           </div>
           <div className="SearchPage-StartButton">
+            <Button variant="outlined" onClick={Search}>検索</Button>
           </div>
         </div>
         <div className="SearchPage-ResultArea">
-
+          <table className="SearchPageTable">
+            <tr>
+              <th>test1</th>
+            </tr>
+          </table>
         </div>
       </div>
     </div>

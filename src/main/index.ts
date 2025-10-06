@@ -151,7 +151,7 @@ const PUPPETEER_ARGS = [
 function getPuppeteerOptions(): LaunchOptions {
   if (is.dev) {
     return {
-      headless: false,
+      headless: true,
       channel: 'chrome',
       args: PUPPETEER_ARGS,
       userDataDir: userDataDirPath
