@@ -335,9 +335,7 @@ export default function StoreOrderPage(): JSX.Element {
 
     const targetDateStr = new Date(InsertDate).toDateString()
     const filtered = ordersGet.filter(item => new Date(item[0]).toDateString() == targetDateStr && item[1] == storeSelect && item[11] !== '前回欠品分')
-    const UpDataRowNum = filtered.length
-    setDeleteRowNum(UpDataRowNum)
-
+    const UpDataRowNum = filtered.length + beforeOutStock.length
     if (filtered.length > 0){
       if (filtered[0][12] == '注文無'){
         return filtered
@@ -366,7 +364,9 @@ export default function StoreOrderPage(): JSX.Element {
         count ++
       })
     }
-    const targetData = getValues().rows.filter((item) => item.name !== '')
+
+    const targetData = getValues().rows.filter((item) => item.name !== '' )
+    setDeleteRowNum(targetData.length)
     return targetData
   }
 
