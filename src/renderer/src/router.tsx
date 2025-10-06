@@ -40,6 +40,9 @@ import StaffData, { loader as StaffDataLoader } from './router/HQwork/StaffData'
 import FCPrintContent, { loader as FCPrintContentLoader } from './router/inventory/inventoryPrint/FCInventoryPrint'
 import HQPrintContent, { loader as HQPrintLoader } from './router/inventory/inventoryPrint/HQInventoryPrint'
 
+import InventorySearchPage from './router/inventory/inventorySearch/inventorySearch'
+
+
 
 export const router = createHashRouter([
   {
@@ -184,5 +187,9 @@ export const router = createHashRouter([
     path: '/FCPrintContent',
     element: <FCPrintContent />,
     loader: FCPrintContentLoader
+  },
+  {
+    path: '/InventorySearchPage',
+    element: <InventorySearchPage />
   }
 ])

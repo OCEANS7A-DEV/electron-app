@@ -132,6 +132,7 @@ const LinkBaner = (data): JSX.Element => {
                 <Button variant="outlined" onClick={() => navigate('/CatalogView')} sx={ButtonStyle}>カタログ</Button>
                 <Button variant="outlined" onClick={() => navigate('/process_chack')} sx={ButtonStyle}>印刷関係</Button>
                 <Button variant="outlined" onClick={() => navigate('/ProductListUpdata')} sx={ButtonStyle}>商品設定</Button>
+                <Button variant="outlined" onClick={() => navigate('/InventorySearchPage')} sx={ButtonStyle}>商品検索</Button>
                 <Button variant="outlined" onClick={() => navigate('/zaikosetting')} sx={ButtonStyle}>在庫設定</Button>
                 <Button variant="outlined" onClick={() => navigate('/InventoryAmount')} sx={ButtonStyle}>在庫金額</Button>
                 

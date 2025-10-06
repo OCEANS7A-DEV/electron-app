@@ -188,6 +188,7 @@ export default function StoreOrderPage(): JSX.Element {
       {
         loading: '注文データ送信中…',
         success: () => {
+          setInsertAction('update')
           return `${storeSelect}店の注文データを送信しました`
         },
         error: () => {
@@ -299,7 +300,9 @@ export default function StoreOrderPage(): JSX.Element {
       rows: defaultSet()
     })
     const ordersGet = await window.myInventoryAPI.ListGet({ sheetName: '店舗へ', action: 'InputDataGet', ranges: 'A2:M' })
-    const storeFilterd = ordersGet.filter(item => item[1] == storeSelect)
+    const weekAgo = new Date()
+    weekAgo.setDate(weekAgo.getDate() - 7)
+    const storeFilterd = ordersGet.filter(item => item[1] == storeSelect && new Date(item[0]) <= weekAgo)
     const latestRow = storeFilterd.reduce((latest, current) => {
       const latestDate = new Date(latest[0])
       const currentDate = new Date(current[0])
@@ -311,6 +314,7 @@ export default function StoreOrderPage(): JSX.Element {
       (item[11].includes('欠品') && !item[11].includes('前回欠品分')) ||
       item[11].includes('前回欠品分欠品')
     )
+    console.log(searchDate)
     let count = 0
     beforeOutStock.forEach((item) => {
       const OutStockNum = item[11].replace(/[^0-9]/g, '')
@@ -401,7 +405,6 @@ export default function StoreOrderPage(): JSX.Element {
     }
 
     const result = await productGet(code, true)
-    console.log(result.detailsData)
     if (result.productData) {
       setValue(`rows.${index}.vendor`, result.productData.vendor)
       setValue(`rows.${index}.name`, result.productData.name)
