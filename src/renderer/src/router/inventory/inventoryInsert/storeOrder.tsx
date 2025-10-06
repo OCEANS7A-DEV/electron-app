@@ -401,6 +401,7 @@ export default function StoreOrderPage(): JSX.Element {
     }
 
     const result = await productGet(code, true)
+    console.log(result.detailsData)
     if (result.productData) {
       setValue(`rows.${index}.vendor`, result.productData.vendor)
       setValue(`rows.${index}.name`, result.productData.name)

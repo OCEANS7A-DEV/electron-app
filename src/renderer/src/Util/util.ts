@@ -4,7 +4,7 @@ export const productGet = async (code, withDetails = false) => {
   let detailsData = [{ value: '', label: '' }]
   if (withDetails) {
     const DetailsList = await window.myInventoryAPI.DetailsData()
-    const foundDetails = DetailsList.find((item) => item.code === Number(code))
+    const foundDetails = DetailsList.filter((item) => Number(item[0]) == Number(code))
     if (foundDetails) {
       detailsData = foundDetails.map((item) => {
         return { value: item[1] ?? '', label: item[1] ?? '' }
