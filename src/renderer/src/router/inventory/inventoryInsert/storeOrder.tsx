@@ -314,7 +314,6 @@ export default function StoreOrderPage(): JSX.Element {
       (item[11].includes('欠品') && !item[11].includes('前回欠品分')) ||
       item[11].includes('前回欠品分欠品')
     )
-    console.log(searchDate)
     let count = 0
     beforeOutStock.forEach((item) => {
       const OutStockNum = item[11].replace(/[^0-9]/g, '')
@@ -367,7 +366,8 @@ export default function StoreOrderPage(): JSX.Element {
         count ++
       })
     }
-    return filtered
+    const targetData = getValues().rows.filter((item) => item.name !== '')
+    return targetData
   }
 
   useEffect(() => {
