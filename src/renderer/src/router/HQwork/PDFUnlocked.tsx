@@ -96,10 +96,11 @@ const PDFUnlocked = () => {
 
       // 2. ArrayBufferをNode.jsのBufferに変換
       const fileDataAsUint8Array = new Uint8Array(arrayBuffer)
+      const fileName = file.name
 
       // 3. Bufferデータとパスワードをメインプロセスに送信し、結果を待つ
       //    (preload.jsで invoke を使うようにしたので、awaitで直接結果が返ってくる)
-      const result = await window.myInventoryAPI.PDFUnlocked(fileDataAsUint8Array, password);
+      const result = await window.myInventoryAPI.PDFUnlocked(fileDataAsUint8Array, password, fileName);
 
       // 4. 結果をUIに表示
       setStatusMessage(result.message);
@@ -141,7 +142,7 @@ const PDFUnlocked = () => {
               disabled={isProcessing}
             />
           </div>
-          {isProcessing || !file ? (
+          {!isProcessing ? (
             <Button variant="outlined" onClick={handleUnlock} loading={isProcessing}>
               ロック解除
             </Button>

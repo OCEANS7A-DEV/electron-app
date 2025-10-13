@@ -1817,14 +1817,18 @@ const PDFfileMarge = async (fileName): Promise<{
 }
 
 
-ipcMain.handle('unlock-pdf', async (event, fileData, password) => {
+ipcMain.handle('unlock-pdf', async (event, fileData, password, fileName) => {
   const tempInputPath = path.join(os.tmpdir(), `temp-pdf-${Date.now()}.pdf`);
 
   try {
+    // '.promises' をつけて await を使う
     await fs.promises.writeFile(tempInputPath, fileData);
-
+    const baseName = path.basename(fileName, '.pdf')
     const { canceled, filePath: outputPath } = await dialog.showSaveDialog({
-    })
+      title: 'ロック解除したPDFの保存先を選択',
+      defaultPath: path.join(app.getPath('downloads'), `${baseName}_unlocked.pdf`),
+      filters: [{ name: 'PDFファイル', extensions: ['pdf'] }]
+    });
 
     if (canceled || !outputPath) {
       return { status: 'info', message: '保存がキャンセルされました。' };
