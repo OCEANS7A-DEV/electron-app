@@ -64,6 +64,8 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   sendOtp: (otp) => ipcRenderer.send('otp-submitted', otp),
   helloworkInit: () => ipcRenderer.invoke('hellowork-init'),
   helloworkUpdate: (RecruitNumbers) => ipcRenderer.invoke('hellowork-update', RecruitNumbers),
+  PDFUnlocked: (fileData, password) =>
+    ipcRenderer.invoke('unlock-pdf', fileData, password)
 })
 
 if (process.contextIsolated) {

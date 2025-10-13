@@ -54,7 +54,6 @@ export const loader = async (): Promise<DataType> => {
 
 export default function HQmemo(): JSX.Element {
   const data = useLoaderData<typeof loader>()
-  console.log(data)
   const [searchString, setSearchString] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenAdd, setModalOpenAdd] = useState(false)

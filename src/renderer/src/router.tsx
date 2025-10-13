@@ -40,6 +40,7 @@ import StaffData, { loader as StaffDataLoader } from './router/HQwork/StaffData'
 import FCPrintContent, { loader as FCPrintContentLoader } from './router/inventory/inventoryPrint/FCInventoryPrint'
 import HQPrintContent, { loader as HQPrintLoader } from './router/inventory/inventoryPrint/HQInventoryPrint'
 
+
 import InventorySearchPage from './router/inventory/inventorySearch/inventorySearch'
 
 

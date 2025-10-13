@@ -26,6 +26,8 @@ import keytar from 'keytar'
 import prompt from 'electron-prompt'
 import Database from 'better-sqlite3'
 import crypto from 'crypto'
+import iconv from 'iconv-lite'
+
 
 
 
@@ -275,7 +277,10 @@ const createUpdaterWindow = async () => {
 
 let GoogleLoginWindow: BrowserWindow
 
+
+
 const createGoogleLoginWindow = async () => {
+  
   GoogleLoginWindow = new BrowserWindow({
     width: 600,
     height: 400,
@@ -292,7 +297,7 @@ const createGoogleLoginWindow = async () => {
       webviewTag: true
     }
   })
-
+  
   GoogleLoginWindow.loadURL(GetAPI_URL)
 
   GoogleLoginWindow.on('ready-to-show', () => {
@@ -504,7 +509,9 @@ const createOfficeWorkWindow = (): void => {
         : join(app.getAppPath(), 'out/preload/index.mjs'),
       sandbox: false,
       webSecurity: false,
-      webviewTag: true
+      webviewTag: true,
+      contextIsolation: true,
+      nodeIntegration: false
     }
   })
 
@@ -1366,6 +1373,7 @@ const opts = getPuppeteerOptions()
 
 browser = await puppeteer.launch(opts)
 
+
 const page = await browser.newPage()
 
 ipcMain.handle('hellowork-init', async () => {
@@ -1658,7 +1666,6 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
   try {
     const total = lists.length
     let count = 0
-
     const date = new Date()
     const y = date.getFullYear()
     const m = String(date.getMonth() + 1).padStart(2, '0')
@@ -1808,6 +1815,57 @@ const PDFfileMarge = async (fileName): Promise<{
     })
   })
 }
+
+
+ipcMain.handle('unlock-pdf', async (event, fileData, password) => {
+  const tempInputPath = path.join(os.tmpdir(), `temp-pdf-${Date.now()}.pdf`);
+
+  try {
+    await fs.promises.writeFile(tempInputPath, fileData);
+
+    const { canceled, filePath: outputPath } = await dialog.showSaveDialog({
+    })
+
+    if (canceled || !outputPath) {
+      return { status: 'info', message: '保存がキャンセルされました。' };
+    }
+
+    let qpdfDir: string
+    if (app.isPackaged) {
+      qpdfDir = path.join(process.resourcesPath, 'qpdf')
+    } else {
+      qpdfDir = path.resolve(__dirname, '../../vendor/qpdf')
+    }
+
+    const qpdfPath = path.join(qpdfDir, 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf')
+
+    const args = [`--password=${password}`, '--decrypt', tempInputPath, outputPath];
+
+    await new Promise<void>((resolve, reject) => {
+      // ここで組み立てた qpdfPath を使う
+      execFile(qpdfPath, args, { encoding: 'buffer', shell: true }, (error, stdout, stderr) => {
+        if (error) {
+          const errorMessage = iconv.decode(stderr, 'cp932');
+          reject(new Error(errorMessage || 'PDFの処理に失敗しました。'));
+          return;
+        }
+        resolve();
+      });
+    });
+
+    return { status: 'success', message: `ロック解除に成功しました。\n${outputPath} に保存されました。` };
+
+  } catch (err: any) {
+    console.error(err);
+    return { status: 'error', message: `エラーが発生しました: ${err.message}` };
+  } finally {
+    try {
+      await fs.promises.unlink(tempInputPath);
+    } catch (cleanupErr) {
+      console.error('Failed to clean up temporary file:', cleanupErr);
+    }
+  }
+})
 
 ipcMain.on('change-github-token', async () => {
   const token = await updateOrPromptToken(launcherWindow)

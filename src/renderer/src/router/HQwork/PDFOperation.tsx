@@ -3,6 +3,7 @@ import LinkBaner from '../../comp/Linkbanar'
 import '../../css/HelloWork.css'
 import { Button } from '@mui/material'
 
+import PDFUnlocked from './PDFUnlocked'
 
 export default function PDFOperationPage () {
 
@@ -23,6 +24,9 @@ export default function PDFOperationPage () {
             PDF結合
           </Button>
         </div>
+      </div>
+      <div>
+        <PDFUnlocked />
       </div>
     </div>
   )

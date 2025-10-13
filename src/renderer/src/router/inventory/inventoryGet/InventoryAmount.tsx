@@ -199,7 +199,8 @@ export default function InventoryAmount(): JSX.Element {
     })
 
     const actionstring = insertActionRef.current
-
+    console.log(formData)
+    return
     if (formData.length >= 1) {
       await window.myInventoryAPI.DataInsert({
         sheetName: '店舗在庫金額',
