@@ -314,9 +314,13 @@ export default function StoreOrderPage(): JSX.Element {
       (item[11].includes('欠品') && !item[11].includes('前回欠品分')) ||
       item[11].includes('前回欠品分欠品')
     )
+
     let count = 0
     beforeOutStock.forEach((item) => {
-      const OutStockNum = item[11].replace(/[^0-9]/g, '')
+      const OutStockStr = item[11].split("、")
+      const OutStocktargetData = OutStockStr.find((item) => (item.includes('欠品') && !item.includes('前回欠品分')) ||
+        item.includes('前回欠品分欠品'))
+      const OutStockNum = OutStocktargetData.replace(/[^0-9]/g, '')
       setValue(`rows.${count}.vendor`, item[2])
       setValue(`rows.${count}.code`, item[3])
       const detaillist = ProductdetailsList.filter(row => row[0] == item[3] && row[1] !== '').map(item => {
@@ -364,8 +368,7 @@ export default function StoreOrderPage(): JSX.Element {
         count ++
       })
     }
-
-    setDeleteRowNum(filtered.length)
+    setDeleteRowNum(getValues().rows.filter((item) => item.name !== '').length)
     return filtered
   }
 
