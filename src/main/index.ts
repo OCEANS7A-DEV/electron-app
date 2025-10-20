@@ -665,6 +665,61 @@ const firstGet = async () => {
   }
 }
 
+
+const AffterGet = async () => {
+  const LastUpdatedDate = ''
+  try {
+    const cookies1 = await session.defaultSession.cookies.get({
+      url: 'https://accounts.google.com'
+    })
+    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+    const allCookies = [...cookies1, ...cookies2]
+    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+    const response = await net.fetch(GetAPI_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Cookie: cookieHeader
+      },
+      body: JSON.stringify({
+        sheetName: '一覧',
+        action: 'ProductsGet',
+        ranges: 'A2:M',
+        LastDate: LastUpdatedDate
+      })
+    })
+    const result = await response.json()
+    const ListResult = await result.ProductsData.map((item) => {
+      return {
+        vendor: item[1],
+        code: item[2],
+        name: item[3],
+        defaultPrice: '',
+        newPrice: item[4],
+        VC: item[5],
+        store: item[6],
+        type: item[11],
+        remarks: item[7],
+        Possibility: item[12],
+        service: item[9],
+        order: item[8],
+        vendorid: item[0]
+      }
+    })
+    store.set('address', result.AddressData)
+    store.set('storeList', result.StoresData)
+    store.set('details', result.DetailsData)
+    store.set('vendor', result.VenderData)
+    store.set('data', ListResult)
+    store.set('LastUpdatedDate', result.date)
+    return
+  } catch (err) {
+    console.log(err)
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+    return errorMessage
+  }
+}
+
 const DataUpdate = async (sheetname, range, key) => {
   try {
     const cookies1 = await session.defaultSession.cookies.get({
@@ -1012,6 +1067,7 @@ app.whenReady().then(async () => {
 })
 
 ipcMain.on('product-reload', async () => {
+  AffterGet()
   DataUpdate('一覧', 'A2:M', 'data')
 })
 
