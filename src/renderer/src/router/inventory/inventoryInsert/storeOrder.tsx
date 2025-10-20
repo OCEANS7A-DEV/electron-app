@@ -365,9 +365,8 @@ export default function StoreOrderPage(): JSX.Element {
       })
     }
 
-    const targetData = getValues().rows.filter((item) => item.name !== '' )
-    setDeleteRowNum(targetData.length)
-    return targetData
+    setDeleteRowNum(filtered.length)
+    return filtered
   }
 
   useEffect(() => {
@@ -630,7 +629,6 @@ export default function StoreOrderPage(): JSX.Element {
           <SweetAlert2
             {...swalProps}
             didClose={() => {
-              console.log('ダイアログが閉じられました');
               setSwalProps({ show: false });
             }}
             customClass={{
