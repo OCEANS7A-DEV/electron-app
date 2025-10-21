@@ -1873,7 +1873,7 @@ const PDFfileMarge = async (fileName): Promise<{
 }
 
 
-ipcMain.handle('unlock-pdf', async (event, fileData, password, fileName) => {
+ipcMain.handle('unlock-pdf', async (_event, fileData, password, fileName) => {
   const tempInputPath = path.join(os.tmpdir(), `temp-pdf-${Date.now()}.pdf`);
 
   try {
@@ -1903,7 +1903,7 @@ ipcMain.handle('unlock-pdf', async (event, fileData, password, fileName) => {
 
     await new Promise<void>((resolve, reject) => {
       // ここで組み立てた qpdfPath を使う
-      execFile(qpdfPath, args, { encoding: 'buffer', shell: true }, (error, stdout, stderr) => {
+      execFile(qpdfPath, args, { encoding: 'buffer', shell: true }, (error, _stdout, stderr) => {
         if (error) {
           const errorMessage = iconv.decode(stderr, 'cp932');
           reject(new Error(errorMessage || 'PDFの処理に失敗しました。'));

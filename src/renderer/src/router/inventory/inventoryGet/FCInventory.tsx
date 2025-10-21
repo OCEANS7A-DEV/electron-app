@@ -89,7 +89,7 @@ export const loader = async () => {
   })
 
   const storenames: SelectOption[] = stores
-    .filter((row) => row[2] !== "" && row[2] == 'FC')
+    .filter((row) => row[2] !== "" && row[2] == 'FC' && row[1] == '竹原')
     .map((item) => ({
       id: item[0],
       value: item[1],
