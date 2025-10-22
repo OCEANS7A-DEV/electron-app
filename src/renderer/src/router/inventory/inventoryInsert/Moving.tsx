@@ -92,7 +92,7 @@ const defaultSet = (): FormValues["rows"] => {
 
 export default function InventoryMoving() {
   const isDev = window.myInventoryAPI.isDev
-  const Completeness = false
+  const Completeness = true
 
   const [DisplayStatus, setDisplayStatus] = useState(false)
 
@@ -132,8 +132,8 @@ export default function InventoryMoving() {
     const storenames: SelectOption[] = stores
       .filter(row => row[0] !== "")
       .map(item => ({
-        value: item[0],
-        label: item[0]
+        value: item[1],
+        label: item[1]
       }));
     console.log(storenames)
     setStoreOptions(storenames);
@@ -240,7 +240,6 @@ export default function InventoryMoving() {
         item.quantity,
         item.price,
         null,
-        item.person,
         item.remarks,
         Now[0],
         Now[1]
@@ -256,7 +255,7 @@ export default function InventoryMoving() {
         data: formData,
         formulaConfig: {
           targetCol: 8,
-          formula: '=RC[-3]*RC[-1]'
+          formula: '=RC[-2]*RC[-1]'
         }
       })
     }

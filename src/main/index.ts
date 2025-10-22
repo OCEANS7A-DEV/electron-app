@@ -712,6 +712,7 @@ const AffterGet = async () => {
     store.set('vendor', result.VenderData)
     store.set('data', ListResult)
     store.set('LastUpdatedDate', result.date)
+
     return
   } catch (err) {
     console.log(err)
