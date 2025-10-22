@@ -25,9 +25,9 @@ jobs:
     - name: Debug GH_TOKEN
       shell: bash
       run: |
-        curl --ssl-no-revoke -H "Authorization: token $GH_TOKEN" https://api.github.com/user
+        curl --ssl-no-revoke -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/user
       env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Set version from tag (PowerShell)
       shell: pwsh
