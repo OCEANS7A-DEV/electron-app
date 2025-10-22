@@ -60,5 +60,4 @@ const InventorySearchPage = () => {
   )
 }
 
-
 export default InventorySearchPage

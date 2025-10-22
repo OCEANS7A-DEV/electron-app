@@ -46,7 +46,7 @@ jobs:
     - name: Build and Publish Electron App
       env:
         # electron-builderはGH_TOKENまたはGITHUB_TOKENを参照します
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         npm run typecheck
         npm run build
