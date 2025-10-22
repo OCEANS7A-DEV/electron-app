@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react'
+import React, { useState } from 'react'
 import './inventorySearch.css'
 import { Button } from '@mui/material'
 import LinkBaner from '../../../comp/Linkbanar'
