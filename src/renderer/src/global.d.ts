@@ -5,7 +5,7 @@ export {}
 declare global {
   interface Window {
     myInventoryAPI: {
-      PDFUnlocked(data: { filePath: string; password: string; fileName: string }): Promise<any>;
+      PDFUnlocked(data: { fileData: any; password: string; fileName: string }): Promise<any>;
       helloworkInit(): Promise<any>;
       helloworkUpdate(RecruitNumbers: any): Promise<any>;
       PrivateMemoGet(): Promise<any>;

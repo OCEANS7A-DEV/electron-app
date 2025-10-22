@@ -17,7 +17,7 @@ import TextField from '@mui/material/TextField'
 const InventorySearchPage = () => {
   const [SearchWord, setSearchWord] = useState('')
 
-  const searchWordChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const searchWordChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setSearchWord(e.target.value)
   }
 

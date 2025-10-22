@@ -23,7 +23,7 @@ const darkTheme = createTheme({
 const baseStyle = {
   flex: 1,
   display: 'flex',
-  flexDirection: 'column',
+  flexFlow: 'column',
   alignItems: 'center',
   borderWidth: 2,
   borderRadius: 10,
@@ -46,7 +46,7 @@ const activeStyle = {
 const PDFUnlocked = () => {
   // --- State管理 (変更なし) ---
   const [file, setFile] = useState<File | null>(null);
-  const [password, setPassword] = useState('');
+  const [passWord, setPassword] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -81,7 +81,7 @@ const PDFUnlocked = () => {
       setStatusMessage('PDFファイルをドラッグ＆ドロップしてください。');
       return;
     }
-    if (!password) {
+    if (!passWord) {
       setStatusMessage('パスワードを入力してください。');
       return;
     }
@@ -96,11 +96,15 @@ const PDFUnlocked = () => {
 
       // 2. ArrayBufferをNode.jsのBufferに変換
       const fileDataAsUint8Array = new Uint8Array(arrayBuffer)
-      const fileName = file.name
+      const filename = file.name ?? ''
 
       // 3. Bufferデータとパスワードをメインプロセスに送信し、結果を待つ
       //    (preload.jsで invoke を使うようにしたので、awaitで直接結果が返ってくる)
-      const result = await window.myInventoryAPI.PDFUnlocked(fileDataAsUint8Array, password, fileName);
+      const result = await window.myInventoryAPI.PDFUnlocked({
+        fileData: fileDataAsUint8Array,
+        password: passWord,
+        fileName: filename
+      });
 
       // 4. 結果をUIに表示
       setStatusMessage(result.message);
@@ -111,7 +115,15 @@ const PDFUnlocked = () => {
 
     } catch (error) {
       console.error('An error occurred:', error);
-      setStatusMessage(`エラーが発生しました: ${error.message}`);
+
+      // errorがErrorオブジェクトのインスタンスかを確認
+      if (error instanceof Error) {
+        // 型が確認されたので、安全に .message にアクセスできます
+        setStatusMessage(`エラーが発生しました: ${error.message}`);
+      } else {
+        // Error オブジェクト以外（文字列など）が投げられた場合のフォールバック
+        setStatusMessage(`予期せぬエラーが発生しました: ${String(error)}`);
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -137,7 +149,7 @@ const PDFUnlocked = () => {
               id="password"
               type="password"
               label="パスワード"
-              value={password}
+              value={passWord}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isProcessing}
             />
