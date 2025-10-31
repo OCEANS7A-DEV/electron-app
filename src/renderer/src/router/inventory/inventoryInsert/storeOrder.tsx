@@ -312,7 +312,7 @@ export default function StoreOrderPage(): JSX.Element {
     const beforeData = storeFilterd.filter((item) => new Date(item[0]).toLocaleDateString() == searchDate)
     const beforeOutStock = beforeData.filter((item) =>
       (item[11].includes('欠品') && !item[11].includes('前回欠品分')) ||
-      item[11].includes('前回欠品分欠品')
+      item[11].includes('前回欠品分欠品') || item[11].includes('送付漏')
     )
 
     let count = 0

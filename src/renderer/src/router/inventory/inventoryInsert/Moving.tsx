@@ -16,6 +16,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ja'
 
+import CommingSoon from '../../CommingSoon'
 
 
 const darkTheme = createTheme({
@@ -284,9 +285,7 @@ export default function InventoryMoving() {
           />
           <div className='in-area' style={{marginLeft: `${marginNum}px`, flex: 1}}>
             {(!isDev && !Completeness) ? (
-              <div style={{ textAlign: 'center', paddingTop: '100px', fontSize: '1.5rem', color: 'white' }}>
-                🚧 このページは現在準備中です（Coming Soon）
-              </div>
+              <CommingSoon />
             ) : (
               <>
                 {/* <div className='window_top' style={{justifyContent: 'center'}}>

@@ -1,17 +1,38 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, ChangeEvent, useEffect } from 'react'
-import Select from 'react-select'
+
 import WordSearch from '../../../comp/ProductSearchWord'
 import '../../../css/Receiving.css'
-import { Button } from '@mui/material'
 import LinkBaner from '../../../comp/Linkbanar'
 import SendIcon from '@mui/icons-material/Send'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import SweetAlert2 from 'react-sweetalert2';
 import ConfirmDialogTable from '../../../comp/DialogTable'
 import toast, { Toaster } from 'react-hot-toast'
-import { productGet } from '../../../Util/util'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import dayjs, { Dayjs } from 'dayjs'
+import 'dayjs/locale/ja'
+import { productGet, getNearestMonday } from '../../../Util/util'
+import { SelectChangeEvent } from '@mui/material/Select'
 
+dayjs.locale('ja')
+
+import {
+  Button,
+  //Dialog,
+  //DialogActions,
+  //DialogContent,
+  //DialogTitle,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  TextField,
+  Typography,
+  Box
+} from '@mui/material'
 
 
 interface SelectOption {
@@ -61,6 +82,8 @@ export default function ReceivingPage() {
   const [DisplayStatus, setDisplayStatus] = useState(false)
 
   const [marginNum, setMarginNum] = useState(100)
+
+  const [dateValue, setDateValue] = useState<Dayjs | null>(null);
 
   const keyData = 'ReceivingstockInputData'
 
@@ -208,9 +231,6 @@ export default function ReceivingPage() {
     //setDialogOpen(true)
   }
 
-  const handleChangeDate = (event: ChangeEvent<HTMLInputElement>) => {
-    setDate(event.target.value)
-  }
 
   useEffect(() => {
     VendorListGet()
@@ -296,22 +316,64 @@ export default function ReceivingPage() {
     })
   }
 
+  useEffect(() => {
+    const date = dateValue?.toDate()
+    const Setdate = getNearestMonday(date)
+    setDate(Setdate)
+  }, [dateValue])
+
   return (
-    <>
-      <div>
+    <Box>
+      <Box>
         <LinkBaner id="zaiko" />
         <Toaster />
-      </div>
-      <div className="window_area">
-        <div className="insertDate">
-          <h2 style={{ color: 'white' }}>入庫日付</h2>
-          <input
-            type="date"
-            className="insert_date"
-            value={InsertDate}
-            onChange={(e) => handleChangeDate(e)}
-          />
-        </div>
+      </Box>
+      <Box
+        sx={{
+          paddingTop: "60px",
+          paddingBottom: "70px",
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 2,
+          }}
+        >
+          <Typography
+            variant="h5"
+            sx={{
+              marginRight: 1,
+              whiteSpace: 'nowrap',
+              color: "white"
+            }}
+          >
+            入庫日付
+          </Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ja">
+            <DatePicker
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  fullWidth: true,
+                  sx: {
+                    fontSize: '1rem',
+                    '& input': {
+                      height: '1.5em',
+                    },
+                    width: '150px',
+                    backgroundColor: 'white',
+                    borderRadius: '4px',
+                  },
+                },
+              }}
+              value={dateValue}
+              onChange={(e) => setDateValue(e)}
+            />
+          </LocalizationProvider>
+        </Box>
         <div className="form_area">
           <WordSearch
             DisplayStatus={DisplayStatus}
@@ -322,21 +384,35 @@ export default function ReceivingPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="p-4">
               {fields.map((field, index) => (
                 <div key={field.id} className="insert_area">
-                  <Controller
-                    name={`rows.${index}.vendor`}
-                    control={control}
-                    render={({ field }) => (
+                  <Box
+                    sx={{
+                      width: 120,
+                      paddingRight: 1
+                    }}
+                  >
+                    <FormControl fullWidth>
                       <Select
-                        {...field}
-                        options={VendorList}
-                        placeholder="業者"
-                        isClearable
-                        className="insert_Select"
-                        menuPlacement="auto"
-                        menuPortalTarget={document.body}
-                      />
-                    )}
-                  />
+                        size="small"
+                        onChange={(e: SelectChangeEvent) => {
+                          const selectedVendor = e.target.value as string
+                          const vendordata = VendorList.find(vendor => vendor.value === selectedVendor) || null
+                          setValue(`rows.${index}.vendor`, vendordata)
+                        }}
+                        sx={{
+                          backgroundColor: 'white',
+                          borderRadius: '4px'
+                        }}
+                      >
+                        <MenuItem value=""></MenuItem>
+                        {VendorList.map((Vdata) => (
+                          <MenuItem value={Vdata.value} key={Vdata.id}>
+                            {Vdata.label}
+                          </MenuItem>
+                        ))}
+                        
+                      </Select>
+                    </FormControl>
+                  </Box>
                   <input
                     {...register(`rows.${index}.code`, {
                       validate: (value) => isHalfWidth(value) || '半角英数字で入力してください'
@@ -402,7 +478,7 @@ export default function ReceivingPage() {
             />
           </SweetAlert2>
         </div>
-      </div>
-    </>
+      </Box>
+    </Box>
   )
 }
