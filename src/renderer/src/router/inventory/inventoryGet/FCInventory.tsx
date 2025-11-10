@@ -432,7 +432,7 @@ export default function FCInventory() {
             <WordSearch
               RegisterData={RegisterData}
             />
-            <div className="in-area" style={{ marginLeft: `${marginNum}px` }}>
+            <div className="in-area">
               <form onSubmit={handleSubmit(onSubmit)} className="p-4">
                 {fields.map((field, index) => (
                   <div key={field.id} className="insert_area">
