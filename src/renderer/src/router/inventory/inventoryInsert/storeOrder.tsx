@@ -262,7 +262,6 @@ export default function StoreOrderPage(): JSX.Element {
         let focused = false;
         for (let i = index + 1; i < elements.length; i++) {
           const next = elements[i] as HTMLElement;
-          //console.log(index)
           if (
             next &&
             typeof next.focus === 'function' &&

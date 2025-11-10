@@ -1,21 +1,39 @@
+
+// React
 import React, { useState, useEffect } from 'react'
-import WordSearch from '../../../comp/ProductSearchWord'
-import '../../../css/Receiving.css'
-import { Button } from '@mui/material'
-import SendIcon from '@mui/icons-material/Send'
-import { useForm, useFieldArray } from 'react-hook-form'
-import { MenuItem } from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import LinkBaner from '../../../comp/Linkbanar'
-import toast, { Toaster } from 'react-hot-toast'
 import { useLoaderData } from 'react-router-dom'
+
+// 自作コンポーネント
+import WordSearch from '../../../comp/ProductSearchWord'
+import LinkBaner from '../../../comp/Linkbanar'
+import { productGet } from '../../../Util/util'
+
+
+// CSS
+import '../../../css/Receiving.css'
 import '../../../css/FCInventory.css'
+
+// MUIコンポーネント
+import { Button } from '@mui/material'
+import { MenuItem } from '@mui/material'
 import { TextField } from '@mui/material'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
 import InputLabel from '@mui/material/InputLabel'
 import FormControl from '@mui/material/FormControl'
-import Swal from 'sweetalert2'
-import { productGet } from '../../../Util/util'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+
+// MUIアイコン
+import SendIcon from '@mui/icons-material/Send'
+
+// MUIテーマ
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+
+// フォーム管理
+import { useForm, useFieldArray } from 'react-hook-form'
+
+
+import toast, { Toaster } from 'react-hot-toast'
+
+
 
 
 interface SelectOption {
@@ -261,12 +279,7 @@ export default function FCInventory() {
 
   const insertPost = async () => {
     if (storeSelect == ''){
-      await Swal.fire({
-        icon: 'warning',
-        title: '店舗が未選択です',
-        text: '店舗を選んでから送信してください',
-        confirmButtonText: 'OK'
-      })
+
       return
     }
 
@@ -402,7 +415,6 @@ export default function FCInventory() {
                   </Select>
                 </FormControl>
               </div>
-              
               <div>
                 <FormControl>
                   <InputLabel id="demo-simple-select-label">店舗</InputLabel>
@@ -512,21 +524,7 @@ export default function FCInventory() {
             <Button variant="outlined" onClick={insertPost} endIcon={<SendIcon />}>
               送信実行
             </Button>
-            {/* <SweetAlert2
-              {...swalProps}
-              didClose={() => {
-                console.log('ダイアログが閉じられました');
-                setSwalProps({ show: false });
-              }}
-              customClass={{
-                popup: 'custom-swal-popup',
-                htmlContainer: 'custom-swal-html'
-              }}
-            >
-              <StoreDialogTable
-                tableData={getValues().rows}
-              />
-            </SweetAlert2> */}
+            {/*<Box>MUIDialog</Box>*/}
           </div>
         </ThemeProvider>
       </div>
