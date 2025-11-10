@@ -151,7 +151,8 @@ export default function ReceivingPage(): JSX.Element {
   })
 
   useEffect(() => {
-    const subscription = watch((value, { name, _type }) => {
+    const subscription = watch((value, {name}) => {
+      console.log(value)
       if (name && name.startsWith('rows')) {
         SaveInputContents() 
       }

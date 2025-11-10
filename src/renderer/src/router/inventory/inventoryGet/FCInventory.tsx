@@ -122,8 +122,6 @@ export const loader = async () => {
 
 export default function FCInventory() {
   const { storenames, yearList, monthList, datas, types } = useLoaderData<typeof loader>()
-  const [marginNum, setMarginNum] = useState(100)
-  const [DisplayStatus, setDisplayStatus] = useState(false)
   const [storeSelect, setStoreSelect] = React.useState('')
   const [Year, setYear] = useState<number>(new Date().getFullYear())
   const [Month, setMonth] = useState<number>(new Date().getMonth() + 1)
@@ -166,14 +164,6 @@ export default function FCInventory() {
       count++
     })
   }
-
-  useEffect(() => {
-    if (DisplayStatus){
-      setMarginNum(330)
-    } else {
-      setMarginNum(80)
-    }
-  }, [DisplayStatus])
 
   const { control, register, handleSubmit, getValues, setValue, reset } = useForm<FormValues>({
     defaultValues: {
@@ -440,8 +430,6 @@ export default function FCInventory() {
           </div>
           <div className="form_area">
             <WordSearch
-              DisplayStatus={DisplayStatus}
-              setDisplayStatus={setDisplayStatus}
               RegisterData={RegisterData}
             />
             <div className="in-area" style={{ marginLeft: `${marginNum}px` }}>

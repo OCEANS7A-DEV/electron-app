@@ -27,7 +27,6 @@ export const loader = async ({ request }: { request: Request }) => {
       sheetName: '一覧',
       action: 'TotallingGet',
     })
-    const donotOrder = [2001, 2002, 2003]
     const codeList = resultData.map((item) => item[2])
     const lastCol = resultData[0].length - 1
     const filterd = resultData.filter(

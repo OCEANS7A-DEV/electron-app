@@ -2,13 +2,11 @@
 import React from 'react'
 
 // MUIコンポーネント
-import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogActions from '@mui/material/DialogActions'
-import Typography from '@mui/material/Typography'
 
 // MUIアイコン
 import SendIcon from '@mui/icons-material/Send'

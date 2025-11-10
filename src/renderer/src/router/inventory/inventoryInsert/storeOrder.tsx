@@ -158,12 +158,6 @@ export default function StoreOrderPage(): JSX.Element {
   const insertPost = async () => {
     const insertExecution = async () => {
       if(storeSelect == ''){
-        await Swal.fire({
-          icon: 'warning',
-          title: '店舗が未選択です',
-          text: '店舗を選んでから送信してください',
-          confirmButtonText: 'OK'
-        })
         return
       }
       const Now = await window.myInventoryAPI.NowGet()
