@@ -1876,13 +1876,15 @@ const PDFfileMarge = async (fileName): Promise<{
 }
 
 
-ipcMain.handle('unlock-pdf', async (_event, fileData, password, fileName) => {
+ipcMain.handle('unlock-pdf', async (_event, fileData, _password, _fileName) => {
   const tempInputPath = path.join(os.tmpdir(), `temp-pdf-${Date.now()}.pdf`);
 
   try {
     // '.promises' をつけて await を使う
-    await fs.promises.writeFile(tempInputPath, fileData);
-    const baseName = path.basename(fileName, '.pdf')
+    const buffer = Buffer.from(fileData.fileData)
+    // 変換した buffer を書き込みます
+    await fs.promises.writeFile(tempInputPath, buffer);
+    const baseName = path.basename(fileData.fileName, '.pdf')
     const { canceled, filePath: outputPath } = await dialog.showSaveDialog({
       title: 'ロック解除したPDFの保存先を選択',
       defaultPath: path.join(app.getPath('downloads'), `${baseName}_unlocked.pdf`),
@@ -1902,7 +1904,7 @@ ipcMain.handle('unlock-pdf', async (_event, fileData, password, fileName) => {
 
     const qpdfPath = path.join(qpdfDir, 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf')
 
-    const args = [`--password=${password}`, '--decrypt', tempInputPath, outputPath];
+    const args = [`--password=${fileData.password}`, '--decrypt', tempInputPath, outputPath];
 
     await new Promise<void>((resolve, reject) => {
       // ここで組み立てた qpdfPath を使う

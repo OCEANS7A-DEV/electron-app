@@ -1,29 +1,57 @@
 /* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react'
-import type { JSX } from 'react'
-import WordSearch from '../../../comp/ProductSearchWord'
-import '../../../css/Receiving.css'
-import { Button } from '@mui/material'
-import { Autocomplete, TextField } from '@mui/material';
-import LinkBaner from '../../../comp/Linkbanar'
+
+// React
+import React, { useState, useEffect, useRef } from 'react'
+import type {JSX} from 'react'
+
+// MUIコンポーネント
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import Autocomplete from '@mui/material/Autocomplete'
+import Select, {SelectChangeEvent} from '@mui/material/Select'
+
+// MUIアイコン
 import SendIcon from '@mui/icons-material/Send'
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import SweetAlert2 from 'react-sweetalert2';
-import Swal from 'sweetalert2'
-import StoreDialogTable from '../../../comp/StoreDialogTable'
-import toast, { Toaster } from 'react-hot-toast';
-import { SubmitHandler } from 'react-hook-form'
-import { MenuItem } from '@mui/material'
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+
+
+// Form関連コンポーネント
+import {
+  useForm,
+  Controller,
+  SubmitHandler,
+  useFieldArray
+} from 'react-hook-form'
+
+// 日付関連コンポーネント
+import 'dayjs/locale/ja'
+import dayjs, { Dayjs } from 'dayjs'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import dayjs, { Dayjs } from 'dayjs'
-import 'dayjs/locale/ja'
+dayjs.locale('ja')
 
+
+// 独自コンポーネント
+import LinkBaner from '../../../comp/Linkbanar'
+import WordSearch from '../../../comp/ProductSearchWord'
+
+// Dialogコンポーネント
+import InsertDialog from './InsertUtil/InsertDialog'
+
+// トースト通知コンポーネント
+import toast, {Toaster} from 'react-hot-toast'
+
+
+// CSS
+import '../../../css/Receiving.css'
+
+// ユーティリティ関数
 import { productGet, getNearestMonday } from '../../../Util/util'
 
-dayjs.locale('ja')
+
 
 
 interface SelectOption {
@@ -71,40 +99,34 @@ const defaultSet = (): FormValues["rows"] => {
 
 export default function StoreOrderPage(): JSX.Element {
 
-  const [DisplayStatus, setDisplayStatus] = useState(false)
-
-  const [marginNum, setMarginNum] = useState(100)
-
-  const [storeSelect, setStoreSelect] = React.useState('');
+  const [storeSelect, setStoreSelect] = useState('');
 
   const [storeOptions, setStoreOptions] = useState<SelectOption[]>([])
 
-  const [SelectType, setSelectType] = React.useState('');
+  const [SelectType, setSelectType] = useState('');
 
   const [InsertDate, setDate] = useState<string>('')
 
-  const [swalProps, setSwalProps] = useState({});
-
   const [ProductdetailsList, setProductdetailsList] = useState([])
 
-  const [DeleteRowNum, setDeleteRowNum] = useState(0)
+
 
   const [dateValue, setDateValue] = useState<Dayjs | null>(null);
 
-  const [insertAction, setInsertAction] = useState('append');
+
+
+  const [DialogOpen, setDialogOpen] = useState(false)
 
 
 
-  const swalWindow = async (): Promise<void> => {
-    setSwalProps({
-      show: true,
-      title: storeSelect,
-      onConfirm: () => {
-        setSwalProps({ show: false })
-        insertPost()
-      }
-    }); 
-  }
+
+
+
+
+
+
+  const DeleteRowNumRef = useRef(0)
+  const InsertActionRef = useRef('append');
 
 
 
@@ -126,8 +148,6 @@ export default function StoreOrderPage(): JSX.Element {
   }
 
   const isHalfWidth = (value: string) => /^[\x20-\x7E]*$/.test(value)
-
-
 
   const addNewForm = () => {
     for (let i = 0; i < 20; i++) {
@@ -167,28 +187,29 @@ export default function StoreOrderPage(): JSX.Element {
           Now[1]
         ]
       })
+
       if (formData.length >= 1) {
         await window.myInventoryAPI.DataInsert({
           sheetName: '店舗へ',
           action: 'Orderinsert',
           sub_action: 'insert',
-          insert_action: insertAction,
+          insert_action: InsertActionRef.current,
           data: formData,
           formulaConfig: {
             targetCol: 10,
             formula: '=RC[-3]*RC[-1]'
           },
-          deleteNum: DeleteRowNum
+          deleteNum: DeleteRowNumRef.current
         })
+        DeleteRowNumRef.current = formData.length
       }
-      setDeleteRowNum(formData.length)
     }
     toast.promise(
       insertExecution(),
       {
         loading: '注文データ送信中…',
         success: () => {
-          setInsertAction('update')
+          InsertActionRef.current = 'update'
           return `${storeSelect}店の注文データを送信しました`
         },
         error: () => {
@@ -198,9 +219,7 @@ export default function StoreOrderPage(): JSX.Element {
     )
   }
 
-  const handleOpenDialog = () => {
-    swalWindow()
-  }
+
 
   const StoresGet = async () => {
     const stores = await window.myInventoryAPI.storeGet('storeList')
@@ -225,14 +244,6 @@ export default function StoreOrderPage(): JSX.Element {
     const result = watch(`rows.${index}.detailList`)
     return result
   }
-
-  useEffect(() => {
-    if(DisplayStatus){
-      setMarginNum(330)
-    }else{
-      setMarginNum(80)
-    }
-  },[DisplayStatus])
 
   useEffect(() => {
     const today = new Date()
@@ -368,7 +379,7 @@ export default function StoreOrderPage(): JSX.Element {
         count ++
       })
     }
-    setDeleteRowNum(getValues().rows.filter((item) => item.name !== '').length)
+    DeleteRowNumRef.current = getValues().rows.filter((item) => item.name !== '').length
     return filtered
   }
 
@@ -380,17 +391,21 @@ export default function StoreOrderPage(): JSX.Element {
           loading: '注文データ読み込み中…',
           success: (data) => {
             if (data.length == 0) {
-              setInsertAction('append')
+              InsertActionRef.current = 'append'
               return `${InsertDate}の${storeSelect}店は注文されていません`
             } else if (data.length == 1 && data[0][12]) {
-              setInsertAction('append')
+              InsertActionRef.current = 'append'
               return `${InsertDate}の${storeSelect}店は注文無し`
             } else {
-              setInsertAction('update')
+              InsertActionRef.current = 'update'
               return `${InsertDate}の${storeSelect}店の注文数${data.length}`
             }
           },
-          error: () => `エラーが発生しました`,
+          error: (e) => {
+            console.error(e)
+            InsertActionRef.current = 'append'
+            return `エラーが発生しました`
+          },
         },
       )
     }
@@ -465,23 +480,41 @@ export default function StoreOrderPage(): JSX.Element {
     DetailsSet()
   }, [])
 
-  
-
   return (
-    <>
-      <div>
+    <Box>
+      <Box>
         <LinkBaner id="zaiko" />
         <Toaster />
-      </div>
-      <div className="window_area">
-        <div className="form_area">
-          <WordSearch
-            DisplayStatus={DisplayStatus}
-            setDisplayStatus={setDisplayStatus}
-            RegisterData={RegisterData}
-          />
-          <div className="in-area" style={{marginLeft: `${marginNum}px`}}>
-            <div className="insertDate">
+      </Box>
+      <Box>
+        <Box
+          className="insert_main_box"
+          sx={{
+            display: 'flex',
+            paddingTop: 8
+          }}
+        >
+          <Box
+            sx={{
+              paddingTop: 8
+            }}
+          >
+            <WordSearch
+              RegisterData={RegisterData}
+            />
+          </Box>
+          <Box
+            sx={{
+              paddingBottom: 8,
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Select
                 value={storeSelect}
                 label='店舗'
@@ -499,10 +532,19 @@ export default function StoreOrderPage(): JSX.Element {
                   </MenuItem>
                 ))}
               </Select>
-              <div className="insert_Title">
-                <h2 style={{ color: 'white' }}>注文日付</h2>
-              </div>
-              <div className="insert_DatePicker">
+              <Box
+                sx={{
+                  margin: '0 8px'
+                }}
+              >
+                <h2 style={{ color: 'white' }}>注文日付:</h2>
+              </Box>
+              <Box
+                sx={{
+                  backgroundColor: 'white',
+                  borderRadius: 1,
+                }}
+              >
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ja">
                   <DatePicker
                     slotProps={{
@@ -522,12 +564,29 @@ export default function StoreOrderPage(): JSX.Element {
                     onChange={(e) => setDateValue(e)}
                   />
                 </LocalizationProvider>
-              </div>
-            </div>
+              </Box>
+            </Box>
             <form onSubmit={handleSubmit(onSubmit)} className="p-4">
               {fields.map((field, index) => (
-                <div key={field.id} className="insert_area_store">
-                  <div style={{width: 24, textAlign: 'right', color: 'white', marginRight: 4}}>{index + 1}</div>
+                <Box key={field.id} className="insert_area_store">
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      width: 20,
+                      alignItems: 'center',
+                      justifyContent: 'right',
+                      paddingRight: '6px'
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        color: 'white'
+                      }}
+                    >
+                      {index + 1}
+                    </Typography>
+                  </Box>
+                  
                   <input
                     {...register(`rows.${index}.vendor`)}
                     className="insert_vendor"
@@ -617,34 +676,29 @@ export default function StoreOrderPage(): JSX.Element {
                   >
                     削除
                   </Button>
-                </div>
+                </Box>
               ))}
             </form>
-          </div>
-        </div>
+          </Box>
+        </Box>
         <div className="button_area">
           <Button variant="outlined" onClick={addNewForm}>
             注文枠追加
           </Button>
-          <Button variant="outlined" onClick={handleOpenDialog} endIcon={<SendIcon />}>
+          <Button variant="outlined" onClick={() => setDialogOpen(true)} endIcon={<SendIcon />}>
             注文実行
           </Button>
-          <SweetAlert2
-            {...swalProps}
-            didClose={() => {
-              setSwalProps({ show: false });
-            }}
-            customClass={{
-              popup: 'custom-swal-popup',
-              htmlContainer: 'custom-swal-html'
-            }}
-          >
-            <StoreDialogTable
-              tableData={getValues().rows}
-            />
-          </SweetAlert2>
+          <InsertDialog
+            data={getValues().rows}
+            InsertDate={InsertDate}
+            DialogOpen={DialogOpen}
+            setDialogOpen={setDialogOpen}
+            insertPost={insertPost}
+            tableType="storeIn"
+            storeName={storeSelect}
+          />
         </div>
-      </div>
-    </>
+      </Box>
+    </Box>
   )
 }

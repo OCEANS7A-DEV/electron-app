@@ -11,16 +11,11 @@ export const loader = async () => {
 }
 
 
-
-
-
 const HQPrintContent = (): JSX.Element => {
   const { data } = useLoaderData<typeof loader>()
-
   const PrintExecution = async () => {
     await window.myInventoryAPI.PrintReady()
   }
-
   return (
     <div className="print-area">
       <div className="printData">

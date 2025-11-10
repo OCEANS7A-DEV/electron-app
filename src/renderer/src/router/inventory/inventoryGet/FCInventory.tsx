@@ -74,7 +74,6 @@ const darkTheme = createTheme({
 })
 
 
-
 export const loader = async () => {
   const stores = await window.myInventoryAPI.ListGet({
     sheetName: '店舗一覧',
@@ -89,7 +88,7 @@ export const loader = async () => {
   })
 
   const storenames: SelectOption[] = stores
-    .filter((row) => row[2] !== "" && row[2] == 'FC' && row[1] == '竹原')
+    .filter((row) => row[2] !== "" && row[2] == 'FC')
     .map((item) => ({
       id: item[0],
       value: item[1],
@@ -129,7 +128,6 @@ export default function FCInventory() {
   const [Year, setYear] = useState<number>(new Date().getFullYear())
   const [Month, setMonth] = useState<number>(new Date().getMonth() + 1)
   const [DeleteRowNum, setDeleteRowNum] = useState<number>(0)
-  
 
   useEffect(() => {
     DataSet()
@@ -168,7 +166,6 @@ export default function FCInventory() {
       count++
     })
   }
-
 
   useEffect(() => {
     if (DisplayStatus){

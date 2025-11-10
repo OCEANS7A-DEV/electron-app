@@ -1,50 +1,58 @@
 /* eslint-disable prettier/prettier */
-import React, { useState, ChangeEvent, useEffect } from 'react'
 
-import WordSearch from '../../../comp/ProductSearchWord'
-import '../../../css/Receiving.css'
-import LinkBaner from '../../../comp/Linkbanar'
-import SendIcon from '@mui/icons-material/Send'
+// React関連
+import React, { useState, useEffect, useRef } from 'react'
+import type {JSX} from 'react'
+
+// フォーム関連
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import SweetAlert2 from 'react-sweetalert2';
-import ConfirmDialogTable from '../../../comp/DialogTable'
+
+// トースト通知
 import toast, { Toaster } from 'react-hot-toast'
+
+// 日付取得系関連
+import 'dayjs/locale/ja'
+import dayjs, {Dayjs} from 'dayjs'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import dayjs, { Dayjs } from 'dayjs'
-import 'dayjs/locale/ja'
-import { productGet, getNearestMonday } from '../../../Util/util'
-import { SelectChangeEvent } from '@mui/material/Select'
-
 dayjs.locale('ja')
 
-import {
-  Button,
-  //Dialog,
-  //DialogActions,
-  //DialogContent,
-  //DialogTitle,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  TextField,
-  Typography,
-  Box
-} from '@mui/material'
+// MUIコンポーネント
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import FormControl from '@mui/material/FormControl'
+import Select, {SelectChangeEvent} from '@mui/material/Select'
+
+// MUIアイコン
+import SendIcon from '@mui/icons-material/Send'
+
+
+// 自作コンポーネント
+import LinkBaner from '../../../comp/Linkbanar'
+import WordSearch from '../../../comp/ProductSearchWord'
+import InsertDialog from './InsertUtil/InsertDialog'
+
+// ユーティリティ
+import { productGet, getNearestMonday } from '../../../Util/util'
+
+// CSS
+import '../../../css/Receiving.css'
 
 
 interface SelectOption {
   value: string
   label: string
-  id: string
+  id: number
 }
 
 
 type FormValues = {
   rows: {
-    vendor: { value: string, label: string, id: string } | null
+    vendor: { value: string, label: string, id: number } | null
     code: string
     name: string
     quantity: string
@@ -67,70 +75,91 @@ const defaultSet = (): FormValues["rows"] => {
 }
 
 
+const placeholderStyle = {
+  '&::placeholder': {
+    fontSize: '14px',
+    opacity: 1,
+    color: 'gray'
+  }
+}
+
+const textFieldStyle = {
+  backgroundColor: 'white',
+  borderRadius: '4px',
+  marginRight: '8px',
+  height: '36px'
+}
 
 
+const fadeInUp = {
+  '@keyframes fadeInUp': {
+    'from': {
+      opacity: 0,
+      transform: 'translateY(-20px)',
+    },
+    'to': {
+      opacity: 1,
+      transform: 'translateY(0)',
+    },
+  },
+};
 
+const fadeOutUp = {
+  '@keyframes fadeOutUp': {
+    'from': {
+      opacity: 1,
+      transform: 'translateY(0)',
+    },
+    'to': {
+      opacity: 0,
+      transform: 'translateY(-20px)',
+    },
+  },
+};
 
-
-export default function ReceivingPage() {
+export default function ReceivingPage(): JSX.Element {
   const [VendorList, setVendorList] = useState<SelectOption[]>([])
 
   const [InsertDate, setDate] = useState<string>('')
-
-  const [swalProps, setSwalProps] = useState({})
-
-  const [DisplayStatus, setDisplayStatus] = useState(false)
-
-  const [marginNum, setMarginNum] = useState(100)
 
   const [dateValue, setDateValue] = useState<Dayjs | null>(null);
 
   const keyData = 'ReceivingstockInputData'
 
-  useEffect(() => {
-    if(DisplayStatus){
-      setMarginNum(330)
-    }else{
-      setMarginNum(80)
+  const [DialogOpen, setDialogOpen] = useState(false)
+
+  const validateMsg = useRef<string>('')
+
+  const {
+    control,
+    register,
+    handleSubmit,
+    getValues,
+    setValue,
+    reset,
+    watch,
+    formState: { errors }
+  } = useForm<FormValues>({
+    defaultValues: {
+      rows: defaultSet()
     }
-  },[DisplayStatus])
-
-  const swalWindow = async () => {
-    setSwalProps({
-      show: true,
-      title: '入力データ',
-      onConfirm: () => {
-        const filterData = getValues().rows.filter((row) => row.code !== '')
-        if(filterData.length !== 0){
-          setSwalProps({ show: false })
-          insertPost()
-          toast.success('送信しました')
-        }else{
-          toast.error('送信できるデータがありません')
-        }
-      }
-    })
-  }
-
-
-  const { control, register, handleSubmit, getValues, setValue, reset, watch } =
-    useForm<FormValues>({
-      defaultValues: {
-        rows: defaultSet()
-      }
-    })
+  })
 
   const { fields, append, remove, insert } = useFieldArray<FormValues>({
     control,
     name: 'rows'
   })
 
-  const watchedValues = watch()
-
-
   useEffect(() => {
-    SaveInputContents()
-  }, [watchedValues])
+    const subscription = watch((value, { name, _type }) => {
+      if (name && name.startsWith('rows')) {
+        SaveInputContents() 
+      }
+    });
+
+    return () => subscription.unsubscribe();
+
+  }, [watch])
 
   useEffect(() => {
     const SaveDataSet = async () => {
@@ -148,6 +177,7 @@ export default function ReceivingPage() {
       })
     }
     SaveDataSet()
+
   }, [])
 
   const SaveInputContents = () => {
@@ -155,12 +185,17 @@ export default function ReceivingPage() {
     window.myInventoryAPI.storeSet(keyData, JSON.stringify(filterData))
   }
 
-  const onSubmit = (data: FormValues) => {
-    console.log('送信データ:', data.rows)
-    // ここでAPIに送信など処理を書く
+  const onSubmit = () => {
+    if (InsertDate == 'NaN-NaN-NaN') {
+      alert('日付が入力されていません')
+      return
+    }
+    setDialogOpen(true)
   }
 
   const isHalfWidth = (value: string) => /^[\x20-\x7E]*$/.test(value)
+
+  const isHalfWidthNum = (value: string) => /^[0-9]*$/.test(value)
 
   const VendorListGet = async () => {
     const list = await window.myInventoryAPI.VendorData()
@@ -222,16 +257,6 @@ export default function ReceivingPage() {
     window.myInventoryAPI.storeSet(keyData, JSON.stringify([]))
   }
 
-  const handleOpenDialog = () => {
-    // if (Date === '') {
-    //   alert('日付が入力されていません')
-    //   return
-    // }
-    swalWindow()
-    //setDialogOpen(true)
-  }
-
-
   useEffect(() => {
     VendorListGet()
   }, [])
@@ -242,20 +267,25 @@ export default function ReceivingPage() {
     const mm = String(today.getMonth() + 1).padStart(2, '0')
     const dd = String(today.getDate()).padStart(2, '0')
     setDate(`${yyyy}-${mm}-${dd}`)
+    setDateValue(dayjs(today))
   }, [])
 
-  const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLInputElement>, rowIndex: number) => {
+  const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>, rowIndex: number) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      const form = e.currentTarget.form
+      const inputElement = e.target as HTMLInputElement
+      const form = inputElement.form
       if(form){
         const elements = Array.from(form.elements) as HTMLElement[]
-        const index = elements.indexOf(e.currentTarget)
+        const index = elements.indexOf(inputElement)
         const nextElement = elements[index + 1] as HTMLInputElement | HTMLButtonElement
-
         if (nextElement && nextElement.type !== 'button') {
-          nextElement.focus()
-          
+          if (nextElement.nodeName == "FIELDSET") {
+            const nextTextFieldElement = elements[index + 2] as HTMLInputElement | HTMLButtonElement
+            nextTextFieldElement.focus()
+          } else {
+            nextElement.focus()
+          }
         } else {
           const nextCodeInput = document.querySelector<HTMLInputElement>(
             `input[name="rows.${rowIndex + 1}.code"]`
@@ -275,7 +305,6 @@ export default function ReceivingPage() {
           }
         }
       }
-      
     }
   }
 
@@ -321,6 +350,102 @@ export default function ReceivingPage() {
     const Setdate = getNearestMonday(date)
     setDate(Setdate)
   }, [dateValue])
+
+  const validateCheck = (index: number, keyName: string, errormsg: string) => {
+    let columnName = ''
+    if (keyName == 'code') {
+      columnName = '商品コード'
+    } else if (keyName == 'quantity') {
+      columnName = '数量'
+    } else if (keyName == 'price') {
+      columnName = '単価'
+    } else {
+      columnName = ''
+    }
+    const value = getValues().rows[index][keyName]
+    const errorstring = `${index + 1}行目 ${columnName} ${errormsg}`
+    if (keyName == 'code' || keyName == 'quantity') {
+      const result = isHalfWidthNum(value)
+      if (!result) {
+        if (validateMsg.current == '') {
+          validateMsg.current = errorstring
+        } else {
+          validateMsg.current = `${validateMsg.current}\n${errorstring}`
+        }
+        return false
+      } else {
+        return true
+      }
+    } else {
+      const result = isHalfWidth(value)
+      if (!result) {
+        if (validateMsg.current == '') {
+          validateMsg.current = errorstring
+        } else {
+          validateMsg.current = `${validateMsg.current}\n${errorstring}`
+        }
+        return false
+      } else {
+        return true
+      }
+    }
+  }
+
+  const SubmitFaledToast = () => {
+    toast.custom((t) => (
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          backgroundColor: 'white',
+          padding: 2,
+          borderRadius: 1,
+          boxShadow: 3,
+          ...fadeInUp,
+          ...fadeOutUp,
+          animation: t.visible
+            ? 'fadeInUp 0.3s forwards'
+            : 'fadeOutUp 0.3s forwards',
+        }}
+      >
+        <Box
+          sx={{
+            whiteSpace: 'pre-line',
+            marginRight: 2,
+          }}
+        >
+          {validateMsg.current}
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <Button
+            onClick={() => {
+              toast.dismiss(t.id)
+              validateMsg.current = ''
+            }}
+            size="small"
+            variant="contained"
+            color="primary"
+          >
+            Close
+          </Button>
+        </Box>
+      </Box>
+    ),
+      {
+        duration: Infinity,
+        position: 'top-center',
+      }
+    )
+  }
+
+  const dateSet = (e) => {
+    setDateValue(e)
+  }
 
   return (
     <Box>
@@ -370,114 +495,185 @@ export default function ReceivingPage() {
                 },
               }}
               value={dateValue}
-              onChange={(e) => setDateValue(e)}
+              onChange={(e) => dateSet(e)}
             />
           </LocalizationProvider>
         </Box>
-        <div className="form_area">
+        <Box
+          sx={{
+            display: 'flex',
+          }}
+        >
           <WordSearch
-            DisplayStatus={DisplayStatus}
-            setDisplayStatus={setDisplayStatus}
             RegisterData={RegisterData}
           />
-          <div className="in-area" style={{marginLeft: `${marginNum}px`}}>
-            <form onSubmit={handleSubmit(onSubmit)} className="p-4">
+          <Box>
+            <Box component="form" onSubmit={handleSubmit(onSubmit, SubmitFaledToast)}>
               {fields.map((field, index) => (
-                <div key={field.id} className="insert_area">
+                <Box
+                  key={field.id}
+                  sx={{
+                    display: 'flex',
+                    marginBottom: 1,
+                    marginLeft: 1,
+                  }}
+                >
                   <Box
                     sx={{
                       width: 120,
-                      paddingRight: 1
                     }}
                   >
                     <FormControl fullWidth>
-                      <Select
-                        size="small"
-                        onChange={(e: SelectChangeEvent) => {
-                          const selectedVendor = e.target.value as string
-                          const vendordata = VendorList.find(vendor => vendor.value === selectedVendor) || null
-                          setValue(`rows.${index}.vendor`, vendordata)
-                        }}
-                        sx={{
-                          backgroundColor: 'white',
-                          borderRadius: '4px'
-                        }}
-                      >
-                        <MenuItem value=""></MenuItem>
-                        {VendorList.map((Vdata) => (
-                          <MenuItem value={Vdata.value} key={Vdata.id}>
-                            {Vdata.label}
-                          </MenuItem>
-                        ))}
-                        
-                      </Select>
+                      <Controller
+                        name={`rows.${index}.vendor`}
+                        control={control}
+                        render={({ field }) => (
+                          <Select
+                            size="small"
+                            onChange={(e: SelectChangeEvent) => {
+                              const selectedVendor = e.target.value as string
+                              const vendordata = VendorList.find(vendor => vendor.value === selectedVendor) || null
+                              field.onChange(vendordata)
+                            }}
+                            value={field.value?.value || ''}
+                            onBlur={field.onBlur}
+                            sx={{
+                              ...textFieldStyle,
+                              textAlign: 'right'
+                            }}
+                          >
+                            <MenuItem value=""></MenuItem>
+                            {VendorList.map((Vdata) => (
+                              <MenuItem value={Vdata.value} key={Vdata.id}>
+                                {Vdata.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        )}
+                      />
                     </FormControl>
                   </Box>
-                  <input
+                  <TextField
                     {...register(`rows.${index}.code`, {
-                      validate: (value) => isHalfWidth(value) || '半角英数字で入力してください'
+                      validate: () => validateCheck(index, 'code', '半角英数字で入力してください')
                     })}
-                    className="insert_code"
                     placeholder="商品コード"
+                    size="small"
                     onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                    inputProps={{
+                      sx: placeholderStyle,
+                      style: { textAlign: 'right' }
+                    }}
+                    sx={{
+                      ...textFieldStyle,
+                      width: 100,
+                    }}
                     onBlur={() => search(index)}
                   />
-                  <input
+                  <TextField
                     {...register(`rows.${index}.name`)}
                     placeholder="商品名"
-                    className="insert_name"
+                    size="small"
                     onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                    inputProps={{
+                      sx: placeholderStyle
+                    }}
+                    sx={{
+                      ...textFieldStyle,
+                      width: 300,
+                    }}
                   />
-                  
-                  <input
+                  <TextField
                     {...register(`rows.${index}.quantity`, {
-                      validate: (value) => isHalfWidth(value) || '半角数字で入力してください'
+                      validate: () => validateCheck(index, 'quantity', '半角数字で入力してください')
                     })}
+                    error={!!errors.rows?.[index]?.quantity}
+                    helperText={errors.rows?.[index]?.quantity?.message}
                     placeholder="数量"
-                    className="insert_quantity"
-                    type="text"
+                    size="small"
                     onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                    inputProps={{
+                      sx: placeholderStyle,
+                      style: { textAlign: 'right' }
+                    }}
+                    sx={{
+                      ...textFieldStyle,
+                      width: 80,
+                    }}
                   />
-                  <input
+                  <TextField
                     {...register(`rows.${index}.price`, {
-                      validate: (value) => isHalfWidth(value) || '半角数字で入力してください'
+                      validate: () => validateCheck(index, 'price', '半角数字で入力してください')
                     })}
                     placeholder="単価"
-                    className="insert_price"
-                    type="text"
+                    size="small"
+                    inputProps={{
+                      sx: placeholderStyle,
+                      style: { textAlign: 'right' }
+                    }}
+                    sx={{
+                      ...textFieldStyle,
+                      width: 100,
+                    }}
                     onKeyDown={(e) => handleEnterFocusNext(e, index)}
                   />
-                  <button
-                    type="button"
+                  <Button
+                    variant="outlined"
+                    size="small"
                     onClick={() => RowRemove(index)}
-                    className="text-red-500 hover:underline"
                   >
                     削除
-                  </button>
-                </div>
+                  </Button>
+                </Box>
               ))}
-            </form>
-          </div>
-        </div>
-        <div className="button_area">
-          <Button variant="outlined" onClick={addNewForm}>
-            入庫枠追加
-          </Button>
-          <Button variant="outlined" onClick={handleOpenDialog} endIcon={<SendIcon />}>
-            入庫実行
-          </Button>
-          <SweetAlert2
-            {...swalProps}
-            didClose={() => {
-              console.log('ダイアログが閉じられました');
-              setSwalProps({ show: false });
-            }}
-          >
-            <ConfirmDialogTable
-              tableData={getValues().rows}
-            />
-          </SweetAlert2>
-        </div>
+              <Box
+                sx={{
+                  display: 'flex',
+                  position: 'fixed',
+                  zIndex: 100,
+                  height: '60px',
+                  bottom: 0,
+                  width: '100%',
+                  left: 0,
+                  alignItems: 'center',
+                  backgroundColor: '#2a2a30',
+                  borderTop: '1px solid #444',
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexGrow: 1,
+                    justifyContent: 'space-around',
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    onClick={addNewForm}
+                  >
+                    入庫枠追加
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    type="submit"
+                    endIcon={<SendIcon />}
+                  >
+                    入庫実行
+                  </Button>
+                  <InsertDialog
+                    data={getValues().rows}
+                    DialogOpen={DialogOpen}
+                    setDialogOpen={setDialogOpen}
+                    insertPost={insertPost}
+                    InsertDate={InsertDate}
+                    tableType="receiving"
+                  />
+                </Box>
+
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       </Box>
     </Box>
   )

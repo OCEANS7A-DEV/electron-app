@@ -18,7 +18,6 @@ const isoToJstYMD = (isoString): string => {
 export const loader = async ({ request }: { request: Request }) => {
   let taiyoData: string[][] = []
   const addressData = await window.myInventoryAPI.storeGet('address')
-  console.log(addressData)
   const url = new URL(request.url)
   const date = url.searchParams.get('date')
   const vendor = url.searchParams.get('vendor')
@@ -27,12 +26,12 @@ export const loader = async ({ request }: { request: Request }) => {
     const resultData = await window.myInventoryAPI.ListGet({
       sheetName: '一覧',
       action: 'TotallingGet',
-      ranges: 'A2:O'
     })
     const donotOrder = [2001, 2002, 2003]
     const codeList = resultData.map((item) => item[2])
+    const lastCol = resultData[0].length - 1
     const filterd = resultData.filter(
-      (row) => row[1] === vendor && row[14] < 0 && !donotOrder.includes(row[2])
+      (row) => row[0] === vendor && row[lastCol] < 0
     )
     const orderResult = filterd.map((item) => {
       let shortageNum = Number(item[14])
@@ -46,13 +45,12 @@ export const loader = async ({ request }: { request: Request }) => {
           shortageNum = shortageNum + up
           num = num + up
         }
-        return ['', item[3], num, '', '', '']
+        return ['', item[2], num, '', '', '']
       } else {
-        return ['', item[3], Number(item[14]) * -1, '', '', '']
+        return ['', item[2], Number(item[14]) * -1, '', '', '']
       }
     })
     taiyoData = orderResult
-
     const Order = await window.myInventoryAPI.ListGet({
       sheetName: '店舗へ',
       action: 'InputDataGet',
@@ -60,26 +58,12 @@ export const loader = async ({ request }: { request: Request }) => {
     })
     const filter = Order.filter((item) => isoToJstYMD(item[0]) == date)
     const Notlisted = filter.filter(
-      (item) => item[2].includes('大洋') && !codeList.includes(item[3])
+      (item) => item[2].includes('大洋') && !codeList.includes(item[3]) && typeof item[3] !== 'number'
     )
     Notlisted.forEach((item) => {
       const result = [item[3], item[4], item[6], '', item[7], '']
       taiyoData.push(result)
     })
-  } else {
-    const data = await window.myInventoryAPI.ListGet({
-      sheetName: '店舗へ',
-      action: 'InputDataGet',
-      ranges: 'A2:L'
-    })
-    const filtered = data.filter(
-      (item) => isoToJstYMD(item[0]) == date && item[1] == address && item[2].includes('大洋')
-    )
-    const Inlist = filtered.map(item => {
-      const result = ['', item[4], item[6] - item[7], '', '', '']
-      return result
-    })
-    taiyoData = Inlist
   }
 
   const calcD = 16 - taiyoData.length
@@ -93,6 +77,7 @@ export default function TaiyoPrint(): JSX.Element {
   const { taiyoData, addressData, address } = useLoaderData<typeof loader>()
   const ShippingAddress = addressData.find((item) => item[0] === address)
   const VendorData = addressData.find((item) => item[0] === '大洋商会')
+  console.log(taiyoData)
 
   useEffect(() => {
     //window.myInventoryAPI.PrintReady()

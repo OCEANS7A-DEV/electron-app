@@ -6,7 +6,7 @@ import type { JSX } from 'react'
 
 export const loader = async () => {
   const data = await window.myInventoryAPI.shortageGet()
-  const shortage = data.filter((item) => item[13] < 0 && item[0] !== 'タムラ' && item[0] !== '三久')
+  const shortage = data.filter((item) => item[14] < 0 && item[0] !== 'タムラ' && item[0] !== '三久')
   return shortage
 }
 
@@ -34,7 +34,7 @@ export default function NetEtcPrint(): JSX.Element {
                 <td>{row[0]}</td>
                 <td>{row[1]}</td>
                 <td>{row[2]}</td>
-                <td>{row[13]}</td>
+                <td>{row[14]}</td>
               </tr>
             ))}
           </tbody>

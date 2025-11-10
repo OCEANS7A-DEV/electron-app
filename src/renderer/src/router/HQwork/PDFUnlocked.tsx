@@ -91,6 +91,7 @@ const PDFUnlocked = () => {
 
 
     try {
+
       // 1. FileReaderを使ってファイルの中身をArrayBufferとして読み込む
       const arrayBuffer = await file.arrayBuffer();
 
@@ -104,8 +105,7 @@ const PDFUnlocked = () => {
         fileData: fileDataAsUint8Array,
         password: passWord,
         fileName: filename
-      });
-
+      })
       // 4. 結果をUIに表示
       setStatusMessage(result.message);
       if (result.status === 'success') {

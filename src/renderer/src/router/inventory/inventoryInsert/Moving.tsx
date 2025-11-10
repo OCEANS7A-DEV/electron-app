@@ -95,10 +95,6 @@ export default function InventoryMoving() {
   const isDev = window.myInventoryAPI.isDev
   const Completeness = true
 
-  const [DisplayStatus, setDisplayStatus] = useState(false)
-
-  const [marginNum, setMarginNum] = useState(100)
-
   const [storeOptions, setStoreOptions] = useState<SelectOption[]>([])
 
   const [ProductdetailsList, setProductdetailsList] = useState([])
@@ -139,14 +135,6 @@ export default function InventoryMoving() {
     console.log(storenames)
     setStoreOptions(storenames);
   }
-
-  useEffect(() => {
-    if(DisplayStatus){
-      setMarginNum(330)
-    }else{
-      setMarginNum(80)
-    }
-  }, [DisplayStatus])
 
   const DetailsSet = async () => {
     const list = await window.myInventoryAPI.DetailsData()
@@ -279,11 +267,9 @@ export default function InventoryMoving() {
       <div className="window_area">
         <div className='form_area'>
           <WordSearch
-            DisplayStatus={DisplayStatus}
-            setDisplayStatus={setDisplayStatus}
             RegisterData={RegisterData}
           />
-          <div className='in-area' style={{marginLeft: `${marginNum}px`, flex: 1}}>
+          <div className='in-area'>
             {(!isDev && !Completeness) ? (
               <CommingSoon />
             ) : (

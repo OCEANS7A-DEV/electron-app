@@ -47,27 +47,28 @@ export const loader = async ({ request }: { request: Request }) => {
     (row) =>
       (Number(row[14]) < 0 || (Number(row[10]) >= 1 && Number(row[14]) <= Number(row[10]))) &&
       (
-        !row[3].includes('eco') &&
-        !row[3].includes('ﾙﾍﾞﾙ') &&
-        row[2] !== 100001 &&
-        !(Number(row[2]) >= 300100 && Number(row[2]) <= 300500)
+        !row[2].includes('eco') &&
+        !row[2].includes('ﾙﾍﾞﾙ') &&
+        row[1] !== 100001 &&
+        !(Number(row[1]) >= 300100 && Number(row[1]) <= 300500)
       )
   )
+  console.log(shortage)
   let subData = []
   let subdata: any[] = []
 
   const resultdata = vendors.map((item) => {
     const swKH = jaconv.toHan(item)
-    const vendorfilter = shortage.filter((row) => row[1] == item || row[1] == swKH)
+    const vendorfilter = shortage.filter((row) => row[0] == item || row[0] == swKH)
     let resultData: any[] = []
     if (item == 'キンバト') {
-      if (vendorfilter.some((row) => row[3].includes('ｱﾐﾉ'))) {
+      if (vendorfilter.some((row) => row[2].includes('ｱﾐﾉ'))) {
         resultData.push(['ｱﾐﾉｱｼｯﾄﾞ', 20])
       }
-      if (vendorfilter.some((row) => row[3].includes('ﾈｽﾗｰ'))) {
+      if (vendorfilter.some((row) => row[2].includes('ﾈｽﾗｰ'))) {
         resultData.push(['ﾈｽﾗｰﾁｵﾊｰﾄﾞ', 20])
       }
-      vendorfilter.filter((row) => !row[3].includes('ｱﾐﾉ') && !row[3].includes('ﾈｽﾗｰ'))
+      vendorfilter.filter((row) => !row[2].includes('ｱﾐﾉ') && !row[2].includes('ﾈｽﾗｰ'))
         .forEach((fitem) => {
           if (fitem[8] !== '') {
             let shortage = fitem[14]
@@ -81,21 +82,20 @@ export const loader = async ({ request }: { request: Request }) => {
             } else {
               orderNum += ordernumCount
             }
-            resultData.push([fitem[3], orderNum])
+            resultData.push([fitem[2], orderNum])
           } else {
-            resultData.push([fitem[3], fitem[14] * -1])
+            resultData.push([fitem[2], fitem[14] * -1])
           }
         })
     } else if (item == 'ミラビス') {
       const mirabisuFilter = productData.filter(
-        (row) => row[1] == 'ミラビス' && row[13] == 'FAX' && row[14] < 0
+        (row) => row[0] == 'ミラビス' && row[12] == 'FAX' && row[14] < 0
       )
-
       const mapping = mirabisuFilter.map((fitem) => {
-        if (fitem[8] !== '') {
+        if (fitem[7] !== '') {
           let shortage = fitem[14]
           let orderNum = 0
-          const ordernumCount = Number(fitem[8])
+          const ordernumCount = Number(fitem[7])
           if (shortage < 0) {
             while (shortage < 0) {
               shortage += ordernumCount
@@ -104,18 +104,18 @@ export const loader = async ({ request }: { request: Request }) => {
           } else {
             orderNum += ordernumCount
           }
-          return [fitem[3], orderNum]
+          return [fitem[2], orderNum]
         } else {
-          return [fitem[3], fitem[14] * -1]
+          return [fitem[2], fitem[14] * -1]
         }
       })
       resultData = mapping
     } else {
       vendorfilter.forEach((fitem) => {
-        if (fitem[8] !== '') {
+        if (fitem[7] !== '') {
           let shortage = fitem[14]
           let orderNum = 0
-          const ordernumCount = Number(fitem[8])
+          const ordernumCount = Number(fitem[7])
           if (shortage < 0) {
             while (shortage < 0) {
               shortage += ordernumCount
@@ -124,9 +124,9 @@ export const loader = async ({ request }: { request: Request }) => {
           } else {
             orderNum += ordernumCount
           }
-          resultData.push([fitem[3], orderNum])
+          resultData.push([fitem[2], orderNum])
         } else {
-          resultData.push([fitem[3], fitem[14] * -1])
+          resultData.push([fitem[2], fitem[14] * -1])
         }
       })
     }

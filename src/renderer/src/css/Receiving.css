@@ -34,8 +34,7 @@
 .insert_area_store {
   white-space: nowrap;
   display: flex;
-  margin-left: 20px;
-  margin-right: 20px;
+  margin-left: 10px;
   margin-bottom: 10px; /* 各行の間にスペースを追加 */
 }
 
@@ -276,3 +275,5 @@
 .insert_Title {
   margin-left: 10px;
 }
+
+

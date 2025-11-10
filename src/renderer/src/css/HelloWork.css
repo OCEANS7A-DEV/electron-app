@@ -5,6 +5,8 @@
   display: flex;
   flex-flow: column;
   padding-left: 20px;
+  max-width: 1250px;
+  min-width: 1250px;
 }
 
 .ButtonArea {

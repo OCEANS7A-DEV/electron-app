@@ -1,16 +1,4 @@
-.WordSearch-area {
-  position: fixed;
-  color: #222;
-  margin-left: 18px;
-  background-color: white;
-  padding: 5px;
-  border-radius: 4px;
-  z-index: 200;
-  height: calc(100% - 150px);
-  top: 60px;
-  display: flex;
-  flex-flow: column;
-}
+
 
 .search-input{
   font-size: 20px;
@@ -88,6 +76,7 @@
   flex: 1;
   overflow-y: scroll; /* 縦スクロールを追加 */
   width: 310px; /* 親要素の幅いっぱいに */
+  height: calc(100% - 170px); /* 親要素の高さから40px引いた高さ */
 }
 
 .search-data-table {
@@ -142,7 +131,18 @@
   max-height: calc(100% - 30px);
   display: flex;
   flex-direction: column;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transform: translateX(-100%);
+  opacity: 0;
+  visibility: hidden;
 }
+
+  .WordSearchA.show {
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transform: translateX(0); /* 元の位置に戻す */
+    opacity: 1;
+    visibility: visible;
+  }
 
 
 .OandC {

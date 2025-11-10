@@ -1,6 +1,10 @@
 import React, { useState, ChangeEvent, useEffect } from 'react'
 import '../css/ProductSearchWord.css'
-import { Button } from '@mui/material'
+import {
+  Box,
+  Button,
+  Collapse
+} from '@mui/material'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 /* @ts-ignore */
 import jaconv from 'jaconv';
@@ -9,13 +13,16 @@ import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import InputLabel from '@mui/material/InputLabel'
 
-export default function WordSearch({ DisplayStatus, setDisplayStatus, RegisterData }) {
+
+export default function WordSearch({RegisterData}) {
+  const [DisplayStatus, setDisplayStatus] = useState(false)
   const [SWord, setSWord] = useState<string>('')
   const [tableData, setTableData] = useState<any[]>([])
   const [data, setData] = useState<any[]>([])
-  const [buttonlabel, setButtonLabel] = useState('閉じる')
+  const [buttonlabel, setButtonLabel] = useState('')
   const [vendorSelect, setVendorSelect] = React.useState('')
   const [vendorList, setVendorList] = useState<any[]>([])
+
 
   // 入力値変更時に呼び出される
   const handlewordchange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +107,7 @@ export default function WordSearch({ DisplayStatus, setDisplayStatus, RegisterDa
 
       setTableData(searchresult)
     }
-  };
+  }
 
   useEffect(() => {
     dataSet()
@@ -111,82 +118,115 @@ export default function WordSearch({ DisplayStatus, setDisplayStatus, RegisterDa
     buttonlabelSet()
   }, [DisplayStatus])
 
+
+
+
   return (
-    <div className="WordSearch-area">
-      <div className="OandC">
+    <Box
+      sx={{
+        backgroundColor: 'white',
+        padding: '10px',
+        marginLeft: '10px',
+        borderRadius: '5px',
+        mt: -8,
+        height: `calc(100vh - 170px)`,
+        position: 'sticky',
+        top: '70px',
+        left: '10px'
+      }}
+    >
+      <Box
+        className="OandC"
+        sx={{
+          display: 'flex',
+          height: '40px',
+        }}
+      >
         <Button variant="outlined" onClick={switching} sx={{ height: '30px' }}>
           {buttonlabel}
         </Button>
-      </div>
-      {DisplayStatus && (
-        <div className="WordSearchA">
-          <div className="WordSearch-vendorFilter">
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">業者</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                value={vendorSelect}
-                label="業者"
-                onChange={handleVendorChange}
-                displayEmpty
-                size="small"
-                style={{ width: 200, backgroundColor: 'white', color: 'black' }}
-              >
-                <MenuItem value="">全て</MenuItem>
-                {vendorList.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
-          <div className="search-input">
-            <input
-              type="text"
-              value={SWord}
-              onChange={handlewordchange}
-              placeholder="検索ワードを入力"
-              onKeyDown={(e) => handleKeyDown(e)}
-            />
-            <Button variant="outlined" onClick={productReSearch} sx={{ height: '30px' }}>
-              検索
-            </Button>
-            <Button variant="outlined" onClick={productListUpdate} sx={{ height: '30px' }}>
-              更新
-            </Button>
-          </div>
-          <div className="search-table">
-            <table className="search-data-table">
-              <thead>
-                <tr>
-                  <th className="stcode">商品コード</th>
-                  <th className="stname">商品名</th>
-                </tr>
-              </thead>
-              <tbody className="datail">
-                {tableData.map((row, index) => (
-                  <tr key={index}>
-                    <td className="scode">
-                      <Button sx={{ height: '30px' }} onClick={() => ProductClick(row)}>
-                        {row.code}
-                      </Button>
-                    </td>
-                    <td className="sname">
-                      <Button
-                        sx={{ height: '30px', color: 'black' }}
-                        onClick={() => ProductClick(row)}
-                      >
-                        {row.name}
-                      </Button>
-                    </td>
+      </Box>
+      <Box>
+        <Collapse
+          orientation="horizontal"
+          in={DisplayStatus}
+        >
+          <Box>
+            <div className="WordSearch-vendorFilter">
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">業者</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  value={vendorSelect}
+                  label="業者"
+                  onChange={handleVendorChange}
+                  displayEmpty
+                  size="small"
+                  style={{ width: 200, backgroundColor: 'white', color: 'black' }}
+                >
+                  <MenuItem value="">全て</MenuItem>
+                  {vendorList.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            <div className="search-input">
+              <input
+                type="text"
+                value={SWord}
+                onChange={handlewordchange}
+                placeholder="検索ワードを入力"
+                onKeyDown={(e) => handleKeyDown(e)}
+              />
+              <Button variant="outlined" onClick={productReSearch} sx={{ height: '30px' }}>
+                検索
+              </Button>
+              <Button variant="outlined" onClick={productListUpdate} sx={{ height: '30px' }}>
+                更新
+              </Button>
+            </div>
+            <Box
+              className="search-table"
+              sx={{
+                height: `calc(100vh - 260px)`,
+                overflowY: 'scroll',
+              }}
+ 
+            >
+              <table className="search-data-table">
+                <thead>
+                  <tr>
+                    <th className="stcode">商品コード</th>
+                    <th className="stname">商品名</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-    </div>
+                </thead>
+                <tbody className="datail">
+                  {tableData.map((row, index) => (
+                    <tr key={index}>
+                      <td className="scode">
+                        <Button sx={{ height: '30px' }} onClick={() => ProductClick(row)}>
+                          {row.code}
+                        </Button>
+                      </td>
+                      <td className="sname">
+                        <Button
+                          sx={{ height: '30px', color: 'black' }}
+                          onClick={() => ProductClick(row)}
+                        >
+                          {row.name}
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Box>
+          </Box>
+        </Collapse>
+      </Box>
+    </Box>
   )
 }

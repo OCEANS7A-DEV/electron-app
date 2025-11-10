@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from 'react'
 import './inventorySearch.css'
-import { Button } from '@mui/material'
 import LinkBaner from '../../../comp/Linkbanar'
 import { Toaster } from 'react-hot-toast'
 import jaconv from 'jaconv'
-import { MenuItem } from '@mui/material'
-import FormControl from '@mui/material/FormControl'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+import { SelectChangeEvent } from '@mui/material/Select'
 import InputLabel from '@mui/material/InputLabel'
-import TextField from '@mui/material/TextField'
 
 import InventorySearchDetailDialog from './inventorySearchDetail'
 import CommingSoon from '../../CommingSoon'
 
-
 import SearchFilterDialog from './inventorySearchFilterDialog'
+
+
+import {
+  Button,
+  MenuItem,
+  FormControl,
+  Select,
+  TextField,
+  Box
+} from '@mui/material'
 
 
 
@@ -146,15 +151,21 @@ const InventorySearchPage = () => {
 
 
   return (
-    <div className="SearchPage-Window">
-      <div>
+    <Box
+      sx={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+      }}
+    >
+      <Box>
         <LinkBaner id="zaiko" />
         <Toaster />
-      </div>
-      <div className="SearchPage-Area">
-        <div className="SearchPage-inputArea">
-          <div className="SearchPage-Setting">
-            <div style={{ marginRight: 20 }}>
+      </Box>
+      <Box className="SearchPage-Area">
+        <Box className="SearchPage-inputArea">
+          <Box className="SearchPage-Setting">
+            <Box style={{ marginRight: 20 }}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">業者</InputLabel>
                 <Select
@@ -174,8 +185,8 @@ const InventorySearchPage = () => {
                   ))}
                 </Select>
               </FormControl>
-            </div>
-            <div>
+            </Box>
+            <Box>
               <TextField
                 label="検索ワード"
                 value={SearchWord}
@@ -183,22 +194,22 @@ const InventorySearchPage = () => {
                 onChange={(e) => searchWordChange(e)}
                 size="small"
               />
-            </div>
-            <div>
+            </Box>
+            <Box>
               <Button
                 variant="outlined"
                 onClick={() => setFilterDialogOpen(true)}
               >
                 絞り込み設定
               </Button>
-            </div>
-          </div>
-          <div className="SearchPage-StartButton">
+            </Box>
+          </Box>
+          <Box className="SearchPage-StartButton">
             <Button variant="outlined" onClick={Search}>
               検索
             </Button>
-          </div>
-        </div>
+          </Box>
+        </Box>
         <div className="SearchPage-ResultArea">
           <div className="SearchTable-headers">
             <table className="SearchPageTable">
@@ -246,8 +257,8 @@ const InventorySearchPage = () => {
           FilterConditions={FilterConditions}
           setFilterConditions={setFilterConditions}
         />
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }
 

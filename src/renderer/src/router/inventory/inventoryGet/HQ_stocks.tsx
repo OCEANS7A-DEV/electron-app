@@ -1,7 +1,7 @@
 import { useLoaderData } from "react-router-dom"
 import '../../../css/stocks.css'
 import LinkBaner from '../../../comp/Linkbanar'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Swal from 'sweetalert2'
 import { Button } from '@mui/material'
 
@@ -51,7 +51,6 @@ export const loader = async () => {
   return { inventoryData, archiveData, archiveDateList, PList }
 }
 
-
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -75,10 +74,11 @@ const CustomTabPanel = (props: TabPanelProps) => {
 
 export default function HQStocks() {
   const { inventoryData, archiveData, archiveDateList, PList } = useLoaderData<typeof loader>()
-
   const [stockData, setStockData] = useState([])
   const [value, setValue] = React.useState(0)
   const [date, setDate] = React.useState(archiveDateList[0].value)
+
+  const maxColumnRef = useRef(inventoryData[0]?.length - 1 || 0)
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -141,12 +141,13 @@ export default function HQStocks() {
       row[1],
       row[2],
       Number(row[3]).toLocaleString('ja-JP'),
-      row[13]
+      row[maxColumnRef.current]
     ])
     console.log(PrintData)
     await window.myInventoryAPI.storeSet('HQinventoryPrint', PrintData)
     window.myInventoryAPI.orderPrint('HQPrintContent')
   }
+
 
   return(
     <div>
@@ -188,7 +189,7 @@ export default function HQStocks() {
                       <td>{row[1]}</td>
                       <td>{row[2]}</td>
                       <td className="stocksNum">{Number(row[3]).toLocaleString('ja-JP')}</td>
-                      <td className="stocksNum">{row[13]}</td>
+                      <td className="stocksNum">{row[maxColumnRef.current]}</td>
                     </tr>
                   ))
                 }
