@@ -274,11 +274,10 @@ export default function ReceivingPage(): JSX.Element {
   const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>, rowIndex: number) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      const inputElement = e.target as HTMLInputElement
-      const form = inputElement.form
+      const form = (e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement).form
       if(form){
         const elements = Array.from(form.elements) as HTMLElement[]
-        const index = elements.indexOf(inputElement)
+        const index = elements.indexOf(e.target as HTMLElement)
         const nextElement = elements[index + 1] as HTMLInputElement | HTMLButtonElement
         if (nextElement && nextElement.type !== 'button') {
           if (nextElement.nodeName == "FIELDSET") {

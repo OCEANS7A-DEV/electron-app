@@ -109,15 +109,11 @@ export default function StoreOrderPage(): JSX.Element {
 
   const [ProductdetailsList, setProductdetailsList] = useState([])
 
-
-
   const [dateValue, setDateValue] = useState<Dayjs | null>(null);
-
-
 
   const [DialogOpen, setDialogOpen] = useState(false)
 
-
+  const BeforeDataRef = useRef<any[]>([])
 
 
 
@@ -181,7 +177,10 @@ export default function StoreOrderPage(): JSX.Element {
           Now[1]
         ]
       })
-
+      let deleteCount = DeleteRowNumRef.current
+      if (deleteCount == 0) {
+        deleteCount = BeforeDataRef.current.length
+      }
       if (formData.length >= 1) {
         await window.myInventoryAPI.DataInsert({
           sheetName: '店舗へ',
@@ -193,7 +192,7 @@ export default function StoreOrderPage(): JSX.Element {
             targetCol: 10,
             formula: '=RC[-3]*RC[-1]'
           },
-          deleteNum: DeleteRowNumRef.current
+          deleteNum: deleteCount
         })
         DeleteRowNumRef.current = formData.length
       }
@@ -374,6 +373,7 @@ export default function StoreOrderPage(): JSX.Element {
       })
     }
     DeleteRowNumRef.current = getValues().rows.filter((item) => item.name !== '').length
+    BeforeDataRef.current = filtered
     return filtered
   }
 
