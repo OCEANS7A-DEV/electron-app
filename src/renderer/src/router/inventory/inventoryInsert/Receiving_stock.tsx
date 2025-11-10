@@ -151,8 +151,7 @@ export default function ReceivingPage(): JSX.Element {
   })
 
   useEffect(() => {
-    const subscription = watch((value, {name}) => {
-      console.log(value)
+    const subscription = watch((_value, {name}) => {
       if (name && name.startsWith('rows')) {
         SaveInputContents() 
       }
@@ -271,38 +270,47 @@ export default function ReceivingPage(): JSX.Element {
     setDateValue(dayjs(today))
   }, [])
 
-  const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>, rowIndex: number) => {
+  const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       const form = (e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement).form
-      if(form){
-        const elements = Array.from(form.elements) as HTMLElement[]
-        const index = elements.indexOf(e.target as HTMLElement)
-        const nextElement = elements[index + 1] as HTMLInputElement | HTMLButtonElement
-        if (nextElement && nextElement.type !== 'button') {
-          if (nextElement.nodeName == "FIELDSET") {
-            const nextTextFieldElement = elements[index + 2] as HTMLInputElement | HTMLButtonElement
-            nextTextFieldElement.focus()
-          } else {
-            nextElement.focus()
+      if (form) {
+        const elements = Array.from(form.elements) as HTMLElement[];
+        const index = elements.indexOf(e.target as HTMLElement);
+        let focused = false;
+        for (let i = index + 1; i < elements.length; i++) {
+          const next = elements[i] as HTMLElement;
+          if (
+            next &&
+            typeof next.focus === 'function' &&
+            !next.hasAttribute('disabled') &&
+            next.getAttribute('tabindex') !== '-1' &&
+            (next instanceof HTMLInputElement ||
+              next instanceof HTMLSelectElement ||
+              next instanceof HTMLTextAreaElement ||
+              next instanceof HTMLButtonElement) &&
+            next.type !== 'button'
+          ) {
+            next.focus();
+            const headerHeight = 80;
+            const footerHeight = 60;
+            const buffer = 20;
+            const rect = next.getBoundingClientRect();
+            const isOutOfViewTop = rect.top < headerHeight + buffer;
+            const isOutOfViewBottom = rect.bottom > window.innerHeight - footerHeight - buffer;
+
+            if (isOutOfViewTop || isOutOfViewBottom) {
+              window.scrollBy({
+                top: rect.top - headerHeight - buffer,
+                behavior: 'smooth',
+              });
+            }
+            focused = true;
+            break;
           }
-        } else {
-          const nextCodeInput = document.querySelector<HTMLInputElement>(
-            `input[name="rows.${rowIndex + 1}.code"]`
-          )
-          nextCodeInput?.focus()
-          const headerHeight = 80;
-          const footerHeight = 60;
-          const buffer = 20;
-          const rect = nextElement.getBoundingClientRect();
-          const isOutOfViewTop = rect.top < headerHeight + buffer;
-          const isOutOfViewBottom = rect.bottom > window.innerHeight - footerHeight - buffer;
-          if (isOutOfViewTop || isOutOfViewBottom) {
-            window.scrollBy({
-              top: rect.top - headerHeight - buffer,
-              behavior: 'smooth',
-            });
-          }
+        }
+        if (!focused) {
+          addNewForm()
         }
       }
     }
@@ -559,7 +567,7 @@ export default function ReceivingPage(): JSX.Element {
                     })}
                     placeholder="商品コード"
                     size="small"
-                    onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                    onKeyDown={(e) => handleEnterFocusNext(e)}
                     inputProps={{
                       sx: placeholderStyle,
                       style: { textAlign: 'right' }
@@ -574,7 +582,7 @@ export default function ReceivingPage(): JSX.Element {
                     {...register(`rows.${index}.name`)}
                     placeholder="商品名"
                     size="small"
-                    onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                    onKeyDown={(e) => handleEnterFocusNext(e)}
                     inputProps={{
                       sx: placeholderStyle
                     }}
@@ -591,7 +599,7 @@ export default function ReceivingPage(): JSX.Element {
                     helperText={errors.rows?.[index]?.quantity?.message}
                     placeholder="数量"
                     size="small"
-                    onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                    onKeyDown={(e) => handleEnterFocusNext(e)}
                     inputProps={{
                       sx: placeholderStyle,
                       style: { textAlign: 'right' }
@@ -615,7 +623,7 @@ export default function ReceivingPage(): JSX.Element {
                       ...textFieldStyle,
                       width: 100,
                     }}
-                    onKeyDown={(e) => handleEnterFocusNext(e, index)}
+                    onKeyDown={(e) => handleEnterFocusNext(e)}
                   />
                   <Button
                     variant="outlined"
