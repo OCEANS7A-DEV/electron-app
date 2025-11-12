@@ -4,8 +4,8 @@ import React from 'react'
 // MUIコンポーネント
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
-import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 
 // MUIアイコン

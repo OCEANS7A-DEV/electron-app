@@ -75,6 +75,7 @@
     "@mui/x-data-grid": "^8.0.0",
     "@mui/x-date-pickers": "^8.5.0",
     "@types/react": "^19.1.6",
+    "@vitejs/plugin-react": "^5.1.0",
     "better-sqlite3": "^12.2.0",
     "dayjs": "^1.11.13",
     "electron-log": "^5.4.0",

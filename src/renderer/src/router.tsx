@@ -1,6 +1,8 @@
 // router.ts
 import React from 'react'
 import { createHashRouter } from 'react-router-dom'
+
+// ページ
 import ReceivingPage from './router/inventory/inventoryInsert/Receiving_stock'
 import StoreOrderPage from './router/inventory/inventoryInsert/storeOrder'
 import ProductDetailChangePage, {
@@ -26,9 +28,12 @@ import NetDetailsPrint, {
 } from './router/inventory/inventoryInsert/OrderDetails'
 import PDFOperationPage from './router/HQwork/PDFOperation'
 import SystemSettingPage from './router/setting/systemSetting'
-import InventoryAmount, {
-  loader as InventoryAmountLoader
-} from './router/inventory/inventoryGet/InventoryAmount'
+
+
+// 在庫金額
+import InventoryAmount from '@InvAmount/Page'
+import { loader as InventoryAmountLoader } from '@InvAmount/useLogic'
+
 import GoogleWindow from './router/setting/GoogleLogin'
 import LauncherPage from './router/launcher'
 import Uriage from './router/sales/Uriage'

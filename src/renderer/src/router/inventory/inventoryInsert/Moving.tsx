@@ -1,18 +1,42 @@
+// React
 import React, { useState, useEffect } from 'react';
+
+// フォーム
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import { Button, FormControl, InputLabel } from '@mui/material'
-import WordSearch from '../../../comp/ProductSearchWord'
-import LinkBaner from '../../../comp/Linkbanar'
-import toast, { Toaster } from 'react-hot-toast';
-import '../../../css/Receiving.css'
-import SendIcon from '@mui/icons-material/Send'
 import { SubmitHandler } from 'react-hook-form'
-import { MenuItem } from '@mui/material'
-import Select from '@mui/material/Select';
+
+// MUI
+import InputLabel from '@mui/material/InputLabel'
+import FormControl from '@mui/material/FormControl'
+import Button from '@mui/material/Button'
+import Select from '@mui/material/Select'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { createTheme, ThemeProvider } from '@mui/material/styles'
+import MenuItem from '@mui/material/MenuItem'
+
+// MUIアイコン
+import SendIcon from '@mui/icons-material/Send'
+
+// 自作コンポ
+import WordSearch from '../../../comp/ProductSearchWord'
+import LinkBaner from '../../../comp/Linkbanar'
+
+// CSS
+import '../../../css/Receiving.css'
+
+// toast
+import toast, { Toaster } from 'react-hot-toast'
+
+
+
+
+
+
+
+
+
 import dayjs from 'dayjs'
 import 'dayjs/locale/ja'
 
@@ -274,9 +298,6 @@ export default function InventoryMoving() {
               <CommingSoon />
             ) : (
               <>
-                {/* <div className='window_top' style={{justifyContent: 'center'}}>
-                  <h2 style={{color: 'white'}}>店舗間移動用ページ</h2>
-                </div> */}
                 <div style={{paddingTop: 10}}>
                   <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ja">
                     <ThemeProvider theme={darkTheme}>
@@ -399,24 +420,6 @@ export default function InventoryMoving() {
             <Button variant="outlined" onClick={insert} endIcon={<SendIcon />}>
               入庫実行
             </Button>
-            {/* <Button variant="outlined" onClick={handleOpenDialog} endIcon={<SendIcon />}>
-              入庫実行
-            </Button> */}
-            {/* <SweetAlert2
-              {...swalProps}
-              didClose={() => {
-                console.log('ダイアログが閉じられました');
-                setSwalProps({ show: false });
-              }}
-              customClass={{
-                popup: 'custom-swal-popup',
-                htmlContainer: 'custom-swal-html'
-              }}
-            >
-              <StoreDialogTable
-                tableData={getValues().rows}
-              />
-            </SweetAlert2> */}
           </div>
         </div>
       </div>

@@ -12,7 +12,8 @@
     "paths": {
       "@renderer/*": [
         "src/renderer/src/*"
-      ]
+      ],
+      "@InvAmount/*": [ "./router/inventory/InventoryAmount/*" ]
     }
   }
 }
