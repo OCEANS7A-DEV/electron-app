@@ -4,16 +4,21 @@
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.vue",
-    "src/preload/*.d.ts"
-, "src/renderer/src/index.tsx"  ],
+    "src/preload/*.d.ts",
+    "src/renderer/src/index.tsx"
+  ],
   "compilerOptions": {
     "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
       "@renderer/*": [
         "src/renderer/src/*"
       ],
-      "@InvAmount/*": [ "./src/router/inventory/InventoryAmount/*" ]
+      "@InvAmount/*": [ "src/renderer/src/router/inventory/InventoryAmount/*" ]
     }
   }
 }
