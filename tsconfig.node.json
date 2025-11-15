@@ -9,7 +9,7 @@
     "target": "ESNext",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "types": [ "node" ],
+    "types": [ "node", "better-sqlite3" ],
     "strict": true,
     "skipLibCheck": true
   }

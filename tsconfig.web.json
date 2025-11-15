@@ -9,25 +9,21 @@
   ],
   "compilerOptions": {
     "composite": true,
-
-    // ▼▼ Web/React 用の基本設定を追加 ▼▼
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": [ "ESNext", "DOM", "DOM.Iterable" ],
-    "jsx": "react-jsx", // React 17以降のJSXトランスフォーム
+    "jsx": "react-jsx",
     "strict": true,
     "skipLibCheck": true,
-    // ▲▲ ここまで ▲▲
-
-    // ▼▼ エラー解消のための設定（既存の設定を再確認） ▼▼
     "module": "ESNext",
-    "moduleResolution": "bundler", // "nodenext" ではなく "bundler" が Vite では標準
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
       "@renderer/*": [ "src/renderer/src/*" ],
-      "@InvAmount/*": [ "src/renderer/src/router/inventory/InventoryAmount/*" ]
+      "@InvAmount/*": [ "src/renderer/src/router/inventory/InventoryAmount/*" ],
+      "types": [ "node", "better-sqlite3" ]
     }
   }
 }

@@ -1,14 +1,11 @@
 {
   "include": [
-    // Paths are relative to src/renderer
     "src/env.d.ts",
     "src/**/*",
-    "../preload/*.d.ts" // 階層を一つ上がってpreloadの型を読み込む
+    "../preload/*.d.ts"
   ],
   "compilerOptions": {
     "composite": true,
-
-    // @electron-toolkit/tsconfig/tsconfig.web.json からの基本設定
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": [ "ESNext", "DOM", "DOM.Iterable" ],
@@ -16,18 +13,14 @@
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-
-    // エラー解消のための設定
     "module": "ESNext",
-    "moduleResolution": "bundler", // 'react-router-dom' エラーの解消
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true, // 'React' デフォルトインポートエラーの解消
-
-    // エイリアス設定 (src/renderer からの相対パス)
+    "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
       "@renderer/*": [ "./src/*" ],
-      "@InvAmount/*": [ "./src/router/inventory/InventoryAmount/*" ] // エイリアスエラーの解消
+      "@InvAmount/*": [ "./src/router/inventory/InventoryAmount/*" ]
     }
   }
 }
