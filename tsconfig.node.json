@@ -4,6 +4,13 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "out/main",
-    "moduleResolution": "bundler"
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "types": [ "node" ],
+    "strict": true,
+    "skipLibCheck": true
   }
 }
