@@ -4,7 +4,7 @@ import { createHashRouter } from 'react-router-dom'
 
 // ページ
 import ReceivingPage from './router/inventory/inventoryInsert/Receiving_stock'
-import StoreOrderPage from './router/inventory/inventoryInsert/storeOrder'
+
 import ProductDetailChangePage, {
   loader as productsLoader
 } from './router/inventory/inventorySetting/ProductListUpdata'
@@ -31,8 +31,12 @@ import SystemSettingPage from './router/setting/systemSetting'
 
 
 // 在庫金額
-import InventoryAmount from '@InvAmount/Page'
+import InventoryAmount from '@Inventory/InventoryAmount/Page'
 import { loader as InventoryAmountLoader } from '@InvAmount/useLogic'
+
+// 店舗注文
+import StoreOrderPage from '@Inventory/StoreOrder/Page'
+
 
 import GoogleWindow from './router/setting/GoogleLogin'
 import LauncherPage from './router/launcher'

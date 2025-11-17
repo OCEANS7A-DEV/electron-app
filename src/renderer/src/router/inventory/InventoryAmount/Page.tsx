@@ -1,7 +1,5 @@
 // Page.tsx
-
 // React
-import React from 'react'
 import type { JSX } from 'react'
 import { useLogic } from './useLogic'
 

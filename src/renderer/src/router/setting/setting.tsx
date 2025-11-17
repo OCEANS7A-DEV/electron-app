@@ -5,7 +5,7 @@ import LinkBaner from '../../comp/Linkbanar'
 import '../../css/setting.css'
 
 import StoreDataUpDate from '../../comp/storeDataUpdate'
-import VendorDataUpDate from '@renderer/comp/vendorDataUpdata'
+import VendorDataUpDate from '../../comp/vendorDataUpdata'
 import TypeDataUpDate from '../../comp/productType'
 
 

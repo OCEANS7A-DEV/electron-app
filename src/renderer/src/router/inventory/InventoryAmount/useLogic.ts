@@ -69,8 +69,6 @@ export const useLogic = () => {
   const SelectDate = useRef<string>('')
   const [DATA, setDATA] = useState(loaderData)
 
-
-
   const { control, register, handleSubmit, getValues, setValue, watch, reset } =
     useForm<FormValues>({
       defaultValues: {

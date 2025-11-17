@@ -1,9 +1,8 @@
 {
-  // "extends" を削除し、Web/React用の設定をすべて書き込みます
   "include": [
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
-    "src/renderer/src/**/*.vue", // .tsx ファイルも自動的に含まれます
+    "src/renderer/src/**/*.vue",
     "src/preload/*.d.ts",
     "src/renderer/src/index.tsx"
   ],

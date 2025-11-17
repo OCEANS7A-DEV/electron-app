@@ -20,7 +20,8 @@
     "baseUrl": ".",
     "paths": {
       "@renderer/*": [ "./src/*" ],
-      "@InvAmount/*": [ "./src/router/inventory/InventoryAmount/*" ]
+      "@InvAmount/*": [ "src/renderer/src/router/inventory/InventoryAmount/*" ],
+      "@Inventory/*": [ "src/renderer/src/router/inventory/*" ]
     }
   }
 }
