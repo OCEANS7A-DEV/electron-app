@@ -44,6 +44,7 @@ export const useLogic = () => {
   const [storeSelect, setStoreSelect] = useState('')
   const [storeOptions, setStoreOptions] = useState<SelectOption[]>([])
   const [dateValue, setDateValue] = useState<Dayjs | null>(null)
+  const [DialogOpen, setDialogOpen] = useState(false)
   const typeRef = useRef('')
   const insertDateRef = useRef('')
   const DeleteRowNumRef = useRef(0)
@@ -240,6 +241,10 @@ export const useLogic = () => {
     if (storeSelect === '' || data.rows.length == 0) {
       return
     }
+    setDialogOpen(true)
+  }
+
+  const insertPost = () => {
     const DataSubmit = async () => {
       const insertData = await insertDataFormat(data.rows, insertDateRef.current, storeSelect)
       if (insertData.length >= 1) {
@@ -345,6 +350,12 @@ export const useLogic = () => {
     DetailsGet,
     deleteRow,
     insertRow,
-    addNewForm
+    addNewForm,
+
+    getValues,
+    insertDateRef,
+    DialogOpen,
+    setDialogOpen,
+    insertPost
   }
 }

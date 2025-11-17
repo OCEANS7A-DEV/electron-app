@@ -1,3 +1,6 @@
+
+import './style.css'
+
 // React
 import type { JSX } from 'react'
 import { useLogic } from './useLogic'
@@ -25,6 +28,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 // 独自コンポーネント
 import LinkBaner from '../../../comp/Linkbanar'
 import WordSearch from '../../../comp/ProductSearchWord'
+import MyDialog from './Dialog'
 
 // トースト通知コンポーネント
 import { Toaster } from 'react-hot-toast'
@@ -53,7 +57,12 @@ const StoreOrderPage = (): JSX.Element => {
     DetailsGet,
     deleteRow,
     insertRow,
-    addNewForm
+    addNewForm,
+    getValues,
+    insertDateRef,
+    DialogOpen,
+    setDialogOpen,
+    insertPost
   } = useLogic()
 
   
@@ -374,7 +383,14 @@ const StoreOrderPage = (): JSX.Element => {
                     注文実行
                   </Button>
                 </Box>
-                
+                <MyDialog
+                  data={getValues('rows')}
+                  InsertDate={insertDateRef.current}
+                  DialogOpen={DialogOpen}
+                  setDialogOpen={setDialogOpen}
+                  insertPost={insertPost}
+                  storeName={storeSelect}
+                />
               </Box>
             </Box>
           </Box>
