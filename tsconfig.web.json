@@ -22,7 +22,8 @@
     "paths": {
       "@renderer/*": [ "src/renderer/src/*" ],
       "@InvAmount/*": [ "src/renderer/src/router/inventory/InventoryAmount/*" ],
-      "types": [ "node", "better-sqlite3" ]
+      "types": [ "node", "better-sqlite3" ],
+      "@Inventory/*": [ "src/renderer/src/router/inventory/*" ]
     }
   }
 }

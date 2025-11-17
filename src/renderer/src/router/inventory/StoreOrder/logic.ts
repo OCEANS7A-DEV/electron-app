@@ -2,7 +2,7 @@
 import {
   SelectOption,
   FormValues,
-  storeTypes
+  storeTypes,
 } from './types'
 
 export const defaultRowData = {

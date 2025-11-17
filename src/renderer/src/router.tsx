@@ -3,7 +3,7 @@ import React from 'react'
 import { createHashRouter } from 'react-router-dom'
 
 // ページ
-import ReceivingPage from './router/inventory/inventoryInsert/Receiving_stock'
+
 
 import ProductDetailChangePage, {
   loader as productsLoader
@@ -36,6 +36,9 @@ import { loader as InventoryAmountLoader } from '@InvAmount/useLogic'
 
 // 店舗注文
 import StoreOrderPage from '@Inventory/StoreOrder/Page'
+
+// 本部入庫
+import ReceivingPage from './router/inventory/inventoryInsert/Receiving_stock'
 
 
 import GoogleWindow from './router/setting/GoogleLogin'

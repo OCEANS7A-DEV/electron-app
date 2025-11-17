@@ -36,9 +36,9 @@ import {
 
 import {
   SelectOption,
-  FormValues
+  FormValues,
+  OrderGetTypes
 } from './types'
-
 
 export const useLogic = () => {
   const [storeSelect, setStoreSelect] = useState('')
@@ -47,7 +47,7 @@ export const useLogic = () => {
   const typeRef = useRef('')
   const insertDateRef = useRef('')
   const DeleteRowNumRef = useRef(0)
-  const BeforeDataRef = useRef<any[]>([])
+  const BeforeDataRef = useRef<OrderGetTypes[]>([])
   const InsertActionRef = useRef('')
 
   const { control, register, handleSubmit, getValues, setValue, reset, watch } =
@@ -91,7 +91,7 @@ export const useLogic = () => {
     let count = 0
     MissingData.forEach(async(item) => {
       const OutStockStr = item[11].split("、")
-      const OutStocktargetData = OutStockStr.find((item) =>
+      const OutStocktargetData = OutStockStr.find((item: string[]) =>
         (item.includes('欠品') && !item.includes('前回欠品分')
         ) || item.includes('前回欠品分欠品')
       )
@@ -111,7 +111,7 @@ export const useLogic = () => {
     })
 
     const targetDateStr = new Date(InsertDate).toDateString()
-    const filtered = ordersGet.filter((item) =>
+    const filtered = ordersGet.filter((item: OrderGetTypes) =>
       new Date(item[0]).toDateString() == targetDateStr &&
       item[1] == storeSelect &&
       item[11] !== '前回欠品分'
@@ -127,18 +127,17 @@ export const useLogic = () => {
           await addNewForm()
         }
       }
-
-      filtered.forEach(async(item) => {
+      filtered.forEach(async (item: OrderGetTypes) => {
         const result = await productGet(item[3], true)
         setValue(`rows.${count}.vendor`, item[2])
-        setValue(`rows.${count}.code`, item[3])
+        setValue(`rows.${count}.code`, String(item[3]))
         setValue(`rows.${count}.detailList`, result.detailsData)
         const detail = { value: item[5], label: item[5] }
         setValue(`rows.${count}.detail`, detail)
         setValue(`rows.${count}.name`, item[4])
-        setValue(`rows.${count}.quantity`, item[6])
+        setValue(`rows.${count}.quantity`, String(item[6]))
         setValue(`rows.${count}.person`, item[10])
-        setValue(`rows.${count}.price`, item[8])
+        setValue(`rows.${count}.price`, String(item[8]))
         setValue(`rows.${count}.remarks`, item[11])
         count++
       })
@@ -226,14 +225,14 @@ export const useLogic = () => {
           }
         }
         if (!focused) {
-          //addNewForm()
+          addNewForm()
         }
       }
     }
   }
 
 
-  const RegisterData = (data) => {
+  const RegisterData = (data: any) => {
     console.log(data)
   }
 
@@ -277,8 +276,9 @@ export const useLogic = () => {
     typeRef.current = type
   }
 
-  const handleDateChange = (date) => {
-    const NewDate = new Date(date).toLocaleDateString()
+  const handleDateChange = (date: Dayjs | null) => {
+    const value = date ? date.toDate() : new Date();
+    const NewDate = value.toLocaleDateString()
     setDateValue(dayjs(date))
     insertDateRef.current = NewDate
   }

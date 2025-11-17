@@ -25,3 +25,20 @@ export type storeTypes = [
   string,
   string
 ]
+
+export type OrderGetTypes = [
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  number,
+  string,
+  number,
+  number,
+  string,
+  string,
+  string
+]
+
