@@ -4,7 +4,7 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "out/main",
-    "module": "NodeNext",
+    "module": "ESNext",
     "moduleResolution": "bundler",
     "target": "ESNext",
     "allowSyntheticDefaultImports": true,
