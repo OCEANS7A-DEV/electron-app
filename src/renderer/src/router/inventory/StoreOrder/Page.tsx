@@ -1,4 +1,3 @@
-
 import './style.css'
 
 // React
@@ -12,7 +11,6 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import Autocomplete from '@mui/material/Autocomplete'
 
 // MUIアイコン
 import SendIcon from '@mui/icons-material/Send'
@@ -29,17 +27,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import LinkBaner from '../../../comp/Linkbanar'
 import WordSearch from '../../../comp/ProductSearchWord'
 import MyDialog from './Dialog'
+import DetailSelectBox from './SelectBox'
 
 // トースト通知コンポーネント
 import { Toaster } from 'react-hot-toast'
 
-
-import {
-  Controller,
-} from 'react-hook-form'
-
 const StoreOrderPage = (): JSX.Element => {
-
   const {
     RegisterData,
     fields,
@@ -54,7 +47,6 @@ const StoreOrderPage = (): JSX.Element => {
     handleDateChange,
     handleEnterFocusNext,
     productCodeSearch,
-    DetailsGet,
     deleteRow,
     insertRow,
     addNewForm,
@@ -65,7 +57,6 @@ const StoreOrderPage = (): JSX.Element => {
     insertPost
   } = useLogic()
 
-  
   return (
     <Box>
       <Box>
@@ -79,7 +70,9 @@ const StoreOrderPage = (): JSX.Element => {
             display: 'flex'
           }}
         >
-          <WordSearch RegisterData={RegisterData}/>
+          <Box>
+            <WordSearch RegisterData={RegisterData} />
+          </Box>
           <Box>
             <Box
               sx={{
@@ -139,14 +132,14 @@ const StoreOrderPage = (): JSX.Element => {
                         sx: {
                           fontSize: '1rem',
                           '& input': {
-                            height: '1.5em',
+                            height: '1.5em'
                           },
-                          width: '150px',
-                        },
-                      },
+                          width: '150px'
+                        }
+                      }
                     }}
                     value={dateValue}
-                    onChange={(e) => handleDateChange(e)}
+                    onChange={handleDateChange}
                   />
                 </LocalizationProvider>
               </Box>
@@ -159,9 +152,7 @@ const StoreOrderPage = (): JSX.Element => {
               onSubmit={handleSubmit(onSubmit)}
             >
               {fields.map((field, index) => (
-                <Box
-                  key={field.id}
-                >
+                <Box key={field.id}>
                   <Box
                     sx={{
                       paddingTop: '6px',
@@ -179,7 +170,7 @@ const StoreOrderPage = (): JSX.Element => {
                         color: 'white'
                       }}
                     >
-                      <Typography>{index}</Typography>
+                      <Typography>{index + 1}</Typography>
                     </Box>
                     <Box
                       sx={{
@@ -207,8 +198,10 @@ const StoreOrderPage = (): JSX.Element => {
                         {...register(`rows.${index}.code`)}
                         size="small"
                         placeholder="商品コード"
-                        inputProps={{
-                          style: { textAlign: 'right' }
+                        slotProps={{
+                          htmlInput: {
+                            style: { textAlign: 'right' }
+                          }
                         }}
                         onKeyDown={(e) => handleEnterFocusNext(e)}
                         onBlur={() => productCodeSearch(index)}
@@ -227,7 +220,6 @@ const StoreOrderPage = (): JSX.Element => {
                         {...register(`rows.${index}.name`)}
                         size="small"
                         placeholder="商品名"
-                        
                         onKeyDown={(e) => handleEnterFocusNext(e)}
                       />
                     </Box>
@@ -235,35 +227,13 @@ const StoreOrderPage = (): JSX.Element => {
                       sx={{
                         borderRadius: '4px',
                         marginLeft: '8px',
-                        backgroundColor: 'white',
+                        backgroundColor: 'white'
                       }}
                     >
-                      <Controller
-                        name={`rows.${index}.detail`}
+                      <DetailSelectBox
                         control={control}
-                        render={({ field }) => (
-                          <Autocomplete
-                            options={DetailsGet(index)}
-                            getOptionLabel={(option) => option.label}
-                            isOptionEqualToValue={(option, value) => option.value === value?.value}
-                            value={field.value || null}
-                            onChange={(_, newValue) => field.onChange(newValue)}
-                            onKeyDown={(e) => handleEnterFocusNext(e)}
-                            openOnFocus
-                            autoHighlight
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label="詳細"
-                                size="small"
-                                style={{
-                                  width: 160,
-                                  height: 38,
-                                }}
-                              />
-                            )}
-                          />
-                        )}
+                        index={index}
+                        handleEnterFocusNext={handleEnterFocusNext}
                       />
                     </Box>
                     <Box
@@ -279,8 +249,10 @@ const StoreOrderPage = (): JSX.Element => {
                         size="small"
                         placeholder="数量"
                         onKeyDown={(e) => handleEnterFocusNext(e)}
-                        inputProps={{
-                          style: { textAlign: 'right' }
+                        slotProps={{
+                          htmlInput: {
+                            style: { textAlign: 'right' }
+                          }
                         }}
                       />
                     </Box>
@@ -297,8 +269,10 @@ const StoreOrderPage = (): JSX.Element => {
                         size="small"
                         placeholder="単価"
                         onKeyDown={(e) => handleEnterFocusNext(e)}
-                        inputProps={{
-                          style: { textAlign: 'right' }
+                        slotProps={{
+                          htmlInput: {
+                            style: { textAlign: 'right' }
+                          }
                         }}
                       />
                     </Box>
@@ -338,16 +312,10 @@ const StoreOrderPage = (): JSX.Element => {
                         whiteSpace: 'nowrap'
                       }}
                     >
-                      <Button
-                        variant="outlined"
-                        onClick={() => insertRow(index)}
-                      >
+                      <Button variant="outlined" onClick={() => insertRow(index)}>
                         追加
                       </Button>
-                      <Button
-                        variant="outlined"
-                        onClick={() => deleteRow(index)}
-                      >
+                      <Button variant="outlined" onClick={() => deleteRow(index)}>
                         削除
                       </Button>
                     </Box>

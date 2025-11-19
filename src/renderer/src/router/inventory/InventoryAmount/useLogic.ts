@@ -18,29 +18,17 @@ import {
 
 import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form'
 
-export interface SelectStoreOption {
-  value: string
-  label: string
-  type: string
-}
+import { storeGetType, FormValues, GetDataType, UseLogicReturn } from './types'
 
-export type FormValues = {
-  rows: {
-    store: string
-    stocking: string
-    used: string
-    inventoryamount: string
-  }[]
-}
-
-
-const defaultSet = (stores): FormValues['rows'] => {
+const defaultSet = (stores: storeGetType[]): FormValues['rows'] => {
   const result = defaultDataFormat(stores)
   return result
 }
 
-
-export const loader = async () => {
+export const loader = async (): Promise<{
+  loaderData: GetDataType[]
+  storenames: storeGetType[]
+}> => {
   const loaderData = await window.myInventoryAPI.ListGet({
     sheetName: '店舗在庫金額',
     action: 'InputDataGet',
@@ -52,15 +40,16 @@ export const loader = async () => {
     action: 'ListGet',
     ranges: 'A2:C'
   })
-  const storenames: SelectStoreOption[] = stores.filter(
-    (row) => row[0] !== '' && row[2] == 'DM' && row[1] !== '会議室'
+
+  const storenames: storeGetType[] = stores.filter(
+    (row: [string | number, string, string]) =>
+      row[0] !== '' && row[2] == 'DM' && row[1] !== '会議室'
   )
 
   return { loaderData, storenames }
 }
 
-
-export const useLogic = () => {
+export const useLogic = (): UseLogicReturn => {
   const { loaderData, storenames } = useLoaderData<typeof loader>()
   const { yearList, monthList } = DateLists()
   const [Year, setYear] = useState<number>(0)
@@ -81,8 +70,6 @@ export const useLogic = () => {
     name: 'rows'
   })
 
-
-
   useEffect(() => {
     const { year, month } = NowYearMonth()
     setYear(year)
@@ -97,8 +84,7 @@ export const useLogic = () => {
     }
     const selectDate = `${Year}/${Month}`
     SelectDate.current = selectDate
-    const filter = DATA.filter((item) => DateFormat(item[0]) == selectDate)
-
+    const filter = DATA.filter((item: GetDataType) => DateFormat(item[0]) == selectDate)
     if (filter.length == 0) {
       insertActionRef.current = 'insert'
       reset({
@@ -118,18 +104,15 @@ export const useLogic = () => {
     setMonth(e.target.value)
   }
 
-
-  const dataSet = (data): void => {
+  const dataSet = (data: GetDataType[]): void => {
     const fData = watch().rows
-    data.forEach((item) => {
+    data.forEach((item: GetDataType) => {
       const indexNum = fData.findIndex((row) => row.store == item[1])
-      setValue(`rows.${indexNum}.stocking`, item[2])
-      setValue(`rows.${indexNum}.used`, item[3])
-      setValue(`rows.${indexNum}.inventoryamount`, item[4])
+      setValue(`rows.${indexNum}.stocking`, String(item[2]))
+      setValue(`rows.${indexNum}.used`, String(item[3]))
+      setValue(`rows.${indexNum}.inventoryamount`, String(item[4]))
     })
   }
-
-
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (insertActionRef.current == 'insert') {
@@ -142,7 +125,7 @@ export const useLogic = () => {
     DataSend(data.rows)
   }
 
-  const DataSend = async (data): Promise<void> => {
+  const DataSend = async (data: FormValues['rows']): Promise<void> => {
     const formData = FormDataFormat(data, SelectDate.current)
     const actionstring = insertActionRef.current
     if (formData.length >= 1) {
@@ -156,16 +139,10 @@ export const useLogic = () => {
     }
   }
 
-
-
   const Reget = async (): Promise<void> => {
     const getData = await DataGet()
     setDATA(getData)
   }
-
-
-
-
 
   return {
     yearList,

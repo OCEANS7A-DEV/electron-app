@@ -4,7 +4,6 @@ import { createHashRouter } from 'react-router-dom'
 
 // ページ
 
-
 import ProductDetailChangePage, {
   loader as productsLoader
 } from './router/inventory/inventorySetting/ProductListUpdata'
@@ -29,7 +28,6 @@ import NetDetailsPrint, {
 import PDFOperationPage from './router/HQwork/PDFOperation'
 import SystemSettingPage from './router/setting/systemSetting'
 
-
 // 在庫金額
 import InventoryAmount from '@Inventory/InventoryAmount/Page'
 import { loader as InventoryAmountLoader } from '@InvAmount/useLogic'
@@ -39,7 +37,6 @@ import StoreOrderPage from '@Inventory/StoreOrder/Page'
 
 // 本部入庫
 import ReceivingPage from './router/inventory/inventoryInsert/Receiving_stock'
-
 
 import GoogleWindow from './router/setting/GoogleLogin'
 import LauncherPage from './router/launcher'
@@ -52,12 +49,9 @@ import StaffData, { loader as StaffDataLoader } from './router/HQwork/StaffData'
 import FCPrintContent, { loader as FCPrintContentLoader } from './router/inventory/inventoryPrint/FCInventoryPrint'
 import HQPrintContent, { loader as HQPrintLoader } from './router/inventory/inventoryPrint/HQInventoryPrint'
 
-
 import InventorySearchPage from './router/inventory/inventorySearch/inventorySearch'
 
-
-
-export const router = createHashRouter([
+export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   {
     path: '/',
     element: <ReceivingPage />

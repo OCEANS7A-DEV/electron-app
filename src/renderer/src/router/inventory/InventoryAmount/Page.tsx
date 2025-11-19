@@ -57,7 +57,6 @@ export default function InventoryAmount(): JSX.Element {
     isHalfWidth
   } = useLogic()
 
-
   return (
     <Box>
       <Box>

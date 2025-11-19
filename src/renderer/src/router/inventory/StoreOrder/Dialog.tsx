@@ -10,19 +10,9 @@ import DialogActions from '@mui/material/DialogActions'
 // MUIアイコン
 import SendIcon from '@mui/icons-material/Send'
 
-import {
-  FormValues
-} from './types'
+import type { JSX } from 'react'
 
-
-interface InsertDialogProps {
-  data: any;
-  InsertDate: string;
-  DialogOpen: boolean;
-  setDialogOpen: (open: boolean) => void;
-  insertPost: () => void;
-  storeName?: string;
-}
+import { FormValues, InsertDialogProps } from './types'
 
 const MyDialog = ({
   data,
@@ -31,15 +21,14 @@ const MyDialog = ({
   setDialogOpen,
   insertPost,
   storeName = ''
-}: InsertDialogProps) => {
+}: InsertDialogProps): JSX.Element => {
   const DisplayData = data.filter((item: FormValues['rows'][number]) => item?.quantity !== '')
   const DisplayDate = InsertDate.split('/')
 
-  const InsertStart = () => {
+  const InsertStart = (): void => {
     setDialogOpen(false)
     insertPost()
   }
-
 
   return (
     <Dialog

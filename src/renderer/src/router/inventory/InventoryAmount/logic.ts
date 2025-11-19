@@ -1,20 +1,16 @@
 //logic.ts
 
-export interface SelectOption {
-  value: number
-  label: string
-}
+import {
+  SelectOption,
+  FormValues,
+  GetDataType,
+  DateReturn,
+  FormDataType,
+  storeGetType,
+  NowReturn
+} from './types'
 
-export type FormValues = {
-  rows: {
-    store: string
-    stocking: string
-    used: string
-    inventoryamount: string
-  }[]
-}
-
-export const DateLists = () => {
+export const DateLists = (): DateReturn => {
   const now = new Date()
   const year = now.getFullYear()
   const yearList: SelectOption[] = [
@@ -29,7 +25,7 @@ export const DateLists = () => {
   return { yearList, monthList }
 }
 
-export const DataGet = async (): Promise<[string, string, number, number, number, string]> => {
+export const DataGet = async (): Promise<GetDataType[]> => {
   const getData = await window.myInventoryAPI.ListGet({
     sheetName: '店舗在庫金額',
     action: 'InputDataGet',
@@ -38,38 +34,37 @@ export const DataGet = async (): Promise<[string, string, number, number, number
   return getData
 }
 
-export const FormDataFormat = (data, selectDate) => {
+export const FormDataFormat = (data: FormValues['rows'], selectDate: string): FormDataType[] => {
   const formData = data.map((item) => {
-    return [selectDate, item.store, null, item.used, null]
+    return [selectDate, item.store, null, item.used, null] as FormDataType
   })
   return formData
 }
 
-export const DateFormat = (date): string => {
+export const DateFormat = (date: string): string => {
   const dt = new Date(date)
   const result = `${dt.getFullYear()}/${dt.getMonth() + 1}`
   return result
 }
 
-export const defaultDataFormat = (data) => {
-  const result: FormValues['rows'] =
-    data.map((item) => {
-      return {
-        store: item[1],
-        stocking: '',
-        used: '',
-        inventoryamount: ''
-      }
-    })
+export const defaultDataFormat = (data: storeGetType[]): FormValues['rows'] => {
+  const result: FormValues['rows'] = data.map((item) => {
+    return {
+      store: item[1],
+      stocking: '',
+      used: '',
+      inventoryamount: ''
+    }
+  })
   return result
 }
 
-export const NowYearMonth = () => {
+export const NowYearMonth = (): NowReturn => {
   const defaultDate = new Date()
   defaultDate.setMonth(defaultDate.getMonth() - 1)
   const year = defaultDate.getFullYear()
   const month = defaultDate.getMonth() + 1
-  return { year, month}
+  return { year, month }
 }
 
 export const isHalfWidth = (value: string): boolean => /^[\x20-\x7E]*$/.test(value)
