@@ -36,7 +36,8 @@ import { loader as InventoryAmountLoader } from '@InvAmount/useLogic'
 import StoreOrderPage from '@Inventory/StoreOrder/Page'
 
 // 本部入庫
-import ReceivingPage from './router/inventory/inventoryInsert/Receiving_stock'
+//import ReceivingPage from './router/inventory/inventoryInsert/Receiving_stock'
+import ReceivingPage from '@Inventory/Receiving/Page'
 
 import GoogleWindow from './router/setting/GoogleLogin'
 import LauncherPage from './router/launcher'
