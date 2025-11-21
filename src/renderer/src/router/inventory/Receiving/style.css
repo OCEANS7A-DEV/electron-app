@@ -1,0 +1,27 @@
+.Receiving-Insert-Dialog {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.Receiving-Insert-Dialog th,
+.Receiving-Insert-Dialog td {
+  border: 1px solid black;
+  height: 30px;
+}
+
+.Receiving-Insert-Dialog td {
+  padding: 0px 10px
+}
+
+.Receiving-Insert-Dialog .Vendor,
+.Receiving-Insert-Dialog .Code,
+.Receiving-Insert-Dialog .Num,
+.Receiving-Insert-Dialog .Price {
+  width: 80px;
+}
+
+.Receiving-Insert-Dialog tbody .Code,
+.Receiving-Insert-Dialog tbody .Num,
+.Receiving-Insert-Dialog tbody .Price {
+  text-align: right;
+}

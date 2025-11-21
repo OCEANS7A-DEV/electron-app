@@ -9,16 +9,18 @@ import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import FormControl from '@mui/material/FormControl'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Select from '@mui/material/Select'
 
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
+// MUIアイコン
+import SendIcon from '@mui/icons-material/Send'
+
+import { Controller } from 'react-hook-form'
 
 // 独自コンポーネント
 import LinkBaner from '../../../comp/Linkbanar'
 import WordSearch from '../../../comp/ProductSearchWord'
-//import MyDialog from './Dialog'
+import MyDialog from './Dialog'
 //import DetailSelectBox from './SelectBox'
-
 
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -27,8 +29,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 // トースト通知コンポーネント
 import { Toaster } from 'react-hot-toast'
 
-
-const ReceivingPage = () => {
+const ReceivingPage = (): JSX.Element => {
   const {
     control,
     RegisterData,
@@ -38,14 +39,21 @@ const ReceivingPage = () => {
     handleSubmit,
     getValues,
     dateValue,
-    dateSet,
     onSubmit,
     handleEnterFocusNext,
     search,
     validateCheck,
     placeholderStyle,
     textFieldStyle,
-    VendorList
+    VendorList,
+    RowRemove,
+    InsertRow,
+    AddNewForm,
+    DialogOpen,
+    setDialogOpen,
+    insertPost,
+    handleDateChange,
+    handleSelectChange
   } = useLogic()
 
   return (
@@ -57,20 +65,24 @@ const ReceivingPage = () => {
       <Box>
         <Box
           sx={{
-            paddingTop: '80px',
+            paddingTop: '60px',
             display: 'flex'
           }}
         >
           <Box>
             <WordSearch RegisterData={RegisterData} />
           </Box>
-          <Box>
+          <Box
+            sx={{
+              paddingBottom: '80px'
+            }}
+          >
             <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                padding: 2,
+                padding: 2
               }}
             >
               <Typography
@@ -101,7 +113,7 @@ const ReceivingPage = () => {
                     }
                   }}
                   value={dateValue}
-                  onChange={dateSet}
+                  onChange={handleDateChange}
                 />
               </LocalizationProvider>
             </Box>
@@ -112,12 +124,12 @@ const ReceivingPage = () => {
                   sx={{
                     display: 'flex',
                     marginBottom: 1,
-                    marginLeft: 1,
+                    marginLeft: 1
                   }}
                 >
                   <Box
                     sx={{
-                      width: 120,
+                      width: 120
                     }}
                   >
                     <FormControl fullWidth>
@@ -127,11 +139,7 @@ const ReceivingPage = () => {
                         render={({ field }) => (
                           <Select
                             size="small"
-                            onChange={(e: SelectChangeEvent) => {
-                              const selectedVendor = e.target.value as string
-                              const vendordata = VendorList.find(vendor => vendor.value === selectedVendor) || null
-                              field.onChange(vendordata)
-                            }}
+                            onChange={(e) => handleSelectChange(e, index)}
                             value={field.value?.value || ''}
                             onBlur={field.onBlur}
                             sx={{
@@ -163,7 +171,7 @@ const ReceivingPage = () => {
                     }}
                     sx={{
                       ...textFieldStyle,
-                      width: 100,
+                      width: 100
                     }}
                     onBlur={() => search(index)}
                   />
@@ -177,7 +185,7 @@ const ReceivingPage = () => {
                     }}
                     sx={{
                       ...textFieldStyle,
-                      width: 300,
+                      width: 300
                     }}
                   />
                   <TextField
@@ -195,7 +203,7 @@ const ReceivingPage = () => {
                     }}
                     sx={{
                       ...textFieldStyle,
-                      width: 80,
+                      width: 80
                     }}
                   />
                   <TextField
@@ -210,19 +218,53 @@ const ReceivingPage = () => {
                     }}
                     sx={{
                       ...textFieldStyle,
-                      width: 100,
+                      width: 100
                     }}
                     onKeyDown={(e) => handleEnterFocusNext(e)}
                   />
-                  {/*<Button*/}
-                  {/*  variant="outlined"*/}
-                  {/*  size="small"*/}
-                  {/*  onClick={() => RowRemove(index)}*/}
-                  {/*>*/}
-                  {/*  削除*/}
-                  {/*</Button>*/}
+                  <Button variant="outlined" onClick={() => InsertRow(index)}>
+                    追加
+                  </Button>
+                  <Button variant="outlined" size="small" onClick={() => RowRemove(index)}>
+                    削除
+                  </Button>
                 </Box>
               ))}
+              <Box
+                sx={{
+                  display: 'flex',
+                  position: 'fixed',
+                  bottom: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '70px',
+                  backgroundColor: '#2a2a30',
+                  borderTop: '1px solid gray',
+                  zIndex: 200,
+                  alignItems: 'center'
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    width: '100%',
+                    justifyContent: 'space-around'
+                  }}
+                >
+                  <Button variant="outlined" onClick={() => AddNewForm(20)}>
+                    入庫枠追加
+                  </Button>
+                  <Button variant="outlined" type="submit" endIcon={<SendIcon />}>
+                    入庫実行
+                  </Button>
+                </Box>
+                <MyDialog
+                  data={getValues('rows')}
+                  DialogOpen={DialogOpen}
+                  setDialogOpen={setDialogOpen}
+                  insertPost={insertPost}
+                />
+              </Box>
             </Box>
           </Box>
         </Box>
