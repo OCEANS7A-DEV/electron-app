@@ -20,7 +20,7 @@ import ZaikoSettingPage, { loader as ZaikoSettingLoader } from './router/setting
 import HelloWork, { loader as HelloWorkLoader } from './router/helloWork/helloWork'
 import DetailContent from './router/inventory/inventorySetting/productDetailEdit'
 import UpdateWindow from './router/updater'
-import InventoryMoving from './router/inventory/inventoryInsert/Moving'
+
 import CatalogView from './router/inventory/inventoryGet/Catalog'
 import NetDetailsPrint, {
   loader as NetDetailsLoader
@@ -38,6 +38,10 @@ import StoreOrderPage from '@Inventory/StoreOrder/Page'
 // 本部入庫
 //import ReceivingPage from './router/inventory/inventoryInsert/Receiving_stock'
 import ReceivingPage from '@Inventory/Receiving/Page'
+
+// 店舗間移動
+import InventoryMoving from './router/inventory/inventoryInsert/Moving'
+import MovingPage from '@Inventory/Moving/Page'
 
 import GoogleWindow from './router/setting/GoogleLogin'
 import LauncherPage from './router/launcher'
@@ -142,7 +146,7 @@ export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   },
   {
     path: '/Moving',
-    element: <InventoryMoving />
+    element: <MovingPage />
   },
   {
     path: '/CatalogView',
