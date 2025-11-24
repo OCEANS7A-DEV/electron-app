@@ -32,3 +32,15 @@ export const defaultDataFormat = (): FormValues["rows"] => {
   }
   return result
 }
+
+
+export const formatStoreData = (data: any) => {
+  const result = data.map((item: [number, string, string | null]) => {
+    return {
+      id: item[0],
+      value: item[1],
+      label: item[1]
+    }
+  })
+  return result
+}

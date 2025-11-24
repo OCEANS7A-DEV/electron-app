@@ -33,6 +33,14 @@ const MovingPage = () => {
           }}
         >
           <WordSearch RegisterData={RegisterData} />
+          <Box
+            sx={{
+              paddingLeft: '20px',
+              color: 'white'
+            }}
+          >
+            idou
+          </Box>
         </Box>
       </Box>
     </Box>
