@@ -131,9 +131,8 @@ export const useLogic = (): UseLogicReturn => {
   }
 
   const addNewForm = (): void => {
-    for (let i = 0; i < 20; i++) {
-      append(defaultRowData, { shouldFocus: false })
-    }
+    const newRows = Array.from({ length: 20 }, () => ({ ...defaultRowData }))
+    append(newRows, { shouldFocus: false })
   }
 
   const orderedData = (): void => {
@@ -167,6 +166,7 @@ export const useLogic = (): UseLogicReturn => {
   }
 
   const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>): void => {
+    const maxRows = getValues().rows.length
     if (e.key === 'Enter') {
       e.preventDefault()
       const form = (
@@ -175,41 +175,20 @@ export const useLogic = (): UseLogicReturn => {
       if (form) {
         const elements = Array.from(form.elements) as HTMLElement[]
         const index = elements.indexOf(e.target as HTMLElement)
-        let focused = false
-        for (let i = index + 1; i < elements.length; i++) {
-          const next = elements[i] as HTMLElement
-          if (
-            next &&
-            typeof next.focus === 'function' &&
-            !next.hasAttribute('disabled') &&
-            next.getAttribute('tabindex') !== '-1' &&
-            (next instanceof HTMLInputElement ||
-              next instanceof HTMLSelectElement ||
-              next instanceof HTMLTextAreaElement ||
-              next instanceof HTMLButtonElement) &&
-            next.type !== 'button'
-          ) {
-            next.focus()
-            const headerHeight = 80
-            const footerHeight = 60
-            const buffer = 20
-            const rect = next.getBoundingClientRect()
-            const isOutOfViewTop = rect.top < headerHeight + buffer
-            const isOutOfViewBottom = rect.bottom > window.innerHeight - footerHeight - buffer
-
-            if (isOutOfViewTop || isOutOfViewBottom) {
-              window.scrollBy({
-                top: rect.top - headerHeight - buffer,
-                behavior: 'smooth'
-              })
-            }
-            focused = true
-            break
-          }
+        const before = elements[index] as HTMLElement
+        let next = elements[index + 2] as HTMLElement
+        let nextType = next.tagName
+        let count = 3
+        while (nextType == 'BUTTON' || nextType == 'FIELDSET') {
+          next = elements[index + count] as HTMLElement
+          nextType = next.tagName
+          count++
         }
-        if (!focused) {
+        if ((before as HTMLInputElement).name == `rows.${maxRows - 1}.remarks`) {
           addNewForm()
+          return
         }
+        next.focus()
       }
     }
   }
@@ -284,6 +263,9 @@ export const useLogic = (): UseLogicReturn => {
 
   const productCodeSearch = async (index: number): Promise<void> => {
     let code = getValues('rows')[index].code
+    if (code == '' && index == 0) {
+      return
+    }
     if (code == '' && index !== 0) {
       code = getValues('rows')[index - 1].code
       setValue(`rows.${index}.code`, code)

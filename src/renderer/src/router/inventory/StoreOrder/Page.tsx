@@ -21,7 +21,6 @@ import 'dayjs/locale/ja'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-//dayjs.locale('ja')
 
 // 独自コンポーネント
 import LinkBaner from '../../../comp/Linkbanar'
