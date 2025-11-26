@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 // Form関連コンポーネント
 import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form'
@@ -52,64 +52,77 @@ export const useLogic = (): UseLogicReturn => {
     GetStores()
   }
 
-  const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>): void => {
-    const maxRows = getValues().rows.length
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      const form = (
-        e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement
-      ).form
-      if (form) {
-        const elements = Array.from(form.elements) as HTMLElement[]
-        const index = elements.indexOf(e.target as HTMLElement)
-        const before = elements[index] as HTMLElement
-        let next = elements[index + 2] as HTMLElement
-        let nextType = next.tagName
-        let count = 3
-        while (nextType == 'BUTTON' || nextType == 'FIELDSET') {
-          next = elements[index + count] as HTMLElement
-          nextType = next.tagName
-          count++
-        }
-        if ((before as HTMLInputElement).name == `rows.${maxRows - 1}.remarks`) {
-          addNewForm()
-          return
-        }
-        next.focus()
-      }
-    }
-  }
-
-  const RowRemove = async (index: number): Promise<void> => {
-    remove(index)
-    append(defaultDataFormat()[0], { shouldFocus: true })
-  }
-
   const addNewForm = (): void => {
     append(defaultDataFormat(), { shouldFocus: true })
   }
 
-  const search = async (index: number): Promise<void> => {
-    const List = await window.myInventoryAPI.ListData()
-    const code = Number(getValues('rows')[index].code)
-    const productData = List.find((item: productType) => item.code == code)
-    if (!productData) {
-      return
-    }
-    setValue(`rows.${index}.vendor`, productData.vendor)
-    setValue(`rows.${index}.name`, productData.name)
-    setValue(`rows.${index}.price`, productData.newPrice)
-  }
+  const handleEnterFocusNext = useCallback(
+    (e: React.KeyboardEvent<HTMLElement>): void => {
+      const maxRows = getValues().rows.length
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        const form = (
+          e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement
+        ).form
+        if (form) {
+          const elements = Array.from(form.elements) as HTMLElement[]
+          const index = elements.indexOf(e.target as HTMLElement)
+          const before = elements[index] as HTMLElement
+          let next = elements[index + 2] as HTMLElement
+          let nextType = next.tagName
+          let count = 3
+          while (nextType == 'BUTTON' || nextType == 'FIELDSET') {
+            next = elements[index + count] as HTMLElement
+            nextType = next.tagName
+            count++
+          }
+          if ((before as HTMLInputElement).name == `rows.${maxRows - 1}.remarks`) {
+            addNewForm()
+            return
+          }
+          next.focus()
+        }
+      }
+    },
+    [addNewForm, getValues]
+  )
 
-  const handleSelectChange = (e: SelectChangeEvent, index: number, select: string): void => {
-    const selectedVendor = e.target.value as string
-    const storedata = storeList.find((item: SelectOption) => item.value === selectedVendor) || null
-    if (select == 'out') {
-      setValue(`rows.${index}.outStore`, storedata)
-    } else {
-      setValue(`rows.${index}.inputStore`, storedata)
-    }
-  }
+  const RowRemove = useCallback(
+    async (index: number): Promise<void> => {
+      remove(index)
+      append(defaultDataFormat()[0], { shouldFocus: true })
+    },
+    [remove, append]
+  )
+
+  const search = useCallback(
+    async (index: number): Promise<void> => {
+      const List = await window.myInventoryAPI.ListData()
+      const code = Number(getValues('rows')[index].code)
+      const productData = List.find((item: productType) => item.code == code)
+      if (!productData) {
+        return
+      }
+      setValue(`rows.${index}.vendor`, productData.vendor)
+      setValue(`rows.${index}.name`, productData.name)
+      setValue(`rows.${index}.price`, productData.newPrice)
+    },
+    [getValues, setValue]
+  )
+
+  const handleSelectChange = useCallback(
+    (e: SelectChangeEvent, index: number, select: string): void => {
+      const selectedVendor = e.target.value as string
+      const storedata =
+        storeList.find((item: SelectOption) => item.value === selectedVendor) || null
+      if (select == 'out') {
+        setValue(`rows.${index}.outStore`, storedata)
+      } else {
+        setValue(`rows.${index}.inputStore`, storedata)
+      }
+    },
+    [setValue]
+  )
 
   const insertPost = async (): Promise<void> => {
     const data = getValues('rows')
