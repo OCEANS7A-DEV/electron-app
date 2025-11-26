@@ -63,8 +63,13 @@ export const useLogic = (): UseLogicReturn => {
     const Values = getValues('rows')
     const index = Values.findLastIndex((item) => item.code !== '') + 1
     const result = await (await productGet(code, true)).productData
+    const vendordata = {
+      value: result.vendor,
+      label: result.vendor,
+      id: result.vendorid
+    }
     setValue(`rows.${index}.code`, String(code))
-    setValue(`rows.${index}.vendor`, result.vendordata)
+    setValue(`rows.${index}.vendor`, vendordata)
     setValue(`rows.${index}.name`, result.name)
     setValue(`rows.${index}.price`, result.newPrice)
   }

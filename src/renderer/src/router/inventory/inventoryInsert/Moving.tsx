@@ -12,8 +12,8 @@ import Button from '@mui/material/Button'
 import Select from '@mui/material/Select'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import MenuItem from '@mui/material/MenuItem'
 
 // MUIアイコン
@@ -41,7 +41,6 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/ja'
 
 import CommingSoon from '../../CommingSoon'
-
 
 const darkTheme = createTheme({
   palette: {
@@ -213,12 +212,12 @@ export default function InventoryMoving() {
       setValue(`rows.${index}.name`, name)
       const detailfilter = ProductdetailsList.filter(row => row[0] == code && row[1] !== '')
       const detaillist = detailfilter.map(item => {
-        const result = {value: item[1] ?? '', label: item[1] ?? ''}
+        const result = { value: item[1] ?? '', label: item[1] ?? '' }
         return result
       })
       setValue(`rows.${index}.detailList`, detaillist)
       setValue(`rows.${index}.price`, productData.newPrice)
-      if(detailfilter.length !== 0){
+      if (detailfilter.length !== 0) {
         console.log('詳細あり')
       }
     }
@@ -240,7 +239,7 @@ export default function InventoryMoving() {
     }
   }
 
-  const insert = async() => {
+  const insert = async () => {
     const Now = await window.myInventoryAPI.NowGet()
     const filterData = getValues().rows.filter((row) => row.code !== '')
     const formData = filterData.map((item) => {
@@ -298,7 +297,7 @@ export default function InventoryMoving() {
               <CommingSoon />
             ) : (
               <>
-                <div style={{paddingTop: 10}}>
+                <div style={{ paddingTop: 10 }}>
                   <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ja">
                     <ThemeProvider theme={darkTheme}>
                       <form onSubmit={handleSubmit(onSubmit)} className="p-4">
