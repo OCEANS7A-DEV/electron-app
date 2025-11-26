@@ -8,7 +8,7 @@ import type { JSX } from 'react'
 import LinkBaner from '../../../comp/Linkbanar'
 import WordSearch from '../../../comp/ProductSearchWord'
 import RowComp from './RowComp'
-//import MyDialog from './Dialog'
+import MyDialog from './Dialog'
 
 // トースト通知コンポーネント
 import { Toaster } from 'react-hot-toast'
@@ -28,7 +28,11 @@ const MovingPage = (): JSX.Element => {
     search,
     handleSelectChange,
     RowRemove,
-    addNewForm
+    addNewForm,
+    insertPost,
+    getValues,
+    DialogOpen,
+    setDialogOpen
   } = useLogic()
   return (
     <Box>
@@ -102,14 +106,12 @@ const MovingPage = (): JSX.Element => {
                   注文実行
                 </Button>
               </Box>
-              {/* <MyDialog
+              <MyDialog
                 data={getValues('rows')}
-                InsertDate={insertDateRef.current}
                 DialogOpen={DialogOpen}
                 setDialogOpen={setDialogOpen}
                 insertPost={insertPost}
-                storeName={storeSelect}
-              /> */}
+              />
             </Box>
           </Box>
         </Box>

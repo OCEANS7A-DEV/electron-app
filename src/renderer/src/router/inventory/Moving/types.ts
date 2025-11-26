@@ -1,4 +1,10 @@
-import { useFieldArray, Control, UseFormRegister, UseFormHandleSubmit } from 'react-hook-form'
+import {
+  useFieldArray,
+  Control,
+  UseFormRegister,
+  UseFormHandleSubmit,
+  UseFormGetValues
+} from 'react-hook-form'
 
 import { SelectChangeEvent } from '@mui/material/Select'
 
@@ -79,10 +85,12 @@ export interface UseLogicReturn {
   search: (index: number) => Promise<void>
   RowRemove: (index: number) => Promise<void>
   addNewForm: () => void
-  //DialogOpen: boolean
-  //setDialogOpen: (open: boolean) => void
+  DialogOpen: boolean
+  setDialogOpen: (open: boolean) => void
   handleSelectChange: (e: SelectChangeEvent, index: number, select: string) => void
   storeList: SelectOption[]
+  insertPost: () => void
+  getValues: UseFormGetValues<FormValues>
 }
 
 export interface RowProps {

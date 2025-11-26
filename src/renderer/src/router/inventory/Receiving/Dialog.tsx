@@ -40,7 +40,6 @@ const MyDialog = ({
       <DialogContent>
         <Box
           sx={{
-            backgroundColor: 'gray',
             minHeight: '60px'
           }}
         >

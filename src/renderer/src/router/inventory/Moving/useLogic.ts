@@ -16,6 +16,8 @@ import { defaultDataFormat } from './logic'
 
 export const useLogic = (): UseLogicReturn => {
   const [storeList, setStoreList] = useState<SelectOption[]>([])
+  const [DialogOpen, setDialogOpen] = useState(false)
+
   const { control, register, handleSubmit, getValues, setValue, reset } = useForm<FormValues>({
     defaultValues: {
       rows: defaultDataFormat()
@@ -36,7 +38,8 @@ export const useLogic = (): UseLogicReturn => {
   }
 
   const onSubmit: SubmitHandler<FormValues> = (data: FormValues): void => {
-    insert(data.rows)
+    setDialogOpen(true)
+    console.log(data.rows)
   }
 
   const GetStores = async (): Promise<void> => {
@@ -108,7 +111,8 @@ export const useLogic = (): UseLogicReturn => {
     }
   }
 
-  const insert = async (data: FormValues['rows']): Promise<void> => {
+  const insertPost = async (): Promise<void> => {
+    const data = getValues('rows')
     const filterData = data.filter((row) => row.code !== '')
     if (filterData.length == 0) return
     const formData = await insertDataFormat(filterData)
@@ -144,6 +148,10 @@ export const useLogic = (): UseLogicReturn => {
     search,
     handleSelectChange,
     RowRemove,
-    addNewForm
+    addNewForm,
+    DialogOpen,
+    setDialogOpen,
+    insertPost,
+    getValues
   }
 }
