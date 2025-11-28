@@ -16,16 +16,18 @@ type LoaderData = {
 export const loader = async (): Promise<LoaderData> => {
   const printDataObj = await window.myInventoryAPI.storeGet('printData')
   const printDate = await window.myInventoryAPI.storeGet('printDate')
+  const storeList = await window.myInventoryAPI.storeGet('storeList')
   const ordersGet: Row[] = JSON.parse(printDataObj)
   const stores = [...new Set(ordersGet.map((item) => item[1] as string))]
   const rowNum = 20
   const resultdata = await Promise.all(
     stores.map(async (storeName) => {
+      const store = storeList.find((item: [number, string, string]) => item[1] === storeName)
       const storeData = ordersGet.filter((row) => row[1] === storeName)
       const printdata = storeData.flatMap((item) => {
         if (item[7] === '') {
           return [item]
-        } else {
+        } else if (store[2] == 'FC' || store[2] == 'VC') {
           return [
             [
               item[0],
@@ -34,10 +36,29 @@ export const loader = async (): Promise<LoaderData> => {
               item[3],
               item[4],
               item[5],
-              Number(item[6]) - Number(item[7]),
+              item[6],
               '',
               item[8],
               item[9],
+              item[10],
+              item[11],
+              item[12]
+            ]
+          ]
+        } else {
+          const totalnum = Number(item[6]) - Number(item[7])
+          return [
+            [
+              item[0],
+              item[1],
+              item[2],
+              item[3],
+              item[4],
+              item[5],
+              totalnum,
+              '',
+              item[8],
+              totalnum * Number(item[8]),
               item[10],
               item[11],
               item[12]
@@ -51,8 +72,8 @@ export const loader = async (): Promise<LoaderData> => {
               item[5],
               item[7],
               item[7],
-              item[8],
-              item[9],
+              0,
+              0,
               item[10],
               'サービス',
               item[12]

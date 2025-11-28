@@ -100,3 +100,34 @@ export interface UseLogicReturn {
   handleDateChange: (date: Dayjs | null) => void
   handleSelectChange: (e: SelectChangeEvent, index: number) => void
 }
+
+export interface RowProps {
+  index: number
+  register: UseFormRegister<FormValues>
+  control: Control<FormValues>
+  handleEnterFocusNext: (e: React.KeyboardEvent<HTMLElement>) => void
+  search: (index: number) => Promise<void>
+  handleSelectChange: (e: SelectChangeEvent, index: number) => void
+  RowRemove: (index: number) => Promise<void>
+  InsertRow: (index: number) => void
+  placeholderStyle: {
+    '&::placeholder': {
+      fontSize: string
+      opacity: number
+      color: string
+    }
+  }
+  textFieldStyle: {
+    backgroundColor: string
+    borderRadius: string
+    marginRight: string
+    height: string
+  }
+  errors: FieldErrors<FormValues>
+  validateCheck: (
+    index: number,
+    keyName: keyof FormValues['rows'][number],
+    errormsg: string
+  ) => boolean
+  VendorList: SelectOption[]
+}
