@@ -12,7 +12,7 @@ import NetEtcPrint, { loader as NetEtcLoader } from './router/inventory/inventor
 import NotListed, { loader as NotListedLoader } from './router/inventory/inventoryGet/NotListed'
 import HQStocks, { loader as HQStocksLoader } from './router/inventory/inventoryGet/HQ_stocks'
 import HQPage from './router/inventory/inventoryGet/processCheck'
-import PrintContent, { loader as PrintLoader } from './router/inventory/inventoryPrint/PrintContent'
+
 import TaiyoPrint, { loader as TaiyoLoader } from './router/inventory/inventoryPrint/taiyo'
 
 import EtcPrint, { loader as EtcLoader } from './router/inventory/inventoryPrint/VendorPrint'
@@ -40,8 +40,15 @@ import StoreOrderPage from '@Inventory/StoreOrder/Page'
 import ReceivingPage from '@Inventory/Receiving/Page'
 
 // 店舗間移動
-import InventoryMoving from './router/inventory/inventoryInsert/Moving'
+//import InventoryMoving from './router/inventory/inventoryInsert/Moving'
 import MovingPage from '@Inventory/Moving/Page'
+
+// 納品書
+//import PrintContent, { loader as PrintLoader } from './router/inventory/inventoryPrint/PrintContent'
+
+import { loader as PrintLoader } from '@Inventory/DeliverySlip/useLogic'
+import DeliverySlip from '@Inventory/DeliverySlip/Page'
+
 
 import GoogleWindow from './router/setting/GoogleLogin'
 import LauncherPage from './router/launcher'
@@ -105,7 +112,7 @@ export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   },
   {
     path: '/PrintContent',
-    element: <PrintContent />,
+    element: <DeliverySlip />,
     loader: PrintLoader
   },
   {

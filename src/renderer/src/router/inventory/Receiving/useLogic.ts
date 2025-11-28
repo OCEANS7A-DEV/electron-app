@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 // Form関連コンポーネント
 import { useForm, useFieldArray } from 'react-hook-form'
@@ -74,54 +74,6 @@ export const useLogic = (): UseLogicReturn => {
     setValue(`rows.${index}.price`, result.newPrice)
   }
 
-  const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>): void => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      const form = (
-        e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement
-      ).form
-      if (form) {
-        const elements = Array.from(form.elements) as HTMLElement[]
-        const index = elements.indexOf(e.target as HTMLElement)
-        let focused = false
-        for (let i = index + 1; i < elements.length; i++) {
-          const next = elements[i] as HTMLElement
-          if (
-            next &&
-            typeof next.focus === 'function' &&
-            !next.hasAttribute('disabled') &&
-            next.getAttribute('tabindex') !== '-1' &&
-            (next instanceof HTMLInputElement ||
-              next instanceof HTMLSelectElement ||
-              next instanceof HTMLTextAreaElement ||
-              next instanceof HTMLButtonElement) &&
-            next.type !== 'button'
-          ) {
-            next.focus()
-            const headerHeight = 80
-            const footerHeight = 60
-            const buffer = 20
-            const rect = next.getBoundingClientRect()
-            const isOutOfViewTop = rect.top < headerHeight + buffer
-            const isOutOfViewBottom = rect.bottom > window.innerHeight - footerHeight - buffer
-
-            if (isOutOfViewTop || isOutOfViewBottom) {
-              window.scrollBy({
-                top: rect.top - headerHeight - buffer,
-                behavior: 'smooth'
-              })
-            }
-            focused = true
-            break
-          }
-        }
-        if (!focused) {
-          AddNewForm(20)
-        }
-      }
-    }
-  }
-
   const onSubmit = (): void => {
     const filtered = getValues('rows').filter((item) => item.code !== '')
     if (filtered.length == 0) {
@@ -131,23 +83,25 @@ export const useLogic = (): UseLogicReturn => {
     setDialogOpen(true)
   }
 
-  const search = async (index: number): Promise<void> => {
-    const values = getValues()
-    const code = values.rows[index].code
-    const result = await productGet(code)
-    if (result.productData) {
-      const vendordata = {
-        value: result.productData.vendor,
-        label: result.productData.vendor,
-        id: result.productData.vendorid
+  const search = useCallback(
+    async (index: number): Promise<void> => {
+      const code = getValues('rows')[index].code
+      const result = await productGet(code)
+      if (result.productData) {
+        const vendordata = {
+          value: result.productData.vendor,
+          label: result.productData.vendor,
+          id: result.productData.vendorid
+        }
+        const name = result.productData.name
+        const Price = result.productData.newPrice
+        setValue(`rows.${index}.vendor`, vendordata)
+        setValue(`rows.${index}.name`, name)
+        setValue(`rows.${index}.price`, Price)
       }
-      const name = result.productData.name
-      const Price = result.productData.newPrice
-      setValue(`rows.${index}.vendor`, vendordata)
-      setValue(`rows.${index}.name`, name)
-      setValue(`rows.${index}.price`, Price)
-    }
-  }
+    },
+    [getValues, setValue]
+  )
 
   const isHalfWidth = (value: string): boolean => /^[\x20-\x7E]*$/.test(value)
 
@@ -228,19 +182,53 @@ export const useLogic = (): UseLogicReturn => {
     defaultDate()
   }
 
-  const RowRemove = async (index: number): Promise<void> => {
-    remove(index)
-    AddNewForm(1)
-  }
-
-  const InsertRow = (index: number): void => {
-    insert(index, defaultRowData)
-  }
-
   const AddNewForm = (num: number): void => {
     for (let i = 0; i < num; i++) {
       append(defaultRowData)
     }
+  }
+
+  const handleEnterFocusNext = useCallback(
+    (e: React.KeyboardEvent<HTMLElement>): void => {
+      const maxRows = getValues().rows.length
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        const form = (
+          e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement
+        ).form
+        if (form) {
+          const elements = Array.from(form.elements) as HTMLElement[]
+          const index = elements.indexOf(e.target as HTMLElement)
+          const before = elements[index] as HTMLElement
+          let next = elements[index + 2] as HTMLElement
+          let nextType = next.tagName
+          let count = 3
+          while (nextType == 'BUTTON' || nextType == 'FIELDSET') {
+            next = elements[index + count] as HTMLElement
+            nextType = next.tagName
+            count++
+          }
+          if ((before as HTMLInputElement).name == `rows.${maxRows - 1}.remarks`) {
+            AddNewForm(20)
+            return
+          }
+          next.focus()
+        }
+      }
+    },
+    [AddNewForm, getValues]
+  )
+
+  const RowRemove = useCallback(
+    async (index: number): Promise<void> => {
+      remove(index)
+      append(defaultRowData, { shouldFocus: true })
+    },
+    [remove, append]
+  )
+
+  const InsertRow = (index: number): void => {
+    insert(index, defaultRowData)
   }
 
   const insertPost = async (): Promise<void> => {

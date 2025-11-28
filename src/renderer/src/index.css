@@ -1,11 +1,12 @@
 html {
-  padding: 0px;
   margin: 0;
   padding: 0;
-  display: flex;
+  max-width: 100%;
 }
+
 body {
   margin: 0;
-  background-color: 	#2a2a30;
-  width: 100%;
+  padding: 0;
+  max-width: 100%;
+  background-color: #2a2a30;
 }

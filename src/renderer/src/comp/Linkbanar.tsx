@@ -14,7 +14,7 @@ import Tooltip from '@mui/material/Tooltip';
 
 import '../css/banner.css';
 
-const ButtonStyle = { height:'30px', margin: "5px 10px", width: 120 }
+const ButtonStyle = { height: '30px', margin: "5px 10px", width: 120 }
 
 const LinkBaner = (data): JSX.Element => {
   const navigate = useNavigate()
@@ -35,9 +35,9 @@ const LinkBaner = (data): JSX.Element => {
     window.myInventoryAPI.onUpdateAvailable((flag) => {
       //console.log('Update available:', flag)
       // UI表示などの処理
-      if(flag){
+      if (flag) {
         setUpdateIconColor('success')
-      }else{
+      } else {
         setUpdateIconColor('disabled')
       }
     })
@@ -53,14 +53,14 @@ const LinkBaner = (data): JSX.Element => {
 
 
   const handleDrawerOpen = (): void => {
-    if(open){
+    if (open) {
       setopen(false);
-    }else{
+    } else {
       setopen(true);
     }
   }
 
-  return(
+  return (
     <div>
       {loading && (
         <div
@@ -70,20 +70,20 @@ const LinkBaner = (data): JSX.Element => {
             top: 0,
             left: 0,
             width: "100%",
-            zIndex: 300,
+            zIndex: 400,
           }}
         >
-          <LinearProgress sx={{ width: "100%", height: 2 }}/>
+          <LinearProgress sx={{ width: "100%", height: 2 }} />
         </div>
       )}
       <div className="Link-area">
         <div className="Arrowarea">
-          <div style={{display: 'flex'}}>
-            <Button variant="outlined" onClick={LauncherOpen} sx={{height:'30px', margin: "0px 5px", width: 60}}>Apps</Button>
-            <IconButton onClick={() => window.history.back()} sx={{color:'white', height:'30px', width:'30px'}} aria-label="戻る">
+          <div style={{ display: 'flex' }}>
+            <Button variant="outlined" onClick={LauncherOpen} sx={{ height: '30px', margin: "0px 5px", width: 60 }}>Apps</Button>
+            <IconButton onClick={() => window.history.back()} sx={{ color: 'white', height: '30px', width: '30px' }} aria-label="戻る">
               <ArrowBackIcon />
             </IconButton>
-            <IconButton onClick={() => window.history.forward()} sx={{color:'white', height:'30px', width:'30px'}} aria-label="進む">
+            <IconButton onClick={() => window.history.forward()} sx={{ color: 'white', height: '30px', width: '30px' }} aria-label="進む">
               <ArrowForwardIcon />
             </IconButton>
           </div>
@@ -99,11 +99,11 @@ const LinkBaner = (data): JSX.Element => {
                 <SystemUpdateAltIcon color={updateIconColor} />
               </IconButton>
             )}
-            <IconButton sx={{color: "white"}} onClick={handleDrawerOpen}>
-              <MenuIcon/>
+            <IconButton sx={{ color: "white" }} onClick={handleDrawerOpen}>
+              <MenuIcon />
             </IconButton>
           </div>
-          
+
         </div>
       </div>
       <div className="DrawerArea">
@@ -115,14 +115,14 @@ const LinkBaner = (data): JSX.Element => {
             '& .MuiDrawer-paper': {
               backgroundColor: "#40404a",
               top: '20px',
-              marginTop: "40px",
-              maxHeight: 'calc(100vh - 100px)',
+              marginTop: "30px",
+              maxHeight: 'calc(100vh - 140px)',
             }
           }}
         >
           <div className="Link-button">
             {data.id == 'zaiko' && (
-              <div className="Link-button" style={{ marginTop: "40px" }}>
+              <div className="Link-button" style={{ marginTop: "6px" }}>
                 <Button variant="outlined" onClick={() => navigate('/')} sx={ButtonStyle}>入庫</Button>
                 <Button variant='outlined' onClick={() => navigate('/StoreOrder')} sx={ButtonStyle}>店舗注文</Button>
                 <Button variant='outlined' onClick={() => navigate('/Moving')} sx={ButtonStyle}>店舗間移動</Button>
@@ -135,16 +135,16 @@ const LinkBaner = (data): JSX.Element => {
                 <Button variant="outlined" onClick={() => navigate('/InventorySearchPage')} sx={ButtonStyle}>商品検索</Button>
                 <Button variant="outlined" onClick={() => navigate('/zaikosetting')} sx={ButtonStyle}>在庫設定</Button>
                 <Button variant="outlined" onClick={() => navigate('/InventoryAmount')} sx={ButtonStyle}>在庫金額</Button>
-                
+
               </div>
             )}
             {data.id == 'helloWork' && (
-              <div className="Link-button" style={{ marginTop: "40px" }}>
+              <div className="Link-button" style={{ marginTop: "6px" }}>
                 <Button variant="outlined" onClick={() => navigate('/HelloWork')} sx={ButtonStyle}>ハロワ</Button>
               </div>
             )}
             {data.id == 'OfficeWork' && (
-              <div className="Link-button" style={{ marginTop: "40px" }}>
+              <div className="Link-button" style={{ marginTop: "6px" }}>
                 <Button variant="outlined" onClick={() => navigate('/PDFOperation')} sx={ButtonStyle}>PDF操作</Button>
                 <Button variant="outlined" onClick={() => navigate('/Uriage')} sx={ButtonStyle}>売上</Button>
                 <Button variant="outlined" onClick={() => navigate('/HQdata')} sx={ButtonStyle}>本部データ</Button>
@@ -154,13 +154,13 @@ const LinkBaner = (data): JSX.Element => {
               </div>
             )}
             {data.id == 'Setting' && (
-              <div className="Link-button" style={{ marginTop: "40px" }}>
+              <div className="Link-button" style={{ marginTop: "6px" }}>
                 <Button variant="outlined" onClick={() => navigate('/systemSetting')} sx={ButtonStyle}>システム設定</Button>
               </div>
             )}
             {/* <Link className="link" to="/service">サービス品入庫</Link>
             <Link className="link" to="/ImgUpload">商品画像設定</Link> */}
-            
+
           </div>
         </Drawer>
       </div>
