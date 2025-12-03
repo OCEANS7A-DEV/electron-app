@@ -97,7 +97,7 @@ export const loader = async () => {
     sheetName: '店舗一覧',
     action: 'ListGet',
     ranges: 'A2:C'
-  });
+  })
 
   const datas = await window.myInventoryAPI.ListGet({
     sheetName: '在庫履歴',
@@ -117,13 +117,13 @@ export const loader = async () => {
   const now = new Date()
   const year = now.getFullYear()
   const yearList: DateSelectOption[] = [
-    { value: year + 1, label: `${year + 1}年`},
-    { value: year, label: `${year}年`},
-    { value: year - 1, label: `${year - 1}年`}
+    { value: year + 1, label: `${year + 1}年` },
+    { value: year, label: `${year}年` },
+    { value: year - 1, label: `${year - 1}年` }
   ]
   const monthList: DateSelectOption[] = []
-  for (let i = 0; i < 12; i++){
-    monthList.push({ value: i + 1, label: `${i + 1}月`})
+  for (let i = 0; i < 12; i++) {
+    monthList.push({ value: i + 1, label: `${i + 1}月` })
   }
 
   const typeDatas = await window.myInventoryAPI.ListGet({
@@ -163,7 +163,7 @@ export default function FCInventory() {
     )
     setDeleteRowNum(filter.length)
     let count = 0
-    if (filter.length == 0){
+    if (filter.length == 0) {
       return
     }
     for (let i = 0; i < filter.length; i++) {
@@ -278,7 +278,7 @@ export default function FCInventory() {
   }
 
   const insertPost = async () => {
-    if (storeSelect == ''){
+    if (storeSelect == '') {
 
       return
     }
@@ -317,7 +317,7 @@ export default function FCInventory() {
 
 
   const Reget = async () => {
-    const DataGets = async() => {
+    const DataGets = async () => {
       const data = await window.myInventoryAPI.ListGet({
         sheetName: '在庫履歴',
         action: 'FCInventoryGet',
@@ -355,7 +355,7 @@ export default function FCInventory() {
       await window.myInventoryAPI.storeSet('inventoryPrint', JSON.stringify(PrintData))
       window.myInventoryAPI.orderPrint('FCPrintContent')
     }
-    
+
     toast.promise(
       DataGets(),
       {
@@ -365,11 +365,11 @@ export default function FCInventory() {
       }
     )
 
-    
+
   }
 
 
-  return(
+  return (
     <div>
       <div>
         <LinkBaner id="zaiko" />

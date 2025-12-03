@@ -1,20 +1,28 @@
+// 自作コンポ
+import RowComp from './RowComp'
+
+// React
+import type { JSX } from 'react'
+
+// Mui
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import RowComp from './RowComp'
-import { BoxSxSetting, ColumnSize } from './logic'
 
-const StoreComp = ({ printDate, storeData }) => {
+// logic type
+import { BoxSxSetting, ColumnSize } from './logic'
+import { PrintRowType, StoreCompType } from './types'
+
+const StoreComp = ({ printDate, storeData }: StoreCompType): JSX.Element => {
   const orderData = storeData.printData
   const storeName = storeData.storeName
   const maxPageNum = orderData.length
-  console.log(storeData.total)
   return (
     <Box
       sx={{
         width: '210mm'
       }}
     >
-      {orderData.map((page, index) => (
+      {orderData.map((page: PrintRowType[], index: number) => (
         <Box
           key={index}
           sx={{
@@ -127,14 +135,6 @@ const StoreComp = ({ printDate, storeData }) => {
                   justifyContent: 'center'
                 }}
               >
-                個人購入
-              </Box>
-              <Box
-                sx={{
-                  ...BoxSxSetting,
-                  justifyContent: 'center'
-                }}
-              >
                 個人税込
               </Box>
               <Box
@@ -144,6 +144,14 @@ const StoreComp = ({ printDate, storeData }) => {
                 }}
               >
                 備考
+              </Box>
+              <Box
+                sx={{
+                  ...BoxSxSetting,
+                  justifyContent: 'center'
+                }}
+              >
+                チェック
               </Box>
             </Box>
             <Box
@@ -166,7 +174,7 @@ const StoreComp = ({ printDate, storeData }) => {
                 textDecoration: 'underline solid black'
               }}
             >
-              <Box>税抜き合計金額(個人購入含む):</Box>
+              <Box>税抜き合計金額:</Box>
               <Box sx={{ paddingLeft: '6px' }}>¥{storeData.total.toLocaleString()}</Box>
             </Box>
           )}

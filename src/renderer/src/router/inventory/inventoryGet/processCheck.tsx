@@ -5,6 +5,7 @@ import '../../../css/process_check.css'
 import LinkBaner from '../../../comp/Linkbanar'
 import toast, { Toaster } from 'react-hot-toast'
 import { Button } from '@mui/material'
+import Box from '@mui/material/Box'
 import MoonLoader from 'react-spinners/MoonLoader'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -447,7 +448,11 @@ const HQPage = (): JSX.Element => {
                 border: '1px solid black'
               }}
             >
-              <div></div>
+              <div>
+                <Box>
+                  <Button variant="outlined" onClick={() => window.myInventoryAPI.orderPrint('CountList')}>カウントリスト</Button>
+                </Box>
+              </div>
             </div>
           </div>
         </div>

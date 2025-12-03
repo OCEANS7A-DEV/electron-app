@@ -1,8 +1,6 @@
 import { useLoaderData } from 'react-router-dom'
-
 import { PrintDataFlatMap } from './logic'
-
-import { PrintRowType, LoaderData } from './types'
+import { PrintRowType, LoaderData, UseLogicType } from './types'
 
 export const loader = async (): Promise<LoaderData> => {
   const printDataObj = await window.myInventoryAPI.storeGet('printData')
@@ -18,14 +16,13 @@ export const loader = async (): Promise<LoaderData> => {
       return printdata
     })
   )
-  return { printDate, resultdata, stores }
+  return { printDate, resultdata }
 }
 
-export const useLogic = () => {
-  const { printDate, resultdata, stores } = useLoaderData<typeof loader>()
+export const useLogic = (): UseLogicType => {
+  const { printDate, resultdata } = useLoaderData<typeof loader>()
   return {
     printDate,
-    resultdata,
-    stores
+    resultdata
   }
 }

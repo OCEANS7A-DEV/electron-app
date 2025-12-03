@@ -1,8 +1,9 @@
+import type { JSX } from 'react'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import { ColumnSize, BoxSxSetting } from './logic'
+import { PrintRowType, RowCompType } from './types'
 
-const RowComp = ({ printData }) => {
+const RowComp = ({ printData }: RowCompType): JSX.Element => {
   return (
     <Box
       sx={{
@@ -13,7 +14,7 @@ const RowComp = ({ printData }) => {
         padding: '1px'
       }}
     >
-      {printData.map((row, index: number) => (
+      {printData.map((row: PrintRowType, index: number) => (
         <Box
           key={index}
           sx={{
@@ -33,7 +34,16 @@ const RowComp = ({ printData }) => {
               paddingLeft: '6px'
             }}
           >
-            <Box sx={{ whiteSpace: 'nowrap' }}>{row[3]}</Box>
+            <Box sx={{ whiteSpace: 'nowrap' }}>
+              <Box
+                sx={{
+                  width: '40px',
+                  textAlign: 'right'
+                }}
+              >
+                {row[3]}
+              </Box>
+            </Box>
             <Box sx={{ whiteSpace: 'nowrap' }}>{row[4]}</Box>
           </Box>
           <Box
@@ -87,18 +97,9 @@ const RowComp = ({ printData }) => {
               flexFlow: 'column'
             }}
           >
-            <Box>{row[10]}</Box>
-          </Box>
-          <Box
-            sx={{
-              ...BoxSxSetting,
-              justifyContent: 'center',
-              flexFlow: 'column'
-            }}
-          >
             {row[10] !== '' && (
               <Box sx={{ width: '100%', textAlign: 'right', paddingRight: '18px' }}>
-                {row[10]}様 ¥{Number(row[6] * row[8]).toLocaleString()}
+                {row[10]}様 ¥{(Number(row[6]) * Number(row[8])).toLocaleString()}
               </Box>
             )}
           </Box>
@@ -110,6 +111,15 @@ const RowComp = ({ printData }) => {
             }}
           >
             <Box>{row[11]}</Box>
+          </Box>
+          <Box
+            sx={{
+              ...BoxSxSetting,
+              justifyContent: 'center',
+              flexFlow: 'column'
+            }}
+          >
+            <Box></Box>
           </Box>
         </Box>
       ))}

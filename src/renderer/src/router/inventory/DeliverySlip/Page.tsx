@@ -1,12 +1,17 @@
+// React
+import type { JSX } from 'react'
+
+// Mui
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 
+// 自作コンポとuse
+import StoreComp from './storeComp'
 import { useLogic } from './useLogic'
 
-import StoreComp from './storeComp'
-
-const DeliverySlip = () => {
+const DeliverySlip = (): JSX.Element => {
   const { printDate, resultdata } = useLogic()
+
   return (
     <Box
       sx={{

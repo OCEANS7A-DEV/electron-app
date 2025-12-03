@@ -17,11 +17,24 @@ export type PrintRowType = [
 export interface LoaderData {
   printDate: string
   resultdata: ForMatType[]
-  stores: string[]
 }
 
 export interface ForMatType {
   storeName: string
   printData: PrintRowType[][]
   total: number
+}
+
+export interface StoreCompType {
+  printDate: string
+  storeData: ForMatType
+}
+
+export interface RowCompType {
+  printData: PrintRowType[]
+}
+
+export interface UseLogicType {
+  printDate: string
+  resultdata: ForMatType[]
 }

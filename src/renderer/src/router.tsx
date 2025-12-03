@@ -7,7 +7,7 @@ import { createHashRouter } from 'react-router-dom'
 import ProductDetailChangePage, {
   loader as productsLoader
 } from './router/inventory/inventorySetting/ProductListUpdata'
-import NETOrder, { loader as netOrderLoader } from './router/inventory/inventoryGet/netOrder'
+
 import NetEtcPrint, { loader as NetEtcLoader } from './router/inventory/inventoryPrint/etcPrint'
 import NotListed, { loader as NotListedLoader } from './router/inventory/inventoryGet/NotListed'
 import HQStocks, { loader as HQStocksLoader } from './router/inventory/inventoryGet/HQ_stocks'
@@ -45,15 +45,31 @@ import MovingPage from '@Inventory/Moving/Page'
 
 // 納品書
 //import PrintContent, { loader as PrintLoader } from './router/inventory/inventoryPrint/PrintContent'
-
 import { loader as PrintLoader } from '@Inventory/DeliverySlip/useLogic'
 import DeliverySlip from '@Inventory/DeliverySlip/Page'
+
+// ネット発注
+//import NETOrder, { loader as netOrderLoader } from './router/inventory/inventoryGet/netOrder'
+import NetOrderPage from '@Inventory/NetOrder/Page'
+import { loader as NetOrderPageLoader } from '@Inventory/NetOrder/useLogic'
+
+// FC在庫入力
+//import FCInventory, { loader as FCLoader } from './router/inventory/inventoryGet/FCInventory'
+import FCInventoryPage from '@Inventory/FCInventory/Page'
+import { loader as FCLoader } from '@Inventory/FCInventory/useLogic'
+
+// 店舗 カウントリスト
+import CountListPage from '@Inventory/CountList/Page'
+import { loader as CountlistLoader } from '@Inventory/CountList/useLogic'
+
+
+// Googleログイン
 
 
 import GoogleWindow from './router/setting/GoogleLogin'
 import LauncherPage from './router/launcher'
 import Uriage from './router/sales/Uriage'
-import FCInventory, { loader as FCLoader } from './router/inventory/inventoryGet/FCInventory'
+
 import HQdata, { loader as HQLoader } from './router/HQwork/HQdata'
 import HQmemo, { loader as HQMemoLoader } from './router/HQwork/HQmemo'
 import HQPrivatememo, { loader as HQPrivatememoLoader } from './router/HQwork/PersonMemo'
@@ -79,8 +95,8 @@ export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   },
   {
     path: '/NETOrder',
-    element: <NETOrder />,
-    loader: netOrderLoader
+    element: <NetOrderPage />,
+    loader: NetOrderPageLoader
   },
   {
     path: '/NetEtcPrint',
@@ -179,7 +195,7 @@ export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   },
   {
     path: '/FCInventory',
-    element: <FCInventory />,
+    element: <FCInventoryPage />,
     loader: FCLoader
   },
   {
@@ -210,5 +226,10 @@ export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   {
     path: '/InventorySearchPage',
     element: <InventorySearchPage />
+  },
+  {
+    path: '/CountList',
+    element: <CountListPage />,
+    loader: CountlistLoader
   }
 ])
