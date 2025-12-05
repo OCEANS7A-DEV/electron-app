@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('myInventoryAPI', {
   orderPrint: (payload) => ipcRenderer.invoke('orderPrint', payload),
   HelloWorkPDFGet: (lists) => ipcRenderer.invoke('hellowork-PDF', lists),
   PrintReady: () => ipcRenderer.invoke('Print-Ready'),
+  CountListPrint: () => ipcRenderer.invoke('CountListPrint'),
   storeSet: (settitle: string, setData: any) => ipcRenderer.invoke('storeSet', settitle, setData),
   storeGet: (gettitle: string) => ipcRenderer.invoke('storeGet', gettitle),
   onUpdateAvailable: (callback: (flag: boolean) => void) => {

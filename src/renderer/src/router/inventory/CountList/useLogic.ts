@@ -1,6 +1,8 @@
 import { useLoaderData } from 'react-router-dom'
 import { productType } from './types'
+import { useRef } from 'react'
 
+import { productGet } from '../../../Util/util'
 
 export const loader = async (): Promise<any> => {
   const ordersGet = await window.myInventoryAPI.ListGet({
@@ -8,6 +10,7 @@ export const loader = async (): Promise<any> => {
     action: 'InputDataGet',
     ranges: 'A2:M'
   })
+  console.log(ordersGet)
   const stores = await window.myInventoryAPI.storeGet('storeList')
   const types = await window.myInventoryAPI.storeGet('types')
   const products = await window.myInventoryAPI.storeGet('data')
@@ -38,16 +41,32 @@ export const loader = async (): Promise<any> => {
         UsedProducts.push(data)
       }
     })
-    const resultList = types.map((item) => {
-      const datas = UsedProducts.filter((row) => row.type == item[1])
-      const result = division(datas, 20)
-      return result
-    })
+    let maxPage = 0
+    const resultList: { typeName: string; products: productType[] }[] = []
 
+    types.forEach((item) => {
+      const datas = UsedProducts.filter((row) => row.type == item[1])
+      if (store[1] == 'SQ' && item[1].includes('8')) {
+        const Push = products.filter((row) => row.code >= 500000 && row.code < 600000)
+        datas.push(...Push)
+      }
+      if (datas.length == 0) return
+      const divData = division(datas, 20)
+      divData.forEach((data) => {
+        maxPage = maxPage + 1
+        const result = {
+          typeName: item[1],
+          products: data,
+          pageNum: maxPage
+        }
+        resultList.push(result)
+      })
+    })
 
     return {
       storeName: store[1],
-      productCodes: resultList
+      productCodes: resultList,
+      maxPageNum: maxPage
     }
   })
   return { resultData }
@@ -55,7 +74,17 @@ export const loader = async (): Promise<any> => {
 
 export const useLogic = () => {
   const { resultData } = useLoaderData<typeof loader>()
-  return { resultData }
+  const PageNum = useRef(0)
+
+  const PageNumReset = () => {
+    PageNum.current = 0
+  }
+
+  const PageNumCount = () => {
+    PageNum.current = PageNum.current + 1
+  }
+
+  return { resultData, PageNum, PageNumReset, PageNumCount }
 }
 
 const division = (arr: productType[], size: number): productType[][] =>

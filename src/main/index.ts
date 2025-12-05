@@ -28,11 +28,8 @@ import Database from 'better-sqlite3'
 import crypto from 'crypto'
 import iconv from 'iconv-lite'
 
-
-
-
 const userDataPath = app.getPath('userData')
-const userDataDirPath = path.resolve('./puppeteer_user_data');
+const userDataDirPath = path.resolve('./puppeteer_user_data')
 
 const dbDirectory = path.join(userDataPath, 'database')
 
@@ -44,7 +41,7 @@ const dbPath = path.join(dbDirectory, 'my-data.sqlite3')
 
 let DB
 try {
-  DB = new Database(dbPath);
+  DB = new Database(dbPath)
   console.log(`データベースを ${dbPath} に接続しました。`)
 } catch (error) {
   console.error('データベースの接続に失敗しました:', error)
@@ -78,7 +75,6 @@ const createMemoDetailTable = DB.prepare(
   )`
 )
 createMemoDetailTable.run()
-
 
 const gotTheLock = app.requestSingleInstanceLock()
 const windowManager = new Map()
@@ -198,8 +194,6 @@ const TokenCheck = async (token: string) => {
 
 const store = new Store() as any
 
-
-
 // const Img_URL =
 //   'https://script.google.com/macros/s/AKfycbzCrMJDEFvfTTTCjb2b-8SwVgc2ySlsKwpf7c49H08DS6P4-ZulaS4zcNtiioytK0i6/exec'
 
@@ -277,10 +271,7 @@ const createUpdaterWindow = async () => {
 
 let GoogleLoginWindow: BrowserWindow
 
-
-
 const createGoogleLoginWindow = async () => {
-  
   GoogleLoginWindow = new BrowserWindow({
     width: 600,
     height: 400,
@@ -297,7 +288,7 @@ const createGoogleLoginWindow = async () => {
       webviewTag: true
     }
   })
-  
+
   GoogleLoginWindow.loadURL(GetAPI_URL)
 
   GoogleLoginWindow.on('ready-to-show', () => {
@@ -666,7 +657,6 @@ const firstGet = async () => {
   }
 }
 
-
 const AffterGet = async () => {
   const LastUpdatedDate = ''
   try {
@@ -743,23 +733,25 @@ const DataUpdate = async (sheetname, range, key) => {
     const result = await response.json()
     let ListResult
     if (key === 'data') {
-      ListResult = result.filter((item) => item[3] !== '').map((item) => {
-        return {
-          vendor: item[1],
-          code: item[2],
-          name: item[3],
-          defaultPrice: '',
-          newPrice: item[4],
-          VC: item[5],
-          store: item[6],
-          type: item[11],
-          remarks: item[7],
-          Possibility: item[12],
-          service: item[9],
-          order: item[8],
-          vendorid: item[0]
-        }
-      })
+      ListResult = result
+        .filter((item) => item[3] !== '')
+        .map((item) => {
+          return {
+            vendor: item[1],
+            code: item[2],
+            name: item[3],
+            defaultPrice: '',
+            newPrice: item[4],
+            VC: item[5],
+            store: item[6],
+            type: item[11],
+            remarks: item[7],
+            Possibility: item[12],
+            service: item[9],
+            order: item[8],
+            vendorid: item[0]
+          }
+        })
     }
     store.set(key, ListResult)
     return
@@ -1132,12 +1124,12 @@ ipcMain.handle('list-get', async (_event, payload: any) => {
 })
 
 ipcMain.handle('uuid-get', async (_event, payload: any) => {
-  let Uuid;
-  let isDuplicate = false;
+  let Uuid
+  let isDuplicate = false
   do {
     Uuid = crypto.randomUUID()
-    isDuplicate = payload.includes(Uuid);
-  } while (isDuplicate);
+    isDuplicate = payload.includes(Uuid)
+  } while (isDuplicate)
   return Uuid
 })
 
@@ -1329,21 +1321,46 @@ ipcMain.handle('Print-Ready', () => {
     console.log(success)
     console.log(failureReason)
     if (success) {
-      console.log('print');
+      console.log('print')
       // 印刷成功後の処理をここに記述
       PrintSatusUpdate()
       result = '印刷実行'
     } else {
-      console.log('ユーザーは印刷をキャンセルしました。');
+      console.log('ユーザーは印刷をキャンセルしました。')
       if (failureReason === 'cancelled') {
-        console.log('cancelled');
+        console.log('cancelled')
         result = '印刷キャンセル'
       } else {
-        console.log(`印刷に失敗しました: ${failureReason}`);
+        console.log(`印刷に失敗しました: ${failureReason}`)
         result = '印刷失敗'
       }
     }
   })
+  return result
+})
+
+ipcMain.handle('CountListPrint', () => {
+  let result
+  //printBackground: false
+  printWindow?.webContents.print(
+    { printBackground: false },
+    (success, failureReason) => {
+      if (success) {
+        console.log('print')
+        PrintSatusUpdate()
+        result = '印刷実行'
+      } else {
+        console.log('ユーザーは印刷をキャンセルしました。')
+        if (failureReason === 'cancelled') {
+          console.log('cancelled')
+          result = '印刷キャンセル'
+        } else {
+          console.log(`印刷に失敗しました: ${failureReason}`)
+          result = '印刷失敗'
+        }
+      }
+    }
+  )
   return result
 })
 
@@ -1381,7 +1398,7 @@ const PrintSatusUpdate = async (): Promise<void> => {
     const result = await response.json()
     return result
   } catch {
-    return 
+    return
   }
 }
 
@@ -1425,19 +1442,17 @@ ipcMain.handle('printStatus', async (_event, payload: any) => {
   }
 })
 
-
 let browser: Browser | null = null
 
 const opts = getPuppeteerOptions()
 
 browser = await puppeteer.launch(opts)
 
-
 const page = await browser.newPage()
 
 ipcMain.handle('hellowork-init', async () => {
   try {
-    if(!page) {
+    if (!page) {
       throw new Error('Puppeteer page is not initialized')
     }
 
@@ -1462,7 +1477,6 @@ ipcMain.handle('hellowork-init', async () => {
     }, selector)
 
     if (title == 'ワンタイムパスワード入力') {
-
       HelloWorkWindow.webContents.send('show-otp-prompt')
 
       const otp = await new Promise((resolve) => {
@@ -1644,10 +1658,10 @@ ipcMain.handle('hellowork-get', async () => {
       console.error(err)
       throw err
     } finally {
-      const linkLocator = page.locator('a[href*="GEAB100010.do"]');
+      const linkLocator = page.locator('a[href*="GEAB100010.do"]')
       await Promise.all([
         page.waitForNavigation({ waitUntil: 'networkidle2' }),
-        linkLocator.click(),
+        linkLocator.click()
       ])
     }
   } catch (e) {
@@ -1655,7 +1669,6 @@ ipcMain.handle('hellowork-get', async () => {
     throw e
   }
 })
-
 
 ipcMain.handle('hellowork-update', async (_event, RecruitNumbers: any) => {
   try {
@@ -1691,13 +1704,9 @@ ipcMain.handle('hellowork-update', async (_event, RecruitNumbers: any) => {
   } catch {
     return
   } finally {
-    const linkLocator = page.locator('a[href*="GEAB100010.do"]');
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle2' }),
-      linkLocator.click(),
-    ])
+    const linkLocator = page.locator('a[href*="GEAB100010.do"]')
+    await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), linkLocator.click()])
   }
-
 })
 
 interface Works {
@@ -1754,7 +1763,6 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
           // 1) Puppeteer でページにアクセスし、クッキーを取得
           await page.goto(jobUrl, { waitUntil: 'networkidle2', timeout: 60000 })
 
-
           // 2) セッション維持用の Cookie を抜き出す
           const cookies = await page.cookies()
           const cookieHeader = cookies.map((c) => `${c.name}=${c.value}`).join('; ')
@@ -1779,7 +1787,6 @@ ipcMain.handle('hellowork-PDF', async (_event: IpcMainInvokeEvent, lists: Works[
           }
 
           fs.writeFileSync(downloadsPath, buffer)
-
 
           HelloWorkWindow.webContents.send('helloWork-progress', {
             count: count,
@@ -1814,7 +1821,9 @@ ipcMain.on('PDF-Marge', () => {
   PDFfileMarge('merged.pdf')
 })
 
-const PDFfileMarge = async (fileName): Promise<{
+const PDFfileMarge = async (
+  fileName
+): Promise<{
   canceled: boolean
   output?: string
   error?: string
@@ -1875,24 +1884,23 @@ const PDFfileMarge = async (fileName): Promise<{
   })
 }
 
-
 ipcMain.handle('unlock-pdf', async (_event, fileData, _password, _fileName) => {
-  const tempInputPath = path.join(os.tmpdir(), `temp-pdf-${Date.now()}.pdf`);
+  const tempInputPath = path.join(os.tmpdir(), `temp-pdf-${Date.now()}.pdf`)
 
   try {
     // '.promises' をつけて await を使う
     const buffer = Buffer.from(fileData.fileData)
     // 変換した buffer を書き込みます
-    await fs.promises.writeFile(tempInputPath, buffer);
+    await fs.promises.writeFile(tempInputPath, buffer)
     const baseName = path.basename(fileData.fileName, '.pdf')
     const { canceled, filePath: outputPath } = await dialog.showSaveDialog({
       title: 'ロック解除したPDFの保存先を選択',
       defaultPath: path.join(app.getPath('downloads'), `${baseName}_unlocked.pdf`),
       filters: [{ name: 'PDFファイル', extensions: ['pdf'] }]
-    });
+    })
 
     if (canceled || !outputPath) {
-      return { status: 'info', message: '保存がキャンセルされました。' };
+      return { status: 'info', message: '保存がキャンセルされました。' }
     }
 
     let qpdfDir: string
@@ -1904,30 +1912,32 @@ ipcMain.handle('unlock-pdf', async (_event, fileData, _password, _fileName) => {
 
     const qpdfPath = path.join(qpdfDir, 'bin', process.platform === 'win32' ? 'qpdf.exe' : 'qpdf')
 
-    const args = [`--password=${fileData.password}`, '--decrypt', tempInputPath, outputPath];
+    const args = [`--password=${fileData.password}`, '--decrypt', tempInputPath, outputPath]
 
     await new Promise<void>((resolve, reject) => {
       // ここで組み立てた qpdfPath を使う
       execFile(qpdfPath, args, { encoding: 'buffer', shell: true }, (error, _stdout, stderr) => {
         if (error) {
-          const errorMessage = iconv.decode(stderr, 'cp932');
-          reject(new Error(errorMessage || 'PDFの処理に失敗しました。'));
-          return;
+          const errorMessage = iconv.decode(stderr, 'cp932')
+          reject(new Error(errorMessage || 'PDFの処理に失敗しました。'))
+          return
         }
-        resolve();
-      });
-    });
+        resolve()
+      })
+    })
 
-    return { status: 'success', message: `ロック解除に成功しました。\n${outputPath} に保存されました。` };
-
+    return {
+      status: 'success',
+      message: `ロック解除に成功しました。\n${outputPath} に保存されました。`
+    }
   } catch (err: any) {
-    console.error(err);
-    return { status: 'error', message: `エラーが発生しました: ${err.message}` };
+    console.error(err)
+    return { status: 'error', message: `エラーが発生しました: ${err.message}` }
   } finally {
     try {
-      await fs.promises.unlink(tempInputPath);
+      await fs.promises.unlink(tempInputPath)
     } catch (cleanupErr) {
-      console.error('Failed to clean up temporary file:', cleanupErr);
+      console.error('Failed to clean up temporary file:', cleanupErr)
     }
   }
 })
