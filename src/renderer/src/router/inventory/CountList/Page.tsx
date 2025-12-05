@@ -9,11 +9,10 @@ const CountListPage = () => {
   const { resultData } = useLogic()
 
   const handlePrint = async () => {
-    const targetIndex = 0
-    // 1. 印刷対象のIDを特定
-    //const targetElementId = `print-area-${targetIndex}`
+    const targetIndex = 0 // テスト用
     const style = document.createElement('style')
     let styleString = ''
+    styleString += '@media print {'
     for (let i = 0; i < resultData.length; i++) {
       if (i == targetIndex) continue
       const targetElementId = `print-area-${i}`
@@ -23,13 +22,12 @@ const CountListPage = () => {
         }
       `
     }
+    styleString += '}'
     style.innerHTML = styleString
     document.head.appendChild(style)
 
     const result = await window.myInventoryAPI.PrintReady()
-    //const result = await window.myInventoryAPI.CountListPrint()
-    // console.log(result)
-    //document.head.removeChild(style)
+    document.head.removeChild(style)
   }
 
   return (
