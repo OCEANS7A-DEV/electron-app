@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 // Form関連コンポーネント
 import { useForm, SubmitHandler, useFieldArray, useWatch, Control } from 'react-hook-form'
@@ -165,33 +165,36 @@ export const useLogic = (): UseLogicReturn => {
     })
   }
 
-  const handleEnterFocusNext = (e: React.KeyboardEvent<HTMLElement>): void => {
-    const maxRows = getValues().rows.length
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      const form = (
-        e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement
-      ).form
-      if (form) {
-        const elements = Array.from(form.elements) as HTMLElement[]
-        const index = elements.indexOf(e.target as HTMLElement)
-        const before = elements[index] as HTMLElement
-        let next = elements[index + 2] as HTMLElement
-        let nextType = next.tagName
-        let count = 3
-        while (nextType == 'BUTTON' || nextType == 'FIELDSET') {
-          next = elements[index + count] as HTMLElement
-          nextType = next.tagName
-          count++
+  const handleEnterFocusNext = useCallback(
+    (e: React.KeyboardEvent<HTMLElement>): void => {
+      const maxRows = getValues().rows.length
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        const form = (
+          e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement
+        ).form
+        if (form) {
+          const elements = Array.from(form.elements) as HTMLElement[]
+          const index = elements.indexOf(e.target as HTMLElement)
+          const before = elements[index] as HTMLElement
+          if ((before as HTMLInputElement).name == `rows.${maxRows - 1}.remarks`) {
+            addNewForm()
+            return
+          }
+          let next = elements[index + 2] as HTMLElement
+          let nextType = next.tagName
+          let count = 3
+          while (nextType == 'BUTTON' || nextType == 'FIELDSET') {
+            next = elements[index + count] as HTMLElement
+            nextType = next.tagName
+            count++
+          }
+          next.focus()
         }
-        if ((before as HTMLInputElement).name == `rows.${maxRows - 1}.remarks`) {
-          addNewForm()
-          return
-        }
-        next.focus()
       }
-    }
-  }
+    },
+    [getValues, addNewForm]
+  )
 
   const RegisterData = async (data: productType): Promise<void> => {
     const code = data.code

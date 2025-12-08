@@ -14,3 +14,9 @@ export interface productType {
   Possibility: boolean | string
   ImageURL: string
 }
+
+export type StoreType = [
+  number,
+  string,
+  string
+]

@@ -1,67 +1,40 @@
 import { useLogic } from './useLogic'
-
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-
 import StoreComp from './storeComp'
+import { Toaster } from 'react-hot-toast'
+import './style.css'
 
 const CountListPage = () => {
-  const { resultData } = useLogic()
-
-  const handlePrint = async () => {
-    const targetIndex = 0 // テスト用
-    const style = document.createElement('style')
-    let styleString = ''
-    styleString += '@media print {'
-    for (let i = 0; i < resultData.length; i++) {
-      if (i == targetIndex) continue
-      const targetElementId = `print-area-${i}`
-      styleString = styleString + `
-        #${targetElementId} {
-          display: none;
-        }
-      `
-    }
-    styleString += '}'
-    style.innerHTML = styleString
-    document.head.appendChild(style)
-
-    const result = await window.myInventoryAPI.PrintReady()
-    document.head.removeChild(style)
-  }
-
+  const { resultData, AllPDFPrint } = useLogic()
   return (
-    <Box>
-      <Box
-        sx={{
-          '@media print': {
-            WebkitPrintColorAdjust: 'exact',
-            printColorAdjust: 'exact'
-          }
-        }}
-      >
-        <Box
-          displayPrint="none"
-          sx={{
-            position: 'fixed',
-            top: 30,
-            zIndex: 100
-          }}
-        >
-          <Button variant="contained" onClick={handlePrint}>
-            印刷
-          </Button>
-        </Box>
-        {resultData.map((row, index) => (
-          <Box
-            key={index}
-            id={`print-area-${index}`}
-          >
-            <StoreComp data={row} />
-          </Box>
-        ))}
+    <>
+      <Box className="toast">
+        <Toaster />
       </Box>
-    </Box>
+      <Box>
+        <Box>
+          <Box
+            displayPrint="none"
+            sx={{
+              position: 'fixed',
+              top: 30,
+              zIndex: 100
+            }}
+          >
+            <Button variant="contained" onClick={AllPDFPrint}>
+              印刷
+            </Button>
+          </Box>
+          {resultData.map((row, index) => (
+            <Box key={index} id={`print-area-${index}`}>
+              <StoreComp data={row} />
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    </>
+
   )
 }
 

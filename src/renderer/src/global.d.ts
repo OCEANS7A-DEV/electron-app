@@ -47,7 +47,8 @@ declare global {
       VendorData: () => Promise<any>
       shortageGet: () => Promise<any>
       PrintReady: () => Promise<any>
-      CountListPrint: () => Promise<any>
+      CountListPrint: (fileName: string, folderPath: string) => Promise<any>
+      FolderBuild: (folderName: string) => Promise<any>
       NowGet: () => Promise<any>
       WorkGet: () => Promise<any>
       HelloWorkPDFGet: (lists: any) => Promise<void>

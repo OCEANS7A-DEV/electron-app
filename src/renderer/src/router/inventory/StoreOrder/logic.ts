@@ -45,7 +45,7 @@ export const insertDataFormat = async (
       date,
       store,
       item.vendor,
-      Number(item.code),
+      item.code,
       item.name,
       item.detail?.value ?? '',
       Number(item.quantity),

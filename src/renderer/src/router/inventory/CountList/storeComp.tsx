@@ -3,19 +3,24 @@ import TypePage from './TypePage'
 
 const StoreComp = ({ data }) => {
   return (
-    <Box
-      sx={{
-        width: '210mm',
-        backgroundColor: 'white'
-      }}
-    >
-      <Box>
-        {data.productCodes.map((row, index) => (
-          <Box key={index}>
-            <TypePage storeName={data.storeName} data={row} maxPage={data.maxPageNum} />
-          </Box>
-        ))}
-      </Box>
+    <Box>
+      {data.productCodes.map((row, index) => (
+        <Box
+          key={index}
+          sx={{
+            breakAfter: 'page',
+            display: 'flex',
+            flexFlow: 'column',
+            backgroundColor: 'white',
+            minWidth: '210mm',
+            maxWidth: '210mm',
+            minHeight: '297mm',
+            maxHeight: '297mm'
+          }}
+        >
+          <TypePage storeName={data.storeName} data={row} maxPage={data.maxPageNum} />
+        </Box>
+      ))}
     </Box>
   )
 }

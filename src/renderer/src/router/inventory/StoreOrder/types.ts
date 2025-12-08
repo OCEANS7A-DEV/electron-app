@@ -36,7 +36,7 @@ export type OrderGetTypes = [
   string,
   string,
   string,
-  number,
+  number | string,
   string,
   string,
   number,
@@ -61,7 +61,7 @@ export type InsertDataType = [
   string,
   string,
   string,
-  number,
+  number | string,
   string,
   string,
   number,
@@ -114,4 +114,16 @@ export interface UseLogicReturn {
   DialogOpen: boolean
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>
   insertPost: () => void
+}
+
+export interface RowProps {
+  index: number
+  register: UseFormRegister<FormValues>
+  control: Control<FormValues>
+  handleEnterFocusNext: (e: React.KeyboardEvent<HTMLElement>) => void
+  search: (index: number) => Promise<void>
+  handleSelectChange: (e: SelectChangeEvent, index: number) => void
+  deleteRow: (index: number) => Promise<void>
+  insertRow: (index: number) => void
+  productCodeSearch: (index: number) => Promise<void>
 }

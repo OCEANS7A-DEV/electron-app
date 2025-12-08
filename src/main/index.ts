@@ -1339,29 +1339,34 @@ ipcMain.handle('Print-Ready', () => {
   return result
 })
 
-ipcMain.handle('CountListPrint', () => {
-  let result
-  //printBackground: false
-  printWindow?.webContents.print(
-    { printBackground: false },
-    (success, failureReason) => {
-      if (success) {
-        console.log('print')
-        PrintSatusUpdate()
-        result = '印刷実行'
-      } else {
-        console.log('ユーザーは印刷をキャンセルしました。')
-        if (failureReason === 'cancelled') {
-          console.log('cancelled')
-          result = '印刷キャンセル'
-        } else {
-          console.log(`印刷に失敗しました: ${failureReason}`)
-          result = '印刷失敗'
-        }
+ipcMain.handle('CountListPrint', async (_event, fileName, folderPath) => {
+  if (!printWindow) return 'ウィンドウが見つかりません'
+  try {
+    const targetFileName = fileName || 'output.pdf'
+    const savePath = path.join(folderPath, targetFileName)
+    const data = await printWindow.webContents.printToPDF({
+      printBackground: false,
+      landscape: false,
+      margins: {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
       }
-    }
-  )
-  return result
+    })
+    await fs.promises.writeFile(savePath, data)
+    return '印刷実行（PDF保存完了）'
+  } catch (error) {
+    return `印刷失敗: ${error}`
+  }
+})
+
+ipcMain.handle('folderBuild', async (_event, folderName: string) => {
+  const downloadDir = path.join(os.homedir(), 'Downloads', folderName)
+  if (!fs.existsSync(downloadDir)) {
+    fs.mkdirSync(downloadDir, { recursive: true })
+  }
+  return downloadDir
 })
 
 const PrintSatusUpdate = async (): Promise<void> => {
