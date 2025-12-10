@@ -125,7 +125,13 @@ export const useLogic = (): UseLogicReturn => {
         count++
       })
     }
-    DeleteRowNumRef.current = getValues().rows.filter((item) => item.name !== '').length
+    const data = ordersGet.filter(
+      (item: OrderGetTypes) =>
+        new Date(item[0]).toLocaleDateString() == InsertDate && item[1] == storeSelect
+    )
+
+    DeleteRowNumRef.current = data.length
+
     BeforeDataRef.current = filtered
     return filtered
   }

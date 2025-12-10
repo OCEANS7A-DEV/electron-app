@@ -9,7 +9,6 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
 // MUIアイコン
@@ -26,7 +25,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import LinkBaner from '../../../comp/Linkbanar'
 import WordSearch from '../../../comp/ProductSearchWord'
 import MyDialog from './Dialog'
-import DetailSelectBox from './SelectBox'
 import RowComp from './RowComp'
 
 // トースト通知コンポーネント

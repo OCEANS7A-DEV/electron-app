@@ -228,7 +228,6 @@ const HQPage = (): JSX.Element => {
     await window.myInventoryAPI.storeSet('printData', JSON.stringify(filterData))
     await window.myInventoryAPI.storeSet('printDate', setDate)
     sessionStorage.setItem('printDate', getDate)
-
     window.myInventoryAPI.orderPrint('PrintContent')
     window.myInventoryAPI.DataInsert({
       sheetName: '店舗へ',

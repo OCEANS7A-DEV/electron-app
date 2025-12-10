@@ -11,7 +11,7 @@ import { useLogic } from './useLogic'
 
 const DeliverySlip = (): JSX.Element => {
   const { printDate, resultdata } = useLogic()
-
+  console.log(resultdata)
   return (
     <Box
       sx={{

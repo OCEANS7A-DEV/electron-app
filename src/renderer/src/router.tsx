@@ -11,11 +11,10 @@ import ProductDetailChangePage, {
 import NetEtcPrint, { loader as NetEtcLoader } from './router/inventory/inventoryPrint/etcPrint'
 import NotListed, { loader as NotListedLoader } from './router/inventory/inventoryGet/NotListed'
 import HQStocks, { loader as HQStocksLoader } from './router/inventory/inventoryGet/HQ_stocks'
-import HQPage from './router/inventory/inventoryGet/processCheck'
 
 import TaiyoPrint, { loader as TaiyoLoader } from './router/inventory/inventoryPrint/taiyo'
 
-import EtcPrint, { loader as EtcLoader } from './router/inventory/inventoryPrint/VendorPrint'
+//import EtcPrint, { loader as EtcLoader } from './router/inventory/inventoryPrint/VendorPrint'
 import ZaikoSettingPage, { loader as ZaikoSettingLoader } from './router/setting/setting'
 import HelloWork, { loader as HelloWorkLoader } from './router/helloWork/helloWork'
 import DetailContent from './router/inventory/inventorySetting/productDetailEdit'
@@ -61,6 +60,13 @@ import { loader as FCLoader } from '@Inventory/FCInventory/useLogic'
 // 店舗 カウントリスト
 import CountListPage from '@Inventory/CountList/Page'
 import { loader as CountlistLoader } from '@Inventory/CountList/useLogic'
+
+// 印刷関係コントロールページ
+//import HQPage from './router/inventory/inventoryGet/processCheck'
+import PrintControlPage from '@Inventory/PrintPage/Page'
+
+// FAX印刷
+import VendorFAXPage from '@Inventory/VendorFAXPrint/Page'
 
 
 // Googleログイン
@@ -124,7 +130,7 @@ export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   },
   {
     path: '/process_chack',
-    element: <HQPage />
+    element: <PrintControlPage />
   },
   {
     path: '/PrintContent',
@@ -138,8 +144,8 @@ export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   },
   {
     path: '/VendorPrint',
-    element: <EtcPrint />,
-    loader: EtcLoader
+    element: <VendorFAXPage />,
+    //loader: EtcLoader
   },
   {
     path: '/zaikosetting',
