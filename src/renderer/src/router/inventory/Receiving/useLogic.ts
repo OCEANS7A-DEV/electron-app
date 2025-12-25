@@ -193,30 +193,31 @@ export const useLogic = (): UseLogicReturn => {
       const maxRows = getValues().rows.length
       if (e.key === 'Enter') {
         e.preventDefault()
-        const form = (
-          e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement
-        ).form
+        const target = e.target as
+          | HTMLInputElement
+          | HTMLSelectElement
+          | HTMLTextAreaElement
+          | HTMLButtonElement
+        const form = target.form
         if (form) {
           const elements = Array.from(form.elements) as HTMLElement[]
           const index = elements.indexOf(e.target as HTMLElement)
           const before = elements[index] as HTMLElement
-          let next = elements[index + 2] as HTMLElement
-          let nextType = next.tagName
-          let count = 3
-          while (nextType == 'BUTTON' || nextType == 'FIELDSET') {
-            next = elements[index + count] as HTMLElement
-            nextType = next.tagName
-            count++
-          }
-          if ((before as HTMLInputElement).name == `rows.${maxRows - 1}.remarks`) {
+          if ((before as HTMLInputElement).name == `rows.${maxRows - 1}.price`) {
             AddNewForm(20)
             return
+          }
+          let next = elements[index + 2] as HTMLElement
+          let count = 3
+          while ((next as HTMLInputElement).name == '') {
+            next = elements[index + count] as HTMLElement
+            count++
           }
           next.focus()
         }
       }
     },
-    [AddNewForm, getValues]
+    [getValues, AddNewForm]
   )
 
   const RowRemove = useCallback(

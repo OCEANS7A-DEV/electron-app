@@ -29,8 +29,10 @@ import crypto from 'crypto'
 import iconv from 'iconv-lite'
 
 import { HelloWorkGet, HelloWorkPdfGet } from './helloworkMain'
-import { Launcher, ZaikoWindowCreate, GoogleWindowCreate } from './WindowCreate'
+import { Launcher, ZaikoWindowCreate, GoogleWindowCreate, WindowCreateLogic } from './WindowCreate'
 //PrintWindowCreate
+
+import { CookieSetup } from './logic'
 
 const userDataPath = app.getPath('userData')
 const userDataDirPath = path.resolve('./puppeteer_user_data')
@@ -306,7 +308,7 @@ function createZaikoWindow(): void {
     return
   }
   StartUpSet()
-  zaikoWindow = ZaikoWindowCreate()
+  zaikoWindow = WindowCreateLogic()
   windowManager.set('zaiko', zaikoWindow)
   zaikoWindow.on('ready-to-show', () => {
     zaikoWindow.show()
@@ -341,7 +343,7 @@ const createLauncherWindow = (): void => {
     return
   }
 
-  launcherWindow = Launcher()
+  launcherWindow = WindowCreateLogic()
 
   windowManager.set('Launcher', launcherWindow)
 
@@ -379,22 +381,7 @@ const createHelloWorkWindow = (): void => {
     return
   }
 
-  HelloWorkWindow = new BrowserWindow({
-    width: 950,
-    height: 670,
-    minWidth: 950,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: is.dev
-        ? join(__dirname, '../preload/index.mjs')
-        : join(app.getAppPath(), 'out/preload/index.mjs'),
-      sandbox: false,
-      webSecurity: false,
-      webviewTag: true
-    }
-  })
+  HelloWorkWindow = WindowCreateLogic()
 
   windowManager.set('HelloWork', HelloWorkWindow)
 
@@ -432,24 +419,7 @@ const createOfficeWorkWindow = (): void => {
     return
   }
 
-  OfficeWorkWindow = new BrowserWindow({
-    width: 950,
-    height: 670,
-    minWidth: 950,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: is.dev
-        ? join(__dirname, '../preload/index.mjs')
-        : join(app.getAppPath(), 'out/preload/index.mjs'),
-      sandbox: false,
-      webSecurity: false,
-      webviewTag: true,
-      contextIsolation: true,
-      nodeIntegration: false
-    }
-  })
+  OfficeWorkWindow = WindowCreateLogic()
 
   windowManager.set('OfficeWork', OfficeWorkWindow)
 
@@ -487,22 +457,7 @@ const createSettingWindow = (): void => {
     return
   }
 
-  SettingWindow = new BrowserWindow({
-    width: 950,
-    height: 670,
-    minWidth: 950,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: is.dev
-        ? join(__dirname, '../preload/index.mjs')
-        : join(app.getAppPath(), 'out/preload/index.mjs'),
-      sandbox: false,
-      webSecurity: false,
-      webviewTag: true
-    }
-  })
+  SettingWindow = WindowCreateLogic()
 
   windowManager.set('Setting', SettingWindow)
 
@@ -550,12 +505,7 @@ const hasGoogleLoginCookie = async (): Promise<boolean> => {
 const firstGet = async () => {
   const LastUpdatedDate = store.get('LastUpdatedDate') || ''
   try {
-    const cookies1 = await session.defaultSession.cookies.get({
-      url: 'https://accounts.google.com'
-    })
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
-    const allCookies = [...cookies1, ...cookies2]
-    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+    const cookieHeader = await CookieSetup()
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
@@ -588,6 +538,7 @@ const firstGet = async () => {
         ImageURL: item[14]
       }
     })
+    console.log(ListResult[0])
     store.set('address', result.AddressData)
     store.set('storeList', result.StoresData)
     store.set('details', result.DetailsData)

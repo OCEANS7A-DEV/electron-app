@@ -245,8 +245,7 @@ export const useLogic = (): UseLogicReturn => {
         },
         deleteNum: DeleteRowNumRef.current
       }
-      console.log(InsertDatas)
-      return
+
       if (insertData.length >= 1) {
         await window.myInventoryAPI.DataInsert(InsertDatas)
         DeleteRowNumRef.current = insertData.length
