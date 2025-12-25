@@ -22,7 +22,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 
 // 独自コンポーネント
-import LinkBaner from '../../../comp/Linkbanar'
+import LinkBaner from '../TopBanner/Page'
 import WordSearch from '../../../comp/ProductSearchWord'
 import MyDialog from './Dialog'
 import RowComp from './RowComp'

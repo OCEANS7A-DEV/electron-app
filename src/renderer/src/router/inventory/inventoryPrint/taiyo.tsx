@@ -4,8 +4,6 @@ import '../../../css/taiyoPrint.css'
 import { useLoaderData } from 'react-router-dom'
 import { Button } from '@mui/material'
 
-
-
 const isoToJstYMD = (isoString): string => {
   const date = new Date(isoString)
   const jst = new Date(date.getTime() + 9 * 60 * 60 * 1000)
@@ -22,22 +20,20 @@ export const loader = async ({ request }: { request: Request }) => {
   const date = url.searchParams.get('date')
   const vendor = url.searchParams.get('vendor')
   const address = url.searchParams.get('address')
-  if (address !== '会議室'){
+  if (address !== '会議室') {
     const resultData = await window.myInventoryAPI.ListGet({
       sheetName: '一覧',
-      action: 'TotallingGet',
+      action: 'TotallingGet'
     })
     const codeList = resultData.map((item) => item[2])
     const lastCol = resultData[0].length - 1
-    const filterd = resultData.filter(
-      (row) => row[0] === vendor && row[lastCol] < 0
-    )
+    const filterd = resultData.filter((row) => row[0] === vendor && row[lastCol] < 0)
     const orderResult = filterd.map((item) => {
       let shortageNum = Number(item[14])
       let num = 0
       if (item[8] !== '' && Number(item[8]) > 0) {
         let up = Number(item[8])
-        if (item[1] == 2002){
+        if (item[1] == 2002) {
           up = up * 2
         }
         while (shortageNum < 0) {
@@ -57,7 +53,8 @@ export const loader = async ({ request }: { request: Request }) => {
     })
     const filter = Order.filter((item) => isoToJstYMD(item[0]) == date)
     const Notlisted = filter.filter(
-      (item) => item[2].includes('大洋') && !codeList.includes(item[3]) && typeof item[3] !== 'number'
+      (item) =>
+        item[2].includes('大洋') && !codeList.includes(item[3]) && typeof item[3] !== 'number'
     )
     Notlisted.forEach((item) => {
       const result = [item[3], item[4], item[6], '', item[7], '']
@@ -66,7 +63,7 @@ export const loader = async ({ request }: { request: Request }) => {
   }
 
   const calcD = 16 - taiyoData.length
-  for (let i = 0; i < calcD; i++){
+  for (let i = 0; i < calcD; i++) {
     taiyoData.push(['', '', '', '', '', ''])
   }
   return { taiyoData, addressData, address }
@@ -86,7 +83,7 @@ export default function TaiyoPrint(): JSX.Element {
     window.myInventoryAPI.PrintReady()
   }
 
-  return(
+  return (
     <div className="taiyobackGround">
       <div className="PrintButton">
         <Button variant="outlined" onClick={Print}>
@@ -99,7 +96,7 @@ export default function TaiyoPrint(): JSX.Element {
       <div className="sub_top">
         <div className="sub_top2">
           <h2 className="taiyo-Data"> </h2>
-          <h2 className="taiyo-Data-name">㈱大洋商会  御中</h2>
+          <h2 className="taiyo-Data-name">㈱大洋商会 御中</h2>
         </div>
         <div className="sub_top2">
           <h2 className="taiyo-Data-number">FAX{VendorData[2]}</h2>
@@ -112,8 +109,7 @@ export default function TaiyoPrint(): JSX.Element {
             <tr className="taiyo-table-header">
               <th className="taiyo-number">
                 カタログ
-                <br />
-                掲載番号
+                <br />+<th></th>
               </th>
               <th className="taiyo-name">商品名</th>
               <th className="taiyo-num">数量</th>
@@ -174,7 +170,4 @@ export default function TaiyoPrint(): JSX.Element {
       </div>
     </div>
   )
-};
-
-
-
+}

@@ -4,7 +4,7 @@ import type { JSX } from 'react'
 import { useLogic } from './useLogic'
 
 // 自作
-import LinkBaner from '../../../comp/Linkbanar'
+import LinkBaner from '../TopBanner/Page'
 
 // CSS
 import '../../../css/Receiving.css'
@@ -60,7 +60,7 @@ export default function InventoryAmount(): JSX.Element {
   return (
     <Box>
       <Box>
-        <LinkBaner id="zaiko"/>
+        <LinkBaner id="zaiko" />
       </Box>
       <Box className="Inventory_Amount_area">
         <ThemeProvider theme={darkTheme}>

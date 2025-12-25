@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { PrintFormat } from './logic'
+import { PrintFormat, ProStepExtraction } from './logic'
+import { UseLogicType, AddressType, VendorsDataType, ProStepType } from './types'
 
-export const useLogic = () => {
-  const [VendorOrderData, setVendorOrderData] = useState<any[]>([])
-  const [Address, setAddress] = useState<any[]>()
+export const useLogic = (): UseLogicType => {
+  const [VendorOrderData, setVendorOrderData] = useState<VendorsDataType[]>([])
+  const [Address, setAddress] = useState<AddressType[]>([])
+  const [ProStepDatas, setProStepDatas] = useState<ProStepType[]>([])
 
   const first = async () => {
     const resultData = await window.myInventoryAPI.ListGet({
@@ -21,8 +23,13 @@ export const useLogic = () => {
       ranges: 'A2:M'
     })
     const vendors = alllist.filter((item) => item[7] !== 'オーシャン').map((row) => row[0])
-    const data = await PrintFormat(vendors, resultData, Order)
-    setVendorOrderData(data)
+    const data: VendorsDataType[] = await PrintFormat(vendors, resultData, Order)
+    if (data.length !== 0) {
+      setVendorOrderData(data)
+    }
+
+    const ProStepData = await ProStepExtraction(Order)
+    setProStepDatas(ProStepData)
     setAddress(alllist)
   }
 
@@ -32,6 +39,7 @@ export const useLogic = () => {
 
   return {
     VendorOrderData,
-    Address
+    Address,
+    ProStepDatas
   }
 }

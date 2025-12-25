@@ -9,7 +9,8 @@ export const defaultRowData = {
   quantity: '',
   person: '',
   remarks: '',
-  price: ''
+  price: '',
+  persontype: null
 }
 
 export const defaultDataFormat = (): FormValues['rows'] => {
@@ -41,6 +42,7 @@ export const insertDataFormat = async (
   const Now = await window.myInventoryAPI.NowGet()
   const existFilter = data.filter((item) => item.name !== '')
   const format = existFilter.map((item) => {
+    console.log(item.persontype)
     return [
       date,
       store,

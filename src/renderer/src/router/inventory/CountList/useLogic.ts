@@ -21,14 +21,13 @@ export const loader = async (): Promise<any> => {
   } else {
     CountListDate = `${now.getFullYear()}/1/1`
   }
-
   const resultData = stores
     .filter((store: StoreType) => store[2] == 'DM' && store[1] !== '会議室')
     .map((store: StoreType) => {
       const filterd = ordersGet.filter(
         (row: any[]) =>
           row[1] == store[1] &&
-          new Date(row[0]).toLocaleDateString() <= CountListDate &&
+          new Date(row[0]).toLocaleDateString() >= CountListDate &&
           typeof row[3] == 'number'
       )
       const mappingData = filterd.map((item: any[]) => {

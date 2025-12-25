@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography'
 import SendIcon from '@mui/icons-material/Send'
 
 // 独自コンポーネント
-import LinkBaner from '../../../comp/Linkbanar'
+import LinkBaner from '../TopBanner/Page'
 import WordSearch from '../../../comp/ProductSearchWord'
 import MyDialog from './Dialog'
 import RowComp from './RowComp'

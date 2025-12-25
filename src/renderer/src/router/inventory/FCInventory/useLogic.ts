@@ -1,39 +1,38 @@
 import { useLoaderData } from 'react-router-dom'
 
-import { SelectOption, DateSelectOption } from './types'
+import {
+  SelectOption,
+  DateSelectOption,
+  FCInventoryTypes,
+  FormValues,
+  DataTypes,
+  productType,
+  LoaderData
+} from './types'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 import { SelectChangeEvent } from '@mui/material/Select'
 
-import { defaultFormDataFormat } from './logic'
+import { defaultFormDataFormat, defaultRowData, InsertDataFormat } from './logic'
 
 import { productGet } from '../../../Util/util'
 
+import toast from 'react-hot-toast'
+
 // フォーム管理
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form'
 
-import { FormValues } from './types'
-
-export const loader = async () => {
-  const types = await window.myInventoryAPI.storeGet('types')
+export const loader = async (): Promise<LoaderData> => {
   const stores = await window.myInventoryAPI.storeGet('storeList')
-
-  const datas = await window.myInventoryAPI.ListGet({
-    sheetName: '在庫履歴',
-    action: 'FCInventoryGet',
-    ranges: 'A2:D'
-  })
-
   const storenames: SelectOption[] = stores
-    .filter((row) => row[2] !== '')
-    .map((item) => ({
+    .filter((row: [number, string, string]) => row[2] !== '')
+    .map((item: [number, string, string]) => ({
       id: item[0],
       value: item[1],
       label: item[1],
       type: item[2]
     }))
-
   const now = new Date()
   const year = now.getFullYear()
   const yearList: DateSelectOption[] = [
@@ -45,18 +44,19 @@ export const loader = async () => {
   for (let i = 0; i < 12; i++) {
     monthList.push({ value: i + 1, label: `${i + 1}月` })
   }
-  return { storenames, yearList, monthList, datas, types }
+  return { storenames, yearList, monthList }
 }
 
-export const useLogic = () => {
-  const { storenames, yearList, monthList, datas, types } = useLoaderData<typeof loader>()
-
+export const useLogic = (): FCInventoryTypes => {
+  const { storenames, yearList, monthList } = useLoaderData<typeof loader>()
   const [storeValue, setStoreSelect] = useState<string>('')
   const [yearValue, setYear] = useState<number>(new Date().getFullYear())
   const [monthValue, setMonth] = useState<number>(new Date().getMonth() + 1)
-
+  const [DialogOpen, setDialogOpen] = useState(false)
   const DeleteRowsRef = useRef(0)
-
+  const typeRef = useRef('')
+  const StoreIDRef = useRef(0)
+  const SubActionRef = useRef('')
 
   const { control, register, handleSubmit, getValues, setValue, reset } = useForm<FormValues>({
     defaultValues: {
@@ -64,14 +64,12 @@ export const useLogic = () => {
     }
   })
 
-
-  const { fields, append, remove, insert } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'rows'
   })
 
-
-  const InventoryData = async () => {
+  const InventoryData = async (): Promise<void> => {
     if (storeValue == '') return
     const storeData = storenames.find((row) => row.value == storeValue)
     if (!storeData) return
@@ -81,11 +79,16 @@ export const useLogic = () => {
       ranges: 'A2:E'
     })
     const filterDate = new Date(yearValue, monthValue, 0).toLocaleDateString()
-    const filtered = datas.filter((row) => 
-      new Date(row[0]).toLocaleDateString() == filterDate &&
-      row[1] == storeData.id
+    const filtered = datas.filter(
+      (row: DataTypes) =>
+        new Date(row[0]).toLocaleDateString() == filterDate && row[1] == storeData.id
     )
     DeleteRowsRef.current = filtered.length
+    if (filtered.length !== 0) {
+      SubActionRef.current = 'update'
+    } else {
+      SubActionRef.current = 'append'
+    }
     for (let i = 0; i < filtered.length; i++) {
       const product = await productGet(filtered[i][2])
       setValue(`rows.${i}.code`, String(product.productData.code))
@@ -99,23 +102,168 @@ export const useLogic = () => {
     InventoryData()
   }, [storeValue, yearValue, monthValue])
 
-  const RegisterData = (data) => {
-    console.log(data)
+  const RegisterData = (data: productType): void => {
+    const RowsData = getValues('rows')
+    const findData = RowsData.filter((row) => row.code !== '')
+    if (findData.length !== 0) {
+      for (let i = RowsData.length - 1; i >= 0; i--) {
+        const row = RowsData[i]
+        if (row.code !== '') {
+          const setRow = i + 1
+          if (typeRef.current !== 'VC') {
+            setValue(`rows.${setRow}.price`, String(data.newPrice))
+          } else {
+            setValue(`rows.${setRow}.price`, String(data.VC))
+          }
+          setValue(`rows.${setRow}.code`, String(data.code))
+          setValue(`rows.${setRow}.name`, data.name)
+          break
+        }
+      }
+    } else {
+      if (typeRef.current !== 'VC') {
+        setValue(`rows.0.price`, String(data.newPrice))
+      } else {
+        setValue(`rows.0.price`, String(data.VC))
+      }
+      setValue(`rows.0.code`, String(data.code))
+      setValue(`rows.0.name`, data.name)
+    }
   }
 
-  const handleYearChange = (e: SelectChangeEvent<number>) => {
+  const handleYearChange = (e: SelectChangeEvent<number>): void => {
     setYear(e.target.value)
+    InventoryData()
   }
 
-  const handleMonthChange = (e: SelectChangeEvent<number>) => {
+  const handleMonthChange = (e: SelectChangeEvent<number>): void => {
     setMonth(e.target.value)
+    InventoryData()
   }
 
-  const handleStoreChange = (e: SelectChangeEvent<string>) => {
-    console.log(e.target.value)
-    setStoreSelect(e.target.value)
+  const handleStoreChange = (e: SelectChangeEvent<string>): void => {
+    const select = e.target.value
+    setStoreSelect(select)
+    const storeData = storenames.find((item) => item.value == select)
+    typeRef.current = storeData?.type ?? ''
+    StoreIDRef.current = storeData?.id ?? 0
+    InventoryData()
   }
 
+  const addNewForm = (): void => {
+    for (let i = 0; i < 20; i++) {
+      append(defaultRowData)
+    }
+  }
+
+  const productCodeSearch = useCallback(
+    async (index: number): Promise<void> => {
+      let code = getValues('rows')[index].code
+      if (code == '' && index == 0) {
+        return
+      }
+      if (code == '' && index !== 0) {
+        code = getValues('rows')[index - 1].code
+        setValue(`rows.${index}.code`, code)
+      }
+      const result = await productGet(code, true)
+      if (result) {
+        const product = result.productData
+        setValue(`rows.${index}.name`, product.name)
+        if (typeRef.current !== 'VC') {
+          setValue(`rows.${index}.price`, product.newPrice)
+        } else {
+          setValue(`rows.${index}.price`, product.VC)
+        }
+      }
+    },
+    [getValues, setValue, productGet]
+  )
+
+  const handleEnterFocusNext = useCallback(
+    (e: React.KeyboardEvent<HTMLElement>): void => {
+      const maxRows = getValues().rows.length
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        const form = (
+          e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement
+        ).form
+        if (form) {
+          const elements = Array.from(form.elements) as HTMLElement[]
+          const index = elements.indexOf(e.target as HTMLElement)
+          const before = elements[index] as HTMLElement
+          const columnName = (before as HTMLInputElement).name
+          if (columnName.includes('code')) {
+            const rowNum = Number(columnName.replace(/[^0-9]/g, ''))
+            productCodeSearch(rowNum)
+          }
+          if ((before as HTMLInputElement).name == `rows.${maxRows - 1}.remarks`) {
+            addNewForm()
+            return
+          }
+          let next = elements[index + 2] as HTMLElement
+          let nextType = next.tagName
+          let count = 3
+          while (nextType == 'BUTTON' || nextType == 'FIELDSET') {
+            next = elements[index + count] as HTMLElement
+            nextType = next.tagName
+            count++
+          }
+          next.focus()
+        }
+      }
+    },
+    [getValues, addNewForm, productCodeSearch]
+  )
+
+  const onSubmit: SubmitHandler<FormValues> = async () => {
+    const storeId = storenames.find((item) => item.value == storeValue)?.id
+    if (!storeId) {
+      toast.error('店舗が選択されていません')
+      return
+    }
+    setDialogOpen(true)
+  }
+
+  const insertPost = (): void => {
+    const DataSubmit = async (): Promise<void> => {
+      const data = getValues('rows')
+      const storeId = storenames.find((item) => item.value == storeValue)?.id
+      if (!storeId) {
+        return
+      }
+      const formData = await InsertDataFormat(data, storeValue, storenames, yearValue, monthValue)
+      const insertData = {
+        sheetName: '在庫履歴',
+        action: 'FCInventory',
+        sub_action: SubActionRef.current,
+        insert_date: formData[0][0],
+        data: formData,
+        storeid: StoreIDRef.current,
+        deleteNum: DeleteRowsRef.current
+      }
+      if (formData.length >= 1) {
+        await window.myInventoryAPI.DataInsert(insertData)
+      }
+    }
+    toast.promise(DataSubmit(), {
+      loading: 'データ送信中...',
+      success: () => {
+        reset({
+          rows: defaultFormDataFormat()
+        })
+        return 'データ送信完了'
+      },
+      error: 'データ送信失敗'
+    })
+  }
+
+  const handleRowDelete = useCallback(
+    async (index: number) => {
+      remove(index)
+    },
+    [remove]
+  )
 
   return {
     RegisterData,
@@ -128,9 +276,15 @@ export const useLogic = () => {
     monthList,
     monthValue,
     handleMonthChange,
-    datas,
-    types,
     fields,
-    register
+    register,
+    handleEnterFocusNext,
+    handleSubmit,
+    onSubmit,
+    handleRowDelete,
+    DialogOpen,
+    setDialogOpen,
+    insertPost,
+    getValues
   }
 }

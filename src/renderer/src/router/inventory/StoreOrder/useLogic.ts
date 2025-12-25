@@ -233,20 +233,24 @@ export const useLogic = (): UseLogicReturn => {
     const DataSubmit = async (): Promise<void> => {
       const data = getValues('rows')
       const insertData = await insertDataFormat(data, insertDateRef.current, storeSelect)
+      const InsertDatas = {
+        sheetName: '店舗へ',
+        action: 'Orderinsert',
+        sub_action: 'insert',
+        insert_action: InsertActionRef.current,
+        data: insertData,
+        formulaConfig: {
+          targetCol: 10,
+          formula: '=RC[-3]*RC[-1]'
+        },
+        deleteNum: DeleteRowNumRef.current
+      }
+      console.log(InsertDatas)
+      return
       if (insertData.length >= 1) {
-        await window.myInventoryAPI.DataInsert({
-          sheetName: '店舗へ',
-          action: 'Orderinsert',
-          sub_action: 'insert',
-          insert_action: InsertActionRef.current,
-          data: insertData,
-          formulaConfig: {
-            targetCol: 10,
-            formula: '=RC[-3]*RC[-1]'
-          },
-          deleteNum: DeleteRowNumRef.current
-        })
+        await window.myInventoryAPI.DataInsert(InsertDatas)
         DeleteRowNumRef.current = insertData.length
+        InsertActionRef.current = 'update'
       }
     }
     toast.promise(DataSubmit(), {

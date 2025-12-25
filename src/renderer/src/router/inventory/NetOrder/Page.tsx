@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 
 // 独自コンポーネント
-import LinkBaner from '../../../comp/Linkbanar'
+import LinkBaner from '../TopBanner/Page'
 //import RowComp from './RowComp'
 
 import { useLogic } from './useLogic'

@@ -98,3 +98,13 @@ export const BoxSxSetting = {
 export const ColumnSize = {
   gridTemplateColumns: '285px 70px 50px 60px 80px 80px 80px 80px'
 }
+
+export const Tax = (item) => {
+  let result = ''
+  if (item[4] == '開運手帳') {
+    result = `¥${Number(item[9]).toLocaleString()}`
+  } else {
+    result = `¥${Number(Number(item[9]) * 1.1).toLocaleString()}`
+  }
+  return result
+}

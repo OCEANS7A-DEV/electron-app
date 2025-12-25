@@ -1,14 +1,18 @@
 import type { JSX } from 'react'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 
 // 自作コンポーネント
 import WordSearch from '../../../comp/ProductSearchWord'
-import LinkBaner from '../../../comp/Linkbanar'
+import LinkBaner from '../TopBanner/Page'
 import RowComp from './RowComp'
 import SelectArea from './SelectArea'
+import MyDialog from './Dialog'
 
+// MUIアイコン
+import SendIcon from '@mui/icons-material/Send'
+import { Toaster } from 'react-hot-toast'
 import { useLogic } from './useLogic'
-
 
 const FCInventoryPage = (): JSX.Element => {
   const {
@@ -22,15 +26,22 @@ const FCInventoryPage = (): JSX.Element => {
     monthList,
     monthValue,
     handleMonthChange,
-    datas,
-    types,
+    handleEnterFocusNext,
     fields,
-    register
+    register,
+    handleSubmit,
+    onSubmit,
+    handleRowDelete,
+    DialogOpen,
+    setDialogOpen,
+    insertPost,
+    getValues
   } = useLogic()
   return (
     <Box>
       <Box>
         <LinkBaner id="zaiko" />
+        <Toaster />
       </Box>
       <Box
         sx={{
@@ -81,12 +92,52 @@ const FCInventoryPage = (): JSX.Element => {
               paddingBottom: '80px'
             }}
           >
-            <Box component="form">
+            <Box component="form" onSubmit={handleSubmit(onSubmit)}>
               {fields.map((field, index) => (
                 <Box key={field.id}>
-                  <RowComp index={index} register={register} />
+                  <RowComp
+                    index={index}
+                    register={register}
+                    handleEnterFocusNext={handleEnterFocusNext}
+                    handleRowDelete={handleRowDelete}
+                  />
                 </Box>
               ))}
+              <Box
+                sx={{
+                  display: 'flex',
+                  position: 'fixed',
+                  bottom: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '70px',
+                  backgroundColor: '#2a2a30',
+                  borderTop: '1px solid gray',
+                  zIndex: 200,
+                  alignItems: 'center'
+                }}
+              >
+                <Box
+                  sx={{
+                    height: '40px',
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    width: '100%'
+                  }}
+                >
+                  <Button variant="outlined" endIcon={<SendIcon />} type="submit">
+                    注文実行
+                  </Button>
+                </Box>
+                <MyDialog
+                  data={getValues('rows')}
+                  InsertDate={`${yearValue}年${monthValue}月`}
+                  DialogOpen={DialogOpen}
+                  setDialogOpen={setDialogOpen}
+                  insertPost={insertPost}
+                  storeName={storeValue}
+                />
+              </Box>
             </Box>
           </Box>
         </Box>

@@ -32,7 +32,8 @@ const StoreComp = ({ printDate, storeData }: StoreCompType): JSX.Element => {
             minWidth: '210mm',
             maxWidth: '210mm',
             minHeight: '297mm',
-            maxHeight: '297mm'
+            maxHeight: '297mm',
+            breakInside: 'avoid'
           }}
         >
           <Box

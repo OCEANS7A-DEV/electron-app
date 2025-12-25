@@ -1,22 +1,22 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
 import type { JSX } from 'react'
-import { Button, IconButton } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useNavigation, useNavigate } from "react-router-dom";
-import Drawer from '@mui/material/Drawer';
-import MenuIcon from '@mui/icons-material/Menu';
-import { LinearProgress } from '@mui/material';
-import type { SvgIconProps } from '@mui/material/SvgIcon';
-import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
-import Tooltip from '@mui/material/Tooltip';
+import { Button, IconButton } from '@mui/material'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import { useNavigation, useNavigate } from "react-router-dom"
+import Drawer from '@mui/material/Drawer'
+import MenuIcon from '@mui/icons-material/Menu'
+import { LinearProgress } from '@mui/material'
+import type { SvgIconProps } from '@mui/material/SvgIcon'
+import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt'
+import Tooltip from '@mui/material/Tooltip'
 
-import '../css/banner.css';
+import '../css/banner.css'
 
 const ButtonStyle = { height: '30px', margin: "5px 10px", width: 120 }
 
-const LinkBaner = (data): JSX.Element => {
+const LinkBaner = (data: { id: string }): JSX.Element => {
   const navigate = useNavigate()
   const [open, setopen] = useState(false)
   const navigation = useNavigation()
@@ -25,16 +25,14 @@ const LinkBaner = (data): JSX.Element => {
 
   useEffect(() => {
     if (navigation.state === "loading") {
-      setLoading(true);
+      setLoading(true)
     } else {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [navigation.state]);
+  }, [navigation.state])
 
   useEffect(() => {
     window.myInventoryAPI.onUpdateAvailable((flag) => {
-      //console.log('Update available:', flag)
-      // UI表示などの処理
       if (flag) {
         setUpdateIconColor('success')
       } else {
@@ -127,7 +125,7 @@ const LinkBaner = (data): JSX.Element => {
                 <Button variant='outlined' onClick={() => navigate('/StoreOrder')} sx={ButtonStyle}>店舗注文</Button>
                 <Button variant='outlined' onClick={() => navigate('/Moving')} sx={ButtonStyle}>店舗間移動</Button>
                 <Button variant="outlined" onClick={() => navigate('/HQ_Stocks')} sx={ButtonStyle}>在庫数</Button>
-                <Button variant="outlined" onClick={() => navigate('/FCInventory')} sx={ButtonStyle}>FC在庫数</Button>
+                <Button variant="outlined" onClick={() => navigate('/FCInventory')} sx={ButtonStyle}>店舗在庫数</Button>
                 <Button variant="outlined" onClick={() => navigate('/netOrder')} sx={ButtonStyle}>発注サイト</Button>
                 <Button variant="outlined" onClick={() => navigate('/CatalogView')} sx={ButtonStyle}>カタログ</Button>
                 <Button variant="outlined" onClick={() => navigate('/process_chack')} sx={ButtonStyle}>印刷関係</Button>
@@ -135,7 +133,6 @@ const LinkBaner = (data): JSX.Element => {
                 <Button variant="outlined" onClick={() => navigate('/InventorySearchPage')} sx={ButtonStyle}>商品検索</Button>
                 <Button variant="outlined" onClick={() => navigate('/zaikosetting')} sx={ButtonStyle}>在庫設定</Button>
                 <Button variant="outlined" onClick={() => navigate('/InventoryAmount')} sx={ButtonStyle}>在庫金額</Button>
-
               </div>
             )}
             {data.id == 'helloWork' && (
@@ -160,7 +157,6 @@ const LinkBaner = (data): JSX.Element => {
             )}
             {/* <Link className="link" to="/service">サービス品入庫</Link>
             <Link className="link" to="/ImgUpload">商品画像設定</Link> */}
-
           </div>
         </Drawer>
       </div>
@@ -168,4 +164,4 @@ const LinkBaner = (data): JSX.Element => {
   );
 }
 
-export default LinkBaner;
+export default LinkBaner

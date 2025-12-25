@@ -1,6 +1,6 @@
 import type { JSX } from 'react'
 import Box from '@mui/material/Box'
-import { ColumnSize, BoxSxSetting } from './logic'
+import { ColumnSize, BoxSxSetting, Tax } from './logic'
 import { PrintRowType, RowCompType } from './types'
 
 const RowComp = ({ printData }: RowCompType): JSX.Element => {
@@ -99,7 +99,7 @@ const RowComp = ({ printData }: RowCompType): JSX.Element => {
           >
             {row[10] !== '' && (
               <Box sx={{ width: '100%', textAlign: 'right', paddingRight: '18px' }}>
-                {row[10]}様 ¥{(Number(row[6]) * Number(row[8])).toLocaleString()}
+                {row[10]}様<br /> {Tax(row)}
               </Box>
             )}
           </Box>

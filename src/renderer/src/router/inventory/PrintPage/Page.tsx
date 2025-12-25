@@ -1,4 +1,7 @@
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+
+import type { JSX } from 'react'
 
 import { useLogic } from './useLogic'
 
@@ -7,12 +10,12 @@ import OPCArea from './OrderPrintControlArea'
 import FAXArea from './FAXPrintControlArea'
 
 // 独自コンポーネント
-import LinkBaner from '../../../comp/Linkbanar'
+import LinkBaner from '../TopBanner/Page'
 
 // トースト通知コンポーネント
 import { Toaster } from 'react-hot-toast'
 
-const PrintControlPage = () => {
+const PrintControlPage = (): JSX.Element => {
   const {
     dateValue,
     handleDateChange,
@@ -78,8 +81,50 @@ const PrintControlPage = () => {
                 OrderPrintExe={OrderPrintExe}
               />
             </Box>
-            <Box>
+            <Box
+              sx={{
+                backgroundColor: '#2a2a30',
+                padding: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                flexFlow: 'column'
+              }}
+            >
               <FAXArea />
+            </Box>
+            <Box
+              sx={{
+                backgroundColor: '#2a2a30',
+                padding: '8px',
+                display: 'flex',
+                justifyContent: 'center',
+                flexFlow: 'column'
+              }}
+            >
+              <Box sx={{ color: 'white' }}>ネット発注印刷</Box>
+              <Button
+                variant="outlined"
+                onClick={() => window.myInventoryAPI.orderPrint('NetOrderPrint')}
+              >
+                印刷
+              </Button>
+            </Box>
+            <Box
+              sx={{
+                backgroundColor: '#2a2a30',
+                padding: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                flexFlow: 'column'
+              }}
+            >
+              <Box sx={{ color: 'white' }}>カウントリスト</Box>
+              <Button
+                variant="outlined"
+                onClick={() => window.myInventoryAPI.orderPrint('CountList')}
+              >
+                印刷
+              </Button>
             </Box>
           </Box>
         </Box>

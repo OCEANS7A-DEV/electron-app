@@ -67,10 +67,13 @@ import PrintControlPage from '@Inventory/PrintPage/Page'
 
 // FAX印刷
 import VendorFAXPage from '@Inventory/VendorFAXPrint/Page'
+import NetOrderPrintPage from '@Inventory/NetOrderPrint/Page'
+import { loader as NetOrderPrintLoader } from '@Inventory/NetOrderPrint/useLogic'
 
+// 商品検索ページ
+import InventorySearchPage from '@Inventory/inventorySearch/Page'
 
 // Googleログイン
-
 
 import GoogleWindow from './router/setting/GoogleLogin'
 import LauncherPage from './router/launcher'
@@ -80,10 +83,13 @@ import HQdata, { loader as HQLoader } from './router/HQwork/HQdata'
 import HQmemo, { loader as HQMemoLoader } from './router/HQwork/HQmemo'
 import HQPrivatememo, { loader as HQPrivatememoLoader } from './router/HQwork/PersonMemo'
 import StaffData, { loader as StaffDataLoader } from './router/HQwork/StaffData'
-import FCPrintContent, { loader as FCPrintContentLoader } from './router/inventory/inventoryPrint/FCInventoryPrint'
-import HQPrintContent, { loader as HQPrintLoader } from './router/inventory/inventoryPrint/HQInventoryPrint'
+import FCPrintContent, {
+  loader as FCPrintContentLoader
+} from './router/inventory/inventoryPrint/FCInventoryPrint'
+import HQPrintContent, {
+  loader as HQPrintLoader
+} from './router/inventory/inventoryPrint/HQInventoryPrint'
 
-import InventorySearchPage from './router/inventory/inventorySearch/inventorySearch'
 
 export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   {
@@ -108,6 +114,11 @@ export const router: ReturnType<typeof createHashRouter> = createHashRouter([
     path: '/NetEtcPrint',
     element: <NetEtcPrint />,
     loader: NetEtcLoader
+  },
+  {
+    path: '/NetOrderPrint',
+    element: <NetOrderPrintPage />,
+    loader: NetOrderPrintLoader
   },
   {
     path: '/NotListed',
@@ -144,7 +155,7 @@ export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   },
   {
     path: '/VendorPrint',
-    element: <VendorFAXPage />,
+    element: <VendorFAXPage />
     //loader: EtcLoader
   },
   {

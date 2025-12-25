@@ -27,6 +27,7 @@ export type FormValues = {
     person: string
     remarks: string
     price: string
+    persontype: { value: string; label: string } | null
   }[]
 }
 

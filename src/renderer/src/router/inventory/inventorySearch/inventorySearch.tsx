@@ -28,7 +28,7 @@ import {
 
 
 
-const InventorySearchPage = () => {
+const InventorySearchArea = ({ status = true }) => {
   const isDev = window.myInventoryAPI.isDev
   const Completeness = false
 
@@ -144,7 +144,6 @@ const InventorySearchPage = () => {
     setDisplayStatus(true)
   }
 
-
   useEffect(() => {
     dataSet()
   }, [])
@@ -155,111 +154,113 @@ const InventorySearchPage = () => {
       sx={{
         width: '100%',
         height: '100%',
-        display: 'flex',
+        display: 'flex'
       }}
     >
       <Box>
         <LinkBaner id="zaiko" />
         <Toaster />
       </Box>
-      <Box className="SearchPage-Area">
-        <Box className="SearchPage-inputArea">
-          <Box className="SearchPage-Setting">
-            <Box style={{ marginRight: 20 }}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">業者</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  value={vendorSelect}
-                  label="業者"
-                  onChange={handleVendorChange}
-                  displayEmpty
+      {!status && (
+        <Box className="SearchPage-Area">
+          <Box className="SearchPage-inputArea">
+            <Box className="SearchPage-Setting">
+              <Box style={{ marginRight: 20 }}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">業者</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    value={vendorSelect}
+                    label="業者"
+                    onChange={handleVendorChange}
+                    displayEmpty
+                    size="small"
+                    style={{ width: 150, backgroundColor: 'white', color: 'black' }}
+                  >
+                    <MenuItem value="">全て</MenuItem>
+                    {vendorList.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box>
+                <TextField
+                  label="検索ワード"
+                  value={SearchWord}
+                  style={{ width: 200, backgroundColor: 'white', color: 'black' }}
+                  onChange={(e) => searchWordChange(e)}
                   size="small"
-                  style={{ width: 150, backgroundColor: 'white', color: 'black' }}
+                />
+              </Box>
+              <Box>
+                <Button
+                  variant="outlined"
+                  onClick={() => setFilterDialogOpen(true)}
                 >
-                  <MenuItem value="">全て</MenuItem>
-                  {vendorList.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                  絞り込み設定
+                </Button>
+              </Box>
             </Box>
-            <Box>
-              <TextField
-                label="検索ワード"
-                value={SearchWord}
-                style={{ width: 200, backgroundColor: 'white', color: 'black' }}
-                onChange={(e) => searchWordChange(e)}
-                size="small"
-              />
-            </Box>
-            <Box>
-              <Button
-                variant="outlined"
-                onClick={() => setFilterDialogOpen(true)}
-              >
-                絞り込み設定
+            <Box className="SearchPage-StartButton">
+              <Button variant="outlined" onClick={Search}>
+                検索
               </Button>
             </Box>
           </Box>
-          <Box className="SearchPage-StartButton">
-            <Button variant="outlined" onClick={Search}>
-              検索
-            </Button>
-          </Box>
-        </Box>
-        <div className="SearchPage-ResultArea">
-          <div className="SearchTable-headers">
-            <table className="SearchPageTable">
-              <thead>
-                <tr>
-                  <th className="Search-vendor">業者</th>
-                  <th className="Search-code">商品コード</th>
-                  <th className="Search-name">商品名</th>
-                  <th className="Search-Button">操作</th>
-                </tr>
-              </thead>
-            </table>
-          </div>
-          <div className="SearchTable-results">
-            <table className="SearchPageTable">
-              <tbody>
-                {tableData.map((row, index) => (
-                  <tr key={index}>
-                    <td className="Search-vendor">{row.vendor}</td>
-                    <td className="Search-code">{row.code}</td>
-                    <td className="Search-name">{row.name}</td>
-                    <td className="Search-Button">
-                      <Button
-                        variant="text"
-                        onClick={() => DataSelect(index)}
-                        size="small"
-                      >
-                        詳細
-                      </Button>
-                    </td>
+          <div className="SearchPage-ResultArea">
+            <div className="SearchTable-headers">
+              <table className="SearchPageTable">
+                <thead>
+                  <tr>
+                    <th className="Search-vendor">業者</th>
+                    <th className="Search-code">商品コード</th>
+                    <th className="Search-name">商品名</th>
+                    <th className="Search-Button">操作</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+              </table>
+            </div>
+            <div className="SearchTable-results">
+              <table className="SearchPageTable">
+                <tbody>
+                  {tableData.map((row, index) => (
+                    <tr key={index}>
+                      <td className="Search-vendor">{row.vendor}</td>
+                      <td className="Search-code">{row.code}</td>
+                      <td className="Search-name">{row.name}</td>
+                      <td className="Search-Button">
+                        <Button
+                          variant="text"
+                          onClick={() => DataSelect(index)}
+                          size="small"
+                        >
+                          詳細
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-        <InventorySearchDetailDialog
-          DisplayStatus={DisplayStatus}
-          setDisplayStatus={setDisplayStatus}
-          SelectData={SelectData}
-        />
-        <SearchFilterDialog
-          FilterDialogOpen={FilterDialogOpen}
-          setFilterDialogOpen={setFilterDialogOpen}
-          FilterConditions={FilterConditions}
-          setFilterConditions={setFilterConditions}
-        />
-      </Box>
+          <InventorySearchDetailDialog
+            DisplayStatus={DisplayStatus}
+            setDisplayStatus={setDisplayStatus}
+            SelectData={SelectData}
+          />
+          <SearchFilterDialog
+            FilterDialogOpen={FilterDialogOpen}
+            setFilterDialogOpen={setFilterDialogOpen}
+            FilterConditions={FilterConditions}
+            setFilterConditions={setFilterConditions}
+          />
+        </Box>
+      )}
     </Box>
   )
 }
 
-export default InventorySearchPage
+export default InventorySearchArea
