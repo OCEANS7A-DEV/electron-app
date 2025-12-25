@@ -29,7 +29,8 @@ import crypto from 'crypto'
 import iconv from 'iconv-lite'
 
 import { HelloWorkGet, HelloWorkPdfGet } from './helloworkMain'
-import { _PrintWindowCreate, Launcher, ZaikoWindowCreate, GoogleWindowCreate } from './WindowCreate'
+import { Launcher, ZaikoWindowCreate, GoogleWindowCreate } from './WindowCreate'
+//PrintWindowCreate
 
 const userDataPath = app.getPath('userData')
 const userDataDirPath = path.resolve('./puppeteer_user_data')
