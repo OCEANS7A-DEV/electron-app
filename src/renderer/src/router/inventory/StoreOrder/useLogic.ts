@@ -263,6 +263,7 @@ export const useLogic = (): UseLogicReturn => {
     const select = event.target.value as string
     setStoreSelect(select)
     const type = storeOptions.find((item) => item.value == select)?.type ?? ''
+    console.log(type)
     typeRef.current = type
   }
 

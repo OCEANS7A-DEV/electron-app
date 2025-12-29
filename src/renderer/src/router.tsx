@@ -90,7 +90,6 @@ import HQPrintContent, {
   loader as HQPrintLoader
 } from './router/inventory/inventoryPrint/HQInventoryPrint'
 
-
 export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   {
     path: '/',

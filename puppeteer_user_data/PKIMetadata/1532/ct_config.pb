@@ -1,4 +1,4 @@
-∑›NÙâÄ  *)
+∑›P÷∏ö  *)
 Googlegoogle-ct-logs@googlegroups.com*$
 
 Cloudflarect-logs@cloudflare.com*
@@ -77,11 +77,11 @@ Cloudflareÿù™ƒRcloudflare_nimbus2027ähttps://crbug.com/434895698ê2“
 DigiCert¿∂˛¥Rdigicert_wyvern2026h2ähttps://crbug.com/353924009ê2€
 DigiCert 'Wyvern2027h1'|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEastxYj1mntGuyv74k4f+yaIx+ZEzlSJ+iVTYWlw8SpSKJ4TfxYWuBhnETlhpyG/5seJn0mOSnVgXsZ1JRflI7g==,ABpdGhwtk3W2SFV4+C9xoa5u7zl9KXyK4xV7yt7hoB4= Ä£*&https://wyvern.ct.digicert.com/2027h1/2
 ÄŸ€ŸÄòñ·B
-†ì•«J
+†»õ J
 DigiCert¿˛Â≈Rdigicert_wyvern2027h1ähttps://crbug.com/442860600ê2€
 DigiCert 'Wyvern2027h2'|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEuOg8hcgaYT/MShxpag2Hige0zsLzz8vOLZXp6faCdzM+Mn/njyU9ROAuwDxuu88/Grxn46kmehdOKVDFexbdSg==,N6oHzCFvLm2RnHCdJNj3MbAPKxR8YhzAkaX6GoTYFt0= Ä£*&https://wyvern.ct.digicert.com/2027h2/2
 Äòñ·Ä¿‡ËB
-†ì•«J
+†»õ J
 DigiCert¿˛Â≈Rdigicert_wyvern2027h2ähttps://crbug.com/442860600ê2◊
 DigiCert 'Sphinx2025h2' Log|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQYxQE1SxGQW3f0ogbqN1Y8o09Mx06jI7tosDFKhSfzKHXlmeD6sYnilstXJ3GidUhV3BeySoNOPNiM7UUBu+aQ==,pELFBklgYVSPD9TqnPt6LSZFTYepfy/fRVn2J086hFQ= Ä£*&https://sphinx.ct.digicert.com/2025h2/2
 Ä å√Äƒˆ B
@@ -97,11 +97,11 @@ Cloudflareÿù™ƒRcloudflare_nimbus2027ähttps://crbug.com/434895698ê2“
 DigiCert¿∂˛¥Rdigicert_sphinx2026h2ähttps://crbug.com/354025369ê2€
 DigiCert 'sphinx2027h1'|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvirIq1XPwgwG7BnbMh2zoUbEt+T8z8XAtg9lo8jma+aaTQl8iVCypUFXtLpt4/SHaoUzbvcjDX/6B1IbL3OoIQ==,RqI5Z8YNtkaHxm89+ZmUdpOmphEghFfVVefj0KHZtkY= Ä£*&https://sphinx.ct.digicert.com/2027h1/2
 ÄŸ€ŸÄòñ·B
-†ì•«J
+†»õ J
 DigiCert¿˛Â≈Rdigicert_sphinx2027h1ähttps://crbug.com/442879528ê2€
 DigiCert 'sphinx2027h2'|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEUCe23M889mAsUVeTTBcNsAmP374ZWQboLdR8RdGwM3VZ6P/sDwhrL7wK4zrXPh3HwLDDLxDjvRBeivUSbpZSwA==,H7D4qS2K3aEhd2wF4qouFbrLxitlOTaVV2qqtS4R0R0= Ä£*&https://sphinx.ct.digicert.com/2027h2/2
 Äòñ·Ä¿‡ËB
-†ì•«J
+†»õ J
 DigiCert¿˛Â≈Rdigicert_sphinx2027h2ähttps://crbug.com/442879528ê2á
 Sectigo 'Sabre2025h2'|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEhRMRLXvzk4HkuXzZZDvntYOZZnlZR2pCXta9Yy63kUuuvFbExW4JoNdkGsjBr4mL9VjYuut7g1Lp9OClzc2SzA==,GgT/SdBUHUCv9qDDv/HYxGcvTuzuI0BomGsXQC7ciX0= Ä£*#https://sabre2025h2.ct.sectigo.com/2
 Ä å√ÄÚ÷ B
@@ -265,11 +265,11 @@ Cloudflareÿù™ƒRcloudflare_nimbus2027ähttps://crbug.com/434895698ê2“
 GeomysÄ£±Rgeomys_bogus6962ähttps://crbug.com/426624777ê2ã
 IPng Networks 'Halloumi2025h2'|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqJxSnCcMhWikCFeWo1RiplGaVEZL5Vn4KEJYZM97Ro5XuTg4h6+n807utfPS7qqpLv5me/ddlpKFGoFfkMBrAQ==,+3xjpo0eBq3Qg4ibuNQyHLJFROv2/mlyKRkuOD5ebiM= <*&https://halloumi2025h2.log.ct.ipng.ch/2
 Ä å√ÄÚ÷ B
-®∏ï«J
+®Ìã J
 IPng Networksê≠≤≈Ripng_halloumi2025h2Z&https://halloumi2025h2.mon.ct.ipng.ch/ähttps://crbug.com/437003344ê2ã
 IPng Networks 'Halloumi2026h1'|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEzdcnGwRjm2ZoA68JFZKfoM4cOPPG2fr0iR72p3XanznOlw57HJ9RlYRNt75gIMIKgB1r0dxY5Jojq1m8uobYjg==,fz035/iSPY5xZb6w0+q+5yoivkbAy4TEFtTkuYJky8I= <*&https://halloumi2026h1.log.ct.ipng.ch/2
 ÄÚ÷ Ä±ë“B
-®∏ï«J
+®Ìã J
 IPng Networksê≠≤≈Ripng_halloumi2026h1Z&https://halloumi2026h1.mon.ct.ipng.ch/ähttps://crbug.com/437003344ê2è
 IPng Networks 'Halloumi2026h2a'|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiGh4zMsdukTgrdk9iPIwz9OfU9TQVi4Mxufpmnlrzv3ivJcxVhrST4XQSeQoF5LlFVIU6PL4IzrYl12BUWn9rQ==,JuNkblhpISO8ND9HJDWbN5LNJFqI2BXTkzP9mRirRyM= <*'https://halloumi2026h2a.log.ct.ipng.ch/2
 Ä±ë“ÄŸ€ŸB
@@ -277,11 +277,11 @@ Cloudflareÿù™ƒRcloudflare_nimbus2027ähttps://crbug.com/434895698ê2“
 IPng Networksê≠≤≈Ripng_halloumi2026h2aZ'https://halloumi2026h2a.mon.ct.ipng.ch/ähttps://crbug.com/437003344ê2ã
 IPng Networks 'Halloumi2027h1'|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEw5SUl2yfd5TFSqUGv7A+I5+TpLe+zEccmtWVQakQQtOHYKqH8TbycalFx5xaqE5PU4NEwwnAJ9FWeT/6QaovZw==,ROgi/CurDpLu0On61pZkYCd20Bdg4IkFCckjobA/w38= <*&https://halloumi2027h1.log.ct.ipng.ch/2
 ÄŸ€ŸÄòñ·B
-®∏ï«J
+®Ìã J
 IPng Networksê≠≤≈Ripng_halloumi2027h1Z&https://halloumi2027h1.mon.ct.ipng.ch/ähttps://crbug.com/437003344ê2ã
 IPng Networks 'Halloumi2027h2'|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErmKbFkPG7QfQUARhbIik8vVbIkXhK+YMB6TvLZkyhnzv7wedn+l7VChqovZHKOQXmZEd4B+3ljovIpQz2HmyHA==,CRV/Yy1Gx/dtlSZUk7wPALOVrF2zorJr+wQ9ukrGOJM= <*&https://halloumi2027h2.log.ct.ipng.ch/2
 Äòñ·Ä¿‡ËB
-®∏ï«J
+®Ìã J
 IPng Networksê≠≤≈Ripng_halloumi2027h2Z&https://halloumi2027h2.mon.ct.ipng.ch/ähttps://crbug.com/437003344ê2ˇ
 IPng Networks 'Gouda2025h2'|MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEpHiP24MNo8pgt5RNoawsvGIwSaVEKNqdzYCUXtMu0MM15t63d26eDUDz+nkQjACuRo4LRJcyia7I0anEdNH9wA==,GoudanQ8ze1gH3O9MJcIHbyuxKYTnJKwtUDDE3sg7AU= <*#https://gouda2025h2.log.ct.ipng.ch/2
 Ä å√ÄÚ÷ B

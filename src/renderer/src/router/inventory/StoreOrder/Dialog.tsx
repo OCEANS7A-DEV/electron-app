@@ -36,7 +36,7 @@ const MyDialog = ({
       onClose={() => setDialogOpen(false)}
       PaperProps={{
         sx: {
-          maxWidth: 'calc(100vw - 200px)',
+          maxWidth: 'calc(100vw - 200px)'
         }
       }}
       fullWidth
@@ -79,8 +79,8 @@ const MyDialog = ({
                     <td style={{ textAlign: 'right' }}>{row.code}</td>
                     <td>{row.name}</td>
                     <td>{row.detail?.label ?? ''}</td>
-                    <td style={{ textAlign: 'right' }}>{row.quantity.toLocaleString()}</td>
-                    <td style={{ textAlign: 'right' }}>{row.price.toLocaleString()}</td>
+                    <td style={{ textAlign: 'right' }}>{Number(row.quantity).toLocaleString()}</td>
+                    <td style={{ textAlign: 'right' }}>{Number(row.price).toLocaleString()}</td>
                     <td>{row.person}</td>
                     <td>{row.remarks}</td>
                   </tr>
@@ -91,18 +91,10 @@ const MyDialog = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button
-          variant="contained"
-          onClick={InsertStart}
-          endIcon={<SendIcon />}
-        >
+        <Button variant="contained" onClick={InsertStart} endIcon={<SendIcon />}>
           OK
         </Button>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => setDialogOpen(false)}
-        >
+        <Button variant="contained" color="error" onClick={() => setDialogOpen(false)}>
           Cancell
         </Button>
       </DialogActions>

@@ -309,6 +309,8 @@ function createZaikoWindow(): void {
   }
   StartUpSet()
   zaikoWindow = WindowCreateLogic()
+  AffterGet()
+  DataUpdate('一覧', 'A2:M', 'data')
   windowManager.set('zaiko', zaikoWindow)
   zaikoWindow.on('ready-to-show', () => {
     zaikoWindow.show()
@@ -538,7 +540,6 @@ const firstGet = async () => {
         ImageURL: item[14]
       }
     })
-    console.log(ListResult[0])
     store.set('address', result.AddressData)
     store.set('storeList', result.StoresData)
     store.set('details', result.DetailsData)
