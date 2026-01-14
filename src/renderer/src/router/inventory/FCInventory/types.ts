@@ -98,6 +98,8 @@ export interface FCInventoryTypes {
   register: UseFormRegister<FormValues>
   onSubmit: SubmitHandler<FormValues>
   handleSubmit: UseFormHandleSubmit<FormValues>
+  addNewForm: () => void
+  Reget: () => void
 }
 
 export interface LoaderData {
@@ -109,4 +111,5 @@ export interface LoaderData {
   }[]
   yearList: DateSelectOption[]
   monthList: DateSelectOption[]
+  types: any[]
 }

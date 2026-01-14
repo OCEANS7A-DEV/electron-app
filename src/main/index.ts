@@ -29,7 +29,7 @@ import crypto from 'crypto'
 import iconv from 'iconv-lite'
 
 import { HelloWorkGet, HelloWorkPdfGet } from './helloworkMain'
-import { Launcher, ZaikoWindowCreate, GoogleWindowCreate, WindowCreateLogic } from './WindowCreate'
+import { WindowStatus } from './WindowCreate'
 //PrintWindowCreate
 
 import { CookieSetup } from './logic'
@@ -44,7 +44,7 @@ if (!fs.existsSync(dbDirectory)) {
 
 const dbPath = path.join(dbDirectory, 'my-data.sqlite3')
 
-let DB
+let DB: Database.Database | undefined
 try {
   DB = new Database(dbPath)
   console.log(`データベースを ${dbPath} に接続しました。`)
@@ -52,34 +52,36 @@ try {
   console.error('データベースの接続に失敗しました:', error)
 }
 
-const createMemoMainTable = DB.prepare(
-  `CREATE TABLE IF NOT EXISTS MemoMain (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sub_id TEXT UNIQUE NOT NULL,
-    title TEXT NOT NULL,
-    remarks TEXT,
-    create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-    update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-    delete_Flg INTEGER DEFAULT 0
-  )`
-)
-createMemoMainTable.run()
+if (DB) {
+  const createMemoMainTable = DB.prepare(
+    `CREATE TABLE IF NOT EXISTS MemoMain (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      sub_id TEXT UNIQUE NOT NULL,
+      title TEXT NOT NULL,
+      remarks TEXT,
+      create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      delete_Flg INTEGER DEFAULT 0
+    )`
+  )
+  createMemoMainTable.run()
 
-const createMemoDetailTable = DB.prepare(
-  `CREATE TABLE IF NOT EXISTS MemoDetail (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    order_id INTEGER NOT NULL,
-    sub_id TEXT NOT NULL,
-    title TEXT NOT NULL,
-    content TEXT,
-    remarks TEXT,
-    check_Flg INTEGER DEFAULT 0,
-    create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-    update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-    delete_Flg INTEGER DEFAULT 0
-  )`
-)
-createMemoDetailTable.run()
+  const createMemoDetailTable = DB.prepare(
+    `CREATE TABLE IF NOT EXISTS MemoDetail (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id INTEGER NOT NULL,
+      sub_id TEXT NOT NULL,
+      title TEXT NOT NULL,
+      content TEXT,
+      remarks TEXT,
+      check_Flg INTEGER DEFAULT 0,
+      create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      delete_Flg INTEGER DEFAULT 0
+    )`
+  )
+  createMemoDetailTable.run()
+}
 
 const gotTheLock = app.requestSingleInstanceLock()
 const windowManager = new Map()
@@ -277,7 +279,7 @@ const createUpdaterWindow = async () => {
 let GoogleLoginWindow: BrowserWindow
 
 const createGoogleLoginWindow = async () => {
-  GoogleLoginWindow = GoogleWindowCreate()
+  GoogleLoginWindow = new BrowserWindow(WindowStatus())
   GoogleLoginWindow.loadURL(GetAPI_URL)
   GoogleLoginWindow.on('ready-to-show', () => {
     GoogleLoginWindow.show()
@@ -308,7 +310,7 @@ function createZaikoWindow(): void {
     return
   }
   StartUpSet()
-  zaikoWindow = WindowCreateLogic()
+  zaikoWindow = new BrowserWindow(WindowStatus())
   AffterGet()
   DataUpdate('一覧', 'A2:M', 'data')
   windowManager.set('zaiko', zaikoWindow)
@@ -345,7 +347,7 @@ const createLauncherWindow = (): void => {
     return
   }
 
-  launcherWindow = WindowCreateLogic()
+  launcherWindow = new BrowserWindow(WindowStatus())
 
   windowManager.set('Launcher', launcherWindow)
 
@@ -383,7 +385,7 @@ const createHelloWorkWindow = (): void => {
     return
   }
 
-  HelloWorkWindow = WindowCreateLogic()
+  HelloWorkWindow = new BrowserWindow(WindowStatus())
 
   windowManager.set('HelloWork', HelloWorkWindow)
 
@@ -421,7 +423,7 @@ const createOfficeWorkWindow = (): void => {
     return
   }
 
-  OfficeWorkWindow = WindowCreateLogic()
+  OfficeWorkWindow = new BrowserWindow(WindowStatus())
 
   windowManager.set('OfficeWork', OfficeWorkWindow)
 
@@ -459,7 +461,7 @@ const createSettingWindow = (): void => {
     return
   }
 
-  SettingWindow = WindowCreateLogic()
+  SettingWindow = new BrowserWindow(WindowStatus())
 
   windowManager.set('Setting', SettingWindow)
 
@@ -628,6 +630,7 @@ const DataUpdate = async (sheetname, range, key) => {
       body: JSON.stringify({ sheetName: sheetname, action: 'ListGet', ranges: range })
     })
     const result = await response.json()
+    console.log(result)
     let ListResult
     if (key === 'data') {
       ListResult = result
@@ -1113,20 +1116,7 @@ ipcMain.handle('data-insert', async (_event, payload: any) => {
 
 ipcMain.handle('orderPrint', (_event, payload) => {
   //printWindow = PrintWindowCreate()
-  printWindow = new BrowserWindow({
-    width: 950,
-    height: 670,
-    minWidth: 950,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: is.dev
-        ? join(__dirname, '../preload/index.mjs')
-        : join(app.getAppPath(), 'out/preload/index.mjs'),
-      sandbox: false
-    }
-  })
+  printWindow = new BrowserWindow(WindowStatus())
 
   printWindow?.on('ready-to-show', () => {
     printWindow?.show()

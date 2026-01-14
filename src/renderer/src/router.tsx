@@ -73,6 +73,9 @@ import { loader as NetOrderPrintLoader } from '@Inventory/NetOrderPrint/useLogic
 // 商品検索ページ
 import InventorySearchPage from '@Inventory/inventorySearch/Page'
 
+// アプデ確認
+import UpdatePage from '@Inventory/Updater/Page'
+
 // Googleログイン
 
 import GoogleWindow from './router/setting/GoogleLogin'
@@ -177,7 +180,7 @@ export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   },
   {
     path: '/updater',
-    element: <UpdateWindow />
+    element: <UpdatePage />
   },
   {
     path: '/Google',

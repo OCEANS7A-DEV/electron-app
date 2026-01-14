@@ -1,67 +1,36 @@
-
-import Box from '@mui/material/Box'
-import React, { useEffect, useState } from 'react'
 import type { JSX } from 'react'
-import '../css/updater.css'
+import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
+import { useLogic } from './useLogic'
 
-const UpdatePage = () => {
-  const [number, setNumber] = useState<number>(0)
-  const [message, setMessage] = useState<string>('')
-  const [status, setStatus] = useState<string>('')
-  const [updateCheck, setUpdateCheck] = useState<boolean>(false)
-  const [DevCheck, setDevCheck] = useState<boolean>(false)
-  const [Startup, setStartup] = useState<boolean>(false)
-  const [Google, setGoogle] = useState<boolean>(false)
-
-  useEffect(() => {
-    window.myInventoryAPI.onProgressUpdate((value) => {
-      setNumber(value.percent)
-      setMessage(value.message)
-      setStatus(value.status)
-    })
-  }, [])
-
-  useEffect(() => {
-    window.myInventoryAPI.onCheckedUpdate((value) => {
-      if (value.status == 'dev') {
-        setDevCheck(true)
-      } else if (value.status == 'updateCheck') {
-        setUpdateCheck(true)
-      } else if (value.status == 'bootCheck') {
-        window.myInventoryAPI.UpdaterClose()
-      } else if (value.status == 'startup') {
-        setStartup(true)
-      } else if (value.status == 'google') {
-        setGoogle(true)
-      } else if (value.status == 'text') {
-        setMessage('アップデートの確認中...')
-      }
-    })
-  }, [])
-
-  useEffect(() => {
-    if ((updateCheck && Startup && Google) || (DevCheck && Google)) {
-      window.myInventoryAPI.MainBoot()
-    }
-  }, [updateCheck, Startup, Google, DevCheck])
+const UpdatePage = (): JSX.Element => {
+  const { number, message, status } = useLogic()
 
   return (
     <>
-      <div className="update-window">
-        <div className="update-progress">
+      <Box
+        sx={{
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexFlow: 'column',
+          color: 'white'
+        }}
+      >
+        <Box>
           {status === 'start' ? (
-            <div>
+            <Box>
               <CircularProgress size="3rem" />
-            </div>
+            </Box>
           ) : status === 'downloading' ? (
-            <div>
+            <Box>
               <CircularProgress variant="determinate" value={number} />
-            </div>
+            </Box>
           ) : null}
-        </div>
-        <div className="update-message">{message}</div>
-      </div>
+        </Box>
+        <Box>{message}</Box>
+      </Box>
     </>
   )
 }

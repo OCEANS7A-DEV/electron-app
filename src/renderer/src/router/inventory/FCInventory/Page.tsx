@@ -35,7 +35,9 @@ const FCInventoryPage = (): JSX.Element => {
     DialogOpen,
     setDialogOpen,
     insertPost,
-    getValues
+    getValues,
+    addNewForm,
+    Reget
   } = useLogic()
   return (
     <Box>
@@ -85,6 +87,9 @@ const FCInventoryPage = (): JSX.Element => {
               valueData={storeValue}
               handleValueChange={handleStoreChange}
             />
+            <Button variant="outlined" onClick={Reget}>
+              印刷
+            </Button>
           </Box>
           <Box
             sx={{
@@ -126,7 +131,10 @@ const FCInventoryPage = (): JSX.Element => {
                   }}
                 >
                   <Button variant="outlined" endIcon={<SendIcon />} type="submit">
-                    注文実行
+                    送信
+                  </Button>
+                  <Button variant="outlined" onClick={addNewForm}>
+                    入力枠追加
                   </Button>
                 </Box>
                 <MyDialog
