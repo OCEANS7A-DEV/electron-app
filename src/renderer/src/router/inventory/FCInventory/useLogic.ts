@@ -86,6 +86,7 @@ export const useLogic = (): FCInventoryTypes => {
       action: 'FCInventoryGet',
       ranges: 'A2:E'
     })
+
     const filterDate = new Date(yearValue, monthValue, 0).toLocaleDateString()
     const filtered = datas.filter(
       (row: DataTypes) =>
@@ -280,29 +281,24 @@ export const useLogic = (): FCInventoryTypes => {
         action: 'FCInventoryGet',
         ranges: 'A2:D'
       })
-
       const storeId = storenames.find((item) => item.value == storeValue)
       const date = new Date(yearValue, monthValue, 0)
       const searchDate = date.toLocaleDateString()
       date.setDate(date.getDate() - 1)
       const filter = data.filter(
-        (item) => item[1] == storeId?.id &&
-          new Date(item[0]).toLocaleDateString() == searchDate
+        (item) => item[1] == storeId?.id && new Date(item[0]).toLocaleDateString() == searchDate
       )
       const List = await window.myInventoryAPI.ListData()
       const inventorys: any[] = []
       for (let i = 0; i < types.length; i++) {
         const targets = List.filter((item) => item.type.includes(i + 1))
-        const pushData = targets.map((item) => {
-          const findData = filter.find((row) => row[2] == item.code)
-          const result = [
-            item.code,
-            item.name,
-            findData ? findData[3] : 0,
-            item.newPrice
-          ]
-          return result
-        }).filter((row) => row[2] !== 0)
+        const pushData = targets
+          .map((item) => {
+            const findData = filter.find((row) => row[2] == item.code)
+            const result = [item.code, item.name, findData ? findData[3] : 0, item.newPrice]
+            return result
+          })
+          .filter((row) => row[2] !== 0)
         inventorys.push({ type: types[i], data: pushData })
       }
       const PrintData = {
@@ -314,14 +310,11 @@ export const useLogic = (): FCInventoryTypes => {
       window.myInventoryAPI.orderPrint('FCPrintContent')
     }
 
-    toast.promise(
-      DataGets(),
-      {
-        loading: '読み込み中',
-        success: () => '終了',
-        error: () => `エラーが発生しました`,
-      }
-    )
+    toast.promise(DataGets(), {
+      loading: '読み込み中',
+      success: () => '終了',
+      error: () => `エラーが発生しました`
+    })
   }
 
   return {
