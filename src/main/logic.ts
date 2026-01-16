@@ -1,14 +1,4 @@
-import {
-  app,
-  shell,
-  BrowserWindow,
-  ipcMain,
-  net,
-  Notification,
-  IpcMainInvokeEvent,
-  dialog,
-  session
-} from 'electron'
+import { session } from 'electron'
 
 export const CookieSetup = async () => {
   const cookies1 = await session.defaultSession.cookies.get({

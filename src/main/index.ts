@@ -45,43 +45,58 @@ if (!fs.existsSync(dbDirectory)) {
 const dbPath = path.join(dbDirectory, 'my-data.sqlite3')
 
 let DB: Database.Database | undefined
-try {
-  DB = new Database(dbPath)
-  console.log(`データベースを ${dbPath} に接続しました。`)
-} catch (error) {
-  console.error('データベースの接続に失敗しました:', error)
+
+const initDB = (dbPath: string) => {
+  try {
+    DB = new Database(dbPath);
+    console.log(`データベースを ${dbPath} に接続しました。`)
+  } catch (error) {
+    console.error("データベースの接続に失敗しました:", error)
+    DB = undefined
+  }
 }
 
-if (DB) {
-  const createMemoMainTable = DB.prepare(
-    `CREATE TABLE IF NOT EXISTS MemoMain (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      sub_id TEXT UNIQUE NOT NULL,
-      title TEXT NOT NULL,
-      remarks TEXT,
-      create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-      update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-      delete_Flg INTEGER DEFAULT 0
-    )`
-  )
-  createMemoMainTable.run()
-
-  const createMemoDetailTable = DB.prepare(
-    `CREATE TABLE IF NOT EXISTS MemoDetail (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      order_id INTEGER NOT NULL,
-      sub_id TEXT NOT NULL,
-      title TEXT NOT NULL,
-      content TEXT,
-      remarks TEXT,
-      check_Flg INTEGER DEFAULT 0,
-      create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-      update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-      delete_Flg INTEGER DEFAULT 0
-    )`
-  )
-  createMemoDetailTable.run()
+function getDB(): Database.Database {
+  if (!DB) {
+    throw new Error("DB is not initialized")
+  }
+  return DB
 }
+
+// 初期化
+initDB(dbPath)
+
+// テーブル作成
+const db = getDB()
+
+const createMemoMainTable = db.prepare(
+  `CREATE TABLE IF NOT EXISTS MemoMain (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sub_id TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL,
+    remarks TEXT,
+    create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+    update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+    delete_Flg INTEGER DEFAULT 0
+  )`
+)
+createMemoMainTable.run()
+
+const createMemoDetailTable = db.prepare(
+  `CREATE TABLE IF NOT EXISTS MemoDetail (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id INTEGER NOT NULL,
+    sub_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT,
+    remarks TEXT,
+    check_Flg INTEGER DEFAULT 0,
+    create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+    update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+    delete_Flg INTEGER DEFAULT 0
+  )`
+)
+createMemoDetailTable.run()
 
 const gotTheLock = app.requestSingleInstanceLock()
 const windowManager = new Map()
