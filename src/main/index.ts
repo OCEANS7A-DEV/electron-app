@@ -44,7 +44,7 @@ if (!fs.existsSync(dbDirectory)) {
 
 const dbPath = path.join(dbDirectory, 'my-data.sqlite3')
 
-let DB: Database.Database | undefined
+let DB!: Database.Database
 
 const initDB = (dbPath: string) => {
   try {
