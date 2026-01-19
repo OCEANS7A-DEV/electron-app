@@ -245,12 +245,13 @@ export const useLogic = (): FCInventoryTypes => {
       const insertData = {
         sheetName: '在庫履歴',
         action: 'FCInventory',
-        sub_action: SubActionRef.current,
+        sub_action: 'insert',
         insert_date: formData[0][0],
         data: formData,
         storeid: StoreIDRef.current,
         deleteNum: DeleteRowsRef.current
       }
+      console.log(insertData)
       if (formData.length >= 1) {
         await window.myInventoryAPI.DataInsert(insertData)
       }
