@@ -52,7 +52,8 @@ const initDB = (dbPath: string) => {
     console.log(`データベースを ${dbPath} に接続しました。`)
   } catch (error) {
     console.error("データベースの接続に失敗しました:", error)
-    DB = undefined
+    DB = null
+    throw error
   }
 }
 
