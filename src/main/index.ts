@@ -34,70 +34,75 @@ import { WindowStatus } from './WindowCreate'
 
 import { CookieSetup } from './logic'
 
-const userDataPath = app.getPath('userData')
 const userDataDirPath = path.resolve('./puppeteer_user_data')
-const dbDirectory = path.join(userDataPath, 'database')
 
-if (!fs.existsSync(dbDirectory)) {
-  fs.mkdirSync(dbDirectory, { recursive: true })
-}
+let DB: Database.Database
+const DataBaseSetup = () => {
+  const userDataPath = app.getPath('userData')
+  const dbDirectory = path.join(userDataPath, 'database')
 
-const dbPath = path.join(dbDirectory, 'my-data.sqlite3')
-
-let DB!: Database.Database
-
-const initDB = (dbPath: string) => {
-  try {
-    DB = new Database(dbPath);
-    console.log(`データベースを ${dbPath} に接続しました。`)
-  } catch (error) {
-    console.error("データベースの接続に失敗しました:", error)
-    DB = null
-    throw error
+  if (!fs.existsSync(dbDirectory)) {
+    fs.mkdirSync(dbDirectory, { recursive: true })
   }
-}
 
-function getDB(): Database.Database {
-  if (!DB) {
-    throw new Error("DB is not initialized")
+  const dbPath = path.join(dbDirectory, 'my-data.sqlite3')
+
+  const initDB = (dbPath: string) => {
+    try {
+      DB = new Database(dbPath);
+      console.log(`データベースを ${dbPath} に接続しました。`)
+    } catch (error) {
+      console.error("データベースの接続に失敗しました:", error)
+      DB = null
+      throw error
+    }
   }
-  return DB
+
+  function getDB(): Database.Database {
+    if (!DB) {
+      throw new Error("DB is not initialized")
+    }
+    return DB
+  }
+
+  // 初期化
+  initDB(dbPath)
+
+  // テーブル作成
+  const db = getDB()
+
+  const createMemoMainTable = db.prepare(
+    `CREATE TABLE IF NOT EXISTS MemoMain (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      sub_id TEXT UNIQUE NOT NULL,
+      title TEXT NOT NULL,
+      remarks TEXT,
+      create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      delete_Flg INTEGER DEFAULT 0
+    )`
+  )
+  createMemoMainTable.run()
+
+  const createMemoDetailTable = db.prepare(
+    `CREATE TABLE IF NOT EXISTS MemoDetail (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id INTEGER NOT NULL,
+      sub_id TEXT NOT NULL,
+      title TEXT NOT NULL,
+      content TEXT,
+      remarks TEXT,
+      check_Flg INTEGER DEFAULT 0,
+      create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      delete_Flg INTEGER DEFAULT 0
+    )`
+  )
+  createMemoDetailTable.run()
+
 }
 
-// 初期化
-initDB(dbPath)
 
-// テーブル作成
-const db = getDB()
-
-const createMemoMainTable = db.prepare(
-  `CREATE TABLE IF NOT EXISTS MemoMain (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sub_id TEXT UNIQUE NOT NULL,
-    title TEXT NOT NULL,
-    remarks TEXT,
-    create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-    update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-    delete_Flg INTEGER DEFAULT 0
-  )`
-)
-createMemoMainTable.run()
-
-const createMemoDetailTable = db.prepare(
-  `CREATE TABLE IF NOT EXISTS MemoDetail (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    order_id INTEGER NOT NULL,
-    sub_id TEXT NOT NULL,
-    title TEXT NOT NULL,
-    content TEXT,
-    remarks TEXT,
-    check_Flg INTEGER DEFAULT 0,
-    create_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-    update_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
-    delete_Flg INTEGER DEFAULT 0
-  )`
-)
-createMemoDetailTable.run()
 
 const gotTheLock = app.requestSingleInstanceLock()
 const windowManager = new Map()
@@ -970,6 +975,7 @@ app.whenReady().then(async () => {
     app.quit()
     return
   }
+  DataBaseSetup()
   electronApp.setAppUserModelId('com.OCEANS7A-DEV.Oceanstockman')
   await createUpdaterWindow()
   app.on('browser-window-created', (_, window) => {
