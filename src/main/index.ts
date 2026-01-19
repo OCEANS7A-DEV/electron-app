@@ -36,7 +36,7 @@ import { CookieSetup } from './logic'
 
 const userDataDirPath = path.resolve('./puppeteer_user_data')
 
-let DB: Database.Database
+let DB!: Database.Database
 const DataBaseSetup = () => {
   const userDataPath = app.getPath('userData')
   const dbDirectory = path.join(userDataPath, 'database')
@@ -53,7 +53,6 @@ const DataBaseSetup = () => {
       console.log(`データベースを ${dbPath} に接続しました。`)
     } catch (error) {
       console.error("データベースの接続に失敗しました:", error)
-      DB = null
       throw error
     }
   }
