@@ -249,9 +249,9 @@ export const useLogic = (): FCInventoryTypes => {
         insert_date: formData[0][0],
         data: formData,
         storeid: StoreIDRef.current,
-        deleteNum: DeleteRowsRef.current
+        deleteNum: DeleteRowsRef.current,
+        sub: SubActionRef.current
       }
-      console.log(insertData)
       if (formData.length >= 1) {
         await window.myInventoryAPI.DataInsert(insertData)
       }
