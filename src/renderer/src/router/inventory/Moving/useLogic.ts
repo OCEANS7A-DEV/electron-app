@@ -42,10 +42,11 @@ export const useLogic = (): UseLogicReturn => {
     console.log(data.rows)
   }
 
-  const GetStores = async (): Promise<void> => {
+  const GetStores = async () => {
     const data = await window.myInventoryAPI.storeGet('storeList')
     const result = formatStoreData(data)
     setStoreList(result)
+    return result
   }
 
   const firstSet = async (): Promise<void> => {
@@ -111,10 +112,14 @@ export const useLogic = (): UseLogicReturn => {
   )
 
   const handleSelectChange = useCallback(
-    (e: SelectChangeEvent, index: number, select: string): void => {
+    async (e: SelectChangeEvent, index: number, select: string): Promise<void> => {
       const selectedVendor = e.target.value as string
+      const storelist = await GetStores()
       const storedata =
-        storeList.find((item: SelectOption) => item.value === selectedVendor) || null
+        storelist.find((item: SelectOption) => item.value === selectedVendor) || null
+      
+      console.log(storedata)
+
       if (select == 'out') {
         setValue(`rows.${index}.outStore`, storedata)
       } else {

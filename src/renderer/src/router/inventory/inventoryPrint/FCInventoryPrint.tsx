@@ -42,32 +42,29 @@ const FCPrintContent = (): JSX.Element => {
 
   const invetoryAmount = () => {
     let total = 0
-    Data.forEach((item: any) => {
-      item.data.forEach((row: any) => {
+    for (const item of Data) {
+      for (const row of item.data) {
         const num = Number(row[2])
         const price = Number(row[3])
+        if (Number.isNaN(num) || Number.isNaN(price)) continue
         total += num * price
-      })
-    })
+      }
+    }
     setAllAmount(total.toLocaleString())
   }
 
   const typeRow = (item, pageIndex) => {
-
-    // 元のデータを変更しないようにコピーを作成
     const localData = [...item.data];
-    const rowNum = 22; // 1ページあたりの行数
-
-    // 最終ページを22行で埋めるための空行を追加
-    const pageNum = Math.ceil(localData.length / rowNum);
-    const requiredEmptyRows = (pageNum * rowNum) - localData.length;
+    const rowNum = 22
+    const pageNum = Math.ceil(localData.length / rowNum)
+    const requiredEmptyRows = (pageNum * rowNum) - localData.length
 
     if (requiredEmptyRows > 0) {
-      const emptyRows = Array.from({ length: requiredEmptyRows }, () => ['', '', null, null]); // 数値部分はnullにする
+      const emptyRows = Array.from({ length: requiredEmptyRows }, () => ['', '', null, null])
       localData.push(...emptyRows);
     }
 
-    
+
 
     return localData.map((row, index: number) => {
       // 分割代入で可読性を向上
@@ -81,18 +78,19 @@ const FCPrintContent = (): JSX.Element => {
             <td className="FC-Name">{name}</td>
             <td className="FC-Price">{price ? price.toLocaleString() : ''}</td>
             <td className="FC-Num">{num ? num.toLocaleString() : ''}</td>
+            <td className="FC-total">{(price * num).toLocaleString()}</td>
           </tr>
 
           {(index + 1) % rowNum === 0 && (
             <tr className="FCPageBreakRow">
-              <td colSpan={4} className="FCPageBreak">
+              <td colSpan={5} className="FCPageBreak">
                 <div className="FCPageBreakText">{item.type}</div>
                 <div>{Math.ceil(index / rowNum)}/{pageNum}</div>
                 <div className="FC-test">{pageIndex + 1}/{PageNum}</div>
               </td>
             </tr>
           )}
-          
+
         </React.Fragment>
       )
     })
@@ -116,7 +114,7 @@ const FCPrintContent = (): JSX.Element => {
         <table className="FCprintData">
           <thead>
             <tr className="FCPrintName">
-              <th colSpan={4}>
+              <th colSpan={5}>
                 <div>
                   <h2>{printStore}店 年末在庫</h2>
                 </div>
@@ -131,6 +129,7 @@ const FCPrintContent = (): JSX.Element => {
               <th>商品名</th>
               <th>単価</th>
               <th>在庫数</th>
+              <th>合計</th>
             </tr>
           </thead>
           <tbody>

@@ -65,6 +65,8 @@ export const useLogic = (): FCInventoryTypes => {
   const typeRef = useRef('')
   const StoreIDRef = useRef(0)
   const SubActionRef = useRef('')
+  const DatagetRef = useRef(true)
+
 
   const { control, register, handleSubmit, getValues, setValue, reset } = useForm<FormValues>({
     defaultValues: {
@@ -78,15 +80,21 @@ export const useLogic = (): FCInventoryTypes => {
   })
 
   const InventoryData = async (): Promise<void> => {
+    // 一度に一つだけにしたい
+    if (!DatagetRef.current) return
+    DatagetRef.current = false
+    reset({
+      rows: defaultFormDataFormat()
+    })
     if (storeValue == '') return
     const storeData = storenames.find((row) => row.value == storeValue)
+
     if (!storeData) return
     const datas = await window.myInventoryAPI.ListGet({
       sheetName: '在庫履歴',
       action: 'FCInventoryGet',
       ranges: 'A2:E'
     })
-
     const filterDate = new Date(yearValue, monthValue, 0).toLocaleDateString()
     const filtered = datas.filter(
       (row: DataTypes) =>
@@ -98,13 +106,24 @@ export const useLogic = (): FCInventoryTypes => {
     } else {
       SubActionRef.current = 'append'
     }
+    const overLength = filtered.length - 20
+    if (overLength > 0) {
+      const nums = Math.ceil(overLength / 20)
+      for (let i = 0; i < nums; i++) {
+        addNewForm()
+      }
+    }
     for (let i = 0; i < filtered.length; i++) {
       const product = await productGet(filtered[i][2])
-      setValue(`rows.${i}.code`, String(product.productData.code))
-      setValue(`rows.${i}.name`, String(product.productData.name))
+      const code = product.productData?.code ?? filtered[i][2]
+      const name = product.productData?.name ?? ''
+      const price = product.productData?.newPrice || ''
+      setValue(`rows.${i}.code`, String(code))
+      setValue(`rows.${i}.name`, String(name))
       setValue(`rows.${i}.quantity`, String(filtered[i][3]))
-      setValue(`rows.${i}.price`, String(product.productData.newPrice))
+      setValue(`rows.${i}.price`, String(price))
     }
+    DatagetRef.current = true
   }
 
   useEffect(() => {
@@ -275,8 +294,9 @@ export const useLogic = (): FCInventoryTypes => {
     [remove]
   )
 
-  const Reget = async () => {
+  const Reget = async (): Promise<void> => {
     const DataGets = async () => {
+
       const data = await window.myInventoryAPI.ListGet({
         sheetName: '在庫履歴',
         action: 'FCInventoryGet',
@@ -310,7 +330,6 @@ export const useLogic = (): FCInventoryTypes => {
       await window.myInventoryAPI.storeSet('inventoryPrint', JSON.stringify(PrintData))
       window.myInventoryAPI.orderPrint('FCPrintContent')
     }
-
     toast.promise(DataGets(), {
       loading: '読み込み中',
       success: () => '終了',

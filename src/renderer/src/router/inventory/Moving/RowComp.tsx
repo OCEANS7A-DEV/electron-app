@@ -12,6 +12,8 @@ import FormControl from '@mui/material/FormControl'
 import Button from '@mui/material/Button'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
+// MUI
+import Autocomplete from '@mui/material/Autocomplete'
 
 import { RowProps } from './types'
 
@@ -97,6 +99,19 @@ const RowComp = React.memo(
                     </MenuItem>
                   ))}
                 </Select>
+                // <Autocomplete
+                //   options={storeList}
+                //   getOptionLabel={(option) => option.label || ''}
+                //   isOptionEqualToValue={(option, value) => option.value === value?.value}
+                //   value={field.value || null}
+                //   onChange={(_, newValue) => field.onChange(newValue)}
+                //   onKeyDown={(e) => handleEnterFocusNext(e)}
+                //   openOnFocus
+                //   autoHighlight
+                //   renderInput={(params) => (
+                //     <TextField {...params} label="詳細" size="small" style={{ width: 120, height: 38 }} />
+                //   )}
+                // />
               )}
             />
           </FormControl>

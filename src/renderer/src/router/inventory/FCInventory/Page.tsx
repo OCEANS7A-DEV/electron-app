@@ -1,3 +1,4 @@
+import React from 'react'
 import type { JSX } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -14,7 +15,7 @@ import SendIcon from '@mui/icons-material/Send'
 import { Toaster } from 'react-hot-toast'
 import { useLogic } from './useLogic'
 
-const FCInventoryPage = (): JSX.Element => {
+const FCInventoryPage = React.memo((): JSX.Element => {
   const {
     RegisterData,
     storenames,
@@ -130,11 +131,11 @@ const FCInventoryPage = (): JSX.Element => {
                     width: '100%'
                   }}
                 >
-                  <Button variant="outlined" endIcon={<SendIcon />} type="submit">
-                    送信
-                  </Button>
                   <Button variant="outlined" onClick={addNewForm}>
                     入力枠追加
+                  </Button>
+                  <Button variant="outlined" endIcon={<SendIcon />} type="submit">
+                    送信
                   </Button>
                 </Box>
                 <MyDialog
@@ -152,6 +153,6 @@ const FCInventoryPage = (): JSX.Element => {
       </Box>
     </Box>
   )
-}
+})
 
 export default FCInventoryPage
