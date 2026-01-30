@@ -18,7 +18,7 @@ import TaiyoPrint, { loader as TaiyoLoader } from './router/inventory/inventoryP
 import ZaikoSettingPage, { loader as ZaikoSettingLoader } from './router/setting/setting'
 import HelloWork, { loader as HelloWorkLoader } from './router/helloWork/helloWork'
 import DetailContent from './router/inventory/inventorySetting/productDetailEdit'
-import UpdateWindow from './router/updater'
+//import UpdateWindow from './router/updater'
 
 import CatalogView from './router/inventory/inventoryGet/Catalog'
 import NetDetailsPrint, {

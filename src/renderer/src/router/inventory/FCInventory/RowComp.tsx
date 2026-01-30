@@ -48,7 +48,6 @@ const RowComp = React.memo(
           />
         </Box>
         <Box>
-
           <Button variant="outlined" onClick={() => handleRowDelete(index)}>
             削除
           </Button>

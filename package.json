@@ -10,8 +10,10 @@
   "build": {
     "appId": "com.OCEANS7A-DEV.Oceanstockman",
     "productName": "オーシャン",
+    "directories": {
+      "output": "release"
+    },
     "files": [
-      "dist",
       "out/main",
       "out/preload",
       "out/renderer"
