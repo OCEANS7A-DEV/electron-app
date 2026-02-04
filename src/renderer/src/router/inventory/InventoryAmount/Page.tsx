@@ -2,6 +2,7 @@
 // React
 import type { JSX } from 'react'
 import { useLogic } from './useLogic'
+import { inventoryamount } from './logic'
 
 // 自作
 import LinkBaner from '../TopBanner/Page'
@@ -54,7 +55,8 @@ export default function InventoryAmount(): JSX.Element {
     onSubmit,
     handleSubmit,
     Reget,
-    isHalfWidth
+    isHalfWidth,
+    rows
   } = useLogic()
 
   return (
@@ -111,6 +113,7 @@ export default function InventoryAmount(): JSX.Element {
             <Box className="Inventory_Amount_table">
               <Box className="Inventory_Amount_rows_header">
                 <Box>店舗名</Box>
+                <Box>前月在庫</Box>
                 <Box>仕入金額</Box>
                 <Box>使用金額</Box>
                 <Box>在庫金額</Box>
@@ -119,6 +122,17 @@ export default function InventoryAmount(): JSX.Element {
                 {fields.map((field, index) => (
                   <Box key={field.id} className="Inventory_Amount_rows">
                     <Box className="Inventory_Amount_Store">{getValues(`rows.${index}.store`)}</Box>
+                    <Box sx={{ width: 160 }}>
+                      <TextField
+                        {...register(`rows.${index}.before`, {
+                          validate: (value) => isHalfWidth(value) || '半角英数字で入力してください'
+                        })}
+                        inputProps={{ style: { textAlign: 'right', fontSize: 20 } }}
+                        fullWidth
+                        size="small"
+                        placeholder="前月在庫金額"
+                      />
+                    </Box>
                     <Box className="Inventory_Amount_stocking">
                       {Number(getValues(`rows.${index}.stocking`)).toLocaleString()}
                     </Box>
@@ -134,7 +148,7 @@ export default function InventoryAmount(): JSX.Element {
                       />
                     </Box>
                     <Box className="Inventory_Amount_inventoryamount">
-                      {Number(getValues(`rows.${index}.inventoryamount`)).toLocaleString()}
+                      {inventoryamount(rows?.[index] ?? getValues('rows')[index])}
                     </Box>
                   </Box>
                 ))}

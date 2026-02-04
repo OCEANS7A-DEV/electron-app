@@ -17,6 +17,7 @@ export interface SelectStoreOption {
 export type FormValues = {
   rows: {
     store: string
+    before: string
     stocking: string
     used: string
     inventoryamount: string
@@ -40,7 +41,7 @@ export type GetDataType = [
   number,
   number,
   number,
-  string
+  number
 ]
 
 export interface UseLogicReturn {
@@ -57,6 +58,7 @@ export interface UseLogicReturn {
   onSubmit: SubmitHandler<FormValues>
   handleSubmit: UseFormHandleSubmit<FormValues>
   isHalfWidth: (str: string) => boolean
+  rows: FormValues['rows']
 }
 
 export interface DateReturn {
@@ -65,6 +67,7 @@ export interface DateReturn {
 }
 
 export type FormDataType = [
+  string,
   string,
   string,
   null,

@@ -38,6 +38,12 @@ jobs:
         $json.version = $tag
         $json | ConvertTo-Json -Depth 10 | Set-Content package.json
 
+    - name: Clean build outputs
+      run: |
+        rmdir /s /q dist 2>nul || exit 0
+        rmdir /s /q release 2>nul || exit 0
+      shell: cmd
+
     - name: Install dependencies
       run: npm install --legacy-peer-deps
 
@@ -48,7 +54,7 @@ jobs:
         token: ${{ secrets.GH_TOKEN }}
       run: |
         npm run build
-        npx electron-builder --win --x64 --publish always
+        npx electron-builder --win --x64 --publish never
 
     - name: Publish GitHub Release
       uses: softprops/action-gh-release@v2
@@ -62,7 +68,7 @@ jobs:
       if: success()
       uses: Nats-ji/delete-old-releases@v1
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GH_TOKEN }}
         keep-count: 3
         keep-old-minor-releases: false
         remove-tags: true

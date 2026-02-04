@@ -36,7 +36,8 @@ export const DataGet = async (): Promise<GetDataType[]> => {
 
 export const FormDataFormat = (data: FormValues['rows'], selectDate: string): FormDataType[] => {
   const formData = data.map((item) => {
-    return [selectDate, item.store, null, item.used, null] as FormDataType
+    console.log(item)
+    return [selectDate, item.store, item.before, null, item.used, null] as FormDataType
   })
   return formData
 }
@@ -47,10 +48,15 @@ export const DateFormat = (date: string): string => {
   return result
 }
 
-export const defaultDataFormat = (data: storeGetType[]): FormValues['rows'] => {
+export const defaultDataFormat = (
+  data: storeGetType[],
+  beforeData: GetDataType[]
+): FormValues['rows'] => {
   const result: FormValues['rows'] = data.map((item) => {
+    const target = beforeData.filter((row) => row[1] == item[1])
     return {
       store: item[1],
+      before: String(target[0][5]),
       stocking: '',
       used: '',
       inventoryamount: ''
@@ -68,3 +74,8 @@ export const NowYearMonth = (): NowReturn => {
 }
 
 export const isHalfWidth = (value: string): boolean => /^[\x20-\x7E]*$/.test(value)
+
+export const inventoryamount = (row: FormValues['rows'][number]): string => {
+  const result = Number(row.before) + Number(row.stocking) - Number(row.used)
+  return result.toLocaleString()
+}

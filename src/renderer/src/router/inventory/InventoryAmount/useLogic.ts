@@ -16,41 +16,54 @@ import {
   isHalfWidth
 } from './logic'
 
-import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form'
+import { useForm, useFieldArray, SubmitHandler, useWatch } from 'react-hook-form'
 
 import { storeGetType, FormValues, GetDataType, UseLogicReturn } from './types'
 
-const defaultSet = (stores: storeGetType[]): FormValues['rows'] => {
-  const result = defaultDataFormat(stores)
+const defaultSet = (stores: storeGetType[], beforeData: GetDataType[]): FormValues['rows'] => {
+  const result = defaultDataFormat(stores, beforeData)
   return result
 }
 
 export const loader = async (): Promise<{
   loaderData: GetDataType[]
   storenames: storeGetType[]
+  beforeZaikoData: GetDataType[]
 }> => {
   const loaderData = await window.myInventoryAPI.ListGet({
-    sheetName: '店舗在庫金額',
+    sheetName: '店舗在庫金額履歴',
     action: 'InputDataGet',
-    ranges: 'A3:F'
+    ranges: 'A2:F'
   })
-
   const stores = await window.myInventoryAPI.ListGet({
     sheetName: '店舗一覧',
     action: 'ListGet',
     ranges: 'A2:C'
   })
-
   const storenames: storeGetType[] = stores.filter(
     (row: [string | number, string, string]) =>
       row[0] !== '' && row[2] == 'DM' && row[1] !== '会議室'
   )
 
-  return { loaderData, storenames }
+  const { year, month } = NowYearMonth()
+
+  const selectDate = `${year}/${month}`
+  const filter = loaderData.filter((item: GetDataType) => DateFormat(item[0]) == selectDate)
+  let beforeZaikoData = filter
+  if (filter.length == 0) {
+    const beforeDate = new Date(selectDate)
+    beforeDate.setMonth(beforeDate.getMonth() - 1)
+    const beforeTarget = beforeDate.toLocaleDateString()
+    beforeZaikoData = loaderData.filter(
+      (item: GetDataType) => DateFormat(item[0]) == DateFormat(beforeTarget)
+    )
+  }
+
+  return { loaderData, storenames, beforeZaikoData }
 }
 
 export const useLogic = (): UseLogicReturn => {
-  const { loaderData, storenames } = useLoaderData<typeof loader>()
+  const { loaderData, storenames, beforeZaikoData } = useLoaderData<typeof loader>()
   const { yearList, monthList } = DateLists()
   const [Year, setYear] = useState<number>(0)
   const [Month, setMonth] = useState<number>(0)
@@ -61,7 +74,7 @@ export const useLogic = (): UseLogicReturn => {
   const { control, register, handleSubmit, getValues, setValue, watch, reset } =
     useForm<FormValues>({
       defaultValues: {
-        rows: defaultSet(storenames)
+        rows: defaultSet(storenames, beforeZaikoData)
       }
     })
 
@@ -85,10 +98,16 @@ export const useLogic = (): UseLogicReturn => {
     const selectDate = `${Year}/${Month}`
     SelectDate.current = selectDate
     const filter = DATA.filter((item: GetDataType) => DateFormat(item[0]) == selectDate)
+    const beforeDate = new Date(selectDate)
+    beforeDate.setMonth(beforeDate.getMonth() - 1)
+    const beforeTarget = beforeDate.toLocaleDateString()
+
+    const beforeData = DATA.filter((item: GetDataType) => DateFormat(item[0]) == DateFormat(beforeTarget))
+    console.log(beforeData)
     if (filter.length == 0) {
       insertActionRef.current = 'insert'
       reset({
-        rows: defaultSet(storenames)
+        rows: defaultSet(storenames, beforeData)
       })
     } else {
       insertActionRef.current = 'InventoryAmountUpdate'
@@ -108,9 +127,10 @@ export const useLogic = (): UseLogicReturn => {
     const fData = watch().rows
     data.forEach((item: GetDataType) => {
       const indexNum = fData.findIndex((row) => row.store == item[1])
-      setValue(`rows.${indexNum}.stocking`, String(item[2]))
-      setValue(`rows.${indexNum}.used`, String(item[3]))
-      setValue(`rows.${indexNum}.inventoryamount`, String(item[4]))
+      setValue(`rows.${indexNum}.before`, String(item[2]))
+      setValue(`rows.${indexNum}.stocking`, String(item[3]))
+      setValue(`rows.${indexNum}.used`, String(item[4]))
+      setValue(`rows.${indexNum}.inventoryamount`, String(item[5]))
     })
   }
 
@@ -130,7 +150,7 @@ export const useLogic = (): UseLogicReturn => {
     const actionstring = insertActionRef.current
     if (formData.length >= 1) {
       await window.myInventoryAPI.DataInsert({
-        sheetName: '店舗在庫金額',
+        sheetName: '店舗在庫金額履歴',
         sub_action: 'insert',
         action: actionstring,
         data: formData,
@@ -143,6 +163,8 @@ export const useLogic = (): UseLogicReturn => {
     const getData = await DataGet()
     setDATA(getData)
   }
+
+  const rows = useWatch({ control, name: 'rows' })
 
   return {
     yearList,
@@ -157,6 +179,7 @@ export const useLogic = (): UseLogicReturn => {
     register,
     onSubmit,
     handleSubmit,
-    isHalfWidth
+    isHalfWidth,
+    rows
   }
 }
