@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 dayjs.locale('ja')
-import { getNearestMonday } from '../../../Util/util'
+//import { getNearestMonday } from '../../../Util/util'
 import { SelectChangeEvent } from '@mui/material/Select'
 import { SelectOption, StatusType } from './types'
 import toast from 'react-hot-toast'
@@ -28,7 +28,8 @@ export const useLogic = () => {
       const SelectDate = selectDateRef.current
       const filtered = data.filter((row) => new Date(row[0]).toLocaleDateString() == SelectDate)
       const storeData = await window.myInventoryAPI.storeGet('storeList')
-      const statusData = storeData.map((item) => {
+      const storeFilter = storeData.filter((row) => row[3] == '営業')
+      const statusData = storeFilter.map((item) => {
         const checkData = filtered.filter((row) => row[1] == item[1])
         let status = ''
         if (
@@ -46,6 +47,7 @@ export const useLogic = () => {
         }
         const result = {
           storeName: item[1],
+          storetype: item[2],
           printStatus: status,
           data: checkData
         }

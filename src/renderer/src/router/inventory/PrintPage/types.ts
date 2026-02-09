@@ -23,6 +23,7 @@ export type OrderType = [
 
 export interface StatusType {
   storeName: string
+  storetype: string
   printStatus: string
   data: OrderType[]
 }

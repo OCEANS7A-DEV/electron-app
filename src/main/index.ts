@@ -599,6 +599,7 @@ const AffterGet = async () => {
       })
     })
     const result = await response.json()
+    console.log(result.StoresData)
     const ListResult = await result.ProductsData.map((item) => {
       return {
         vendor: item[1],

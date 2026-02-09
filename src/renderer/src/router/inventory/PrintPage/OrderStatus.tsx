@@ -63,14 +63,16 @@ const OrderStatus = ({ dateValue, handleDateChange, DataGet, OrderDataStatus }) 
           backgroundColor: 'black',
           display: 'grid',
           gap: '1px',
-          gridTemplateColumns: '100px 120px'
+          gridTemplateColumns: '100px 80px 120px'
         }}
       >
         <Box sx={{ ...ColumnSize }}>店舗名</Box>
+        <Box sx={{ ...ColumnSize }}>運営</Box>
         <Box sx={{ ...ColumnSize }}>処理状況</Box>
         {OrderDataStatus.map((row) => (
           <>
             <Box sx={{ ...RowDataStyle }}>{row.storeName}</Box>
+            <Box sx={{ ...RowDataStyle, textAlign: 'center' }}>{row.storetype}</Box>
             <Box sx={{ ...RowDataStyle, textAlign: 'center' }}>{row.printStatus}</Box>
           </>
         ))}
