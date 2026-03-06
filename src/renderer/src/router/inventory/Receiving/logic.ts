@@ -30,7 +30,8 @@ export const InsertDataFormat = (
       Number(item.price),
       null,
       '',
-      Number(item.vendor?.id)
+      Number(item.vendor?.id),
+      '未'
     ] as InsertTypes
   })
 }

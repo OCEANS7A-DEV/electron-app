@@ -39,7 +39,7 @@ export interface SelectOption {
   id: number
 }
 
-export type InsertTypes = [string, string, number, string, number, number, null, string, number]
+export type InsertTypes = [string, string, number, string, number, number, null, string, number, string]
 
 export interface productType {
   vendor: string
