@@ -113,6 +113,7 @@ export default function HelloWork(): JSX.Element {
       window.myInventoryAPI.removeShowOtpPromptListener()
     }
   }, [])
+  
   useEffect(() => {
     initcode()
   }, [])

@@ -34,6 +34,10 @@ import { WindowStatus } from './WindowCreate'
 
 import { CookieSetup } from './logic'
 
+
+import { SpreadsheetIDs } from './ids'
+
+
 const userDataDirPath = path.resolve('./puppeteer_user_data')
 
 let DB!: Database.Database
@@ -981,6 +985,72 @@ app.whenReady().then(async () => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
+})
+
+type idstype = {
+  SpreadsheetName: string
+  id: string
+}
+
+const SingleSheetGet = async (target: string) => {
+  const sheet = SpreadsheetIDs.find((item: idstype) => item.SpreadsheetName == target)
+  if (!sheet) return
+  const response = await net.fetch(GetAPI_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: JSON.stringify({ sheetName: target, action: 'DataGet' })
+  })
+  const result = await response.json()
+  return result
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ipcMain.handle('NowData', async (_event, targetName) => {
+  const result = await SingleSheetGet(targetName)
+  return result
 })
 
 ipcMain.on('product-reload', async () => {
