@@ -55,7 +55,7 @@ export const insertDataFormat = async (
       null,
       item.person,
       item.remarks,
-      '未印刷',
+      '未',
       Now[0],
       Now[1]
     ] as InsertDataType

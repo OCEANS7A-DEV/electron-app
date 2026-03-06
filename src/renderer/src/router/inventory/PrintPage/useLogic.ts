@@ -31,19 +31,9 @@ export const useLogic = () => {
       const storeFilter = storeData.filter((row) => row[3] == '営業')
       const statusData = storeFilter.map((item) => {
         const checkData = filtered.filter((row) => row[1] == item[1])
-        let status = ''
-        if (
-          checkData.find((row) => row[12].includes('未印刷')) &&
-          checkData.find((row) => row[12].includes('印刷済'))
-        ) {
-          status = '未印刷有り'
-        } else if (checkData.find((row) => !row[12].includes('未印刷'))) {
-          status = '印刷済'
-        } else {
-          status = '未印刷'
-        }
-        if (checkData.length == 0) {
-          status = '未注文'
+        let status = '未注文'
+        if (checkData.length >= 1) {
+          status = '注文あり'
         }
         const result = {
           storeName: item[1],
