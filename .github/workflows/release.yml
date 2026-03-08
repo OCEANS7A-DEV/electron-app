@@ -1,74 +1,80 @@
 name: Build and Release Electron App
 
-
 permissions:
   contents: write
 
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'v*'
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-    - name: Debug GH_TOKEN
-      shell: bash
-      run: |
-        curl -H "Authorization: token $GH_TOKEN" https://api.github.com/user
-      env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Set version from tag (PowerShell)
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref }}" -replace '^refs/tags/v', ''
+          Write-Host "Setting package.json version to $tag"
+          $json = Get-Content package.json -Raw | ConvertFrom-Json
+          $json.version = $tag
+          $json | ConvertTo-Json -Depth 10 | Set-Content package.json
 
-    - name: Set version from tag (PowerShell)
-      shell: pwsh
-      run: |
-        $tag = "${{ github.ref }}" -replace '^refs/tags/v', ''
-        Write-Host "Setting package.json version to $tag"
-        $json = Get-Content package.json | ConvertFrom-Json
-        $json.version = $tag
-        $json | ConvertTo-Json -Depth 10 | Set-Content package.json
+      - name: Clean build outputs
+        shell: cmd
+        run: |
+          if exist dist rmdir /s /q dist
+          if exist release rmdir /s /q release
 
-    - name: Clean build outputs
-      run: |
-        rmdir /s /q dist 2>nul || exit 0
-        rmdir /s /q release 2>nul || exit 0
-      shell: cmd
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
 
-    - name: Install dependencies
-      run: npm install --legacy-peer-deps
+      - name: Build Electron App
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run build
+          npx electron-builder --win --x64 --publish never
 
-    - name: Build and Publish Electron App
-      env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        token: ${{ secrets.GH_TOKEN }}
-      run: |
-        npm run build
-        npx electron-builder --win --x64 --publish never
+      - name: List release files
+        shell: pwsh
+        run: |
+          Write-Host "=== release folder ==="
+          if (Test-Path release) {
+            Get-ChildItem -Recurse release
+          } else {
+            Write-Host "release folder not found"
+          }
 
-    - name: Publish GitHub Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: ${{ github.ref_name }}
-        draft: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          draft: false
+          files: |
+            release/**/*.exe
+            release/**/*.msi
+            release/**/latest*.yml
+            release/**/*.blockmap
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Cleanup old releases
-      if: success()
-      uses: Nats-ji/delete-old-releases@v1
-      with:
-        token: ${{ secrets.GH_TOKEN }}
-        keep-count: 3
-        keep-old-minor-releases: false
-        remove-tags: true
+      - name: Cleanup old releases
+        if: success()
+        uses: Nats-ji/delete-old-releases@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          keep-count: 3
+          keep-old-minor-releases: false
+          remove-tags: true
