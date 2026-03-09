@@ -858,6 +858,10 @@ export const DetailsGet = async () => {
 }
 
 const setupAutoUpdater = () => {
+  autoUpdater.allowPrerelease = true
+  autoUpdater.autoDownload = true
+  autoUpdater.logger = log
+  
   autoUpdater.on('checking-for-update', () => {
     log.info('アップデートを確認中...')
     if (updaterWindow && !updaterWindow.isDestroyed()) {
@@ -867,6 +871,7 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('update-available', () => {
     log.info('アップデートが利用可能です。')
+    autoUpdater.downloadUpdate()
     // NotificationEXE('アップデートが利用可能です。')
     // try{
     //   if (mainWindow) {
