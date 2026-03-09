@@ -1408,28 +1408,29 @@ ipcMain.handle('now-DateGet', () => {
 })
 
 ipcMain.handle('printStatus', async (_event, payload: any) => {
-  try {
-    const cookies1 = await session.defaultSession.cookies.get({
-      url: 'https://accounts.google.com'
-    })
-    const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
-    const allCookies = [...cookies1, ...cookies2]
-    const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
+  return
+  // try {
+  //   const cookies1 = await session.defaultSession.cookies.get({
+  //     url: 'https://accounts.google.com'
+  //   })
+  //   const cookies2 = await session.defaultSession.cookies.get({ url: 'https://www.google.com' })
+  //   const allCookies = [...cookies1, ...cookies2]
+  //   const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join('; ')
 
-    const response = await net.fetch(InsertAPI_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Cookie: cookieHeader
-      },
-      body: JSON.stringify(payload)
-    })
-    const result = await response.json()
-    return result
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
-    return errorMessage
-  }
+  //   const response = await net.fetch(InsertAPI_URL, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded',
+  //       Cookie: cookieHeader
+  //     },
+  //     body: JSON.stringify(payload)
+  //   })
+  //   const result = await response.json()
+  //   return result
+  // } catch (err) {
+  //   const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+  //   return errorMessage
+  // }
 })
 
 let browser: Browser | null = null
