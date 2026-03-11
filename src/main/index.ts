@@ -926,23 +926,8 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('update-downloaded', () => {
     log.info('アップデート完了。再起動して更新します。')
-
-    if (isFirstRunUpdate) {
-      NotificationEXE('再起動して更新します。')
-      autoUpdater.quitAndInstall()
-    } else {
-      log.info('定期チェックのアップデートは即時インストールしません')
-      NotificationEXE('アップデートが利用可能です。')
-      try {
-        if (launcherWindow) {
-          launcherWindow.webContents.send('update-available', false)
-        }
-      } catch {
-        if (!launcherWindow) {
-          createLauncherWindow()
-        }
-      }
-    }
+    NotificationEXE('アップデートを適用するため再起動します。')
+    autoUpdater.quitAndInstall()
   })
 }
 
@@ -964,6 +949,7 @@ const initAutoUpdater = async (win: BrowserWindow) => {
   await setupAutoUpdater()
 
   if (!is.dev) {
+    isFirstRunUpdate = true
     setTimeout(() => {
       log.info('初回アップデート確認中...')
       autoUpdater.checkForUpdates()
