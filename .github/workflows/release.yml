@@ -20,15 +20,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'npm'
 
-      - name: Set version from tag (PowerShell)
+      - name: Set version from tag
         shell: pwsh
         run: |
-          $tag = "${{ github.ref }}" -replace '^refs/tags/v', ''
+          $tag = "${{ github.ref_name }}" -replace '^v', ''
           Write-Host "Setting package.json version to $tag"
           $json = Get-Content package.json -Raw | ConvertFrom-Json
           $json.version = $tag
-          $json | ConvertTo-Json -Depth 10 | Set-Content package.json
+          $json | ConvertTo-Json -Depth 100 | Set-Content package.json
 
       - name: Clean build outputs
         shell: cmd
@@ -37,7 +38,7 @@ jobs:
           if exist release rmdir /s /q release
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci --legacy-peer-deps
 
       - name: Build Electron App
         env:
@@ -45,17 +46,36 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm run build
-          npx electron-builder --win --x64 --publish never
+          npx electron-builder --win nsis --x64 --publish never
 
       - name: List release files
         shell: pwsh
         run: |
           Write-Host "=== release folder ==="
           if (Test-Path release) {
-            Get-ChildItem -Recurse release
+            Get-ChildItem -Recurse release | Select-Object FullName, Length
           } else {
             Write-Host "release folder not found"
+            exit 1
           }
+
+      - name: Verify required files exist
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem release -Recurse -Filter *.exe
+          $yml = Get-ChildItem release -Recurse -Filter latest*.yml
+          $blockmap = Get-ChildItem release -Recurse -Filter *.blockmap
+
+          if (-not $exe) { Write-Error "No .exe found"; exit 1 }
+          if (-not $yml) { Write-Error "No latest*.yml found"; exit 1 }
+          if (-not $blockmap) { Write-Error "No .blockmap found"; exit 1 }
+
+          Write-Host "EXE:"
+          $exe | ForEach-Object { $_.FullName }
+          Write-Host "YML:"
+          $yml | ForEach-Object { $_.FullName }
+          Write-Host "BLOCKMAP:"
+          $blockmap | ForEach-Object { $_.FullName }
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
@@ -64,17 +84,10 @@ jobs:
           draft: false
           files: |
             release/**/*.exe
-            release/**/*.msi
             release/**/latest*.yml
             release/**/*.blockmap
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Cleanup old releases
-        if: success()
-        uses: Nats-ji/delete-old-releases@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          keep-count: 3
-          keep-old-minor-releases: false
-          remove-tags: true
+
+          

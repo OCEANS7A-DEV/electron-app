@@ -30,7 +30,7 @@
     "asarUnpack": [
       "qpdf/**"
     ],
-    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "artifactName": "zaiko-kanri-setup-${version}.${ext}",
     "win": {
       "target": "nsis"
     },

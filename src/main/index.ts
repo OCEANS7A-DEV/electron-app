@@ -871,6 +871,7 @@ const setupAutoUpdater = () => {
 
   autoUpdater.on('update-available', () => {
     log.info('アップデートが利用可能です。')
+    NotificationEXE('アップデートが利用可能です。')
     autoUpdater.downloadUpdate()
     // NotificationEXE('アップデートが利用可能です。')
     // try{
@@ -883,6 +884,7 @@ const setupAutoUpdater = () => {
   })
 
   autoUpdater.on('download-progress', (progressObj) => {
+    NotificationEXE('アップデート開始。')
     const percent = Math.floor(progressObj.percent)
     try {
       if (updaterWindow && !updaterWindow.isDestroyed()) {
@@ -900,7 +902,7 @@ const setupAutoUpdater = () => {
   })
 
   autoUpdater.on('update-not-available', () => {
-    log.info('アップデートはありません。')
+    NotificationEXE('アップデートはありません。')
     if (isFirstRunUpdate) {
       if (!launcherWindow) {
         createLauncherWindow()
@@ -918,7 +920,7 @@ const setupAutoUpdater = () => {
   })
 
   autoUpdater.on('error', (error) => {
-    log.error('アップデートエラー:', error)
+    NotificationEXE('アップデートエラー:', error)
     if (!launcherWindow) {
       createLauncherWindow()
     }
