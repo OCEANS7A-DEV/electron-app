@@ -1,9 +1,10 @@
 import type { JSX } from 'react'
 import Box from '@mui/material/Box'
-import { ColumnSize, BoxSxSetting, Tax } from './logic'
+import { ColumnSize, BoxSxSetting, Tax, DeliverNum, Missing, totalPrice } from './logic'
 import { PrintRowType, RowCompType } from './types'
 
 const RowComp = ({ printData }: RowCompType): JSX.Element => {
+  console.log(printData)
   return (
     <Box
       sx={{
@@ -65,18 +66,7 @@ const RowComp = ({ printData }: RowCompType): JSX.Element => {
             }}
           >
             <Box sx={{ width: '100%', textAlign: 'right', paddingRight: '18px' }}>
-              {row[4] !== '' && Number(row[6]).toLocaleString()}
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              ...BoxSxSetting,
-              justifyContent: 'center',
-              flexFlow: 'column'
-            }}
-          >
-            <Box sx={{ width: '100%', textAlign: 'right', paddingRight: '18px' }}>
-              {row[4] !== '' && Number(row[8]).toLocaleString()}
+              {row[4] !== '' && DeliverNum(row)}
             </Box>
           </Box>
           <Box
@@ -97,9 +87,20 @@ const RowComp = ({ printData }: RowCompType): JSX.Element => {
               flexFlow: 'column'
             }}
           >
-            {row[10] !== '' && (
+            <Box sx={{ width: '100%', textAlign: 'right', paddingRight: '18px' }}>
+              {row[4] !== '' && totalPrice(row)}
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              ...BoxSxSetting,
+              justifyContent: 'center',
+              flexFlow: 'column'
+            }}
+          >
+            {row[11] !== '' && (
               <Box sx={{ width: '100%', textAlign: 'right', paddingRight: '18px' }}>
-                {row[10]}様<br /> {Tax(row)}
+                {row[11]}様<br /> {Tax(row)}
               </Box>
             )}
           </Box>
@@ -110,7 +111,7 @@ const RowComp = ({ printData }: RowCompType): JSX.Element => {
               flexFlow: 'column'
             }}
           >
-            <Box>{row[11]}</Box>
+            <Box>{row[12]}{Missing(row)}</Box>
           </Box>
           <Box
             sx={{

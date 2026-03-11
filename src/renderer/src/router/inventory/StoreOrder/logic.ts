@@ -77,6 +77,5 @@ export const MissingItemsDataGet = async (
     (item) => new Date(item[0]).toLocaleDateString() == lastDate
   )
   const beforeOutStock = beforeData.filter((item) => Number(item[8]) >= 1)
-  console.log(beforeOutStock)
   return beforeOutStock
 }

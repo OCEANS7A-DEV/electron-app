@@ -15,9 +15,9 @@ export const useLogic = () => {
 
   const OrderData = async () => {
     const ordersGet = await window.myInventoryAPI.ListGet({
-      sheetName: '店舗へ',
-      action: 'InputDataGet',
-      ranges: 'A2:M'
+      sheetName: '店舗注文履歴',
+      sheetID: '1UK3huzFfa3lQnhqWylJU65IeF8z-L39zgj3bSKDMALI',
+      action: 'DataGet'
     })
     return ordersGet
   }
@@ -71,6 +71,8 @@ export const useLogic = () => {
       toast.error('印刷できる注文データがありません')
       return
     }
+
+    console.log(PrintData)
     await window.myInventoryAPI.storeSet('printData', JSON.stringify(PrintData))
     window.myInventoryAPI.orderPrint('PrintContent')
   }

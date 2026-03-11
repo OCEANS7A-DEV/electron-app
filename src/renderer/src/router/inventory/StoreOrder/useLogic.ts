@@ -239,8 +239,8 @@ export const useLogic = (): UseLogicReturn => {
         insert_action: InsertActionRef.current,
         data: insertData,
         formulaConfig: {
-          targetCol: 10,
-          formula: '=RC[-3]*RC[-1]'
+          targetCol: 11,
+          formula: '=(RC[-4] - RC[-2])*RC[-1]'
         },
         deleteNum: DeleteRowNumRef.current
       }

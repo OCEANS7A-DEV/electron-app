@@ -102,9 +102,28 @@ export const ColumnSize = {
 export const Tax = (item) => {
   let result = ''
   if (item[4] == '開運手帳') {
-    result = `¥${Number(item[9]).toLocaleString()}`
+    result = `¥${Number(item[10]).toLocaleString()}`
   } else {
-    result = `¥${Math.ceil(Number(item[9]) * 1.1).toLocaleString()}`
+    result = `¥${Math.ceil(Number(item[10]) * 1.1).toLocaleString()}`
   }
   return result
+}
+
+export const DeliverNum = (item) => {
+  return (Number(item[6]) - Number(item[8])).toLocaleString()
+}
+
+export const totalPrice = (item) => {
+  const DeliverNum = Number(item[6]) - Number(item[8])
+  const Price = Number(item[9])
+
+  return (DeliverNum * Price).toLocaleString()
+}
+
+export const Missing = (item) => {
+  let MissingNum = ''
+  if (item[8] !== '') {
+    MissingNum = `${item[8]}=欠品`
+  }
+  return MissingNum
 }
