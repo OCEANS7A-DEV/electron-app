@@ -920,7 +920,7 @@ const setupAutoUpdater = () => {
   })
 
   autoUpdater.on('error', (error) => {
-    NotificationEXE('アップデートエラー:', error)
+    log.error('アップデートエラー:', error)
     if (!launcherWindow) {
       createLauncherWindow()
     }
