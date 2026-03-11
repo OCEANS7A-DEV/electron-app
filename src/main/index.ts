@@ -1407,7 +1407,7 @@ ipcMain.handle('now-DateGet', () => {
   return [id, DateTime]
 })
 
-ipcMain.handle('printStatus', async (_event, payload: any) => {
+ipcMain.handle('printStatus', async (_event, _payload: any) => {
   return
   // try {
   //   const cookies1 = await session.defaultSession.cookies.get({
