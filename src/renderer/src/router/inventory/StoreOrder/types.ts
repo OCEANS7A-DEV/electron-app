@@ -67,6 +67,7 @@ export type InsertDataType = [
   string,
   number,
   null,
+  null,
   number,
   null,
   string,

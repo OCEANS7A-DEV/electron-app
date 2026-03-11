@@ -51,6 +51,7 @@ export const insertDataFormat = async (
       item.detail?.value ?? '',
       Number(item.quantity),
       null,
+      null,
       Number(item.price),
       null,
       item.person,
