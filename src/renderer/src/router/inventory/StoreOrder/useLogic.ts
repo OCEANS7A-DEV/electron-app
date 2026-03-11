@@ -65,19 +65,24 @@ export const useLogic = (): UseLogicReturn => {
     const InsertDate = insertDateRef.current
     if (InsertDate == '' || storeSelect == '') return
     const ordersGet = await window.myInventoryAPI.ListGet({
-      sheetName: '店舗へ',
-      action: 'InputDataGet',
-      ranges: 'A2:M'
+      sheetName: '店舗注文履歴',
+      sheetID: '1UK3huzFfa3lQnhqWylJU65IeF8z-L39zgj3bSKDMALI',
+      action: 'DataGet'
     })
+
+    
     const MissingData = await MissingItemsDataGet(InsertDate, storeSelect, ordersGet)
+
+    const targetDateStr = new Date(InsertDate).toDateString()
+    const filtered = ordersGet.filter(
+      (item: OrderGetTypes) =>
+        new Date(item[0]).toDateString() == targetDateStr &&
+        item[1] == storeSelect &&
+        item[12] !== '前回欠品分'
+    )
     let count = 0
     MissingData.forEach(async (item) => {
-      const OutStockStr = item[11].split('、')
-      const OutStocktargetData = OutStockStr.find(
-        (item: string) =>
-          (item.includes('欠品') && !item.includes('前回欠品分')) || item.includes('前回欠品分欠品')
-      )
-      const OutStockNum = String(OutStocktargetData).replace(/[^0-9]/g, '')
+      const MissingNum = item[8]
       const result = await productGet(item[3], true)
       const detail = { value: item[5], label: item[5] }
       setValue(`rows.${count}.vendor`, item[2])
@@ -85,20 +90,14 @@ export const useLogic = (): UseLogicReturn => {
       setValue(`rows.${count}.detailList`, result.detailsData)
       setValue(`rows.${count}.detail`, detail)
       setValue(`rows.${count}.name`, item[4])
-      setValue(`rows.${count}.quantity`, OutStockNum)
-      setValue(`rows.${count}.person`, item[10])
-      setValue(`rows.${count}.price`, String(item[8]))
+      setValue(`rows.${count}.quantity`, String(MissingNum))
+      setValue(`rows.${count}.person`, item[11])
+      setValue(`rows.${count}.price`, String(item[9]))
       setValue(`rows.${count}.remarks`, '前回欠品分')
       count++
     })
 
-    const targetDateStr = new Date(InsertDate).toDateString()
-    const filtered = ordersGet.filter(
-      (item: OrderGetTypes) =>
-        new Date(item[0]).toDateString() == targetDateStr &&
-        item[1] == storeSelect &&
-        item[11] !== '前回欠品分'
-    )
+    
     const UpDataRowNum = filtered.length + MissingData.length
     if (filtered.length > 0) {
       if (filtered[0][12] == '注文無') {
@@ -119,9 +118,9 @@ export const useLogic = (): UseLogicReturn => {
         setValue(`rows.${count}.detail`, detail)
         setValue(`rows.${count}.name`, item[4])
         setValue(`rows.${count}.quantity`, String(item[6]))
-        setValue(`rows.${count}.person`, item[10])
-        setValue(`rows.${count}.price`, String(item[8]))
-        setValue(`rows.${count}.remarks`, item[11])
+        setValue(`rows.${count}.person`, item[11])
+        setValue(`rows.${count}.price`, String(item[9]))
+        setValue(`rows.${count}.remarks`, item[12])
         count++
       })
     }

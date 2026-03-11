@@ -70,16 +70,13 @@ export const MissingItemsDataGet = async (
   ordersGet: OrderGetTypes[]
 ): Promise<OrderGetTypes[]> => {
   const searchDate = new Date(date)
-  const filtered = ordersGet.filter((item) => new Date(item[0]) < searchDate)
+  const filtered = ordersGet.filter((item) => new Date(item[0]) < searchDate && item[1] == store)
+  filtered.sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime())
   const lastDate = new Date(filtered[filtered.length - 1][0]).toLocaleDateString()
-  const beforeData = ordersGet.filter(
-    (item) => new Date(item[0]).toLocaleDateString() == lastDate && item[1] == store
+  const beforeData = filtered.filter(
+    (item) => new Date(item[0]).toLocaleDateString() == lastDate
   )
-  const beforeOutStock = beforeData.filter(
-    (item) =>
-      (item[11].includes('欠品') && !item[11].includes('前回欠品分')) ||
-      item[11].includes('前回欠品分欠品') ||
-      item[11].includes('送付漏')
-  )
+  const beforeOutStock = beforeData.filter((item) => Number(item[8]) >= 1)
+  console.log(beforeOutStock)
   return beforeOutStock
 }
