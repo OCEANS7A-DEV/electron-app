@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<title>ハローワークインターネットサービス - 求人情報</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=0.5,user-scalable=yes,initial-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="jsp/img/favicon.ico">
+<link rel="stylesheet" href="jsp/css/reset.css">
+<link rel="stylesheet" href="jsp/css/buttons_orange.css">
+<link rel="stylesheet" href="jsp/css/table_orange.css">
+<link rel="stylesheet" href="jsp/css/navbar_orange.css">
+<link rel="stylesheet" href="jsp/css/page.css">
+<link rel="stylesheet" href="jsp/css/progress_orange.css">
+<link rel="stylesheet" href="jsp/css/common_orange.css">
+<link rel="stylesheet" href="jsp/css/jquery-ui.css">
+<link rel="stylesheet" href="jsp/font-awesome-4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="jsp/css/accordion.css">
+<link rel="stylesheet" href="jsp/css/accordion_style.css">
+<link rel="stylesheet" href="jsp/css/navigation.css">
+<link rel="stylesheet" href="jsp/css/navigation_style.css">
+<link rel="stylesheet" href="https://kyujin.hellowork.mhlw.go.jp/map/css/ol.css">
+<script type="text/javascript" src="https://kyujin.hellowork.mhlw.go.jp/map/js/ol.js" charset="UTF-8"></script>
+<script><!--
+	const mapServerUrl = 'https://kyujin.hellowork.mhlw.go.jp/';
+	const mapAppId = '';
+	const pointerUrl = 'https://kyujin.hellowork.mhlw.go.jp/map/images/pin.png';
+	const maxZoom = 17;
+	const minZoom = 4;
+--></script>
+
+<link rel="stylesheet" href="jsp/css/tab10_auto_orange.css" />
+
+		<link rel="stylesheet" type="text/css" href="jsp/css/ECZ250/ECZ250.css">
+		<link rel="stylesheet" type="text/css" href="jsp/css/EAB501/EAB501.css">
+		<link rel="stylesheet" type="text/css" href="jsp/css/EAB501/EAB501010.css">
+		<link rel="stylesheet" type="text/css" href="jsp/css/flickity.min.css">
+		<link rel="stylesheet" href="jsp/css/slider.css" />
+<link rel="stylesheet" href="jsp/css/slider_style.css" />
+</head>
+<body onload="init();">
+
+<div id="all">
+<header id="top_header">
+
+<div id="header" class="flex align_center last_right nowrap">
+	<a href="https://www.hellowork.mhlw.go.jp/index.html" class="flex nowrap">
+		<img class="top_image_logo"   src="jsp/img/mhlwlogo-1.gif">
+		<img class="top_image_min769" src="jsp/img/logo_big.gif">
+		<img class="top_image_max768" src="jsp/img/logo_small.gif">
+	</a>
+	<div class="flex jus_end align_center mr05_pc">
+		<script type="text/javascript" src="jsp/js/ewbc.min.js"></script>
+		<a href="javascript:void(0);" id="pt_enable">
+			<img class="img_small" src="jsp/img/yasashii.gif" alt="やさしいブラウザ・クラウド版はこちらからご利用ください" title="やさしいブラウザ">
+		</a>
+		<a href="javascript:void(0);" class="outBtn_layout button light media_nodisp ml05">ログアウト</a>
+		<a href="https://www.mhlw.go.jp/index.html" target="_blank">
+			<img class="img_small ml05" src="jsp/img/000820328.jpg" alt="厚生労働省Webサイトはこちら" title="厚生労働省">
+		</a>
+<!-- 		<div style="min-width:40px"></div> -->
+	</div>
+</div>
+
+<div class="popupWrap popupWrap_base popupWrap_layout">
+	<div class="popup_base popup_layout popup_color">
+		<p>ログアウトしますか。<br>ログアウトすると、編集中の情報など保存していない情報は失われます。</p>
+		<div class="popupBtn">
+			<button type="button" class="cancelBtn">キャンセル</button>
+			<button type="button" onclick="location.href='./logout.do'">ログアウト</button>
+		</div>
+	</div>
+	<div class="popupBg_base popupBg_color"></div>
+</div>
+
+<script>
+		var outBunLayout = document.querySelectorAll('.outBtn_layout');
+		var popupWrap = document.querySelector('.popupWrap');
+		var popupBase = document.querySelector('.popup_base');
+		var popupBg = document.querySelector('.popupBg_base');
+		var cancelBtn = document.querySelector('.cancelBtn');
+		function wrapClickAdd() {
+			popupWrap.classList.add('popupOpen');
+		}
+		function wrapClickRemove() {
+			popupWrap.classList.remove('popupOpen');
+		}
+		outBunLayout.forEach((out) => {
+			out.addEventListener('click', wrapClickAdd);
+		})
+		popupBg.addEventListener('click', wrapClickRemove);
+		cancelBtn.addEventListener('click', wrapClickRemove);
+</script><div class="navigation_menu"><input type="checkbox" id="hamburger_check" class="hamburger_navCheck"><label for="hamburger_check" class="checkBtn_base checkBtn_size checkBtn_layout checkBtn_color"><span class="checkBtn_lineBase checkBtn_lineLayout"></span></label><nav id="mainNav" class="navigationContents_base navigationContents_layout navigationContents_color"><div id="navbar"><ul class="nav_wrapBase nav_wrapLayout nav_wrapColor"><li class="navbar_item navbar_header"><p class="hamTitle_layout hamTitle_color hamTitle_text">メニュー</p></li><li class="navbar_item active "><a href="./GEAB100010.do?action=initDisp&screenId=GEAB100010" class="navLink_base navLink_layout navLink_color navLink_font">ホーム（求人／応募管理）</a></li><li class="navbar_item "><a href="./GEAB100040.do?action=initDisp&screenId=GEAB100040" class="navLink_base navLink_layout navLink_color navLink_font">求人検索</a></li><li class="navbar_item "><a href="./GEAB300110.do?action=initDisp&screenId=GEAB300110" class="navLink_base navLink_layout navLink_color navLink_font">メッセージ</a></li><li class="navbar_item "><a href="./GEAB500030.do?action=initDisp&screenId=GEAB500030" class="navLink_base navLink_layout navLink_color navLink_font">事業所情報設定</a></li><li class="navbar_item login_status "><a href="./logout.do" class="navLink_base navLink_layout navLink_color navLink_font">ログアウト</a></li></ul></div></nav></div>
+<script>
+var pulldownBase = document.querySelectorAll('.pulldown_base');
+var pulldownContainerBase = document.querySelectorAll('.pulldown_containerBase');
+var pulldownArrow = document.querySelectorAll('.pulldown_arrow')
+for(let i = 0; i < pulldownBase.length; i++){
+pulldownBase[i].addEventListener('click', () => {
+pulldownContainerBase[i].classList.toggle('addClick');
+pulldownArrow[i].classList.toggle('addClick');
+})
+}
+</script>
+<div id="breadcrumbs" class="m_side5p"><span>
+<a href="./GEAB100010.do?screenId=GEAB100010&#x26;action=initDisp">ホーム</a>
+&nbsp;&gt;&nbsp;求人情報設定
+</span></div>
+</header><p class="pagebottom"><a href="#bottom">ページ<br>最下部へ<br><i class="fa fa-2x fa-chevron-down"></i></a></p>
+<div id="container">
+<div class="page_title">求人情報</div><hr class="media_nodisp">
+<div class="media_nodisp_pc"></div><table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><tr>
+<th scope="row">事業所名</th><td colspan="2"><div class="m_t_0_5 mb05" name="jgshMei" id="ID_jgshMei">有限会社　吉</div>
+</td></tr>
+<tr>
+<th scope="row">就業場所</th><td colspan="2"><div class="mb05"><div class="m_t_0_5" name="shgBsYubinNo" id="ID_shgBsYubinNo">〒739-2102</div>
+<div class="m_t_0_5" name="shgBsJusho" id="ID_shgBsJusho">広島県東広島市高屋町杵原１３１１－２<br>ヘアーモード　キャビン高屋店</div>
+</div></td></tr>
+<tr>
+<th scope="row">職種</th><td colspan="2"><div class="mb05"><div class="m_t_0_5" name="sksu" id="ID_sksu">美容師／東広島市（ヘアーモードキャビン高屋店）レギュラー</div>
+</div></td></tr>
+<tr>
+<th scope="row">仕事内容</th><td colspan="2"><div class="m_t_0_5 mb05" name="shigotoNy" id="ID_shigotoNy">・ヘアーサロンオーシャングループ（理容店１３店、美容室６店）<br>での、スタイリストやアシスタント業務（カット、パーマ、カラー<br>他の補助業務）接客等を行って頂きます。<br><br>・ヘアーサロン内では、スタイリストとアシスタントが全員協力し<br>合い、お客様に安らぎと喜びを感じて頂ける店舗運営を心がけてい<br>ます。<br><br>※業務の変更範囲：変更なし</div>
+</td></tr>
+</div></table>
+<div class="m_t_0_5 element flex jus_center m_b_0"><div class="slideContainer imgeSlide"><div class="imageSlideWrap_layout slideWrap_color"><ul class="slideContents" data-flickity='{ "wrapAround": true, "prevNextButtons": false }'>
+</ul>
+</div>
+</div></div>
+
+	<BR>
+	<div class="p_h_0_5_sd max_width1088px_pc"><div class="flex flex_bottom direction_column_sd"><a id="ID_kyujinLink" class="mb05 mr05" href="#ID_GECZ25041Z">▼求人事業所へ</a><a id="ID_kyujinLink" class="mb05 mr05" href="#ID_GECZ25042Z">▼仕事内容へ</a><a id="ID_kyujinLink" class="mb05 mr05" href="#ID_GECZ25043Z">▼賃金・手当へ</a><a id="ID_kyujinLink" class="mb05 mr05" href="#ID_GECZ25044Z">▼労働時間へ</a><a id="ID_kyujinLink" class="mb05 mr05" href="#ID_GECZ25045Z">▼その他の労働条件等へ</a><a id="ID_kyujinLink" class="mb05 mr05" href="#ID_GECZ25046Z">▼会社の情報へ</a><a id="ID_kyujinLink" class="mb05 mr05" href="#ID_GECZ25047Z">▼選考等へ</a><a id="ID_kyujinLink" class="mb05 mr05" href="#ID_GECZ25048Z">▼求人に関する特記事項へ</a><a id="ID_kyujinLink" class="mb05 mr05" href="#ID_GECZ25062Z">▼求人・事業所PR情報へ</a></div></div>
+	<BR>
+	<table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><tr>
+<th scope="row">求人番号</th><td colspan="2"><div class="m_t_0_5 mb05" name="kjNo" id="ID_kjNo">34010-10155661</div>
+</td></tr>
+<tr>
+<th scope="row">受付年月日</th><td colspan="2"><div class="m_t_0_5 mb05" name="uktkYmd" id="ID_uktkYmd">2026年3月2日</div>
+</td></tr>
+<tr>
+<th scope="row">紹介期限日</th><td colspan="2"><div class="m_t_0_5 mb05" name="shkiKigenHi" id="ID_shkiKigenHi">2026年5月31日</div>
+</td></tr>
+<tr>
+<th scope="row">受理安定所</th><td colspan="2"><div class="m_t_0_5 mb05" name="juriAtsh" id="ID_juriAtsh">広島公共職業安定所</div>
+</td></tr>
+<tr>
+<th scope="row">求人区分</th><td colspan="2"><div class="m_t_0_5 mb05" name="kjKbn" id="ID_kjKbn">フルタイム</div>
+</td></tr>
+<tr>
+<th scope="row">オンライン自主応募の受付</th><td colspan="2"><div class="m_t_0_5 mb05" name="onlinJishuOboUktkKahi" id="ID_onlinJishuOboUktkKahi">不可</div>
+</td></tr>
+<tr>
+<th scope="row">産業分類</th><td colspan="2"><div class="m_t_0_5 mb05" name="sngBrui" id="ID_sngBrui">理容業</div>
+</td></tr>
+<tr>
+<th scope="row">トライアル雇用併用の希望</th><td colspan="2"><div class="m_t_0_5 mb05" name="tryKoyoKibo" id="ID_tryKoyoKibo">希望しない</div>
+</td></tr>
+</div></table>
+<div id="ID_GECZ25041Z" class="fs1_25 mt1"><div>求人事業所</div></div><table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><tr>
+<th scope="row">事業所番号</th><td colspan="2"><div class="m_t_0_5 mb05" name="jgshNo" id="ID_jgshNo">3401-625381-7</div>
+</td></tr>
+<tr>
+<th scope="row">事業所名</th><td colspan="2"><div class="mb05"><div class="m_t_0_5" name="jgshMeiKana" id="ID_jgshMeiKana">ユウゲンガイシャ　ヨシ</div>
+<div class="m_t_0_5" name="jgshMei" id="ID_jgshMei">有限会社　吉</div>
+</div></td></tr>
+<tr>
+<th scope="row">所在地</th><td colspan="2"><div class="mb05"><div class="m_t_0_5" name="szciYbn" id="ID_szciYbn">〒730-0001</div>
+<div class="m_t_0_5" name="szci" id="ID_szci">広島県広島市中区白島北町１３番８号</div>
+</div></td></tr>
+<tr>
+<th scope="row">ホームページ</th><td colspan="2"><div class="m_t_0_5 mb05"><a id="ID_hp" href="https://www.ocean115.jp/" target="_blank">https://www.ocean115.jp/</a></div></td></tr>
+</div></table>
+<table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><hr>
+<div class="flex kodawari">
+					<span class="bg_label white_back"><div name="koyoKeitai" id="ID_koyoKeitai">正社員</div>
+</span>
+					
+				<span class="bg_label white_back"><div name="kjKbn" id="ID_kjKbn">フル</div>
+</span>
+
+				
+							<span class="bg_label white_back"><div name="hynaKiknt" id="ID_hynaKiknt">経験不問</div>
+</span>
+				
+									<span class="bg_label white_back"><div name="grki" id="ID_grki">学歴不問</div>
+</span>
+				
+							<span class="bg_label white_back"><div name="selectHoho" id="ID_selectHoho">書類選考なし</div>
+</span>
+				
+								<span class="bg_label white_back"><div name="tsknTat" id="ID_tsknTat">通勤手当あり</div>
+</span>
+				
+								<span class="bg_label white_back"><div name="mycarTskn" id="ID_mycarTskn">マイカー通勤可</div>
+</span>
+				</div><hr>
+</div></table>
+<div id="ID_GECZ25042Z" class="fs1_25 mt1"><div>仕事内容</div></div><table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><tr>
+<th scope="row">職種</th><td colspan="2"><div class="mb05"><div class="m_t_0_5" name="sksu" id="ID_sksu">美容師／東広島市（ヘアーモードキャビン高屋店）レギュラー</div>
+</div></td></tr>
+<tr>
+<th scope="row">仕事内容</th><td colspan="2"><div class="m_t_0_5 mb05" name="shigotoNy" id="ID_shigotoNy">・ヘアーサロンオーシャングループ（理容店１３店、美容室６店）<br>での、スタイリストやアシスタント業務（カット、パーマ、カラー<br>他の補助業務）接客等を行って頂きます。<br><br>・ヘアーサロン内では、スタイリストとアシスタントが全員協力し<br>合い、お客様に安らぎと喜びを感じて頂ける店舗運営を心がけてい<br>ます。<br><br>※業務の変更範囲：変更なし</div>
+</td></tr>
+<tr>
+<th scope="row">雇用形態</th><td colspan="2"><div class="mb05"><div class="m_t_0_5" name="koyoKeitai" id="ID_koyoKeitai">正社員</div>
+</div></td></tr>
+<tr>
+<th scope="row">雇用期間</th><td colspan="2"><div class="mb05"><div class="m_t_0_5" name="koyoKikan" id="ID_koyoKikan">雇用期間の定めなし</div>
+</div></td></tr>
+<tr>
+<th scope="row">就業場所</th><td colspan="2"><div class="mb05"><div class="m_t_0_5" name="shgBsYubinNo" id="ID_shgBsYubinNo">〒739-2102</div>
+<div class="m_t_0_5" name="shgBsJusho" id="ID_shgBsJusho">広島県東広島市高屋町杵原１３１１－２<br>ヘアーモード　キャビン高屋店</div>
+<div class="flex input"><div><div id="ID_mapcontainer" name="mapcontainer" class="flex input align_center mb03"><button  type="button" id="ID_map1regbutton" name="map1regbutton" class="button " data-map-name="map1" data-longitude="132.786405423" data-latitude="34.4489813639" data-scale="13" data-pin-longitude="132.786405423" data-pin-latitude="34.4489813639" data-btn-kind="showMap" data-map-control="false">地図表示</button>
+</div><div id="ID_mapmap1"  class="map_container" style="display:none;"></div><input type="hidden" id="ID_latitudemap1" name="latitudemap1" value="">
+<input type="hidden" id="ID_longitudemap1" name="longitudemap1" value="">
+<input type="hidden" id="ID_scalemap1" name="scalemap1" value="">
+<input type="hidden" id="ID_leftmap1" name="leftmap1" value="">
+<input type="hidden" id="ID_rightmap1" name="rightmap1" value="">
+<input type="hidden" id="ID_topmap1" name="topmap1" value="">
+<input type="hidden" id="ID_bottommap1" name="bottommap1" value="">
+<input type="hidden" id="ID_pinLatitudemap1" name="pinLatitudemap1" value="">
+<input type="hidden" id="ID_pinLongitudemap1" name="pinLongitudemap1" value="">
+
+<script>
+function callbackmap1(json){
+	var funcName;
+	funcName = callbackmap1.name;
+	if(!funcName){funcName = getFnName(this);}
+	funcName = funcName.replace(/callback/, '');
+	callback(json, 'map1');
+}
+
+</script>
+</div></div><div class="flex"></div><div class="fs1 fb m_t_0_5">受動喫煙対策</div><div class="m_t_0_5" name="shgBsKitsuTsak" id="ID_shgBsKitsuTsak">あり（屋内禁煙）</div>
+</div></td></tr>
+<tr class="Interval_syousai">
+<th scope="row">マイカー通勤</th><td class="mycarTskn_col p_v_0_sd"><div class="fs1 fb m_t_0_5">マイカー通勤</div><div class="m_t_0_5 m_b_0_5_pc" name="mycarTskn" id="ID_mycarTskn">可</div>
+</td><td class="mycarTsknChushaUmu_col p_v_0_sd"><div class="fs1 fb m_t_0_5">駐車場の有無</div><div class="m_t_0_5 m_b_0_5_pc" name="mycarTsknChushaUmu" id="ID_mycarTsknChushaUmu">あり</div>
+</td></tr>
+<tr class="Interval_syousai">
+<th scope="row">転勤の可能性</th><td class="tenkinNoKnsi_col p_v_0_sd"><div class="fs1 fb m_t_0_5">転勤の可能性の有無</div><div class="m_t_0_5 m_b_0_5_pc" name="tenkinNoKnsi" id="ID_tenkinNoKnsi">あり</div>
+</td><td class="tenkinNoKnsiTenkinHanni_col p_v_0_sd"><div class="fs1 fb m_t_0_5">転勤範囲</div><div class="m_t_0_5 m_b_0_5_pc" name="tenkinNoKnsiTenkinHanni" id="ID_tenkinNoKnsiTenkinHanni">広島県内</div>
+</td></tr>
+<tr>
+<th scope="row">年齢</th><td colspan="2"><div class="mb05"><div class="flex"><div class="flex.nowrap"><div class="fs1 fb m_t_0_5">年齢制限</div><div class="m_t_0_5" name="nenreiSegn" id="ID_nenreiSegn">制限あり</div>
+</div><div class="flex.nowrap ml30p"><div class="fs1 fb m_t_0_5">年齢制限範囲</div><div class="m_t_0_5" name="nenreiSegnHanni" id="ID_nenreiSegnHanni">〜64歳</div>
+</div></div><div class="fs1 fb m_t_0_5">年齢制限該当事由</div><div class="m_t_0_5" name="nenreiSegnGaitoJiyu" id="ID_nenreiSegnGaitoJiyu">定年を上限</div>
+<div class="fs1 fb m_t_0_5">年齢制限の理由</div><div class="m_t_0_5" name="nenreiSegnNoRy" id="ID_nenreiSegnNoRy">定年が６５歳のため</div>
+</div></td></tr>
+<tr>
+<th scope="row">必要な免許・資格</th><td colspan="2"><div class="mb05"><div class="fs1 fb m_t_0_5">免許・資格名</div><div class="flex"><div><div class="fs1 m_t_0_5" name="MenkyoSkkuMeisho" id="ID_MenkyoSkkuMeisho">美容師</div>
+<div class="m_t_0_5" name="MenkyoSkkuSel" id="ID_MenkyoSkkuSel">必須</div>
+</div></div><div class="flex"><div><div class="fs1 m_t_0_5" name="MenkyoSkkuMeisho" id="ID_MenkyoSkkuMeisho">管理美容師</div>
+<div class="m_t_0_5" name="MenkyoSkkuSel" id="ID_MenkyoSkkuSel">あれば尚可</div>
+</div></div></div></td></tr>
+<tr>
+<th scope="row">試用期間</th><td colspan="2"><div class="mb05"><div class="flex"><div class="m_t_0_5" name="trialKikan" id="ID_trialKikan">あり</div>
+<div class="flex.nowrap ml30p"><div class="fs1 fb m_t_0_5">期間</div><div class="m_t_0_5" name="trialKikanKikan" id="ID_trialKikanKikan">３ヶ月</div>
+</div></div><div class="fs1 fb m_t_0_5">試用期間中の労働条件</div><div class="m_t_0_5" name="trialKikanChuuNoRodoJkn" id="ID_trialKikanChuuNoRodoJkn">同条件</div>
+</div></td></tr>
+<tr>
+<th scope="row">派遣・請負等</th><td colspan="2"><div class="mb05"><div class="fs1 fb m_t_0_5">就業形態</div><div class="m_t_0_5" name="hakenUkeoiToShgKeitai" id="ID_hakenUkeoiToShgKeitai">派遣・請負ではない</div>
+</div></td></tr>
+</div></table>
+<div id="ID_GECZ25043Z" class="fs1_25 mt1"><div>賃金・手当</div></div><table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><tr>
+<th scope="row"><div><div class="ta_left">ａ ＋ ｂ<br>（固定残業代がある場合はａ ＋ ｂ ＋ ｃ）</div></div></th><td colspan="4"><div class="m_t_0_5" name="chgn" id="ID_chgn">280,000円〜430,000円</div>
+<div class="fs0_875 m_t_0_5 mb05">※フルタイム求人の場合は月額（換算額）、パート求人の場合は時間額を表示しています。</div></td></tr>
+<tr>
+<th scope="row">基本給（ａ）</th><td colspan="4"><div class="fs1 fb m_t_0_5">基本給（月額平均）又は時間額</div><div class="m_t_0_5 mb05" name="khky" id="ID_khky">280,000円〜430,000円</div>
+</td></tr>
+<tr>
+<th scope="row">定額的に支払われる手当（ｂ）</th><td colspan="4"><div class="m_t_0_5 mb05" name="tgktNiShwrTat" id="ID_tgktNiShwrTat">-</div>
+</td></tr>
+<tr>
+<th scope="row">固定残業代（ｃ）</th><td colspan="4"><div class="mb05"><div class="flex"><div class="m_t_0_5" name="koteiZngyKbn" id="ID_koteiZngyKbn">なし</div>
+</div></div></td></tr>
+<tr>
+<th scope="row">月平均労働日数</th><td colspan="4"><div class="m_t_0_5 mb05" name="thkinRodoNissu" id="ID_thkinRodoNissu">23.7日</div>
+</td></tr>
+<tr>
+<th scope="row">賃金形態等</th><td colspan="4"><div class="mb05"><div class="flex"><div class="m_t_0_5 mr1" name="chgnKeitaiToKbn" id="ID_chgnKeitaiToKbn">月給</div>
+</div></div></td></tr>
+<tr class="Interval_syousai">
+<th scope="row">通勤手当</th><td class="tsknTat_col p_v_0_sd"><div class="m_t_0_5 m_b_0_5_pc" name="tsknTat" id="ID_tsknTat">実費支給（上限あり）</div>
+</td><td class="tsknTatTsuki_col p_v_0_sd"><div class="m_t_0_5 m_b_0_5_pc" name="tsknTatTsuki" id="ID_tsknTatTsuki">月額</div>
+</td><td class="p_v_0_sd" colspan="2"><div class="m_t_0_5 m_b_0_5_pc" name="tsknTatKingaku" id="ID_tsknTatKingaku">22,000円</div>
+</td></tr>
+<tr class="Interval_syousai">
+<th scope="row">賃金締切日</th><td class="chgnSkbi_col p_v_0_sd"><div class="m_t_0_5 dispnone_sd">&nbsp;</div><div class="m_t_0_5 m_b_0_5_pc" name="chgnSkbi" id="ID_chgnSkbi">固定（月末）</div>
+</td></tr>
+<tr class="Interval_syousai">
+<th scope="row">賃金支払日</th><td class="chgnSrbi_col p_v_0_sd"><div class="m_t_0_5 dispnone_sd">&nbsp;</div><div class="m_t_0_5 m_b_0_5_pc" name="chgnSrbi" id="ID_chgnSrbi">固定（月末以外）</div>
+</td><td class="chgnSrbiTsuki_col p_v_0_sd"><div class="fs1 fb m_t_0_5">支払月</div><div class="m_t_0_5 m_b_0_5_pc" name="chgnSrbiTsuki" id="ID_chgnSrbiTsuki">翌月</div>
+</td><td class="chgnSrbiHi_col p_v_0_sd"><div class="fs1 fb m_t_0_5">支払日</div><div class="m_t_0_5 m_b_0_5_pc" name="chgnSrbiHi" id="ID_chgnSrbiHi">20日</div>
+</td></tr>
+<tr>
+<th scope="row">昇給</th><td colspan="4"><div class="mb05"><div class="fs1 fb m_t_0_5">昇給制度</div><div class="m_t_0_5" name="shokyuSd" id="ID_shokyuSd">なし</div>
+</div></td></tr>
+<tr>
+<th scope="row">賞与</th><td colspan="4"><div class="mb05"><div class="fs1 fb m_t_0_5">賞与制度の有無</div><div class="m_t_0_5" name="shoyoSdNoUmu" id="ID_shoyoSdNoUmu">なし</div>
+<div class="flex"></div></div></td></tr>
+</div></table>
+<div id="ID_GECZ25044Z" class="fs1_25 mt1"><div>労働時間</div></div><table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><tr>
+<th scope="row">就業時間</th><td><div class="mb05"><div class="fs1 fb m_t_0_5">就業時間１</div><div class="m_t_0_5" name="shgJn1" id="ID_shgJn1">8時45分〜17時45分</div>
+<div class="fs1 fb m_t_0_5">就業時間２</div><div class="m_t_0_5" name="shgJn2" id="ID_shgJn2">8時45分〜12時45分</div>
+<div class="fs1 fb m_t_0_5">就業時間に関する特記事項</div><div class="m_t_0_5" name="shgJiknTkjk" id="ID_shgJiknTkjk">週６日勤務の場合　週１回、就業時間（２）の勤務となるが、引き<br>続き午後の勤務有り（時間外扱い）<br>※月の平均労働時間（１９０時間）</div>
+</div></td></tr>
+<tr>
+<th scope="row">時間外労働時間</th><td><div class="mb05"><div class="flex nowrap"><div class="m_t_0_5" name="jkgiRodoJn" id="ID_jkgiRodoJn">あり</div>
+<div class="nowrap ml30p"><div class="fs1 fb m_t_0_5">月平均時間外労働時間</div><div class="m_t_0_5" name="thkinJkgiRodoJn" id="ID_thkinJkgiRodoJn">30時間</div>
+</div></div><div class="fs1 fb m_t_0_5">３６協定における特別条項</div><div class=" m_t_0_5" name="sanrokuKyotei" id="ID_sanrokuKyotei">あり</div>
+<div class="fs1 fb m_t_0_5">特別な事情・期間等</div><div class="m_t_0_5" name="tkbsNaJijo" id="ID_tkbsNaJijo">月４５時間超の場合あり（年間６回まで）</div>
+</div></td></tr>
+<tr>
+<th scope="row">休憩時間</th><td><div class="m_t_0_5 mb05" name="kyukeiJn" id="ID_kyukeiJn">60分</div>
+</td></tr>
+<tr>
+<th scope="row">年間休日数</th><td><div class="m_t_0_5 mb05" name="nenkanKjsu" id="ID_nenkanKjsu">80日</div>
+</td></tr>
+<tr>
+<th scope="row">休日等</th><td><div class="mb05"><div class="fs1 fb m_t_0_5">休日</div><div class="m_t_0_5" name="kyjs" id="ID_kyjs">水曜日，その他</div>
+<div class="fs1 fb m_t_0_5">週休二日制</div><div class="m_t_0_5" name="shukFtskSei" id="ID_shukFtskSei">その他</div>
+<div class="fs1 fb m_t_0_5">その他</div><div class=" m_t_0_5" name="kyjsSnta" id="ID_kyjsSnta">シフトによる<br>隔週の週休二日制</div>
+<div class="fs1 fb m_t_0_5">６ヶ月経過後の年次有給休暇日数</div><div class="m_t_0_5" name="nenjiYukyu" id="ID_nenjiYukyu">10日</div>
+</div></td></tr>
+</div></table>
+<div id="ID_GECZ25045Z" class="fs1_25 mt1"><div>その他の労働条件等</div></div><table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><tr>
+<th scope="row">加入保険等</th><td colspan="2"><div class="m_t_0_5 mb05" name="knyHoken" id="ID_knyHoken">雇用保険，労災保険，健康保険，厚生年金</div>
+</td></tr>
+<tr>
+<th scope="row">退職金共済</th><td colspan="2"><div class="m_t_0_5 mb05" name="tskinKsi" id="ID_tskinKsi">未加入</div>
+</td></tr>
+<tr class="Interval_syousai">
+<th scope="row">退職金制度</th><td class="tskinSd_col p_v_0_sd"><div class="m_t_0_5 dispnone_sd">&nbsp;</div><div class="m_t_0_5 m_b_0_5_pc" name="tskinSd" id="ID_tskinSd">なし</div>
+</td></tr>
+<tr class="Interval_syousai">
+<th scope="row">定年制</th><td class="tnsei_col p_v_0_sd"><div class="m_t_0_5 dispnone_sd">&nbsp;</div><div class="m_t_0_5 m_b_0_5_pc" name="tnsei" id="ID_tnsei">あり</div>
+</td><td class="tnseiTeinenNenrei_col p_v_0_sd"><div class="fs1 fb m_t_0_5">定年年齢</div><div class="m_t_0_5 m_b_0_5_pc" name="tnseiTeinenNenrei" id="ID_tnseiTeinenNenrei">一律&#xa0;65歳</div>
+</td></tr>
+<tr class="Interval_syousai">
+<th scope="row">再雇用制度</th><td class="saiKoyoSd_col p_v_0_sd"><div class="m_t_0_5 dispnone_sd">&nbsp;</div><div class="m_t_0_5 m_b_0_5_pc" name="saiKoyoSd" id="ID_saiKoyoSd">あり</div>
+</td></tr>
+<tr class="Interval_syousai">
+<th scope="row">勤務延長</th><td class="kmec_col p_v_0_sd"><div class="m_t_0_5 dispnone_sd">&nbsp;</div><div class="m_t_0_5 m_b_0_5_pc" name="kmec" id="ID_kmec">あり</div>
+</td></tr>
+<tr class="Interval_syousai">
+<th scope="row">入居可能住宅</th><td class="nkj_col p_v_0_sd"><div class="m_t_0_5 m_b_0_5_pc" name="nkj" id="ID_nkj">単身用あり，世帯用あり</div>
+</td></tr>
+<tr class="Interval_syousai">
+<th scope="row">利用可能託児施設</th><td class="riyoKanoTkjShst_col p_v_0_sd"><div class="m_t_0_5 dispnone_sd">&nbsp;</div><div class="m_t_0_5 m_b_0_5_pc" name="riyoKanoTkjShst" id="ID_riyoKanoTkjShst">なし</div>
+</td></tr>
+</div></table>
+<div id="ID_GECZ25046Z" class="fs1_25 mt1"><div>会社の情報</div></div><table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><tr class="Interval_syousai">
+<th scope="row">従業員数</th><td class="p_v_0_sd"><div class="fs1 fb m_t_0_5">企業全体</div><div class="m_t_0_5 m_b_0_5_pc" name="jgisKigyoZentai" id="ID_jgisKigyoZentai">85人</div>
+</td><td class="p_v_0_sd"><div class="fs1 fb m_t_0_5">就業場所</div><div class="m_t_0_5 m_b_0_5_pc" name="jgisShgBs" id="ID_jgisShgBs">5人</div>
+</td><td class="p_v_0_sd"><div class="fs1 fb m_t_0_5">うち女性</div><div class="m_t_0_5 m_b_0_5_pc" name="jgisUchiJosei" id="ID_jgisUchiJosei">4人</div>
+</td><td class="jgisUchiPart_col p_v_0_sd"><div class="fs1 fb m_t_0_5">うちパート</div><div class="m_t_0_5 m_b_0_5_pc" name="jgisUchiPart" id="ID_jgisUchiPart">2人</div>
+</td></tr>
+<tr>
+<th scope="row">設立年</th><td colspan="4"><div class="m_t_0_5 mb05" name="setsuritsuNen" id="ID_setsuritsuNen">平成8年</div>
+</td></tr>
+<tr>
+<th scope="row">資本金</th><td colspan="4"><div class="m_t_0_5 mb05" name="shkn" id="ID_shkn">3,000万円</div>
+</td></tr>
+<tr>
+<th scope="row">労働組合</th><td colspan="4"><div class="m_t_0_5 mb05" name="rodoKumiai" id="ID_rodoKumiai">なし</div>
+</td></tr>
+<tr>
+<th scope="row">事業内容</th><td colspan="4"><div class="m_t_0_5 mb05" name="jigyoNy" id="ID_jigyoNy">広島市東広島市竹原市三次市安芸郡府中町と幅広いエリアで、理美<br>容店併せて２２店舗展開中。業界トップブランドの薬剤を取り扱い<br>、安心安全な施術を提供し、多様な層のお客様にご愛顧頂いてます<br></div>
+</td></tr>
+<tr>
+<th scope="row">会社の特長</th><td colspan="4"><div class="m_t_0_5 mb05" name="kaishaNoTokucho" id="ID_kaishaNoTokucho">理容、美容問わず、多様な店舗展開中！働く主婦を応援する「時短<br>正社員制度」あり！スタッフの将来独立や、夢の実現を叶えるべく<br>、ＦＣ、教育システムも実現中！</div>
+</td></tr>
+<tr>
+<th scope="row">役職／代表者名</th><td colspan="4"><div class="mb05"><div class="fs1 fb m_t_0_5">役職</div><div class="m_t_0_5" name="yshk" id="ID_yshk">代表取締役</div>
+<div class="fs1 fb m_t_0_5">代表者名</div><div class="m_t_0_5" name="dhshaMei" id="ID_dhshaMei">吉森　英二</div>
+</div></td></tr>
+<tr>
+<th scope="row">法人番号</th><td colspan="4"><div class="m_t_0_5 mb05" name="hoNinNo" id="ID_hoNinNo">4240002028607</div>
+</td></tr>
+<tr class="Interval_syousai">
+<th scope="row">就業規則</th><td class="p_v_0_sd" colspan="2"><div class="fs1 fb m_t_0_5">フルタイムに適用される就業規則</div><div class="m_t_0_5 m_b_0_5_pc" name="fltmShgKisoku" id="ID_fltmShgKisoku">あり</div>
+</td><td class="p_v_0_sd" colspan="2"><div class="fs1 fb m_t_0_5">パートタイムに適用される就業規則</div><div class="m_t_0_5 m_b_0_5_pc" name="partShgKisoku" id="ID_partShgKisoku">あり</div>
+</td></tr>
+<tr>
+<th scope="row">育児休業取得実績</th><td colspan="4"><div class="m_t_0_5 mb05" name="ikujiKyugyoStkJisseki" id="ID_ikujiKyugyoStkJisseki">あり</div>
+</td></tr>
+<tr>
+<th scope="row">介護休業取得実績</th><td colspan="4"><div class="m_t_0_5 mb05" name="kaigoKyugyoStkJisseki" id="ID_kaigoKyugyoStkJisseki">あり</div>
+</td></tr>
+<tr>
+<th scope="row">看護休暇取得実績</th><td colspan="4"><div class="m_t_0_5 mb05" name="kangoKyukaStkJisseki" id="ID_kangoKyukaStkJisseki">該当者なし</div>
+</td></tr>
+</div></table>
+<div id="ID_GECZ25047Z" class="fs1_25 mt1"><div>選考等</div></div><table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><tr>
+<th scope="row">採用人数</th><td><div class="mb05"><div class="flex align_end"><div class="width20p"><div class="m_t_0_5" name="saiyoNinsu" id="ID_saiyoNinsu">2人</div>
+</div></div></div></td></tr>
+<tr>
+<th scope="row">選考方法</th><td><div class="m_t_0_5 mb05" name="selectHoho" id="ID_selectHoho">面接（予定1回）</div>
+</td></tr>
+<tr>
+<th scope="row">選考結果通知</th><td><div class="mb05"><div class="fs1 fb m_t_0_5">選考結果通知のタイミング</div><div class="m_t_0_5" name="selectKekkaTsuch" id="ID_selectKekkaTsuch">面接選考後</div>
+<div class="fs1 fb m_t_0_5">面接選考結果通知</div><div class="m_t_0_5" name="mensetsuSelectKekka" id="ID_mensetsuSelectKekka">面接後7日以内</div>
+</div></td></tr>
+<tr>
+<th scope="row">求職者への通知方法</th><td><div class="m_t_0_5 mb05" name="ksshEnoTsuchiHoho" id="ID_ksshEnoTsuchiHoho">電話</div>
+</td></tr>
+<tr>
+<th scope="row">選考日時等</th><td><div class="mb05"><div class="flex align_end"><div class="width20p"><div class="m_t_0_5" name="selectNichijiTo" id="ID_selectNichijiTo">随時</div>
+</div></div></div></td></tr>
+<tr>
+<th scope="row">選考場所</th><td><div class="mb05"><div class="m_t_0_5" name="selectBsYubinNo" id="ID_selectBsYubinNo">〒739-2102</div>
+<div class="m_t_0_5" name="selectBsJusho" id="ID_selectBsJusho">広島県東広島市高屋町杵原１３１１－２</div>
+<div class="flex input"><div><div id="ID_mapcontainer" name="mapcontainer" class="flex input align_center mb03"><button  type="button" id="ID_map2regbutton" name="map2regbutton" class="button " data-map-name="map2" data-longitude="132.786405423" data-latitude="34.4489813639" data-scale="13" data-pin-longitude="132.786405423" data-pin-latitude="34.4489813639" data-btn-kind="showMap" data-map-control="false">地図表示</button>
+</div><div id="ID_mapmap2"  class="map_container" style="display:none;"></div><input type="hidden" id="ID_latitudemap2" name="latitudemap2" value="">
+<input type="hidden" id="ID_longitudemap2" name="longitudemap2" value="">
+<input type="hidden" id="ID_scalemap2" name="scalemap2" value="">
+<input type="hidden" id="ID_leftmap2" name="leftmap2" value="">
+<input type="hidden" id="ID_rightmap2" name="rightmap2" value="">
+<input type="hidden" id="ID_topmap2" name="topmap2" value="">
+<input type="hidden" id="ID_bottommap2" name="bottommap2" value="">
+<input type="hidden" id="ID_pinLatitudemap2" name="pinLatitudemap2" value="">
+<input type="hidden" id="ID_pinLongitudemap2" name="pinLongitudemap2" value="">
+
+<script>
+function callbackmap2(json){
+	var funcName;
+	funcName = callbackmap2.name;
+	if(!funcName){funcName = getFnName(this);}
+	funcName = funcName.replace(/callback/, '');
+	callback(json, 'map2');
+}
+
+</script>
+</div></div><div class="flex"></div></div></td></tr>
+<tr>
+<th scope="row">応募書類等</th><td><div class="mb05"><div class="fs1 fb m_t_0_5">応募書類等</div><div class="m_t_0_5" name="oboShoruitou" id="ID_oboShoruitou">ハローワーク紹介状，履歴書（写真貼付）</div>
+<div class="flex"><div class="flex.nowrap m_r_3p"><div class="fs1 fb m_t_0_5">応募書類の送付方法</div><div class="m_t_0_5" name="oboShoruiNoSofuHoho" id="ID_oboShoruiNoSofuHoho">その他</div>
+</div><div class="flex.nowrap"><div class="fs1 fb m_t_0_5">その他の送付方法</div><div class="m_t_0_5" name="sntaNoSofuHoho" id="ID_sntaNoSofuHoho">面接時に持参</div>
+</div></div></div></td></tr>
+<tr>
+<th scope="row">応募書類の返戻</th><td><div class="m_t_0_5 mb05" name="obohen" id="ID_obohen">求人者の責任にて廃棄</div>
+</td></tr>
+<tr>
+<th scope="row">担当者</th><td><div class="mb05"><div class="fs1 fb m_t_0_5">課係名、役職名</div><div class="m_t_0_5" name="ttsYkm" id="ID_ttsYkm">採用担当　土江：０９０－６４０３－１４０８</div>
+<div class="flex"><div class="mr1"><div class="fs1 fb m_t_0_5">電話番号</div><div class="m_t_0_5" name="ttsTel" id="ID_ttsTel">082-569-8408</div>
+</div></div><hr>
+<div class="fs1 fb m_t_0_5">ＦＡＸ</div><div class="m_t_0_5" name="ttsFax" id="ID_ttsFax">082-569-8408</div>
+<hr>
+<div class="fs1 fb m_t_0_5">Ｅメール</div><div class="m_t_0_5" name="ttsEmail" id="ID_ttsEmail">oceans7a@gmail.com</div>
+</div></td></tr>
+</div></table>
+<div id="ID_GECZ25048Z" class="fs1_25 mt1"><div>求人に関する特記事項</div></div><table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><tr>
+<th scope="row">求人に関する特記事項</th><td><div class="m_t_0_5 mb05" name="kjTkjk" id="ID_kjTkjk">＊通勤手当…マイカー通勤の場合は、別途規定により支給<br>＊特例処置対象事業場（週４４Ｈ制）<br>＊週休二日制のパターン有り　　※応相談<br><br><br>＊無料駐車場有</div>
+</td></tr>
+</div></table>
+<div id="ID_GECZ25062Z" class="flex fs1_25 mt1"><div>求人・事業所PR情報</div><div class="flex ml1 m025 fs_14px">「求人・事業所PR情報」は求人票には表示されません。</div></div><table class="normal mb1">
+<div class="p_h_0_5_sd max_width1088px_pc"><tr>
+<th scope="row">職務給制度</th><td colspan="3"><div class="mb05"><div class="m_t_0_5" name="shokumuKyuSd" id="ID_shokumuKyuSd">なし</div>
+</div></td></tr>
+<tr>
+<th scope="row">復職制度</th><td colspan="3"><div class="mb05"><div class="m_t_0_5" name="fukushokuSd" id="ID_fukushokuSd">なし</div>
+</div></td></tr>
+<tr>
+<th scope="row">事業所に関する特記事項</th><td colspan="3"><div class="m_t_0_5 mb05" name="jgshTkjk" id="ID_jgshTkjk">勤務延長制度あり。上限年齢なし。定年後は、１年ご<br>との契約更新（条件等は面談により決定します）</div>
+</td></tr>
+</div></table>
+</div>
+
+<footer>
+	<p class="pagetop" style="display: block;"><a href="#all"><i class="fa fa-2x fa-chevron-up"></i><br>ページ<br>最上部へ</a></p>
+	<hr>
+	<div class="footer_navi">
+		<p class="m_side_auto">
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/link.html">リンク集</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/sitemap.html">サイトマップ</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/sitepolicy.html">サイトポリシー</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/privacypolicy.html">プライバシーポリシー</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/terms.html">利用規約</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/help/question.html">よくあるご質問</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/contact.html">お問い合わせ先</a>
+			｜
+			<a href="https://www.hellowork.mhlw.go.jp/info/location_list.html">所在地情報</a>
+			｜
+		</p>
+		<p class="m_side_auto footer_copyright" id="bottom">All rights reserved, Copyright (C) Employment Security Bureau,Ministry of Health, Labour and Welfare</p>
+	</div>
+</footer></div>
+<script src="jsp/js/jquery/jquery-3.6.3.min.js"></script>
+<script src="jsp/js/jquery/jquery-ui.js"></script>
+<script src="jsp/js/common.js"></script>
+<script src="jsp/js/map.js"></script>
+<script src="jsp/js/AssistCode.js"></script>
+
+<script src="jsp/js/ECZ250/ECZ250.js"></script>
+<script src="jsp/js/jquery/flickity.pkgd.min.js"></script>
+</body>
+</html>

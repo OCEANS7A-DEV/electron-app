@@ -11,6 +11,7 @@ const VendorFAXPage = () => {
     Address,
     ProStepDatas
   } = useLogic()
+  console.log(VendorOrderData)
   return (
     <Box>
       <Box

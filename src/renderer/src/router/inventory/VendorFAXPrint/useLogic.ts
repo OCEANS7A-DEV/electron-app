@@ -18,7 +18,7 @@ export const useLogic = (): UseLogicType => {
       ranges: 'A2:H'
     })
     const Order = await window.myInventoryAPI.ListGet({
-      sheetName: '店舗へ',
+      sheetName: '店舗注文履歴',
       action: 'InputDataGet',
       ranges: 'A2:M'
     })

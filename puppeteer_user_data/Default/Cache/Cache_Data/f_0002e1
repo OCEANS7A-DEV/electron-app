@@ -1,0 +1,2061 @@
+// マイカー通勤
+$(function() {
+	if(!$('.mycarTsknChushaUmu_col').length){
+		$('.mycarTskn_col').attr('colspan','2');
+	}
+});
+
+// 転勤の可能性
+$(function() {
+	if(!$('.tenkinNoKnsiTenkinHanni_col').length){
+		$('.tenkinNoKnsi_col').attr('colspan','2');
+	}
+});
+
+// 通勤手当
+$(function() {
+	if(!$('.tsknTatTsuki_col').length){
+		$('.tsknTat_col').attr('colspan','4');
+	}
+});
+
+// 賃金締切日
+$(function() {
+	if(!$('.chgnSkbiMitk_col').length
+			&& !$('.chgnSkbiSntaNoSkbi_col').length){
+		$('.chgnSkbi_col').attr('colspan','4');
+	} else if(!$('.chgnSkbiMitk_col').length){
+		$('.chgnSkbi_col').attr('colspan','2');
+	} else if(!$('.chgnSkbiSntaNoSkbi_col').length){
+		$('.chgnSkbiMitk_col').attr('colspan','3');
+	}
+});
+
+// 賃金支払日
+$(function() {
+	if(!$('.chgnSrbiTsuki_col').length){
+		$('.chgnSrbi_col').attr('colspan','3');
+	} else if(!$('.chgnSrbiSnta_col').length){
+		$('.chgnSrbiHi_col').attr('colspan','2');
+	}
+});
+
+// 退職金制度
+$(function() {
+	if(!$('.tskinSdKinzokuNensu_col').length){
+		$('.tskinSd_col').attr('colspan','2');
+	}
+});
+
+// 定年制
+$(function() {
+	if(!$('.tnseiTeinenNenrei_col').length){
+		$('.tnsei_col').attr('colspan','2');
+	}
+});
+
+// 再雇用制度
+$(function() {
+	if(!$('.saiKoyoSdJgnNenrei_col').length){
+		$('.saiKoyoSd_col').attr('colspan','2');
+	}
+});
+
+// 勤務延長
+$(function() {
+	if(!$('.kmecJgnNenrei_col').length){
+		$('.kmec_col').attr('colspan','2');
+	}
+});
+
+// 入居可能住宅
+$(function() {
+	if(!$('.nkjTkjk_col').length){
+		$('.nkj_col').attr('colspan','2');
+	}
+});
+
+// 利用可能託児施設
+$(function() {
+	if(!$('.tkjShstTkjk_col').length){
+		$('.riyoKanoTkjShst_col').attr('colspan','2');
+	}
+});
+
+// 通勤手当_大卒等
+$(function() {
+	if(!$('.gsTsknTatTsuki_col').length){
+		$('.gsTsknTat_col').attr('colspan','4');
+	}
+});
+
+// マイカー通勤_大卒等
+$(function() {
+	if(!$('.gsMycarTsknTkjk_col').length){
+		$('.gsMycarTskn_col').attr('colspan','4');
+	}
+});
+
+// 退職金制度_大卒等
+$(function() {
+	if(!$('.gsTskinSdKinzokuNensu_col').length){
+		$('.gsTskinSd_col').attr('colspan','4');
+	}
+});
+
+// 定年制_大卒等
+$(function() {
+	if(!$('.gsTnseiTeinenNenrei_col').length){
+		$('.gsTnsei_col').attr('colspan','4');
+	}
+});
+
+// 再雇用制度_大卒等
+$(function() {
+	if(!$('.gsSaiKoyoSdJgnNenrei_col').length){
+		$('.gsSaiKoyoSd_col').attr('colspan','4');
+	}
+});
+
+// 勤務延長_大卒等
+$(function() {
+	if(!$('.gsKmecJgnNenrei_col').length){
+		$('.gsKmec_col').attr('colspan','4');
+	}
+});
+
+//賃金締切日_大卒等
+$(function() {
+	if(!$('.gsChgnSkbiMitk_col').length
+			&& !$('.gsChgnSkbiSntaNoSkbi_col').length){
+		$('.gsChgnSkbi_col').attr('colspan','4');
+	} else if(!$('.gsChgnSkbiMitk_col').length){
+		$('.gsChgnSkbi_col').attr('colspan','2');
+	} else if(!$('.gsChgnSkbiSntaNoSkbi_col').length){
+		$('.gsChgnSkbiMitk_col').attr('colspan','3');
+	}
+});
+
+// 賃金支払日_大卒等
+$(function() {
+	if(!$('.gsChgnShTsuki_col').length){
+		$('.gsChgnShbi_col').attr('colspan','3');
+	} else if(!$('.gsChgnShbiSnot_col').length){
+		$('.gsChgnShbiHi_col').attr('colspan','2');
+	}
+});
+
+//賃金締切日_高卒
+$(function() {
+	if(!$('.kstMITK_col').length
+			&& !$('.kstSNTASKBI_col').length){
+		$('.kstCHGNSKBI_col').attr('colspan','4');
+	} else if(!$('.kstMITK_col').length){
+		$('.kstSNTASKBI_col').attr('colspan','2');
+	} else if(!$('.kstSNTASKBI_col').length){
+		$('.kstMITK_col').attr('colspan','3');
+	}
+});
+
+// 賃金支払日_高卒
+$(function() {
+	if(!$('.kstShiharaiTsuki_col').length
+			&& !$('.kstSNTASHBI_col').length){
+		$('.kstCHGNSHBI_col').attr('colspan','3');
+	} else if(!$('.kstShiharaiTsuki_col').length
+			&& $('.kstSNTASHBI_col').length){
+		$('.kstCHGNSHBI_col').attr('colspan','2');
+	}else if(!$('.kstSNTASHBI_col').length){
+		$('.kstSHBI_col').attr('colspan','2');
+	}
+});
+
+//QRボタンを押下した場合、モーダル表示
+$('.qr_btn').on('click', function(){
+	// src書き換え
+	var kjno =  $(this).data('id').replace('-', '');
+	$('#ID_modalQrText').text($(this).data('id'));
+	var qrurl = 'qrcode?source=' + kjno + '&' + 'size=100';
+	$('#modalQrUrl').attr('src', qrurl);
+
+	// モーダルダイアログをポップアップ表示
+	modalDisp($('.qrDailog').html(), true);
+});
+
+//PRロゴマークを選択ボタン押下時モーダル表示処理
+$('.pr_btn').on('click', function(){
+	var targetHtml = $('.prDailog').html();
+	// ターゲットHTMLのチェックボックス名書き換え
+	targetHtml = targetHtml.replace(/chkPRLogo/g, 'modalTmpChkPRLogo');
+	if ($('input[name="chkPRLogo"]:checked').length == 0) {
+		targetHtml = targetHtml.replace(/checked=""/g, '').replace(/checked=/g, '').replace(/checked/g, '');
+	}
+	// モーダルダイアログをポップアップ表示
+	modalDisp(targetHtml, true);
+});
+
+//押下されたチェックボックスを元に対象となるモーダルを開く
+$('.modalAction').change(function(){
+	// modalActionのCheckBoxは押下のみで変更しない
+	$(this).prop('checked', !$(this).prop('checked'));
+
+	//条件を選ぶの場合
+	if($(this).attr('name') === 'daiJyoukenBox'){
+		//モーダル部品取得
+		var targetHtml = $('.modalJyoukenBox' + $(this).val()).html();
+		// ターゲットHTMLのチェックボックス名書き換え
+		targetHtml = targetHtml.replace(/jyoukenBox/g, 'modalTmpJyoukenBox');
+
+	//特集求人の場合
+	} else if ($(this).attr('name') === 'daiTokusyuBox'){
+		//モーダル部品取得
+		var targetHtml = $('.modalTokusyuKyujinBox' + $(this).val()).html();
+		// ターゲットHTMLのチェックボックス名書き換え
+		targetHtml = targetHtml.replace(/tokusyuBox/g, 'modalTmpTokusyuBox').replace(/type="checkbox"/g,'type="radio"');
+
+	//かんたん職種の場合
+	} else if($(this).attr('name') === 'daiEasyShokusyuBox'){
+		//モーダル部品取得
+		var targetHtml = $('.modalEasyShokusyuBox' + $(this).val()).html();
+		// ターゲットHTMLのチェックボックス名書き換え
+		targetHtml = targetHtml.replace(/easyShokusyuBox/g, 'modalTmpEasyShokusyuBox');
+	}
+
+	// モーダルダイアログをポップアップ表示
+	modalDisp(targetHtml, true);
+
+	//条件を選ぶ・特集求人・かんたん職種用のクラスを追加
+	$('.modal_content').addClass('modalB_width');
+
+	// 特集求人モーダル画面_ラジオボタン選択制御
+	if($('.modalTokusyuKyujinBox' + $(this).val() + ' input[name="tokusyuBox"]:checked').length == 0) {
+		$("input[name^='modalTmpTokusyuBox']").prop('checked', false);
+	}
+
+	// 職種モーダル画面_チェックボックス表示制御
+	if($('.middle input[name=modalTmpEasyShokusyuBox]:checked').length >= 5) {
+		$('.modal_content input[name=modalTmpEasyShokusyuBox]').not(':checked').prop('disabled',true);
+	}
+});
+
+//職種選択限度設定
+$(function(){
+	$('.easyShokusyu_style').on('change',function(){
+		easyShokusyuCheck()
+	});
+});
+
+//職種選択限度設定(同一カテゴリ内)
+$(function(){
+	$(document).off('change', 'input[name=modalTmpEasyShokusyuBox]').on('change', 'input[name=modalTmpEasyShokusyuBox]', function () {
+		//チェック数取得
+		var checked = $('.modal_content input[name=modalTmpEasyShokusyuBox]:checked').map(function(){
+			return $(this).val();
+		}).get();
+
+		if(checked.length >= 5){
+			$('.modal_content input[name=modalTmpEasyShokusyuBox]').not(':checked').prop('disabled',true);
+		}else{
+			$('.modal_content input[name=modalTmpEasyShokusyuBox]').prop('disabled',false);
+		}
+	});
+});
+
+//特集求人選択限度設定
+$("input[name^='tokusyuBox']").click(function(){
+	if ($(this).prop('checked')){
+		$("input[name^='tokusyuBox']").prop('checked', false);
+		$("input[name^='daiTokusyuBox']").prop('checked', false);
+		$(this).prop('checked', true);
+	}else{
+		$(this).prop('checked', false);
+	};
+});
+
+//職種選択限度設定メソッド
+function easyShokusyuCheck(){
+	//チェック数取得
+	var checked = $('.r08ThAcWrapper .easyShokusyu_style:checked').map(function(){
+		return $(this).val();
+	}).get();
+
+	if(checked.length >= 3){
+		$('.easyShokusyu_style').not(':checked').prop('disabled',true);
+		$('.easyShokusyu_style').not(':checked').closest('label').addClass('buttonStyleDisabled');
+	}else{
+		$('.easyShokusyu_style').prop('disabled',false);
+		$('.easyShokusyu_style').not(':checked').closest('label').removeClass('buttonStyleDisabled');
+	}
+}
+
+//かんたん職種_クリアボタン
+function clearEasyShokusyuModal(kaisou1){
+	//チェックボックスを非選択状態にする
+	$('.modalEasyShokusyuBoxMiddle'+ kaisou1 +' input[name="modalTmpEasyShokusyuBox"]').prop('checked', false);
+	$('.modalEasyShokusyuBoxMiddle'+ kaisou1 +' input[name="modalTmpEasyShokusyuBox"]').prop('disabled', false);
+}
+
+//かんたん条件_クリアボタン
+function clearJyoukenModal(kaisou1){
+	//チェックボックスを非選択状態にする
+	$('.modalJyoukenBoxMiddle'+ kaisou1 +' input[name="modalTmpJyoukenBox"]').prop('checked', false);
+}
+
+//特集求人_クリアボタン
+function clearTokusyuKyujinModal(kaisou1){
+	//チェックボックスを非選択状態にする
+	$('.modalTokusyuKyujinBoxMiddle'+ kaisou1 +' input[name="modalTmpTokusyuBox"]').prop('checked', false);
+}
+
+function closeJyoukenModal(kaisou1){
+	//非表示中のモーダル部品を取得
+	var checked = $('.r08ThAcWrapper .modalJyoukenBoxMiddle'+ kaisou1 +' input[name="jyoukenBox"]:checked').map(function(){
+		return $(this).val();
+	}).get();
+
+	if(checked.length > 0){
+		//親にあたる階層１ボタンを選択状態にする
+		$('.jyoukenKNo' + kaisou1).prop('checked', true);
+		//モーダル内項目（階層２）が１つも選択されていない場合
+	}else{
+		//親にあたる階層１ボタンを非選択状態にする
+		$('.jyoukenKNo' + kaisou1).prop('checked', false);
+	}
+
+	// modalClose
+	modalClose(true);
+}
+
+function closeTokusyuKyujinModal(kaisou1){
+
+	var checked = $('.r08ThAcWrapper .modalTokusyuKyujinBoxMiddle'+ kaisou1 +' input[name="tokusyuBox"]:checked').map(function(){
+		return $(this).val();
+	}).get();
+
+	if(checked.length > 0){
+		$('.tokusyuKNo' + kaisou1).prop('checked', true);
+	}else{
+		$('.tokusyuKNo' + kaisou1).prop('checked', false);
+	}
+
+	// modalClose
+	modalClose(true);
+}
+
+function closeEasyShokusyuModal(kaisou1){
+
+	var checked = $('.r08ThAcWrapper .modalEasyShokusyuBoxMiddle'+ kaisou1 +' input[name="easyShokusyuBox"]:checked').map(function(){
+		return $(this).val();
+	}).get();
+
+	if(checked.length > 0){
+		$('.easyShokusyuKNo' + kaisou1).prop('checked', true);
+	}else{
+		$('.easyShokusyuKNo' + kaisou1).prop('checked', false);
+	}
+
+	easyShokusyuCheck();
+
+	// modalClose
+	modalClose(true);
+}
+
+//かんたん条件　階層２選択時の処理
+function saveJyoukenModal(kaisou1){
+
+	//モーダル内全項目（階層２）取得
+	var map = $('.modal_content input[name="modalTmpJyoukenBox"]').map(function(){
+		return $(this);
+	}).get();
+
+	for(let i = 0; i < map.length; i++){
+		//チェックされている場合
+		if($(map[i]).is(':checked')){
+			//非表示中のモーダル部品を取得
+			var checkBox = $('.r08ThAcWrapper .modalJyoukenBoxMiddle'+ kaisou1 +' input[name="jyoukenBox"][value="'+ map[i].val() +'"]');
+			//ID取得（階層１番号）
+			var id = checkBox.attr('id');
+			//value取得（階層２番号）
+			var value = checkBox.val();
+			//非表示中のモーダル部品をチェック有りに更新（値保持のため）
+			$(checkBox).before('<input type="checkbox" id="'+ id +'" name="jyoukenBox" value="'+value+'" checked>');
+			//更新前のモーダル部品を削除
+			$(checkBox).remove();
+		}else{
+			var checkBox = $('.r08ThAcWrapper .modalJyoukenBoxMiddle'+ kaisou1 +' input[name="jyoukenBox"][value="'+ map[i].val() +'"]');
+			var id = checkBox.attr('id');
+			var value = checkBox.val();
+			//非表示中のモーダル部品をチェックなしに更新（値保持のため）
+			$(checkBox).before('<input type="checkbox" id="'+ id +'" name="jyoukenBox" value="'+value+'">');
+			$(checkBox).remove();
+		}
+	}
+
+	//モーダル内でチェックされた項目を取得
+	var checked = $('.r08ThAcWrapper .modalJyoukenBoxMiddle'+ kaisou1 +' input[name="jyoukenBox"]:checked').map(function(){
+		return $(this).val();
+	}).get();
+	//モーダル内項目（階層２）が選択されている場合
+	if(checked.length > 0){
+		//親にあたる階層１ボタンを選択状態にする
+		$('.jyoukenKNo' + kaisou1).prop('checked', true);
+		$('.jyoukenKNo' + kaisou1).closest('label').addClass('buttonStyleChecked');
+		//モーダル内項目（階層２）が１つも選択されていない場合
+	}else{
+		//親にあたる階層１ボタンを非選択状態にする
+		$('.jyoukenKNo' + kaisou1).prop('checked', false);
+		$('.jyoukenKNo' + kaisou1).closest('label').removeClass('buttonStyleChecked');
+	}
+
+	// modalClose
+	modalClose(true);
+}
+
+//特集求人　階層２選択時の処理
+//条件選択と同じ
+function saveTokusyuKyujinModal(kaisou1){
+
+	var map = $('.modal_content input[name="modalTmpTokusyuBox"]').map(function(){
+		return $(this);
+	}).get();
+	// 階層1のチェックボックスを全てクリア
+	$("input[name^='tokusyuBox']").prop('checked', false);
+	$("input[name^='daiTokusyuBox']").prop('checked', false);
+
+	for(let i = 0; i < map.length; i++){
+		if($(map[i]).is(':checked')){
+			var checkBox = $('.r08ThAcWrapper .modalTokusyuKyujinBoxMiddle'+ kaisou1 +' input[name="tokusyuBox"][value="'+ map[i].val() +'"]');
+			var id = checkBox.attr('id');
+			var value = checkBox.val();
+			$(checkBox).before('<input type="checkbox" id="'+ id +'" name="tokusyuBox" value="'+value+'" checked>');
+			$(checkBox).remove();
+		}else{
+			var checkBox = $('.r08ThAcWrapper .modalTokusyuKyujinBoxMiddle'+ kaisou1 +' input[name="tokusyuBox"][value="'+ map[i].val() +'"]');
+			var id = checkBox.attr('id');
+			var value = checkBox.val();
+			$(checkBox).before('<input type="checkbox" id="'+ id +'" name="tokusyuBox" value="'+value+'">');
+			$(checkBox).remove();
+		}
+	}
+
+	var checked = $('.r08ThAcWrapper .modalTokusyuKyujinBoxMiddle'+ kaisou1 +' input[name="tokusyuBox"]:checked').map(function(){
+		return $(this).val();
+	}).get();
+	if(checked.length > 0){
+		$('.tokusyuKNo' + kaisou1).prop('checked', true);
+		$('[class*="tokusyuKNo"]').closest('label').removeClass('buttonStyleChecked');
+		$('.tokusyuKNo' + kaisou1).closest('label').addClass('buttonStyleChecked');
+	}else{
+		$('.tokusyuKNo' + kaisou1).prop('checked', false);
+		$('.tokusyuKNo' + kaisou1).closest('label').removeClass('buttonStyleChecked');
+	}
+
+	// modalClose
+	modalClose(true);
+}
+
+//職種　中分類選択時の処理
+//条件選択と同じ
+function saveEasyShokusyuModal(kaisou1){
+
+	var map = $('.modal_content input[name="modalTmpEasyShokusyuBox"]').map(function(){
+		return $(this);
+	}).get();
+
+	for(let i = 0; i < map.length; i++){
+		if($(map[i]).is(':checked')){
+			var checkBox = $('.r08ThAcWrapper .modalEasyShokusyuBoxMiddle'+ kaisou1 +' input[name="easyShokusyuBox"][value="'+ map[i].val() +'"]');
+			var id = checkBox.attr('id');
+			var value = checkBox.val();
+			$(checkBox).before('<input type="checkbox" id="'+ id +'" name="easyShokusyuBox" value="'+value+'" checked>');
+			$(checkBox).remove();
+		}else{
+			var checkBox = $('.r08ThAcWrapper .modalEasyShokusyuBoxMiddle'+ kaisou1 +' input[name="easyShokusyuBox"][value="'+ map[i].val() +'"]');
+			var id = checkBox.attr('id');
+			var value = checkBox.val();
+			$(checkBox).before('<input type="checkbox" id="'+ id +'" name="easyShokusyuBox" value="'+value+'">');
+			$(checkBox).remove();
+		}
+	}
+
+	var checked = $('.r08ThAcWrapper .modalEasyShokusyuBoxMiddle'+ kaisou1 +' input[name="easyShokusyuBox"]:checked').map(function(){
+		return $(this).val();
+	}).get();
+
+	if(checked.length > 0){
+		$('.easyShokusyuKNo' + kaisou1).prop('checked', true);
+		$('.easyShokusyuKNo' + kaisou1).closest('label').addClass('buttonStyleChecked');
+	}else{
+		$('.easyShokusyuKNo' + kaisou1).prop('checked', false);
+		$('.easyShokusyuKNo' + kaisou1).closest('label').removeClass('buttonStyleChecked');
+	}
+
+	easyShokusyuCheck();
+
+	// modalClose
+	modalClose(true);
+}
+
+//PRロゴモーダル内_クリアボタン
+function clearPrBtn(){
+	//チェックボックスを非選択状態にする
+	$('.modal_content input[name="modalTmpChkPRLogo"]').prop('checked', false);
+}
+
+//PRロゴモーダル内でロゴマーク選択時、選択値保存処理
+function savePrBtn(){
+
+	//モーダル内のPRロゴを全取得
+	var map = $('.modal_content input[name="modalTmpChkPRLogo"]').map(function(){
+		return $(this);
+	}).get();
+	//PRロゴ用の項目
+	var label ="";
+	//空白
+	var spase="　";
+
+	//繰り返し、PRロゴチェックボックスを１つずつ確認
+	for(let i = 0; i < map.length; i++){
+
+		//PRロゴチェックボックスの要素を取得
+		var checkBox = $('.prDailog .prLogoInModal input[name="chkPRLogo"][value="'+ map[i].val() +'"]');
+		//ID取得
+		var id = checkBox.attr('id');
+		//Value値取得
+		var value = checkBox.val();
+
+		//チェックが入っていた場合
+		if($(map[i]).is(':checked')){
+			//非表示状態のモーダル内のチェックボックスを選択状態にする
+			$(checkBox).before('<input type="checkbox" id="'+ id +'" name="chkPRLogo" value="'+value+'" checked>');
+			//もとにあったものを削除
+			$(checkBox).remove();
+			//PRロゴラベルを追記
+			label = label + spase + $('#ID_LchkPRLogo' + value).text();
+		//チェックが入っていない場合
+		}else{
+			//非表示状態のモーダル内のチェックボックスを非選択状態にする
+			$(checkBox).before('<input type="checkbox" id="'+ id +'" name="chkPRLogo" value="'+value+'">');
+			//もとにあったものを削除
+			$(checkBox).remove();
+		}
+	}
+	//先頭の空白除去
+	label = label.trim();
+
+	//モーダル内でチェックされた項目を取得
+	var checked = $('.prDailog .prLogoInModal input[name="chkPRLogo"]:checked').map(function(){
+		return $(this).val();
+	}).get();
+	//モーダル内項目が選択されている場合
+	if(checked.length > 0){
+		//モーダル表示ボタン選択状態にする
+		$('#ID_prLogoBtn').addClass('selected');
+		//選択中表示
+		$('.prLogoArea').css('display','flex');
+		$('.prLogoArea').css('align-items','center');
+		//PRロゴマークラベルを表示
+		$('#ID_prLogoLabel').html(label);
+	//モーダル内項目が１つも選択されていない場合
+	}else{
+		//モーダル表示ボタン非選択状態にする
+		$('#ID_prLogoBtn').removeClass('selected');
+		clearPRlogo()
+	}
+
+	// modalClose
+	modalClose(true);
+}
+
+function closePrBtn() {
+	// modalClose
+	modalClose(true);
+}
+
+function clearPRlogo(){
+	//PRロゴマークを選択_クリアボタン
+	//チェックボックスを非選択状態にする
+	$('input[name="chkPRLogo"]').prop('checked', false);
+	$('.prLogoArea').css('display','none');
+	$('#ID_prLogoLabel').html();
+	$('#ID_prLogoBtn').removeClass('selected');
+}
+
+function closeQrBtn() {
+	// modalClose
+	modalClose(true);
+}
+
+//求人区分選択時、条件ボタン表示切り替え
+$('input[name=kjKbnRadioBtn]').click(function(){
+	// 求人区分の表示変更
+	checkKjKbn();
+	viewJokenTokusyuByKbn();
+	viewTokyusyuMessage();
+	changeTatZngyCKBox();
+});
+
+//求人区分（フルタイムパート・一般）選択時、条件ボタン表示切り替え
+$('input[name=ippanCKBox]').change(function(){
+	checkKjKbn();
+	viewJokenTokusyuByFullPart();
+	viewTokyusyuMessage();
+	changeTatZngyCKBox();
+});
+
+//求人区分（フルタイムパート・障碍者）選択時、条件ボタン表示切り替え
+$('input[name=sGSYACKBox]').change(function(){
+	checkKjKbn();
+	viewJokenTokusyuBySgsyaiFullPart();
+	viewTokyusyuMessage();
+	changeTatZngyCKBox();
+});
+
+function viewJokenTokusyuByKbn() {
+	//一度全ての項目を非表示/非活性
+	$('input[name="jyoukenBox"]').prop('disabled', true);
+	$('.jyouken_box').hide();
+	$('input[name="tokusyuBox"]').prop('disabled', true);
+	$('.tokusyuKyujin_box').hide();
+
+	//選択されたラジオボタンのvalueを取得
+	var value = $('input[name="kjKbnRadioBtn"]:checked').val();
+	//フルタイム・パート用の一時変数
+	var ckBox;
+
+	//一般or障害ラジオボタンが選択かつ、フルタイム・パートにチェックが入っている場合
+	//現状PTだと一般or障害以外を選択したときもフルタイム・パートを選択できるため
+	if(value == 1){
+
+		//フルタイム・パート(一般)のチェック項目を取得
+		var checked = $('input[name="ippanCKBox"]:checked').map(function(){
+			return $(this).val();
+		}).get();
+
+		if(checked.length > 0){
+			//チェックされた回数繰り返す
+			for(let i = 0; i < checked.length; i++){
+				ckBox = 0
+
+				//特集求人・条件の表示フラグに対応する値を代入
+				switch(checked[i]){
+				//一般ラジオボタンが選択かつフルタイムにチェックが入っている場合
+				case "1":
+					ckBox = 6;
+					break;
+				//一般ラジオボタンが選択かつパートにチェックが入っている場合
+				case "2":
+					ckBox = 7;
+					break;
+				}
+				//代入した値を持つ特集求人・条件ボタンを表示
+				$('.kbn'+ ckBox).find('input[type="checkbox"]').prop('disabled', false);
+				$('.kbn'+ ckBox).show();
+			}
+		}else{
+			$('.kbn'+ value).find('input[type="checkbox"]').prop('disabled', false);
+			$('.kbn'+ value).show();
+		}
+
+	}else if(value == 5){
+
+		//フルタイム・パート(障碍)のチェック項目を取得
+		var checked = $('input[name="sGSYACKBox"]:checked').map(function(){
+			return $(this).val();
+		}).get();
+
+		if(checked.length > 0){
+			//チェックされた回数繰り返す
+			for(let i = 0; i < checked.length; i++){
+				ckBox = 0
+
+				//特集求人・条件の表示フラグに対応する値を代入
+				switch(checked[i]){
+				//障害ラジオボタンが選択かつフルタイムにチェックが入っている場合
+				case "1":
+					ckBox = 8;
+					break;
+				//障害ラジオボタンが選択かつパートにチェックが入っている場合
+				case "2":
+					ckBox = 9;
+					break;
+				}
+				//代入した値を持つ特集求人・条件ボタンを表示
+				$('.kbn'+ ckBox).find('input[type="checkbox"]').prop('disabled', false);
+				$('.kbn'+ ckBox).show();
+			}
+		}else{
+			$('.kbn'+ value).find('input[type="checkbox"]').prop('disabled', false);
+			$('.kbn'+ value).show();
+		}
+	//それ以外の場合
+	}else{
+		$('.kbn'+ value).find('input[type="checkbox"]').prop('disabled', false);
+		$('.kbn'+ value).show();
+	}
+}
+
+function viewJokenTokusyuByFullPart() {
+	//一度全ての項目を非表示/非活性
+	$('input[name="jyoukenBox"]').prop('disabled', true);
+	$('.jyouken_box').hide();
+	$('input[name="tokusyuBox"]').prop('disabled', true);
+	$('.tokusyuKyujin_box').hide();
+
+	var checked = $('input[name="ippanCKBox"]:checked').map(function(){
+		return $(this).val();
+	}).get();
+
+	//選択されたラジオボタンを取得
+	var radio = $('input[name=kjKbnRadioBtn]:checked').val();
+
+	if(checked.length < 1){
+		//親区分に当たる値を持つ特集求人・条件ボタンを表示
+		$('.kbn'+ radio).find('input[type="checkbox"]').prop('disabled', false);
+		$('.kbn'+ radio).show();
+	}else{
+		//親区分に当たる値を持つ特集求人・条件ボタンを非表示
+		$('.kbn'+ radio).find('input[type="checkbox"]').prop('disabled', true);
+		$('.kbn'+ radio).hide();
+		//選択されたチェックボタンの数繰り返す
+		for(let i = 0; i < checked.length; i++){
+
+			value = checked[i];
+			//特集求人・条件の表示フラグに対応する値を代入
+			switch(value){
+			case "1":
+				value = 6;
+				break;
+			case "2":
+				value = 7;
+				break;
+			}
+
+			//代入した値を持つ特集求人・条件ボタンを表示
+			$('.kbn'+ value).find('input[type="checkbox"]').prop('disabled', false);
+			$('.kbn'+ value).show();
+		}
+	}
+}
+
+function viewJokenTokusyuBySgsyaiFullPart() {
+	//一度全ての項目を非表示/非活性
+	$('input[name="jyoukenBox"]').prop('disabled', true);
+	$('.jyouken_box').hide();
+	$('input[name="tokusyuBox"]').prop('disabled', true);
+	$('.tokusyuKyujin_box').hide();
+
+	var checked = $('input[name="sGSYACKBox"]:checked').map(function(){
+		return $(this).val();
+	}).get();
+
+	//選択されたラジオボタンを取得
+	var radio = $('input[name=kjKbnRadioBtn]:checked').val();
+
+	if(checked.length < 1){
+		//親区分に当たる値を持つ特集求人・条件ボタンを表示
+		$('.kbn'+ radio).find('input[type="checkbox"]').prop('disabled', false);
+		$('.kbn'+ radio).show();
+	}else{
+		//親区分に当たる値を持つ特集求人・条件ボタンを非表示
+		$('.kbn'+ radio).find('input[type="checkbox"]').prop('disabled', true);
+		$('.kbn'+ radio).hide();
+		//選択されたチェックボタンの数繰り返す
+		for(let i = 0; i < checked.length; i++){
+
+			value = checked[i];
+			//特集求人・条件の表示フラグに対応する値を代入
+			switch(value){
+			case "1":
+				value = 8;
+				break;
+			case "2":
+				value = 9;
+				break;
+			}
+
+			//代入した値を持つ特集求人・条件ボタンを表示
+			$('.kbn'+ value).find('input[type="checkbox"]').prop('disabled', false);
+			$('.kbn'+ value).show();
+		}
+	}
+}
+
+function viewTokyusyuMessage() {
+	if ($('.tokusyuKyujin_box:visible').length > 0) {
+		$('#ID_tokusyuAriLabel').show();
+		$('#ID_tokusyuNashiLabel').hide();
+	} else {
+		$('#ID_tokusyuAriLabel').hide();
+		$('#ID_tokusyuNashiLabel').show();
+	}
+}
+
+function isViewedKyujin(obj, list) {
+	let resultFlg = false;
+	let searchstr = obj.getAttribute('class').replace(/.*viewed_kjno_/, "").substr(0, 13);
+	console.log("searchstr:" + searchstr);
+	$.each(list, function(index, value) {
+		console.log("value:" + value);
+		if (searchstr == value) {
+			resultFlg = true;
+			return resultFlg;
+		}
+	});
+	return resultFlg;
+}
+
+function checkKjKbn(){
+	// 求人区分チェック時
+	var koyo = 0;
+	// 一般求人
+	if ($('input[name=kjKbnRadioBtn]:eq(0)').prop('checked')){
+		koyo = 0;
+		// 一般求人チェックボックス有効化
+		ippanCKBox(false);
+		// 障害のある方のための求人チェックボックス無効化
+		sGSYACKBox(true);
+		// 必要な経験等チェックボックス有効化
+		freeCKBox(false);
+		// 年齢入力有効化
+		nenreiCKBox(false);
+		// 既卒者の応募チェックボックス無効化
+		kstKaCKBox(true);
+		// 学歴無効化
+		gkrkCmbBox(true);
+		// 学歴・資格・経験の不問有効化
+		grkiFumonCKBox(false);
+		// 普通自動車運転免許有効化
+		jdsMenkyoCKBox(false);
+		// 必要な免許・資格有効化
+		msgMenkyoSkku(false);
+		// 定年制有効化
+		tnseiRadioBtn(false);
+		// 利用可能な託児施設有効化
+		riyoKanoNaTjsAriCKBox(false);
+		// 従業員数有効化
+		jginSuRadioBtn(false);
+		// その他有効化
+		sonotaCKBox(false);
+
+		if ($('#ID_screenId').val() == 'GECA110010' || $('#ID_screenId').val() == 'GEAA110010' || $('#ID_screenId').val() == 'GEAC110010') {
+			// 一般求人_チェックボックスの表示（ECA110010場合）
+			$('#ID_ippanCKBox').show();
+			// 障害のある方のための求人_チェックボックスの非表示（ECA110010場合）
+			$('#ID_sGSYACKBox').hide();
+		}
+
+		// フルタイム
+		if ($('input[name=ippanCKBox]:eq(0)').prop('checked')){
+			koyo = 1;
+		};
+		// パート
+		if ($('input[name=ippanCKBox]:eq(1)').prop('checked')){
+			if (koyo == 1) {
+				// 両方の場合は未チェックと同じ
+				koyo = 0;
+			} else {
+				koyo = 2;
+			}
+		};
+
+		if ($('#ID_screenId').val() == 'GECA110010' || $('#ID_screenId').val() == 'GEAA110010' || $('#ID_screenId').val() == 'GEAC110010') {
+			// 一般フルタイム選択時、障害フルタイムにチェック付与
+			if ($('input[name=ippanCKBox]:eq(0)').prop('checked')){
+				if (!$('input[name=sGSYACKBox]:eq(0)').prop('checked'))
+				$('input[name=sGSYACKBox]:eq(0)').prop("checked",true)
+			};
+			// 一般フルタイム選択時、障害フルタイムのチェック削除
+			if (!$('input[name=ippanCKBox]:eq(0)').prop('checked')){
+				if ($('input[name=sGSYACKBox]:eq(0)').prop('checked'))
+				$('input[name=sGSYACKBox]:eq(0)').prop("checked",false)
+			};
+			// 一般パート選択時、障害パートにチェック付与
+			if ($('input[name=ippanCKBox]:eq(1)').prop('checked'))
+				if (!$('input[name=sGSYACKBox]:eq(1)').prop('checked')){
+				$('input[name=sGSYACKBox]:eq(1)').prop("checked",true)
+			};
+			// 一般パート選択時、障害パートのチェック削除
+			if (!$('input[name=ippanCKBox]:eq(1)').prop('checked'))
+				if ($('input[name=sGSYACKBox]:eq(1)').prop('checked')){
+				$('input[name=sGSYACKBox]:eq(1)').prop("checked",false)
+			};
+		}
+
+		// フルタイム
+		if (koyo == 1) {
+			// 全ての項目非表示処理
+			$('.ippan').css("display","none");
+			$('.ippan_full').css("display","none");
+			$('.ippan_part').css("display","none");
+			$('.daisotsu').css("display","none");
+			$('.shougai').css("display","none");
+			$('.shougai_full').css("display","none");
+			$('.shougai_part').css("display","none");
+			$('.kisetsu').css("display","none");
+			$('.dekasegi').css("display","none");
+			// 一般求人表示処理
+			$('.ippan').css("display","table-row");
+			// 一般求人_フルタイム表示処理
+			$('.ippan_full').css("display","table-row");
+			$('#ID_jikyIn').prop("disabled", true);
+			$('#ID_gkkyIn').prop("disabled", false);
+			// 雇用形態(正社員)有効化
+			koyoFltmCKBox(false);
+			// 雇用形態(パート)無効化
+			koyoPartCKBox(true);
+			// 週所定労働日数無効化
+			sstiRodoNissuIjoRadioBtn(true);
+			// 年間休日数有効化
+			nenkanKjsu(false);
+		// パート
+		} else if (koyo == 2) {
+			// 全ての項目非表示処理
+			$('.ippan').css("display","none");
+			$('.ippan_full').css("display","none");
+			$('.ippan_part').css("display","none");
+			$('.daisotsu').css("display","none");
+			$('.shougai').css("display","none");
+			$('.shougai_full').css("display","none");
+			$('.shougai_part').css("display","none");
+			$('.kisetsu').css("display","none");
+			$('.dekasegi').css("display","none");
+			// 一般求人表示処理
+			$('.ippan').css("display","table-row");
+			// 一般求人_パート表示処理
+			$('.ippan_part').css("display","table-row");
+			$('#ID_gkkyIn').prop("disabled", true);
+			$('#ID_jikyIn').prop("disabled", false);
+			// 雇用形態(正社員)無効化
+			koyoFltmCKBox(true);
+			// 雇用形態(パート)有効化
+			koyoPartCKBox(false);
+			// 週所定労働日数有効化
+			sstiRodoNissuIjoRadioBtn(false);
+			// 年間休日数無効化
+			nenkanKjsu(true);
+		// 両方チェックまたは未チェック
+		} else {
+			// 全ての項目非表示処理
+			$('.ippan').css("display","none");
+			$('.ippan_full').css("display","none");
+			$('.ippan_part').css("display","none");
+			$('.daisotsu').css("display","none");
+			$('.shougai').css("display","none");
+			$('.shougai_full').css("display","none");
+			$('.shougai_part').css("display","none");
+			$('.kisetsu').css("display","none");
+			$('.dekasegi').css("display","none");
+			// 一般求人表示処理
+			$('.ippan').css("display","table-row");
+			$('#ID_gkkyIn').prop("disabled", true);
+			$('#ID_jikyIn').prop("disabled", true);
+			// 雇用形態(正社員)無効化
+			koyoFltmCKBox(true);
+			// 雇用形態(パート)無効化
+			koyoPartCKBox(true);
+			// 週所定労働日数無効化
+			sstiRodoNissuIjoRadioBtn(true);
+			// 年間休日数無効化
+			nenkanKjsu(true);
+		}
+	}
+	// 障害のある方のための求人
+	if ($('input[name=kjKbnRadioBtn]:eq(1)').prop('checked')){
+		koyo = 0;
+		// 一般求人チェックボックス無効化
+		ippanCKBox(true);
+		// 障害のある方のための求人チェックボックス有効化
+		sGSYACKBox(false);
+		// 必要な経験等チェックボックス有効化
+		freeCKBox(false);
+		// 年齢入力有効化
+		nenreiCKBox(false);
+		// 既卒者の応募チェックボックス無効化
+		kstKaCKBox(true);
+		// 学歴無効化
+		gkrkCmbBox(true);
+		// 学歴・資格・経験の不問有効化
+		grkiFumonCKBox(false);
+		// 普通自動車運転免許有効化
+		jdsMenkyoCKBox(false);
+		// 必要な免許・資格有効化
+		msgMenkyoSkku(false);
+		// 定年制有効化
+		tnseiRadioBtn(false);
+		// 利用可能な託児施設有効化
+		riyoKanoNaTjsAriCKBox(false);
+		// 従業員数有効化
+		jginSuRadioBtn(false);
+		// その他有効化
+		sonotaCKBox(false);
+
+		if ($('#ID_screenId').val() == 'GECA110010' || $('#ID_screenId').val() == 'GEAA110010' || $('#ID_screenId').val() == 'GEAC110010') {
+			// 一般求人_チェックボックスの非表示（ECA110010場合）
+			$('#ID_ippanCKBox').hide();
+			// 障害のある方のための求人_チェックボックスの表示（ECA110010場合）
+			$('#ID_sGSYACKBox').show();
+		}
+
+		// フルタイム
+		if ($('input[name=sGSYACKBox]:eq(0)').prop('checked')){
+			koyo = 1;
+		};
+		// パート
+		if ($('input[name=sGSYACKBox]:eq(1)').prop('checked')){
+			if (koyo == 1) {
+				// 両方の場合は未チェックと同じ
+				koyo = 0;
+			} else {
+				koyo = 2;
+			}
+		};
+
+		if ($('#ID_screenId').val() == 'GECA110010' || $('#ID_screenId').val() == 'GEAA110010' || $('#ID_screenId').val() == 'GEAC110010') {
+			// 障害フルタイム選択時、一般フルタイムにチェック付与
+			if ($('input[name=sGSYACKBox]:eq(0)').prop('checked')){
+				if (!$('input[name=ippanCKBox]:eq(0)').prop('checked'))
+				$('input[name=ippanCKBox]:eq(0)').prop("checked",true)
+			};
+			// 障害フルタイム選択時、一般フルタイムのチェック削除
+			if (!$('input[name=sGSYACKBox]:eq(0)').prop('checked')){
+				if ($('input[name=ippanCKBox]:eq(0)').prop('checked'))
+				$('input[name=ippanCKBox]:eq(0)').prop("checked",false)
+			};
+			// 障害パート選択時、一般パートにチェック付与
+			if ($('input[name=sGSYACKBox]:eq(1)').prop('checked'))
+				if (!$('input[name=ippanCKBox]:eq(1)').prop('checked')){
+				$('input[name=ippanCKBox]:eq(1)').prop("checked",true)
+			};
+			// 障害パート選択時、一般パートのチェック削除
+			if (!$('input[name=sGSYACKBox]:eq(1)').prop('checked'))
+				if ($('input[name=ippanCKBox]:eq(1)').prop('checked')){
+				$('input[name=ippanCKBox]:eq(1)').prop("checked",false)
+			};
+		}
+
+		// フルタイム
+		if (koyo == 1) {
+			// 全ての項目非表示処理
+			$('.ippan').css("display","none");
+			$('.ippan_full').css("display","none");
+			$('.ippan_part').css("display","none");
+			$('.daisotsu').css("display","none");
+			$('.shougai').css("display","none");
+			$('.shougai_full').css("display","none");
+			$('.shougai_part').css("display","none");
+			$('.kisetsu').css("display","none");
+			$('.dekasegi').css("display","none");
+			// 障害のある方のための求人表示処理
+			$('.shougai').css("display","table-row");
+			// 障害のある方のための求人_フルタイム表示処理
+			$('.shougai_full').css("display","table-row");
+			$('#ID_jikyIn').prop("disabled", true);
+			$('#ID_gkkyIn').prop("disabled", false);
+			// 雇用形態(正社員)有効化
+			koyoFltmCKBox(false);
+			// 雇用形態(パート)無効化
+			koyoPartCKBox(true);
+			// 週所定労働日数無効化
+			sstiRodoNissuIjoRadioBtn(true);
+			// 年間休日数有効化
+			nenkanKjsu(false);
+		// パート
+		} else if (koyo == 2) {
+			// 全ての項目非表示処理
+			$('.ippan').css("display","none");
+			$('.ippan_full').css("display","none");
+			$('.ippan_part').css("display","none");
+			$('.daisotsu').css("display","none");
+			$('.shougai').css("display","none");
+			$('.shougai_full').css("display","none");
+			$('.shougai_part').css("display","none");
+			$('.kisetsu').css("display","none");
+			$('.dekasegi').css("display","none");
+			// 障害のある方のための求人表示処理
+			$('.shougai').css("display","table-row");
+			// 障害のある方のための求人_パート表示処理
+			$('.shougai_part').css("display","table-row");
+			$('#ID_gkkyIn').prop("disabled", true);
+			$('#ID_jikyIn').prop("disabled", false);
+			// 雇用形態(正社員)無効化
+			koyoFltmCKBox(true);
+			// 雇用形態(パート)有効化
+			koyoPartCKBox(false);
+			// 週所定労働日数有効化
+			sstiRodoNissuIjoRadioBtn(false);
+			// 年間休日数無効化
+			nenkanKjsu(true);
+		// 両方チェックまたは未チェック
+		} else {
+			// 全ての項目非表示処理
+			$('.ippan').css("display","none");
+			$('.ippan_full').css("display","none");
+			$('.ippan_part').css("display","none");
+			$('.daisotsu').css("display","none");
+			$('.shougai').css("display","none");
+			$('.shougai_full').css("display","none");
+			$('.shougai_part').css("display","none");
+			$('.kisetsu').css("display","none");
+			$('.dekasegi').css("display","none");
+			// 障害のある方のための求人表示処理
+			$('.shougai').css("display","table-row");
+			$('#ID_gkkyIn').prop("disabled", true);
+			$('#ID_jikyIn').prop("disabled", true);
+			// 雇用形態(正社員)無効化
+			koyoFltmCKBox(true);
+			// 雇用形態(パート)無効化
+			koyoPartCKBox(true);
+			// 週所定労働日数無効化
+			sstiRodoNissuIjoRadioBtn(true);
+			// 年間休日数無効化
+			nenkanKjsu(true);
+		}
+	};
+
+	// 新卒・既卒求人
+	if ($('input[name=kjKbnRadioBtn]:eq(2)').prop('checked')){
+		// 全ての項目非表示処理
+		$('.ippan').css("display","none");
+		$('.ippan_full').css("display","none");
+		$('.ippan_part').css("display","none");
+		$('.daisotsu').css("display","none");
+		$('.shougai').css("display","none");
+		$('.shougai_full').css("display","none");
+		$('.shougai_part').css("display","none");
+		$('.kisetsu').css("display","none");
+		$('.dekasegi').css("display","none");
+		// 新卒・既卒求人表示処理
+		$('.daisotsu').css("display","table-row");
+		$('#ID_jikyIn').prop("disabled", true);
+		$('#ID_gkkyIn').prop("disabled", false);
+		ippanCKBox(true);
+		// 障害のある方のための求人チェックボックス無効化
+		sGSYACKBox(true);
+		// 必要な経験等チェックボックス無効化
+		freeCKBox(true);
+		// 雇用形態(正社員)有効化
+		koyoFltmCKBox(false);
+		// 雇用形態(パート)無効化
+		koyoPartCKBox(true);
+		// 年齢入力無効化
+		nenreiCKBox(true);
+		// 既卒者の応募有効化
+		kstKaCKBox(false);
+		// 学歴有効化
+		gkrkCmbBox(false);
+		// 学歴・資格・経験の不問無効化
+		grkiFumonCKBox(true);
+		// 普通自動車運転免許無効化
+		jdsMenkyoCKBox(true);
+		// 必要な免許・資格無効化
+		msgMenkyoSkku(true);
+		// 週所定労働日数無効化
+		sstiRodoNissuIjoRadioBtn(true);
+		// 年間休日数有効化
+		nenkanKjsu(false);
+		// 定年制無効化
+		tnseiRadioBtn(true);
+		// 利用可能な託児施設無効化
+		riyoKanoNaTjsAriCKBox(true);
+		// 従業員数無効化
+		jginSuRadioBtn(true);
+		// その他無効化
+		sonotaCKBox(true);
+
+	};
+	// 季節求人
+	if ($('input[name=kjKbnRadioBtn]:eq(3)').prop('checked')){
+		// 全ての項目非表示処理
+		$('.ippan').css("display","none");
+		$('.ippan_full').css("display","none");
+		$('.ippan_part').css("display","none");
+		$('.daisotsu').css("display","none");
+		$('.shougai').css("display","none");
+		$('.shougai_full').css("display","none");
+		$('.shougai_part').css("display","none");
+		$('.kisetsu').css("display","none");
+		$('.dekasegi').css("display","none");
+		// 季節求人表示処理
+		$('.kisetsu').css("display","table-row");
+		$('#ID_jikyIn').prop("disabled", true);
+		$('#ID_gkkyIn').prop("disabled", false);
+		// 一般求人チェックボックス無効化
+		ippanCKBox(true);
+		// 障害のある方のための求人チェックボックス無効化
+		sGSYACKBox(true);
+		// 必要な経験等チェックボックス有効化
+		freeCKBox(false);
+		// 雇用形態(正社員)有効化
+		koyoFltmCKBox(false);
+		// 雇用形態(パート)無効化
+		koyoPartCKBox(true);
+		// 年齢入力有効化
+		nenreiCKBox(false);
+		// 既卒者の応募チェックボックス無効化
+		kstKaCKBox(true);
+		// 学歴無効化
+		gkrkCmbBox(true);
+		// 学歴・資格・経験の不問有効化
+		grkiFumonCKBox(false);
+		// 普通自動車運転免許有効化
+		jdsMenkyoCKBox(false);
+		// 必要な免許・資格有効化
+		msgMenkyoSkku(false);
+		// 週所定労働日数無効化
+		sstiRodoNissuIjoRadioBtn(true);
+		// 年間休日数無効化
+		nenkanKjsu(true);
+		// 定年制有効化
+		tnseiRadioBtn(false);
+		// 利用可能な託児施設有効化
+		riyoKanoNaTjsAriCKBox(false);
+		// 従業員数有効化
+		jginSuRadioBtn(false);
+		// その他有効化
+		sonotaCKBox(false);
+	};
+	// 出稼ぎ求人
+	if ($('input[name=kjKbnRadioBtn]:eq(4)').prop('checked')){
+		// 全ての項目非表示処理
+		$('.ippan').css("display","none");
+		$('.ippan_full').css("display","none");
+		$('.ippan_part').css("display","none");
+		$('.daisotsu').css("display","none");
+		$('.shougai').css("display","none");
+		$('.shougai_full').css("display","none");
+		$('.shougai_part').css("display","none");
+		$('.kisetsu').css("display","none");
+		$('.dekasegi').css("display","none");
+		// 出稼ぎ求人表示処理
+		$('.dekasegi').css("display","table-row");
+		$('#ID_jikyIn').prop("disabled", true);
+		$('#ID_gkkyIn').prop("disabled", false);
+		// 一般求人チェックボックス無効化
+		ippanCKBox(true);
+		// 障害のある方のための求人チェックボックス無効化
+		sGSYACKBox(true);
+		// 必要な経験等チェックボックス有効化
+		freeCKBox(false);
+		// 雇用形態(正社員)有効化
+		koyoFltmCKBox(false);
+		// 雇用形態(パート)無効化
+		koyoPartCKBox(true);
+		// 年齢入力有効化
+		nenreiCKBox(false);
+		// 既卒者の応募チェックボックス無効化
+		kstKaCKBox(true);
+		// 学歴無効化
+		gkrkCmbBox(true);
+		// 学歴・資格・経験の不問有効化
+		grkiFumonCKBox(false);
+		// 普通自動車運転免許有効化
+		jdsMenkyoCKBox(false);
+		// 必要な免許・資格有効化
+		msgMenkyoSkku(false);
+		// 週所定労働日数無効化
+		sstiRodoNissuIjoRadioBtn(true);
+		// 年間休日数無効化
+		nenkanKjsu(true);
+		// 定年制有効化
+		tnseiRadioBtn(false);
+		// 利用可能な託児施設有効化
+		riyoKanoNaTjsAriCKBox(false);
+		// 従業員数有効化
+		jginSuRadioBtn(false);
+		// その他有効化
+		sonotaCKBox(false);
+	};
+}
+
+function ippanCKBox(dis){
+	// 一般求人チェックボックス
+	$('input[name=ippanCKBox]:eq(0)').prop("disabled", dis);
+	$('input[name=ippanCKBox]:eq(1)').prop("disabled", dis);
+}
+function sGSYACKBox(dis){
+	// 障害のある方のための求人チェックボックス
+	$('input[name=sGSYACKBox]:eq(0)').prop("disabled", dis);
+	$('input[name=sGSYACKBox]:eq(1)').prop("disabled", dis);
+}
+function freeCKBox(dis){
+	// 必要な経験等チェックボックス
+	$('input[name=freeCKBox]:eq(7)').prop("disabled", dis);
+}
+function koyoFltmCKBox(dis){
+	// 雇用形態(正社員)
+	$('input[name=koyoFltmCKBox]:eq(0)').prop("disabled", dis);
+	$('input[name=koyoFltmCKBox]:eq(1)').prop("disabled", dis);
+	$('input[name=koyoFltmCKBox]:eq(2)').prop("disabled", dis);
+	$('input[name=koyoFltmCKBox]:eq(3)').prop("disabled", dis);
+}
+function koyoPartCKBox(dis){
+	// 雇用形態(パート)
+	$('input[name=koyoPartCKBox]:eq(0)').prop("disabled", dis);
+	$('input[name=koyoPartCKBox]:eq(1)').prop("disabled", dis);
+	$('input[name=koyoPartCKBox]:eq(2)').prop("disabled", dis);
+}
+function nenreiCKBox(dis){
+	// 年齢入力
+	$('#ID_nenreiInput').prop("disabled", dis);
+	$('input[name=nenreiCKBox]:eq(0)').prop("disabled", dis);
+	$('input[name=nenreiCKBox]:eq(1)').prop("disabled", dis);
+}
+function kstKaCKBox(dis){
+	// 既卒者の応募チェックボックス
+	$('input[name=kstKaCKBox]:eq(0)').prop("disabled", dis);
+}
+function gkrkCmbBox(dis){
+	// 学歴
+	$('#ID_gkrkCmbBox').prop("disabled", dis);
+}
+function grkiFumonCKBox(dis){
+	// 学歴・資格・経験の不問
+	$('input[name=grkiFumonCKBox]:eq(0)').prop("disabled", dis);
+	$('input[name=hynaKikntFumonCKBox]:eq(0)').prop("disabled", dis);
+	$('input[name=hynaMenkyoSkkuFumonCKBox]:eq(0)').prop("disabled", dis);
+}
+function jdsMenkyoCKBox(dis){
+	// 普通自動車運転免許
+	$('input[name=jdsMenkyoCKBox]:eq(0)').prop("disabled", dis);
+	$('input[name=jdsMenkyoCKBox]:eq(1)').prop("disabled", dis);
+	$('input[name=jdsMenkyoCKBox]:eq(2)').prop("disabled", dis);
+	$('input[name=jdsMenkyoCKBox]:eq(3)').prop("disabled", dis);
+}
+function msgMenkyoSkku(dis){
+	// 必要な免許・資格
+	$('#ID_msgMenkyoSkku1').find('input').prop("disabled", dis);
+	$('#ID_msgMenkyoSkku2').find('input').prop("disabled", dis);
+	$('#ID_msgMenkyoSkku3').find('input').prop("disabled", dis);
+}
+function sstiRodoNissuIjoRadioBtn(dis){
+	// 週所定労働日数
+	$('#ID_sstiRodoNissu').prop("disabled", dis);
+	$('input[name=sstiRodoNissuIjoRadioBtn]:eq(0)').prop("disabled", dis);
+	$('input[name=sstiRodoNissuIjoRadioBtn]:eq(1)').prop("disabled", dis);
+	$('input[name=sstiRodoNissuIjoRadioBtn]:eq(2)').prop("disabled", dis);
+}
+function nenkanKjsu(dis){
+	// 年間休日数
+	$('#ID_nenkanKjsu').prop("disabled", dis);
+}
+function tnseiRadioBtn(dis){
+	// 定年制
+	$('#ID_tnseiCmbBox').prop("disabled", dis);
+	$('input[name=tnseiRadioBtn]:eq(0)').prop("disabled", dis);
+	$('input[name=tnseiRadioBtn]:eq(1)').prop("disabled", dis);
+	$('input[name=tnseiRadioBtn]:eq(2)').prop("disabled", dis);
+}
+function riyoKanoNaTjsAriCKBox(dis){
+	// 利用可能な託児施設
+	$('input[name=riyoKanoNaTjsAriCKBox]:eq(0)').prop("disabled", dis);
+}
+function jginSuRadioBtn(dis){
+	// 従業員数
+	$('input[name=jginSuRadioBtn]:eq(0)').prop("disabled", dis);
+	$('input[name=jginSuRadioBtn]:eq(1)').prop("disabled", dis);
+	$('input[name=jginSuRadioBtn]:eq(2)').prop("disabled", dis);
+	$('input[name=jginSuRadioBtn]:eq(3)').prop("disabled", dis);
+	$('input[name=jginSuRadioBtn]:eq(4)').prop("disabled", dis);
+}
+function sonotaCKBox(dis){
+	// その他
+	$('input[name=sonotaCKBox]:eq(1)').prop("disabled", dis);
+	$('input[name=sonotaCKBox]:eq(8)').prop("disabled", dis);
+	$('input[name=sonotaCKBox]:eq(9)').prop("disabled", dis);
+}
+
+//画面からチェックした求人保持リスト取得
+function getCheckedKjList(Obj) {
+
+	if (Obj == undefined) {
+		return new Array();
+	}
+
+	let chkListStr = "";
+	if (typeof Obj === "string") {
+		chkListStr = Obj;
+	} else {
+		chkListStr = Obj.val();
+	}
+
+	if (chkListStr == null
+		|| chkListStr == undefined
+		|| chkListStr == "") {
+		return new Array();
+	} else {
+		return chkListStr.replace(/\[|\]/g,'').split(',').filter(item => item != "" && item != null);
+	}
+}
+
+// チェックした求人保持リスト制限処理
+function setChkListLimit(arr) {
+
+	let chkList = arr;
+
+	if (chkList == undefined || !Array.isArray(chkList)) {
+		return new Array();
+	}
+
+	const MAX = 50;
+	const len = chkList.length;
+	if (len > MAX) {
+		const deleteIdx = Math.abs(len - MAX);
+		chkList = chkList.splice(deleteIdx, len);
+	}
+
+	return chkList;
+}
+
+// セッションにお気に入り保持リストを保存
+function saveSessionRequest(screenId, kjDetaliListStr, checkboxFlg, chkListHddnObj, allSelectObj, ckBoxesObj, floatBtnAraObj) {
+
+	// セッションチェックした求人情報リストを更新
+	$.ajax({
+		url: screenId +'SaveSession.do',
+		type: 'POST',
+		datatype: 'json',
+		data: {
+			screenId: screenId,
+			action: "saveSession",
+			checkedKjDetailList : kjDetaliListStr.toString(),
+			kjCheckedFlag : checkboxFlg
+		}
+	}).done(function(data){
+		const shoriCode = data.shoriCode;
+		if (shoriCode == "0") {
+			let chkResult = getCheckedKjList(data.sessionCheckedKjList);
+
+			// 画面表示設定
+			setDisplay(chkResult, chkListHddnObj, allSelectObj, ckBoxesObj, floatBtnAraObj);
+		}
+	}).fail(function(data){
+		let pathArr = data.responseText.split('/');
+		let errScreenId = "";
+		for (let item of pathArr) {
+		    if (item.includes(".jsp")) {
+		        errScreenId = item.replace(".jsp", "");
+		    }
+		}
+		window.location.replace("./" + screenId + ".do?screenId=" + errScreenId);
+	});
+}
+
+// 画面表示設定
+function setDisplay(sessionKjList, chkListHddnObj, allSelectObj, ckBoxesObj, floatBtnAraObj) {
+
+	// 一般チェックフラグ
+	var ipCkFlg = false;
+	// 学卒チェックフラグ
+	var gsCkFlg = false;
+
+
+
+	// チェックの状態を更新する。
+	for (var obj of ckBoxesObj) {
+		var ckBoxVal = obj.value;
+		const index = sessionKjList.indexOf(ckBoxVal);
+		if (0 <= index) {
+			obj.checked = true;
+
+			// チェック求人の学卒有無も判断
+			if (ckBoxVal.slice(-1) == '8') {
+				gsCkFlg = true;
+
+			} else {
+				ipCkFlg = true;
+			}
+		} else {
+			obj.checked = false;
+		}
+	}
+	// セッションで持っている求人。
+	for (var i = 0; i < sessionKjList.length; i++) {
+		// チェック求人の学卒有無も判断
+		if (sessionKjList[i].slice(-1) == '8') {
+			gsCkFlg = true;
+
+		} else {
+			ipCkFlg = true;
+		}
+	}
+	// チェック状況に合わせて、チェックした求人の求人票を表示ボタンの表示切替
+	$('[id="ID_checkedKyujinhyoIppanBtn"]').toggle(ipCkFlg);
+	$('[id="ID_checkedKyujinhyoDsBtn"]').toggle(gsCkFlg);
+
+	if(ipCkFlg && gsCkFlg) {
+		$('.checkedKyujinhyoBtnDs_1').css('display','none');
+		$('.checkedKyujinhyoBtnIppan_1').css('display','none');
+	} else if (!ipCkFlg && gsCkFlg)  {
+		$('.checkedKyujinhyoBtnDs_2').css('display','none');
+	} else if (ipCkFlg && !gsCkFlg)  {
+		$('.checkedKyujinhyoBtnIppan_2').css('display','none');
+	} else {
+		$('.checkedKyujinhyoBtnDs_1').css('display','none');
+		$('.checkedKyujinhyoBtnIppan_1').css('display','none');
+		$('.checkedKyujinhyoBtnDs_2').css('display','none');
+		$('.checkedKyujinhyoBtnIppan_2').css('display','none');
+	}
+
+
+	// 画面チェックした求人保持リストを入れ替える
+	if (sessionKjList.length <= 0) {
+		chkListHddnObj.attr('value', null);
+		floatBtnAraObj.hide();
+	} else {
+		chkListHddnObj.attr('value', sessionKjList.toString());
+		floatBtnAraObj.show();
+	}
+
+	if (ckBoxesObj.length > 0) {
+		var ckBoxes = ckBoxesObj;
+		// チェックボックスの活性、非活性化
+		const isDisable = (sessionKjList.length >= 50);
+		for (var obj of ckBoxes) {
+			if (!obj.checked) {
+				obj.disabled = isDisable;
+			}
+		}
+
+		// 全て選択ボタン名を変更
+		const diabledCnt = ckBoxes.filter((idx, item) => item.disabled).length;
+		if (diabledCnt == ckBoxes.length) {
+			allSelectObj.children().eq(0)[0].innerText ='全て選択';
+			allSelectObj.children().eq(1)[0].innerText ='全て選択';
+			allSelectObj.eq(0).prop('disabled', true);
+			allSelectObj.eq(1).prop('disabled', true);
+		} else {
+			const stateChgCnt = ckBoxes.filter((idx, item) => item.checked || item.disabled).length;
+			if (stateChgCnt == ckBoxes.length) {
+				allSelectObj.children().eq(0)[0].innerText ='全て解除';
+				allSelectObj.children().eq(1)[0].innerText ='全て解除';
+			} else {
+				allSelectObj.children().eq(0)[0].innerText ='全て選択';
+				allSelectObj.children().eq(1)[0].innerText ='全て選択';
+			}
+		}
+	}
+}
+$(function() {
+	// チェックした求人の求人票を表示
+	$(document).off('click', '[id^="ID_checkedKyujinhyoIppanBtn"]').on('click', '[id^="ID_checkedKyujinhyoIppanBtn"]', function(){
+		// チェックした求人保持リストの画面オブジェクト取得
+		let chkListHddnObj = $('#ID_CHECKEDKJNOLIST');
+		// リスト取得
+		let sessionKjList = getCheckedKjList(chkListHddnObj);
+
+		// ソート選択オブジェクト取得
+		let sortSelectObj = $('[id="ID_fwListNaviSortTop"]').val();
+
+		// ボタン名取得
+		let actionBtn = $('[id="ID_checkedKyujinhyoIppanBtn"]').val();
+
+		const screenId = $('input[type="hidden"][name="screenId"]').val();
+
+		// 求人票を表示する求人リスト
+		var checkedKyujinList = [];
+		for (var kjNo of sessionKjList) {
+			var obj = new Object();
+			obj.kjNo = kjNo
+			checkedKyujinList.push(obj);
+		}
+
+		checkKjhyo(chkListHddnObj, sessionKjList, sortSelectObj, screenId, actionBtn);
+
+
+	});
+	// チェックした求人の求人票を表示（大卒）
+	$(document).off('click', '[id^="ID_checkedKyujinhyoDsBtn"]').on('click', '[id^="ID_checkedKyujinhyoDsBtn"]', function(){
+		// チェックした求人保持リストの画面オブジェクト取得
+		let chkListHddnObj = $('#ID_CHECKEDKJNOLIST');
+		// リスト取得
+		let sessionKjList = getCheckedKjList(chkListHddnObj);
+
+		// ソート選択オブジェクト取得
+		let sortSelectObj = $('[id="ID_fwListNaviSortTop"]').val();
+
+		// ボタン名取得
+		let actionBtn = $('[id="ID_checkedKyujinhyoDsBtn"]').val();
+
+		const screenId = $('input[type="hidden"][name="screenId"]').val();
+
+		// 求人票を表示する求人リスト
+		var checkedKyujinList = [];
+		for (var kjNo of sessionKjList) {
+			var obj = new Object();
+			obj.kjNo = kjNo
+			checkedKyujinList.push(obj);
+		}
+
+		checkKjhyo(chkListHddnObj, sessionKjList, sortSelectObj, screenId, actionBtn);
+	});
+	// チェックボックス選択処理
+	$(document).off('click', '[id^="ID_kyujinCKBox"]').on('click', '[id^="ID_kyujinCKBox"]', function(){
+
+		// チェックした求人保持リストの画面オブジェクト取得
+		let chkListHddnObj = $('#ID_CHECKEDKJNOLIST');
+		// チェックボックスオブジェクト取得
+		let ckBoxesObj = $('[name="kyujinCKBox"]');
+
+		// チェックボックス状態取得
+		const checkboxFlg = $(this).prop('checked');
+
+		// 同じサマリのチェックボックスの詳細を取り出す。
+		let ckBoxesDetailObj = $(this).parents(".kyujin_head_check").find($("[id^=ID_kyujinCKBoxDetail]"))
+		let kjDetailStr = ckBoxesDetailObj.attr('value');
+
+		// 全て選択スオブジェクト取得
+		let allSelectObj = $('[name="checkBoxAllSelect"]');
+		// フロントボタンエリア
+		let floatBtnAraObj = null;
+		if ($('[id="ID_float_search_button_area2"]').length <= 0) {
+			floatBtnAraObj = $('[id="ID_float_search_button_area"]');
+		} else {
+			floatBtnAraObj = $('[id="ID_float_search_button_area2"]');
+		}
+		// 画面ID
+		const screenId = $('input[type="hidden"][name="screenId"]').val();
+
+		// セッションに保存
+		saveSessionRequest(screenId, kjDetailStr, checkboxFlg, chkListHddnObj, allSelectObj, ckBoxesObj, floatBtnAraObj);
+	});
+});
+
+
+
+function checkKjhyo(chkListHddnObj, sessionKjList, sortSelectObj, screenId, actionBtn){
+	$.ajax({
+		url: screenId +'.do',
+		type: 'POST',
+		datatype: 'json',
+		data: {
+			screenId: screenId,
+			action: actionBtn,
+			checkedKyujinList : checkedKyujinList,
+			fwListNaviSort : sortSelectObj
+		}
+	}).done(function(data){
+		const shoriCode = data.shoriCode;
+
+	}).fail(function(data){
+		if(!($('#msg_area').length)){
+			$('.page_title + .media_nodisp').after('<div id="msg_area"><p class="msg_E"><i class="fa fa-check"></i>該当する情報は見つかりませんでした。情報の更新が行われたか、削除されました。</p></div>');
+		}
+		failScrollTop();
+	});
+}
+// 全て選択処理
+function selectAllCKboxes(obj) {
+
+	// チェックした求人保持リストの画面オブジェクト取得
+	let chkListHddnObj = $('#ID_CHECKEDKJNOLIST');
+	// チェックボックスオブジェクト取得
+	let ckBoxesObj = $('[name="kyujinCKBox"]');
+
+	// チェックボックスの詳細オブジェクト取得
+	let ckBoxesDetailObj = $('[name="kyujinCKBoxDetail"]');
+
+	// 全ての求人の詳細を抽出し、カンマ区切りで結合
+	let kjDetaliList = ckBoxesDetailObj.map(function(index, element){
+		return element.value;
+	}).get();
+	let kjDetaliListStr = kjDetaliList.join(",");
+
+	// 押下したボタンが全て選択ボタンならtrue、そうでなければfalseを設定
+	let label = obj.innerText.trim();
+	const checkboxFlg = (label == "全て選択");
+
+	let allSelectObj = $('[name="checkBoxAllSelect"]');
+	// フロントボタンエリア
+	let floatBtnAraObj = null;
+	if ($('[id="ID_float_search_button_area2"]').length <= 0) {
+		floatBtnAraObj = $('[id="ID_float_search_button_area"]');
+	} else {
+		floatBtnAraObj = $('[id="ID_float_search_button_area2"]');
+	}
+	// 画面ID
+	const screenId = $('input[type="hidden"][name="screenId"]').val();
+
+	// セッションに保存
+	saveSessionRequest(screenId, kjDetaliListStr, checkboxFlg, chkListHddnObj, allSelectObj, ckBoxesObj, floatBtnAraObj);
+
+	// submit防止
+	return false;
+}
+
+// 就業場所スクリプト
+function execOkTodohukenModal() {
+	//都道府県から選択
+	if ($('#ID_todohukenHidden').val() != '') {
+		//選択中表示
+		$('.todofukenArea').css('display','flex');
+		$('.todofukenArea').css('align-items','center');
+		//モーダル表示ボタン選択状態にする
+		$('#ID_todohukenHiddenAccoBtn').addClass('selected');
+		//選択対象以外ボタン非活性およびグレーアウト
+		$('#ID_ensenHiddenAccoBtn').addClass('grayout');
+		$('#ID_roudousijyoHiddenAccoBtn').addClass('grayout');
+
+	} else {
+		//未選択状態
+		clearTdfk();
+	}
+}
+function execOkEnsenModal() {
+	//沿線から選択
+	if ($('#ID_ensenHidden').val() != '') {
+		//選択中表示
+		$('.ensenArea').css('display','flex');
+		$('.ensenArea').css('align-items','center');
+		//モーダル表示ボタン選択状態にする
+		$('#ID_ensenHiddenAccoBtn').addClass('selected');
+		//選択対象以外のボタン非活性およびグレーアウト
+		$('#ID_todohukenHiddenAccoBtn').addClass('grayout');
+		$('#ID_roudousijyoHiddenAccoBtn').addClass('grayout');
+
+	} else {
+		//未選択状態
+		clearEnsen();
+	}
+}
+function execOkRoudousijyoHidden() {
+	//労働市場圏から選択
+	if ($('#ID_roudousijyoHidden').val() != '') {
+		//選択中表示
+		$('.roudousijyoArea').css('display','flex');
+		$('.roudousijyoArea').css('align-items','center');
+		//モーダル表示ボタン選択状態にする
+		$('#ID_roudousijyoHiddenAccoBtn').addClass('selected');
+		//選択対象以外のボタンを非活性およびグレーアウト
+		$('#ID_todohukenHiddenAccoBtn').addClass('grayout');
+		$('#ID_ensenHiddenAccoBtn').addClass('grayout');
+
+	} else {
+		//未選択状態
+		clearRdsj();
+	}
+}
+
+function clearTdfk(){
+	//都道府県から選択_クリアボタン
+	$('.todofukenArea').css('display','none');
+
+	$('div[name="todohukenNameLbl"]').text('');
+	$('input[name="todohukenHidden"]').val('');
+
+	$('#ID_todohukenHiddenAccoBtn').removeClass('selected');
+	$('#ID_ensenHiddenAccoBtn').removeClass('grayout');
+	$('#ID_roudousijyoHiddenAccoBtn').removeClass('grayout');
+}
+function clearEnsen(){
+	//沿線から選択_クリアボタン
+	$('.ensenArea').css('display','none');
+
+	$('div[name="ensenNameLbl"]').text('');
+	$('input[name="ensenHidden"]').val('');
+
+	$('#ID_ensenHiddenAccoBtn').removeClass('selected');
+	$('#ID_todohukenHiddenAccoBtn').removeClass('grayout');
+	$('#ID_roudousijyoHiddenAccoBtn').removeClass('grayout');
+}
+function clearRdsj(){
+	//労働市場圏から選択_クリアボタン
+	$('.roudousijyoArea').css('display','none');
+
+	$('div[name="roudousijyoNameLbl"]').text('');
+	$('input[name="roudousijyoHidden"]').val('');
+
+	$('#ID_roudousijyoHiddenAccoBtn').removeClass('selected');
+	$('#ID_ensenHiddenAccoBtn').removeClass('grayout');
+	$('#ID_todohukenHiddenAccoBtn').removeClass('grayout');
+}
+
+function changeTatZngyCKBox() {
+	let kjKbn = getSelectedKjKbn();
+	let fullPart = getSelectedFullPartKbn();
+
+	if (kjKbn == '1' || kjKbn == '5') {
+		if (fullPart == '' || fullPart == '2') {
+			// 未選択／両方／パート
+			$('input[name=tatZngyCKBox]:eq(0)').prop("checked", true);
+		}
+	}
+}
+
+function getSelectedKjKbn() {
+	return $('input[name=kjKbnRadioBtn]:checked').val();
+}
+
+function getSelectedFullPartKbn() {
+	let kjKbn = getSelectedKjKbn();
+	if (kjKbn == '1') {
+		let fullpartCk = $('input[name="ippanCKBox"]:checked').map(function(){
+			return $(this).val();
+		}).get();
+		if (fullpartCk.length == 0 || fullpartCk.length == 2) {
+			return '';
+		} else {
+			return fullpartCk;
+		}
+	} else if (kjKbn == '5') {
+		let fullpartCk = $('input[name="sGSYACKBox"]:checked').map(function(){
+			return $(this).val();
+		}).get();
+		if (fullpartCk.length == 0 || fullpartCk.length == 2) {
+			return '';
+		} else {
+			return fullpartCk;
+		}
+	} else {
+		return '';
+	}
+}
+
+function getPrLogoLabel() {
+	var checkedValue = $('input[name="chkPRLogo"]:checked').map(function(){
+		return $(this).val();
+	}).get();
+
+	//PRロゴ用の項目
+	var label ="";
+	//空白
+	var spase="　";
+
+	//繰り返し、PRロゴチェックボックスを１つずつ確認
+	for(let i = 0; i < checkedValue.length; i++){
+
+		//PRロゴチェックボックスの要素を取得
+		var checkBox = $('.prDailog .prLogoInModal input[name="chkPRLogo"][value="'+ checkedValue[i] +'"]');
+		//Value値取得
+		var value = checkBox.val();
+		//PRロゴラベルを追記
+		label = label + spase + $('#ID_LchkPRLogo' + value).text();
+	}
+	//先頭の空白除去
+	label = label.trim();
+	return label;
+}
+
+function checkChgnByKjKbn() {
+	var koyo = 0;
+	// 一般求人
+	if ($('input[name=kjKbnRadioBtn]:eq(0)').prop('checked')){	
+		// フルタイム
+		if ($('input[name=ippanCKBox]:eq(0)').prop('checked')){
+			koyo = 1;
+		};
+		// パート
+		if ($('input[name=ippanCKBox]:eq(1)').prop('checked')){
+			if (koyo == 1) {
+				// 両方の場合は未チェックと同じ
+				koyo = 0;
+			} else {
+				koyo = 2;
+			}
+		}
+		// フルタイム
+		if (koyo == 1) {
+			// 並び順コンボボックス（上部）_下限賃金順表示
+			$('select[name=fwListNaviSortTop] option:eq(1)').css("display","block");
+			// 並び順コンボボックス（上部）_上限賃金順表示
+			$('select[name=fwListNaviSortTop] option:eq(2)').css("display","block");
+			// 並び順コンボボックス（下部）_下限賃金順表示
+			$('select[name=fwListNaviSortBtm] option:eq(1)').css("display","block");
+			// 並び順コンボボックス（下部）_上限賃金順表示
+			$('select[name=fwListNaviSortBtm] option:eq(2)').css("display","block");
+		} else if (koyo == 2) {
+			// 並び順コンボボックス（上部）_下限賃金順表示
+			$('select[name=fwListNaviSortTop] option:eq(1)').css("display","block");
+			// 並び順コンボボックス（上部）_上限賃金順表示
+			$('select[name=fwListNaviSortTop] option:eq(2)').css("display","block");
+			// 並び順コンボボックス（下部）_下限賃金順表示
+			$('select[name=fwListNaviSortBtm] option:eq(1)').css("display","block");
+			// 並び順コンボボックス（下部）_上限賃金順表示
+			$('select[name=fwListNaviSortBtm] option:eq(2)').css("display","block");
+		} else {
+			// 並び順コンボボックス（上部）_下限賃金順非表示
+			$('select[name=fwListNaviSortTop] option:eq(1)').css("display","none");
+			// 並び順コンボボックス（上部）_上限賃金順非表示
+			$('select[name=fwListNaviSortTop] option:eq(2)').css("display","none");
+			// 並び順コンボボックス（下部）_下限賃金順非表示
+			$('select[name=fwListNaviSortBtm] option:eq(1)').css("display","none");
+			// 並び順コンボボックス（下部）_上限賃金順非表示
+			$('select[name=fwListNaviSortBtm] option:eq(2)').css("display","none");
+		}
+	}
+	if ($('input[name=kjKbnRadioBtn]:eq(1)').prop('checked')){
+		koyo = 0;
+		// フルタイム
+		if ($('input[name=sGSYACKBox]:eq(0)').prop('checked')){
+			koyo = 1;
+		};
+		// パート
+		if ($('input[name=sGSYACKBox]:eq(1)').prop('checked')){
+			if (koyo == 1) {
+				// 両方の場合は未チェックと同じ
+				koyo = 0;
+			} else {
+				koyo = 2;
+			}
+		};
+		if (koyo == 1) {
+			// 並び順コンボボックス（上部）_下限賃金順表示
+			$('select[name=fwListNaviSortTop] option:eq(1)').css("display","block");
+			// 並び順コンボボックス（上部）_上限賃金順表示
+			$('select[name=fwListNaviSortTop] option:eq(2)').css("display","block");
+			// 並び順コンボボックス（下部）_下限賃金順表示
+			$('select[name=fwListNaviSortBtm] option:eq(1)').css("display","block");
+			// 並び順コンボボックス（下部）_上限賃金順表示
+			$('select[name=fwListNaviSortBtm] option:eq(2)').css("display","block");
+		} else if (koyo == 2) {
+			// 並び順コンボボックス（上部）_下限賃金順表示
+			$('select[name=fwListNaviSortTop] option:eq(1)').css("display","block");
+			// 並び順コンボボックス（上部）_上限賃金順表示
+			$('select[name=fwListNaviSortTop] option:eq(2)').css("display","block");
+			// 並び順コンボボックス（下部）_下限賃金順表示
+			$('select[name=fwListNaviSortBtm] option:eq(1)').css("display","block");
+			// 並び順コンボボックス（下部）_上限賃金順表示
+			$('select[name=fwListNaviSortBtm] option:eq(2)').css("display","block");
+		} else {
+			// 並び順コンボボックス（上部）_下限賃金順非表示
+			$('select[name=fwListNaviSortTop] option:eq(1)').css("display","none");
+			// 並び順コンボボックス（上部）_上限賃金順非表示
+			$('select[name=fwListNaviSortTop] option:eq(2)').css("display","none");
+			// 並び順コンボボックス（下部）_下限賃金順非表示
+			$('select[name=fwListNaviSortBtm] option:eq(1)').css("display","none");
+			// 並び順コンボボックス（下部）_上限賃金順非表示
+			$('select[name=fwListNaviSortBtm] option:eq(2)').css("display","none");
+		}
+	}
+	if ($('input[name=kjKbnRadioBtn]:eq(2)').prop('checked') 
+		|| $('input[name=kjKbnRadioBtn]:eq(3)').prop('checked')
+		|| $('input[name=kjKbnRadioBtn]:eq(4)').prop('checked')) {
+			// 並び順コンボボックス（上部）_下限賃金順表示
+			$('select[name=fwListNaviSortTop] option:eq(1)').css("display","block");
+			// 並び順コンボボックス（上部）_上限賃金順表示
+			$('select[name=fwListNaviSortTop] option:eq(2)').css("display","block");
+			// 並び順コンボボックス（下部）_下限賃金順表示
+			$('select[name=fwListNaviSortBtm] option:eq(1)').css("display","block");
+			// 並び順コンボボックス（下部）_上限賃金順表示
+			$('select[name=fwListNaviSortBtm] option:eq(2)').css("display","block");
+	}
+	
+}
+
+// onload 求人区分の項目判定
+$(function () {
+	// 初期表示時
+	checkKjKbn();
+	checkChgnByKjKbn();
+	viewJokenTokusyuByKbn();
+	viewTokyusyuMessage();
+});
+
+// onload 閲覧済情報の初期表示
+$(function () {
+	let viewedLbelJqObj = $('span[class*="viewed_kjno_"]');
+	if (viewedLbelJqObj === undefined) return;
+
+	if ($('#ID_hiddenViewedKyujinList') === undefined || $('#ID_hiddenViewedKyujinList').val() == "") {
+		// セッションにデータなしのため非表示
+		viewedLbelJqObj.css('display', 'none');
+		return;
+	}
+
+	let viewStr = $('#ID_hiddenViewedKyujinList').val();
+	if (viewStr === undefined || viewStr == "") {
+		// セッションにデータなしのため非表示
+		viewedLbelJqObj.css('display', 'none');
+		return;
+	}
+
+	let viewAry = viewStr.split(',');
+	$.each(viewedLbelJqObj, function(index, obj) {
+		if (isViewedKyujin(obj, viewAry)) {
+			$(obj).css('display', 'block');
+		} else {
+			$(obj).css('display', 'none');
+		}
+	})
+});
+
+// onload 就業場所とPRロゴ
+$(function(){
+	if ($('#ID_todohukenHidden').val() != '') {
+		execOkTodohukenModal();
+	} else if ($('#ID_ensenHidden').val() != '') {
+		execOkEnsenModal();
+	} else if ($('#ID_roudousijyoHidden').val() != '') {
+		execOkRoudousijyoHidden();
+	}
+
+	//モーダル内でチェックされた項目を取得
+	var checked = $('input[name="chkPRLogo"]:checked').map(function(){
+		return $(this).val();
+	}).get();
+	if(checked.length > 0){
+		//モーダル表示ボタン選択状態にする
+		$('#ID_prLogoBtn').addClass('selected');
+		//選択中表示
+		$('.prLogoArea').css('display','flex');
+		$('.prLogoArea').css('align-items','center');
+		//PRロゴマークラベルを表示
+		$('#ID_prLogoLabel').html(getPrLogoLabel());
+	}
+});
+
+// onload 特集求人、条件を選ぶ、職種を選ぶ
+$(function(){
+	// 条件を選ぶ
+	var checkedId = $("input[id^='ID_jyoukenBox']:checked").map(function(){
+		return $(this).attr("id").replace('ID_jyoukenBox','');
+	}).get();
+	for (i = 0; i < checkedId.length; i++) {
+		if (checkedId[i].length > 2) {
+			$('#ID_daiJyoukenBox' + checkedId[i].slice(0,-2)).prop('checked', true);
+		}
+	}
+	// 特集求人
+	checkedId = $("input[id^='ID_tokusyuBox']:checked").map(function(){
+		return $(this).attr("id").replace('ID_tokusyuBox','');
+	}).get();
+	for (i = 0; i < checkedId.length; i++) {
+		if (checkedId[i].length > 2) {
+			$('#ID_daiTokusyuBox' + checkedId[i].slice(0,-2)).prop('checked', true);
+		}
+	}
+	// 職種を選ぶ
+	checkedId = $("input[id^='ID_easyShokusyuBox']:checked").map(function(){
+		return $(this).attr("id").replace('ID_easyShokusyuBox','');
+	}).get();
+	for (i = 0; i < checkedId.length; i++) {
+		if (checkedId[i].length > 2) {
+			$('#ID_daiEasyShokusyuBox' + checkedId[i].slice(0,-2)).prop('checked', true);
+		}
+	}
+	// 非活性制御
+	easyShokusyuCheck();
+});
+
+// onload チェックした求人
+$(function(){
+	if ($('#ID_checkBoxAllSelect').length != 0) {
+		// チェックした求人保持リストの画面オブジェクト取得
+		let chkListHddnObj = $('#ID_CHECKEDKJNOLIST');
+		// リスト取得
+		let sessionKjList = getCheckedKjList(chkListHddnObj);
+		// 全て選択オブジェクト取得
+		let allSelectObj = $('[id="ID_checkBoxAllSelect"]');
+		// チェックボックスオブジェクト取得
+		let ckBoxesObj = $('[name="kyujinCKBox"]');
+		// フロートボタンエリア
+		let floatBtnAraObj = $('[id="ID_float_search_button_area2"]');
+		 // 画面表示設定
+		 setDisplay(sessionKjList, chkListHddnObj, allSelectObj, ckBoxesObj, floatBtnAraObj);
+	}
+});
+
+// ブラウザバック時にリロード
+window.addEventListener('pageshow',()=>{
+	if(window.performance.navigation.type==2) location.reload();
+});

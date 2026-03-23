@@ -233,7 +233,7 @@ export const useLogic = (): UseLogicReturn => {
       const data = getValues('rows')
       const insertData = await insertDataFormat(data, insertDateRef.current, storeSelect)
       const InsertDatas = {
-        sheetName: '店舗へ',
+        sheetName: '店舗注文履歴',
         action: 'Orderinsert',
         sub_action: 'insert',
         insert_action: InsertActionRef.current,

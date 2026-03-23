@@ -4,7 +4,7 @@ import { OrderType, detailsTypes, shortageType, UseLogicType, resultType } from 
 
 export const loader = async (): Promise<UseLogicType> => {
   const ordersGet = await window.myInventoryAPI.ListGet({
-    sheetName: '店舗へ',
+    sheetName: '店舗注文履歴',
     action: 'InputDataGet',
     ranges: 'A2:M'
   })

@@ -1437,14 +1437,14 @@ ipcMain.handle('hellowork-init', async () => {
 
     await page.goto(
       'https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB040010.do?action=initDisp&screenId=GEAB040010',
-      { waitUntil: 'networkidle2' }
+      { waitUntil: 'domcontentloaded' }
     )
 
     await page.type('input[name="mail"]', 'oceans7a@gmail.com')
     await page.type('input[name="password"]', 'ocean@1115')
 
     await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle2' }),
+      page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
       page.click('button[name="loginBtn"]')
     ])
 
@@ -1480,7 +1480,7 @@ ipcMain.handle('hellowork-init', async () => {
       await page.waitForSelector('button[name="okBtn"]', { visible: true })
 
       await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle2' }),
+        page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
         page.click('button[name="okBtn"]')
       ])
     }
@@ -1503,7 +1503,7 @@ ipcMain.handle('hellowork-update', async (_event, RecruitNumbers: any) => {
   try {
     for (const num of RecruitNumbers) {
       const updatePass = `https://kyujin.hellowork.mhlw.go.jp/kyujin/GEAB031010.do?screenId=GEAB031010&action=tenyoTorokuBtn&kjNo=${num}`
-      await page.goto(updatePass, { waitUntil: 'networkidle2' })
+      await page.goto(updatePass, { waitUntil: 'domcontentloaded' })
       let pagenum = 1
       while (true) {
         if (pagenum == 1) {
@@ -1514,7 +1514,7 @@ ipcMain.handle('hellowork-update', async (_event, RecruitNumbers: any) => {
           break
         }
         await Promise.all([
-          page.waitForNavigation({ waitUntil: 'networkidle2' }),
+          page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
           nextButton.click()
         ])
         pagenum++
@@ -1524,7 +1524,7 @@ ipcMain.handle('hellowork-update', async (_event, RecruitNumbers: any) => {
         const comment = '来月からの更新をお願いします'
         await page.type('textarea[name="helloworkRKJK"]', comment)
         await Promise.all([
-          page.waitForNavigation({ waitUntil: 'networkidle2' }),
+          page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
           confirmButton.click()
         ])
       }
@@ -1534,7 +1534,7 @@ ipcMain.handle('hellowork-update', async (_event, RecruitNumbers: any) => {
     return
   } finally {
     const linkLocator = page.locator('a[href*="GEAB100010.do"]')
-    await Promise.all([page.waitForNavigation({ waitUntil: 'networkidle2' }), linkLocator.click()])
+    await Promise.all([page.waitForNavigation({ waitUntil: 'domcontentloaded' }), linkLocator.click()])
   }
 })
 

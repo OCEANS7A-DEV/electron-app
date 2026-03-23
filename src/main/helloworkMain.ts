@@ -99,7 +99,7 @@ export const HelloWorkGet = async (page) => {
 
         try {
           // 詳細ページへ移動
-          await page.goto(url, { waitUntil: 'networkidle2' })
+          await page.goto(url, { waitUntil: 'domcontentloaded' })
         } catch (err) {
           //console.warn(`詳細ページへ移動失敗: ${url}`, err);
           jushos.push('')
@@ -187,7 +187,7 @@ export const HelloWorkPdfGet = async (
       const jobUrl = `https://kyujin.hellowork.mhlw.go.jp/kyujin/${item.求人票URL}`
 
       try {
-        await page.goto(jobUrl, { waitUntil: 'networkidle2', timeout: 60000 })
+        await page.goto(jobUrl, { waitUntil: 'domcontentloaded' })
         const cookies = await page.cookies()
         const cookieHeader = cookies.map((c) => `${c.name}=${c.value}`).join('; ')
         browser = null
