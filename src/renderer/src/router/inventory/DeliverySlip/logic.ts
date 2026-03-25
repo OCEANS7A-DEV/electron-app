@@ -63,14 +63,14 @@ export const PrintDataFlatMap = (
   const rowNum = 20
   const printdata = data.flatMap((item) => {
     if (item[7] === '') {
-      totalAmount = totalAmount + Number(item[9])
+      totalAmount = totalAmount + Number(item[10])
       return [item]
     } else if (store[2] == 'FC' || store[2] == 'VC') {
-      totalAmount = totalAmount + Number(item[9])
+      totalAmount = totalAmount + Number(item[10])
       return [NotDMRows(item)]
     } else {
-      const totalnum = Number(item[6]) - Number(item[7])
-      totalAmount = totalAmount + Number(item[8]) * totalnum
+      const totalnum = Number(item[6]) - Number(item[7]) - Number(item[8])
+      totalAmount = totalAmount + Number(item[9]) * totalnum
       return ServiseRow(item, totalnum)
     }
   })
