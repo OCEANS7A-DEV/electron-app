@@ -22,6 +22,12 @@ export const useLogic = () => {
     return ordersGet
   }
 
+  const NetOrderPrint = async() => {
+    // const details = await window.myInventoryAPI.storeGet()
+    // console.log(details)
+    window.myInventoryAPI.orderPrint('NetOrderPrint')
+  }
+
   const DataGet = async () => {
     const InsertDataCheck = async () => {
       const data = await OrderData()
@@ -120,6 +126,7 @@ export const useLogic = () => {
     handleStoreChange,
     storeOptions,
     storeSelect,
-    OrderPrintExe
+    OrderPrintExe,
+    NetOrderPrint
   }
 }

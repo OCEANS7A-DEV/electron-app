@@ -12,12 +12,15 @@ export const loader = async (): Promise<UseLogicType> => {
   const detailCodes: number[] = []
 
   const shortage = await window.myInventoryAPI.shortageGet()
-  const lastDate = new Date(ordersGet[ordersGet.length - 1][0]).toLocaleDateString()
+
+  const printtargetdate = await window.myInventoryAPI.storeGet('printDate')
+  const lastDate = new Date(printtargetdate).toLocaleDateString()
 
   const filteredData = ordersGet.filter(
     (row: OrderType) => new Date(row[0]).toLocaleDateString() == lastDate && row[5] !== ''
   )
   const details = await window.myInventoryAPI.storeGet('details')
+
 
   const Datas = details
     .map((item: [number, string]) => {

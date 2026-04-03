@@ -592,8 +592,7 @@ const AffterGet = async () => {
     const response = await net.fetch(GetAPI_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Cookie: cookieHeader
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: JSON.stringify({
         sheetName: '一覧',
@@ -603,7 +602,7 @@ const AffterGet = async () => {
       })
     })
     const result = await response.json()
-    console.log(result.StoresData)
+    console.log(result)
     const ListResult = await result.ProductsData.map((item) => {
       return {
         vendor: item[1],

@@ -56,7 +56,7 @@ export const defaultDataFormat = (
     const target = beforeData.filter((row) => row[1] == item[1])
     return {
       store: item[1],
-      before: String(target[0][5]),
+      before: String(target[5] ?? ''),
       stocking: '',
       used: '',
       inventoryamount: ''

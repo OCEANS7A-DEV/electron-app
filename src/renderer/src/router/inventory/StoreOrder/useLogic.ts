@@ -283,6 +283,7 @@ export const useLogic = (): UseLogicReturn => {
       setValue(`rows.${index}.code`, code)
     }
     const result = await productGet(code, true)
+    console.log(result)
     if (result) {
       const product = result.productData
       const detail = result.detailsData

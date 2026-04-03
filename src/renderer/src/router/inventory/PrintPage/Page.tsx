@@ -24,7 +24,8 @@ const PrintControlPage = (): JSX.Element => {
     storeSelect,
     storeOptions,
     handleStoreChange,
-    OrderPrintExe
+    OrderPrintExe,
+    NetOrderPrint
   } = useLogic()
 
   return (
@@ -104,7 +105,7 @@ const PrintControlPage = (): JSX.Element => {
               <Box sx={{ color: 'white' }}>ネット発注印刷</Box>
               <Button
                 variant="outlined"
-                onClick={() => window.myInventoryAPI.orderPrint('NetOrderPrint')}
+                onClick={NetOrderPrint}
               >
                 印刷
               </Button>
