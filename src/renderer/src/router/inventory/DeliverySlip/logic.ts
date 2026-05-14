@@ -19,6 +19,7 @@ const NotDMRows = (item: PrintRowType): PrintRowType => {
 }
 
 const ServiseRow = (item: PrintRowType, totalnum: number): PrintRowType[] => {
+  console.log(totalnum)
   return [
     [
       item[0],
@@ -29,11 +30,15 @@ const ServiseRow = (item: PrintRowType, totalnum: number): PrintRowType[] => {
       item[5],
       totalnum,
       '',
-      item[8],
-      totalnum * Number(item[8]),
-      item[10],
+      '',
+      item[9],
+      totalnum * Number(item[9]),
       item[11],
-      item[12]
+      item[12],
+      item[12],
+      '',
+      '',
+      '',
     ],
     [
       item[0],
@@ -44,16 +49,20 @@ const ServiseRow = (item: PrintRowType, totalnum: number): PrintRowType[] => {
       item[5],
       item[7],
       item[7],
+      '',
       0,
       0,
-      item[10],
+      '',
       'サービス',
-      item[12]
+      '未',
+      '',
+      '',
+      ''
     ]
   ]
 }
 
-const EmptyRow = ['', '', '', '', '', '', '', '', '', '', '', '', '']
+const EmptyRow = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
 
 export const PrintDataFlatMap = (
   data: PrintRowType[],
