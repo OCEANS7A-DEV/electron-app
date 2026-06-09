@@ -70,6 +70,9 @@ import VendorFAXPage from '@Inventory/VendorFAXPrint/Page'
 import NetOrderPrintPage from '@Inventory/NetOrderPrint/Page'
 import { loader as NetOrderPrintLoader } from '@Inventory/NetOrderPrint/useLogic'
 
+
+import EnrePage from '@Inventory/enrePrint/Page'
+
 // 商品検索ページ
 import InventorySearchPage from '@Inventory/inventorySearch/Page'
 
@@ -250,5 +253,9 @@ export const router: ReturnType<typeof createHashRouter> = createHashRouter([
     path: '/CountList',
     element: <CountListPage />,
     loader: CountlistLoader
+  },
+  {
+    path: '/enre',
+    element: <EnrePage />
   }
 ])

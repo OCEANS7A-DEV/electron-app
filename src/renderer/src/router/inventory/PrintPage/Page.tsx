@@ -25,7 +25,8 @@ const PrintControlPage = (): JSX.Element => {
     storeOptions,
     handleStoreChange,
     OrderPrintExe,
-    NetOrderPrint
+    NetOrderPrint,
+    enrePrint
   } = useLogic()
 
   return (
@@ -108,6 +109,12 @@ const PrintControlPage = (): JSX.Element => {
                 onClick={NetOrderPrint}
               >
                 印刷
+              </Button>
+              <Button
+                variant='outlined'
+                onClick={enrePrint}
+              >
+                enre印刷
               </Button>
             </Box>
             <Box

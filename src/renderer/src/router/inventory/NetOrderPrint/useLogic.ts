@@ -21,7 +21,6 @@ export const loader = async (): Promise<UseLogicType> => {
   )
   const details = await window.myInventoryAPI.storeGet('details')
 
-
   const Datas = details
     .map((item: [number, string]) => {
       const target = filteredData.filter((row: OrderType) => row[3] == item[0] && row[5] == item[1])
@@ -45,7 +44,7 @@ export const loader = async (): Promise<UseLogicType> => {
       }
     })
     .filter((row: detailsTypes | undefined) => row && row.code !== 100001)
-
+  console.log(Datas)
   const Tida = shortage.filter((row: shortageType) => row[0] == 'TIDA' && Number(row[14]) < 0)
   Tida.forEach((row: shortageType) => {
     const result = {
