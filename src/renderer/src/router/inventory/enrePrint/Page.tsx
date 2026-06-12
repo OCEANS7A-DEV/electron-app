@@ -142,9 +142,9 @@ export default function EnrePage() {
                     fontWeight: 'bold'
                   }}
                 >
-                  <Box>株式会社</Box>
-                  <Box sx={{ padding: '0px 6px' }}>enre(西迫)</Box>
-                  <Box>御中</Box>
+                  <Box></Box>
+                  <Box sx={{ padding: '0px 6px' }}>ENRE 西迫信義</Box>
+                  <Box>様</Box>
                 </Box>
                 <Box></Box>
                 <Box></Box>
