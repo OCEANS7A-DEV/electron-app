@@ -7,15 +7,15 @@ export const loader = async (): Promise<LoaderData> => {
   const printDate = await window.myInventoryAPI.storeGet('printDate')
   const storeList = await window.myInventoryAPI.storeGet('storeList')
   const ordersGet: PrintRowType[] = JSON.parse(printDataObj)
-  console.log(ordersGet)
+  //console.log(ordersGet)
   const stores = [...new Set(ordersGet.map((item) => item[1] as string))]
   const resultdata = await Promise.all(
     stores.map(async (storeName) => {
       const store = storeList.find((item: [number, string, string]) => item[1] === storeName)
       const storeData = ordersGet.filter((row) => row[1] === storeName)
-      console.log(storeData)
+      //console.log(storeData)
       const printdata = PrintDataFlatMap(storeData, store)
-      console.log(printdata)
+      //console.log(printdata)
       return printdata
     })
   )

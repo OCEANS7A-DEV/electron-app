@@ -4,7 +4,24 @@ import { ColumnSize, BoxSxSetting, Tax, DeliverNum, Missing, totalPrice } from '
 import { PrintRowType, RowCompType } from './types'
 
 const RowComp = ({ printData }: RowCompType): JSX.Element => {
-  console.log(printData)
+
+  const IntaxPrice = (data) => {
+    const persolPrice = Number(data[9]) * 10 //小数点回避
+    const intax = (persolPrice * 1.1) / 10
+    return intax
+  }
+
+  if (printData[0][1] == '山本') {
+    const persolPrice = Number(printData[5][9]) * 10
+
+    const intax = (persolPrice * 1.1) / 10
+    console.log(intax)
+
+  }
+
+
+
+
   return (
     <Box
       sx={{
