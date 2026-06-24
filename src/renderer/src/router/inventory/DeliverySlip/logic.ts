@@ -113,9 +113,9 @@ export const Tax = (item) => {
   if (item[4] == '開運手帳') {
     result = `¥${Number(item[10]).toLocaleString()}`
   } else {
-    const persolPrice = Number(item[10]) * 10
-    const intax = (persolPrice * 1.1) / 10
-    result = `¥${intax.toLocaleString()}`
+    const price = Number(item[10])
+    const tax = Math.ceil(price * 10 / 100)
+    result = `¥${(price + tax).toLocaleString()}`
   }
   return result
 }
